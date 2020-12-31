@@ -1,0 +1,103 @@
+html {
+  background-color: #eee;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: #eee;
+  min-width: 900px;
+}
+
+.flex-container {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-flow: row nowrap;
+}
+
+.section-title {
+  font-size: 21px;
+  font-weight: 500;
+  padding-top: 10px;
+  padding-bottom: 20px;
+  line-height: 30px;
+}
+
+.separator {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border: 1px dashed #eee;
+}
+
+.oj-captcha {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  width: 100%;
+  height: 36px;
+  .oj-captcha-code {
+    flex: auto;
+  }
+  .oj-captcha-img {
+    margin-left: 10px;
+    padding: 3px;
+    flex: initial;
+  }
+}
+
+.oj-relative {
+  position: relative;
+}
+
+a.emphasis{
+  color: #495060;
+  &:hover {
+    color: #2d8cf0;
+  }
+}
+
+// for mathjax
+.MathJax {
+  outline: 0;
+}
+
+.MathJax_Display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.markdown-body {
+  @import './markdown.less';
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(0, 50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
