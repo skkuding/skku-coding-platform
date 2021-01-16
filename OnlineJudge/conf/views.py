@@ -211,7 +211,7 @@ class TestCasePruneAPI(APIView):
 class ReleaseNotesAPI(APIView):
     def get(self, request):
         try:
-            resp = requests.get("https://raw.githubusercontent.com/QingdaoU/OnlineJudge/master/docs/data.json?_=" + str(time.time()),
+            resp = requests.get("https://raw.githubusercontent.com/skku-npc/skku-coding-platform/master/OnlineJudge/docs/data.json?_=" + str(time.time()),
                                 timeout=3)
             releases = resp.json()
         except (RequestException, ValueError):
