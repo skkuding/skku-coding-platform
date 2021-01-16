@@ -206,7 +206,7 @@ class UsernameOrEmailCheck(APIView):
         if data.get("username"):
             if User.objects.filter(username=data["username"].lower()).exists():
                 result["username"] = 1
-            elif re.compile("20[0-9]{8}$").match(data["username"]) is None:
+            elif not re.match(r"^20[0-9]{8}$", data["username"]):
                 result["username"] = 2
         if data.get("email"):
             if User.objects.filter(email=data["email"].lower()).exists():
@@ -247,10 +247,12 @@ class UserRegisterAPI(APIView):
             return self.error("Invalid captcha")
         if User.objects.filter(username=data["username"]).exists():
             return self.error("Username already exists")
+        if not re.match(r"^20[0-9]{8}$", data["username"]):
+            return self.error("Not student ID")
         if User.objects.filter(email=data["email"]).exists():
             return self.error("Email already exists")
-        if not self._email_parse(request):
-            return self.error("Invalid domain (Use skku.edu or g.skku.edu")
+        if data["email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
+            return self.error("Not university email")
         user = User.objects.create(username=data["username"], email=data["email"])
         user.set_password(data["password"])
         user.save()
