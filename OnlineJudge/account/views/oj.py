@@ -194,15 +194,20 @@ class UsernameOrEmailCheck(APIView):
         check username or email is duplicate
         """
         data = request.data
-        # True means already exist.
+        # 1 means already exist.
+        # 2 means not university email
         result = {
-            "username": False,
-            "email": False
+            "username": 0,
+            "email": 0
         }
         if data.get("username"):
-            result["username"] = User.objects.filter(username=data["username"].lower()).exists()
+            if User.objects.filter(username=data["username"].lower()).exists():
+                result["username"] = 1
         if data.get("email"):
-            result["email"] = User.objects.filter(email=data["email"].lower()).exists()
+            if User.objects.filter(email=data["email"].lower()).exists():
+                result["email"] = 1
+            elif data["email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
+                result["email"] = 2
         return self.success(result)
 
 
