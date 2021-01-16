@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import timedelta
 from importlib import import_module
 
@@ -195,7 +196,7 @@ class UsernameOrEmailCheck(APIView):
         """
         data = request.data
         # 1 means already exist.
-        # 2 means not university email
+        # 2 means not student ID / university email
         result = {
             "username": 0,
             "email": 0
@@ -203,6 +204,8 @@ class UsernameOrEmailCheck(APIView):
         if data.get("username"):
             if User.objects.filter(username=data["username"].lower()).exists():
                 result["username"] = 1
+            elif re.compile("20[0-9]{8}$").match(data["username"]) is None:
+                result["username"] = 2
         if data.get("email"):
             if User.objects.filter(email=data["email"].lower()).exists():
                 result["email"] = 1
