@@ -58,6 +58,14 @@ class APIView(View):
         写到父类中是为了不同的人开发写法统一,不再使用自己的success/error格式
      - self.response 返回一个django HttpResponse, 具体在self.response_class中实现
      - parse请求的类需要定义在request_parser中, 目前只支持json和urlencoded的类型, 用来解析请求的数据
+
+
+    The parent class of Django view, and the usage of django-rest-framework is basically the same
+      - request.data to get parsed json or urlencoded data, dict type
+      - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+        Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+      - self.response returns a django HttpResponse, which is implemented in self.response_class
+      - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
     """
     request_parsers = (JSONParser, URLEncodedParser)
     response_class = JSONResponse
@@ -112,9 +120,9 @@ class APIView(View):
 
     def paginate_data(self, request, query_set, object_serializer=None):
         """
-        :param request: django的request
-        :param query_set: django model的query set或者其他list like objects
-        :param object_serializer: 用来序列化query set, 如果为None, 则直接对query set切片
+        :param request: django's request
+        :param query_set: django model query set or other list like objects
+        :param object_serializer: Used to serialize the query set, if it is None, slice the query set directly
         :return:
         """
         try:

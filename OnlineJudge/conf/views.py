@@ -157,7 +157,7 @@ class JudgeServerHeartbeatAPI(CSRFExemptAPIView):
                                        service_url=data["service_url"],
                                        last_heartbeat=timezone.now(),
                                        )
-        # 新server上线 处理队列中的，防止没有新的提交而导致一直waiting
+        # The new server is online. Process the queues to prevent waiting for no new submissions
         process_pending_task()
 
         return self.success()
@@ -211,7 +211,7 @@ class TestCasePruneAPI(APIView):
 class ReleaseNotesAPI(APIView):
     def get(self, request):
         try:
-            resp = requests.get("https://raw.githubusercontent.com/QingdaoU/OnlineJudge/master/docs/data.json?_=" + str(time.time()),
+            resp = requests.get("https://raw.githubusercontent.com/skku-npc/skku-coding-platform/master/OnlineJudge/docs/data.json?_=" + str(time.time()),
                                 timeout=3)
             releases = resp.json()
         except (RequestException, ValueError):

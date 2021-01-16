@@ -23,7 +23,7 @@ class SubmissionModelSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# 不显示submission info的serializer, 用于ACM rule_type
+# Serializer that does not display submission info, used for ACM rule_type
 class SubmissionSafeModelSerializer(serializers.ModelSerializer):
     problem = serializers.SlugRelatedField(read_only=True, slug_field="_id")
 
@@ -45,7 +45,7 @@ class SubmissionListSerializer(serializers.ModelSerializer):
         exclude = ("info", "contest", "code", "ip")
 
     def get_show_link(self, obj):
-        # 没传user或为匿名user
+        # No user or anonymous user
         if self.user is None or not self.user.is_authenticated:
             return False
         return obj.check_user_permission(self.user)
