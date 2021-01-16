@@ -67,8 +67,10 @@
     data () {
       const CheckUsernameNotExist = (rule, value, callback) => {
         api.checkUsernameOrEmail(value, undefined).then(res => {
-          if (res.data.data.username === true) {
+          if (res.data.data.username === 1) {
             callback(new Error(this.$i18n.t('m.The_username_already_exists')))
+          } else if (res.data.data.username === 2) {
+            callback(new Error(this.$i18n.t('m.The_username_is_not_student_ID')))
           } else {
             callback()
           }
