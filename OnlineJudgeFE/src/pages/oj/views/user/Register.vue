@@ -76,8 +76,10 @@
       }
       const CheckEmailNotExist = (rule, value, callback) => {
         api.checkUsernameOrEmail(undefined, value).then(res => {
-          if (res.data.data.email === true) {
+          if (res.data.data.email === 1) {
             callback(new Error(this.$i18n.t('m.The_email_already_exists')))
+          } else if (res.data.data.email === 2) {
+            callback(new Error(this.$i18n.t('m.The_email_domain_not_match')))
           } else {
             callback()
           }

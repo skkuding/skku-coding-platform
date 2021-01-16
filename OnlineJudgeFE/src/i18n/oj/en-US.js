@@ -218,6 +218,7 @@ export const m = {
   Already_Registed: 'Already registed? Login now!',
   The_username_already_exists: 'The username already exists.',
   The_email_already_exists: 'The email already exists',
+  The_email_domain_not_match: 'Please use university email (@g.skku.edu, @skku.edu)',
   password_does_not_match: 'password does not match',
   Thanks_for_registering: 'Thanks for your registering, you can login now',
   // ResetPassword.vue and ApplyResetPassword.vue
