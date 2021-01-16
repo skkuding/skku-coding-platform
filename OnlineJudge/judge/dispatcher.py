@@ -173,10 +173,10 @@ class JudgeDispatcher(DispatcherBase):
             self.submission.info = resp
             self._compute_statistic_info(resp["data"])
             error_test_case = list(filter(lambda case: case["result"] != 0, resp["data"]))
-            # In ACM mode, if multiple test points are all correct, then AC, 
+            # In ACM mode, if multiple test points are all correct, then AC,
             # otherwise, take the status of the first wrong test point
-            # In OI mode, if multiple test points are all correct, AC is used, 
-            # if all test points are wrong, the first test point state is taken as the first error, 
+            # In OI mode, if multiple test points are all correct, AC is used,
+            # if all test points are wrong, the first test point state is taken as the first error,
             # otherwise it is partially correct
             if not error_test_case:
                 self.submission.result = JudgeStatus.ACCEPTED

@@ -66,7 +66,7 @@ def check_contest_password(password, contest_password):
         return True
     else:
         # sig#timestamp
-        # This form of password is also possible, 
+        # This form of password is also possible,
         # but no support is provided on the interface
         # sig = sha256(contest_password + timestamp)[:8]
         if "#" in password:
@@ -89,7 +89,7 @@ def check_contest_password(password, contest_password):
 
 def check_contest_permission(check_type="details"):
     """
-    Only for Class based view to check whether the user has the right 
+    Only for Class based view to check whether the user has the right
     to enter the contest, check_type optional details, problems, ranks, submissions
     If the verification is passed, the contest can be obtained through self.contest in the view
     """
