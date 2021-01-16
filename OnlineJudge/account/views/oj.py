@@ -1,6 +1,8 @@
 import os
 from datetime import timedelta
 from importlib import import_module
+from email.policy import default as email_default_policy
+from email import message_from_string
 
 import qrcode
 from django.conf import settings
@@ -32,7 +34,7 @@ class UserProfileAPI(APIView):
     @method_decorator(ensure_csrf_cookie)
     def get(self, request, **kwargs):
         """
-        Determine whether to log in, and return user information if logged in
+        判断是否登录， 若登录返回用户信息
         """
         user = request.user
         if not user.is_authenticated:
@@ -44,7 +46,7 @@ class UserProfileAPI(APIView):
                 user = User.objects.get(username=username, is_disabled=False)
             else:
                 user = request.user
-                # The api returns your own information, you can return real_name
+                # api返回的是自己的信息，可以返real_name
                 show_real_name = True
         except User.DoesNotExist:
             return self.error("User does not exist")
@@ -207,6 +209,20 @@ class UsernameOrEmailCheck(APIView):
 
 
 class UserRegisterAPI(APIView):
+    def _email_parse(self, request):
+        data = request.data
+        data["email"] = data["email"].lower()
+
+        msg = message_from_string('To: {}'.format(data["email"]), policy=email_default_policy)
+        addr = msg['to'].addresses[0]
+
+        if addr.domain == "g.skku.edu" or addr.domain == "skku.edu" :
+            print(addr.domain)
+            return True
+        else :
+            print(addr.domain)
+            return False
+
     @validate_serializer(UserRegisterSerializer)
     def post(self, request):
         """
@@ -225,6 +241,8 @@ class UserRegisterAPI(APIView):
             return self.error("Username already exists")
         if User.objects.filter(email=data["email"]).exists():
             return self.error("Email already exists")
+        if not self._email_parse(request):
+            return self.error("Invalid domain (Use skku.edu or g.skku.edu")
         user = User.objects.create(username=data["username"], email=data["email"])
         user.set_password(data["password"])
         user.save()

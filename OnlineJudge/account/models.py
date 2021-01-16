@@ -26,6 +26,7 @@ class UserManager(models.Manager):
 class User(AbstractBaseUser):
     username = models.TextField(unique=True)
     email = models.TextField(null=True)
+    major = models.TextField(null=True)
     create_time = models.DateTimeField(auto_now_add=True, null=True)
     # One of UserType
     admin_type = models.TextField(default=AdminType.REGULAR_USER)
@@ -93,7 +94,6 @@ class UserProfile(models.Model):
     mood = models.TextField(null=True)
     github = models.TextField(null=True)
     school = models.TextField(null=True)
-    major = models.TextField(null=True)
     language = models.TextField(null=True)
     # for ACM
     accepted_number = models.IntegerField(default=0)
@@ -109,8 +109,7 @@ class UserProfile(models.Model):
         self.submission_number = models.F("submission_number") + 1
         self.save()
 
-    # When calculating the total score, you should first subtract the score from the previous question,
-    # and then add the score this time
+    # 计算总分时， 应先减掉上次该题所得分数， 然后再加上本次所得分数
     def add_score(self, this_time_score, last_time_score=None):
         last_time_score = last_time_score or 0
         self.total_score = models.F("total_score") - last_time_score + this_time_score
