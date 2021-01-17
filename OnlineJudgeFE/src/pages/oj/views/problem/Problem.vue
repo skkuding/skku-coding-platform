@@ -527,30 +527,43 @@
 
   #problem-content {
     margin-top: -50px;
+    margin-left: auto;
+    margin-right: auto;
+    width: ~"min(800px, 100%)";
     .title {
       font-size: 20px;
       font-weight: 400;
-      margin: 25px 0 8px 0;
+      margin-top: 20px;
+      margin-bottom: 30px;
       color: #3091f2;
       .copy {
         padding-left: 8px;
       }
     }
     p.content {
-      margin-left: 25px;
-      margin-right: 20px;
       font-size: 15px
     }
     .sample {
       align-items: stretch;
-      &-input, &-output {
-        width: 50%;
+      margin-left: 0px;
+      margin-right: 0px;
+      &-input {
+        width: 40%;
         flex: 1 1 auto;
         display: flex;
         flex-direction: column;
+        margin-left: 0px;
+        margin-right: 5%;
+      }
+      &-output {
+        width: 40%;
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction:  column;
         margin-right: 5%;
       }
       pre {
+        width: 105%;
         flex: 1 1 auto;
         align-self: stretch;
         border-style: solid;

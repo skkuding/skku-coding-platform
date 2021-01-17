@@ -10,7 +10,6 @@
         <p>
           <span v-if="version">&nbsp; Version: {{ version }}</span>
         </p>
-        <p> Test </p>
       </div>
     </div>
     <BackTop></BackTop>

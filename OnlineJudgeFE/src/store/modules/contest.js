@@ -3,6 +3,8 @@ import types from '../types'
 import api from '@oj/api'
 import { CONTEST_STATUS, USER_TYPE, CONTEST_TYPE } from '@/utils/constants'
 
+let padZero = (n) => (n < 10 ? '0' + n : n)
+
 const state = {
   now: moment(),
   access: false,
@@ -83,12 +85,12 @@ const getters = {
       if (duration.weeks() > 0) {
         return 'Start At ' + duration.humanize()
       }
-      let texts = [Math.floor(duration.asHours()), duration.minutes(), duration.seconds()]
-      return '-' + texts.join(':')
+      let texts = [padZero(Math.floor(duration.asHours())), padZero(duration.minutes()), padZero(duration.seconds())]
+      return '- ' + texts.join(':')
     } else if (getters.contestStatus === CONTEST_STATUS.UNDERWAY) {
       let duration = moment.duration(getters.contestEndTime.diff(state.now, 'seconds'), 'seconds')
-      let texts = [Math.floor(duration.asHours()), duration.minutes(), duration.seconds()]
-      return '-' + texts.join(':')
+      let texts = [padZero(Math.floor(duration.asHours())), padZero(duration.minutes()), padZero(duration.seconds())]
+      return '- ' + texts.join(':')
     } else {
       return 'Ended'
     }

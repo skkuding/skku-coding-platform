@@ -187,7 +187,7 @@ export const m = {
   No_Account: 'No account? Register now!',
   Forget_Password: 'Forget Password',
   UserLogin: 'Login',
-  Welcome_back: 'Welcome back to OJ',
+  Welcome_back: 'Welcome back to SKKU Coding Platform',
   // OIRank.vue
   OI_Ranklist: 'OI Ranklist',
   // OIContestRank.vue
