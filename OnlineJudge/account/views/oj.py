@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import timedelta
 from importlib import import_module
 from email.policy import default as email_default_policy
@@ -196,15 +197,22 @@ class UsernameOrEmailCheck(APIView):
         check username or email is duplicate
         """
         data = request.data
-        # True means already exist.
+        # 1 means already exist.
+        # 2 means not student ID / university email
         result = {
-            "username": False,
-            "email": False
+            "username": 0,
+            "email": 0
         }
         if data.get("username"):
-            result["username"] = User.objects.filter(username=data["username"].lower()).exists()
+            if User.objects.filter(username=data["username"].lower()).exists():
+                result["username"] = 1
+            elif not re.match(r"^20[0-9]{8}$", data["username"]):
+                result["username"] = 2
         if data.get("email"):
-            result["email"] = User.objects.filter(email=data["email"].lower()).exists()
+            if User.objects.filter(email=data["email"].lower()).exists():
+                result["email"] = 1
+            elif data["email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
+                result["email"] = 2
         return self.success(result)
 
 
@@ -239,6 +247,8 @@ class UserRegisterAPI(APIView):
             return self.error("Invalid captcha")
         if User.objects.filter(username=data["username"]).exists():
             return self.error("Username already exists")
+        if not re.match(r"^20[0-9]{8}$", data["username"]):
+            return self.error("Not student ID")
         if User.objects.filter(email=data["email"]).exists():
             return self.error("Email already exists")
         if not self._email_parse(request):

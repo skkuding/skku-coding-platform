@@ -181,7 +181,7 @@ export const m = {
   Sessions: 'Sessions',
   Two_Factor_Authentication: 'Two Factor Authentication',
   // Login.vue
-  LoginUsername: 'Username',
+  LoginUsername: 'Student ID',
   LoginPassword: 'Password',
   TFA_Code: 'Code from your TFA app',
   No_Account: 'No account? Register now!',
@@ -204,7 +204,7 @@ export const m = {
   Total: 'Total',
   AC_Rate: 'AC Rate',
   // Register.vue
-  RegisterUsername: 'Username',
+  RegisterUsername: 'Student ID',
   Email_Address: 'Email Address',
   RegisterPassword: 'Password',
   Password_Again: 'Password Again',
@@ -212,7 +212,9 @@ export const m = {
   UserRegister: 'Register',
   Already_Registed: 'Already registed? Login now!',
   The_username_already_exists: 'The username already exists.',
+  The_username_is_not_student_ID: 'Please use correct student ID',
   The_email_already_exists: 'The email already exists',
+  The_email_domain_not_match: 'Please use university email (@g.skku.edu, @skku.edu)',
   password_does_not_match: 'password does not match',
   Thanks_for_registering: 'Thanks for your registering, you can login now',
   // ResetPassword.vue and ApplyResetPassword.vue
