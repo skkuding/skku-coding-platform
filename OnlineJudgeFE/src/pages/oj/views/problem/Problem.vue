@@ -62,7 +62,10 @@
             <div class="status" v-if="statusVisible">
               <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
                 <span>{{$t('m.Status')}}</span>
-                <Tag type="dot" :color="submissionStatus.color" @click.native="handleRoute('/status/'+submissionId)">
+                <Tag v-if="submissionStatus.text === 'Compile Error'" type="dot" :color="submissionStatus.color" @click.native="handleRoute('/status/'+submissionId)">
+                  {{$t('m.' + submissionStatus.text.replace(/ /g, "_"))}}
+                </Tag>
+                <Tag v-else type="dot" :color="submissionStatus.color">
                   {{$t('m.' + submissionStatus.text.replace(/ /g, "_"))}}
                 </Tag>
               </template>
