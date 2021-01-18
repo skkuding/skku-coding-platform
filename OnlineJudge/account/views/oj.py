@@ -32,7 +32,7 @@ class UserProfileAPI(APIView):
     @method_decorator(ensure_csrf_cookie)
     def get(self, request, **kwargs):
         """
-        判断是否登录， 若登录返回用户信息
+        Determine whether to log in, and return user information if logged in
         """
         user = request.user
         if not user.is_authenticated:
@@ -44,7 +44,7 @@ class UserProfileAPI(APIView):
                 user = User.objects.get(username=username, is_disabled=False)
             else:
                 user = request.user
-                # api返回的是自己的信息，可以返real_name
+                # The api returns your own information, you can return real_name
                 show_real_name = True
         except User.DoesNotExist:
             return self.error("User does not exist")

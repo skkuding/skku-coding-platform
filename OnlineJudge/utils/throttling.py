@@ -3,13 +3,13 @@ import time
 
 class TokenBucket:
     """
-    注意：对于单个key的操作不是线程安全的
+    Note: The operation of a single key is not thread-safe
     """
     def __init__(self, key, capacity, fill_rate, default_capacity, redis_conn):
         """
-        :param capacity: 最大容量
-        :param fill_rate: 填充速度/每秒
-        :param default_capacity: 初始容量
+        :param capacity: maximum capacity
+        :param fill_rate: fill rate/per second
+        :param default_capacity: initial capacity
         :param redis_conn: redis connection
         """
         self._key = key
@@ -53,7 +53,7 @@ class TokenBucket:
 
     def consume(self, num=1):
         """
-        消耗 num 个 token，返回是否成功
+        Consume num tokens, return whether it is successful
         :param num:
         :return: result: bool, wait_time: float
         """

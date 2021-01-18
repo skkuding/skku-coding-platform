@@ -12,7 +12,7 @@ class MyRedisClient(DefaultClient):
 
     def redis_incr(self, key, count=1):
         """
-        django 默认的 incr 在 key 不存在时候会抛异常
+        Django's default incr will throw an exception when the key does not exist
         """
         client = self.get_client(write=True)
         return client.incr(key, count)

@@ -102,7 +102,7 @@ class SubmissionAPI(APIView):
             submission_data = SubmissionModelSerializer(submission).data
         else:
             submission_data = SubmissionSafeModelSerializer(submission).data
-        # 是否有权限取消共享
+        # if there is permission to cancel sharing
         submission_data["can_unshare"] = submission.check_user_permission(request.user, check_share=False)
         return self.success(submission_data)
 
@@ -184,7 +184,7 @@ class ContestSubmissionListAPI(APIView):
         if contest.status != ContestStatus.CONTEST_NOT_START:
             submissions = submissions.filter(create_time__gte=contest.start_time)
 
-        # 封榜的时候只能看到自己的提交
+        # You can only see your submissions when you close the list
         if contest.rule_type == ContestRuleType.ACM:
             if not contest.real_time_rank and not request.user.is_contest_admin(contest):
                 submissions = submissions.filter(user_id=request.user.id)
