@@ -2,8 +2,6 @@ import os
 import re
 from datetime import timedelta
 from importlib import import_module
-from email.policy import default as email_default_policy
-from email import message_from_string
 
 import qrcode
 from django.conf import settings
@@ -217,20 +215,6 @@ class UsernameOrEmailCheck(APIView):
 
 
 class UserRegisterAPI(APIView):
-    def _email_parse(self, request):
-        data = request.data
-        data["email"] = data["email"].lower()
-
-        msg = message_from_string('To: {}'.format(data["email"]), policy=email_default_policy)
-        addr = msg['to'].addresses[0]
-
-        if addr.domain == "g.skku.edu" or addr.domain == "skku.edu" :
-            print(addr.domain)
-            return True
-        else :
-            print(addr.domain)
-            return False
-
     @validate_serializer(UserRegisterSerializer)
     def post(self, request):
         """
@@ -252,7 +236,7 @@ class UserRegisterAPI(APIView):
         if User.objects.filter(email=data["email"]).exists():
             return self.error("Email already exists")
         if data["email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
-            return self.error("Not university email")
+            return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
         user = User.objects.create(username=data["username"], email=data["email"])
         user.set_password(data["password"])
         user.save()
@@ -275,6 +259,8 @@ class UserChangeEmailAPI(APIView):
             data["new_email"] = data["new_email"].lower()
             if User.objects.filter(email=data["new_email"]).exists():
                 return self.error("The email is owned by other account")
+            if data["new_email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
+                return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
             user.email = data["new_email"]
             user.save()
             return self.success("Succeeded")
