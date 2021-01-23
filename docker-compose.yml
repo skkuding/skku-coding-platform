@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 services:
 
   oj-redis:
@@ -19,9 +19,9 @@ services:
       - POSTGRES_USER=onlinejudge
       - POSTGRES_PASSWORD=onlinejudge
 
-  judge-server:
+  judger:
     image: skkunpc/judger
-    container_name: judge-server
+    container_name: judger
     restart: always
     read_only: true
     cap_drop:
@@ -35,22 +35,22 @@ services:
       - /tmp
     volumes:
       - ./data/backend/test_case:/test_case:ro
-      - ./data/judge_server/log:/log
-      - ./data/judge_server/run:/judger
+      - ./data/judger/log:/log
+      - ./data/judger/run:/judger
     environment:
-      - SERVICE_URL=http://judge-server:8080
-      - BACKEND_URL=http://oj-backend:8000/api/judge_server_heartbeat/
+      - SERVICE_URL=http://judger:8080
+      - BACKEND_URL=http://coding-platform:8000/api/judge_server_heartbeat/
       - TOKEN=CHANGE_THIS
       # - judger_debug=1
   
-  oj-backend:
+  coding-platform:
     image: skkunpc/coding-platform
-    container_name: oj-backend
+    container_name: coding-platform
     restart: always
     depends_on:
       - oj-redis
       - oj-postgres
-      - judge-server
+      - judger
     volumes:
       - ./data/backend:/data
     environment:
