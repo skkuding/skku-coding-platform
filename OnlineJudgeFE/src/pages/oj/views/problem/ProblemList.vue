@@ -12,9 +12,13 @@
               </span>
               <Dropdown-menu slot="list">
                 <Dropdown-item name="">{{$t('m.All')}}</Dropdown-item>
-                <Dropdown-item name="Low">{{$t('m.Low')}}</Dropdown-item>
-                <Dropdown-item name="Mid" >{{$t('m.Mid')}}</Dropdown-item>
-                <Dropdown-item name="High">{{$t('m.High')}}</Dropdown-item>
+                <Dropdown-item name="Level1">{{$t('m.Level1')}}</Dropdown-item>
+                <Dropdown-item name="Level2">{{$t('m.Level2')}}</Dropdown-item>
+                <Dropdown-item name="Level3">{{$t('m.Level3')}}</Dropdown-item>
+                <Dropdown-item name="Level4">{{$t('m.Level4')}}</Dropdown-item>
+                <Dropdown-item name="Level5">{{$t('m.Level5')}}</Dropdown-item>
+                <Dropdown-item name="Level6">{{$t('m.Level6')}}</Dropdown-item>
+                <Dropdown-item name="Level7">{{$t('m.Level7')}}</Dropdown-item>
               </Dropdown-menu>
             </Dropdown>
           </li>
@@ -136,9 +140,12 @@
             title: this.$i18n.t('m.Level'),
             render: (h, params) => {
               let t = params.row.difficulty
-              let color = 'blue'
-              if (t === 'Low') color = 'green'
-              else if (t === 'High') color = 'yellow'
+              let color = 'green'
+              if (t === 'Level3') color = 'blue'
+              else if (t === 'Level4') color = 'blue'
+              else if (t === 'Level5') color = 'yellow'
+              else if (t === 'Level6') color = 'yellow'
+              else if (t === 'Level7') color = 'red'
               return h('Tag', {
                 props: {
                   color: color

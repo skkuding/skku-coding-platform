@@ -49,9 +49,13 @@
           <el-col :span="8">
             <el-form-item :label="$t('m.Difficulty')">
               <el-select class="difficulty-select" size="small" :placeholder="$t('m.Difficulty')" v-model="problem.difficulty">
-                <el-option :label="$t('m.Low')" value="Low"></el-option>
-                <el-option :label="$t('m.Mid')" value="Mid"></el-option>
-                <el-option :label="$t('m.High')" value="High"></el-option>
+                <el-option :label="$t('m.Level1')" value="Level1"></el-option>
+                <el-option :label="$t('m.Level2')" value="Level2"></el-option>
+                <el-option :label="$t('m.Level3')" value="Level3"></el-option>
+                <el-option :label="$t('m.Level4')" value="Level4"></el-option>
+                <el-option :label="$t('m.Level5')" value="Level5"></el-option>
+                <el-option :label="$t('m.Level6')" value="Level6"></el-option>
+                <el-option :label="$t('m.Level7')" value="Level7"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -378,7 +382,7 @@
           output_description: '',
           time_limit: 1000,
           memory_limit: 256,
-          difficulty: 'Low',
+          difficulty: 'Level1',
           visible: true,
           share_submission: false,
           tags: [],
