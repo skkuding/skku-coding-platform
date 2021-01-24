@@ -197,6 +197,7 @@ export const m = {
   High: 'High',
   Mid: 'Mid',
   Low: 'Low',
+  Add_Problem: 'Add Problem',
   All: 'All',
   Reset: 'Reset',
   Pick_One: 'Pick one',

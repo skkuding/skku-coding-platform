@@ -94,6 +94,7 @@ export const m = {
   High: 'High',
   Mid: 'Mid',
   Low: 'Low',
+  Add_Problem: 'Add Problem',
   Tag: 'Tag',
   New_Tag: 'New Tag',
    // ProblemList.vue
