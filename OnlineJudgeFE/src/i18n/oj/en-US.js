@@ -211,6 +211,7 @@ export const m = {
   // Register.vue
   RegisterUsername: 'Student ID',
   Email_Address: 'Email Address',
+  RegisterMajor: 'Major',
   RegisterPassword: 'Password',
   Password_Again: 'Password Again',
   Captcha: 'Captcha',
