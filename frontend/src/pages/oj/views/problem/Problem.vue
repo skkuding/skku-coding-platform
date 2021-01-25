@@ -115,9 +115,17 @@
             <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
               <span>{{ $t('m.Status') }}</span>
               <Tag
+                v-if="submissionStatus.text === 'Compile Error'"
                 type="dot"
                 :color="submissionStatus.color"
                 @click.native="handleRoute('/status/'+submissionId)"
+              >
+                {{ $t('m.' + submissionStatus.text.replace(/ /g, "_")) }}
+              </Tag>
+              <Tag
+                v-else
+                type="dot"
+                :color="submissionStatus.color"
               >
                 {{ $t('m.' + submissionStatus.text.replace(/ /g, "_")) }}
               </Tag>
@@ -354,7 +362,7 @@ export default {
     if (problemCode) {
       next(vm => {
         vm.language = problemCode.language
-        vm.code = problemCode.code
+        vm.code = problemCode.code // get the left code.
         vm.theme = problemCode.theme
       })
     } else {
@@ -429,11 +437,21 @@ export default {
           return
         }
         // try to load problem template
-        this.language = this.problem.languages[0]
-        const template = this.problem.template
-        if (template && template[this.language]) {
-          this.code = template[this.language]
-        }
+        const userId = this.$route.query.username
+        let preferredLanguage = problem.languages[0]
+        api.getUserInfo(userId).then(res => {
+          const lang = res.data.data.language
+          if (lang !== null) {
+            if (problem.languages.includes(lang)) {
+              preferredLanguage = lang
+            }
+          }
+          this.language = preferredLanguage
+          const template = this.problem.template
+          if (template && template[this.language]) {
+            this.code = template[this.language]
+          }
+        })
       }, () => {
         this.$Loading.error()
       })
