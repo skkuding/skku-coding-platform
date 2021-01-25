@@ -237,7 +237,7 @@ class UserRegisterAPI(APIView):
             return self.error("Email already exists")
         if data["email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
             return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
-        user = User.objects.create(username=data["username"], email=data["email"])
+        user = User.objects.create(username=data["username"], email=data["email"], major=data["major"])
         user.set_password(data["password"])
         user.save()
         UserProfile.objects.create(user=user)

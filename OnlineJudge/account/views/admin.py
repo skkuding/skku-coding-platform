@@ -62,6 +62,7 @@ class UserAdminAPI(APIView):
         pre_username = user.username
         user.username = data["username"].lower()
         user.email = data["email"].lower()
+        user.major = data["major"]
         user.admin_type = data["admin_type"]
         user.is_disabled = data["is_disabled"]
 

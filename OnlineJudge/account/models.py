@@ -93,7 +93,6 @@ class UserProfile(models.Model):
     blog = models.URLField(null=True)
     mood = models.TextField(null=True)
     github = models.TextField(null=True)
-    school = models.TextField(null=True)
     language = models.TextField(null=True)
     # for ACM
     accepted_number = models.IntegerField(default=0)

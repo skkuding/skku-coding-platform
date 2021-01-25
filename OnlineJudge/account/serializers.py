@@ -20,6 +20,7 @@ class UserRegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=32)
     password = serializers.CharField(min_length=6)
     email = serializers.EmailField(max_length=64)
+    major = serializers.CharField(max_length=128)
     captcha = serializers.CharField()
 
 
@@ -53,7 +54,7 @@ class UserAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "admin_type", "problem_permission", "real_name",
+        fields = ["id", "username", "email", "major", "admin_type", "problem_permission", "real_name",
                   "create_time", "last_login", "two_factor_auth", "open_api", "is_disabled"]
 
     def get_real_name(self, obj):
@@ -63,7 +64,7 @@ class UserAdminSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "admin_type", "problem_permission",
+        fields = ["id", "username", "email", "major", "admin_type", "problem_permission",
                   "create_time", "last_login", "two_factor_auth", "open_api", "is_disabled"]
 
 
@@ -89,6 +90,7 @@ class EditUserSerializer(serializers.Serializer):
     real_name = serializers.CharField(max_length=32, allow_blank=True, allow_null=True)
     password = serializers.CharField(min_length=6, allow_blank=True, required=False, default=None)
     email = serializers.EmailField(max_length=64)
+    major = serializers.CharField(max_length=128)
     admin_type = serializers.ChoiceField(choices=(AdminType.REGULAR_USER, AdminType.ADMIN, AdminType.SUPER_ADMIN))
     problem_permission = serializers.ChoiceField(choices=(ProblemPermission.NONE, ProblemPermission.OWN,
                                                           ProblemPermission.ALL))
@@ -103,8 +105,6 @@ class EditUserProfileSerializer(serializers.Serializer):
     blog = serializers.URLField(max_length=256, allow_blank=True, required=False)
     mood = serializers.CharField(max_length=256, allow_blank=True, required=False)
     github = serializers.CharField(max_length=64, allow_blank=True, required=False)
-    school = serializers.CharField(max_length=64, allow_blank=True, required=False)
-    major = serializers.CharField(max_length=64, allow_blank=True, required=False)
     language = serializers.CharField(max_length=32, allow_blank=True, required=False)
 
 
