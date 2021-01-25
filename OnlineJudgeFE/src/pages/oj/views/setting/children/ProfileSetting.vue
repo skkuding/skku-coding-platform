@@ -69,9 +69,6 @@
           <FormItem label="Real Name">
             <Input v-model="formProfile.real_name"/>
           </FormItem>
-          <Form-item label="School">
-            <Input v-model="formProfile.school"/>
-          </Form-item>
           <FormItem label="Language">
             <Select v-model="formProfile.language">
               <Option v-for="lang in languages" :key="lang.value" :value="lang.value">{{lang.label}}</Option>
@@ -126,7 +123,6 @@
           real_name: '',
           mood: '',
           blog: '',
-          school: '',
           github: '',
           language: ''
         }
