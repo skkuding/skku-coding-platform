@@ -51,7 +51,7 @@
       <!--problem main end-->
       <Card :padding="20" id="submit-code" dis-hover>
         <CodeMirror :value.sync="code"
-                    :languages="problem.languages"
+                    :languages="problem.languages" 
                     :language="language"
                     :theme="theme"
                     @resetCode="onResetToTemplate"
@@ -62,7 +62,10 @@
             <div class="status" v-if="statusVisible">
               <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
                 <span>{{$t('m.Status')}}</span>
-                <Tag type="dot" :color="submissionStatus.color" @click.native="handleRoute('/status/'+submissionId)">
+                <Tag v-if="submissionStatus.text === 'Compile Error'" type="dot" :color="submissionStatus.color" @click.native="handleRoute('/status/'+submissionId)">
+                  {{$t('m.' + submissionStatus.text.replace(/ /g, "_"))}}
+                </Tag>
+                <Tag v-else type="dot" :color="submissionStatus.color">
                   {{$t('m.' + submissionStatus.text.replace(/ /g, "_"))}}
                 </Tag>
               </template>
@@ -264,7 +267,7 @@
       if (problemCode) {
         next(vm => {
           vm.language = problemCode.language
-          vm.code = problemCode.code
+          vm.code = problemCode.code // get the left code.
           vm.theme = problemCode.theme
         })
       } else {
@@ -298,11 +301,21 @@
             return
           }
           // try to load problem template
-          this.language = this.problem.languages[0]
-          let template = this.problem.template
-          if (template && template[this.language]) {
-            this.code = template[this.language]
-          }
+          let userId = this.$route.query.username
+          let preferredLanguage = problem.languages[0]
+          api.getUserInfo(userId).then(res => {
+            let lang = res.data.data.language
+            if (lang !== null) {
+              if (problem.languages.includes(lang)) {
+                preferredLanguage = lang
+              }
+            }
+            this.language = preferredLanguage
+            let template = this.problem.template
+            if (template && template[this.language]) {
+              this.code = template[this.language]
+            }
+          })
         }, () => {
           this.$Loading.error()
         })
