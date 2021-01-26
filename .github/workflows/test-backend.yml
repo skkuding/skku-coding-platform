@@ -18,6 +18,9 @@ jobs:
       working-directory: ./OnlineJudge
 
     steps:
+      - working-directory: ${{ env.working-directory }}
+      - run: pwd
+
       - name: Install Python Packages
         working-directory: ${{ env.working-directory }}
         run: pip3 install -r deploy/requirements.txt
