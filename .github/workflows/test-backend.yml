@@ -18,8 +18,7 @@ jobs:
       working-directory: ./OnlineJudge
 
     steps:
-      - working-directory: ${{ env.working-directory }}
-        run: pwd
+      - uses: actions/checkout@v2
 
       - name: Install Python Packages
         working-directory: ${{ env.working-directory }}
