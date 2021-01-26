@@ -28,9 +28,6 @@ class CacheKey:
 
 
 class Difficulty(Choices):
-    LOW = "Low"
-    MID = "Mid"
-    HIGH = "High"
     Level1 = "Level1"
     Level2 = "Level2"
     Level3 = "Level3"
