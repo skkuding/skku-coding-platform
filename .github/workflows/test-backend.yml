@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - working-directory: ${{ env.working-directory }}
-      - run: pwd
+        run: pwd
 
       - name: Install Python Packages
         working-directory: ${{ env.working-directory }}
