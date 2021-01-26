@@ -22,7 +22,10 @@ jobs:
 
       - name: Install Python Packages
         working-directory: ${{ env.working-directory }}
-        run: pip3 install -r deploy/requirements.txt
+        run: |
+          sudo apt-get install python3-setuptools
+          pip3 install wheel
+          pip3 install -r deploy/requirements.txt
 
       - name: Create secret.key
         working-directory: ${{ env.working-directory }}
