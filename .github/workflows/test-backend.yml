@@ -15,7 +15,7 @@ jobs:
   test:
     runs-on: ubuntu-18.04
     env:
-      wokrking-directory: ./OnlineJudge
+      working-directory: ./OnlineJudge
 
     steps:
       - name: Install Python Packages
