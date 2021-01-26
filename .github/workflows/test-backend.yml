@@ -39,10 +39,10 @@ jobs:
         run: docker ps -a
 
       - name: Check Python Code Style
-        run: flake8 OnlineJudge
+        run: python3 -m flake8 OnlineJudge
 
       - name: Django Test
         working-directory: ${{ env.working-directory }}
         run: |
-          coverage run --include="$PWD/*" manage.py test
-          coverage report
+          python3 -m coverage run --include="$PWD/*" manage.py test
+          python3 -m coverage report

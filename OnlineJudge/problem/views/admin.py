@@ -32,9 +32,9 @@ from ..utils import TEMPLATE_BASE, build_problem_template
 
 class TestCaseJsonProcessor:
     def process_json(self, data, spj):
-        if 'testcases' not in data:
+        if "testcases" not in data:
             return APIError("No testcases in data")
-        testcases = data['testcases']
+        testcases = data["testcases"]
 
         test_case_id = rand_str()
         test_case_dir = os.path.join(settings.TEST_CASE_DIR, test_case_id)
@@ -44,12 +44,12 @@ class TestCaseJsonProcessor:
         for i, testcase in enumerate(testcases):
             in_path = os.path.join(test_case_dir, "{}.in".format(i+1))
             with open(in_path, "w") as f:
-                f.write(testcase['input'])
+                f.write(testcase["input"])
 
-            if 'output' in testcase:
+            if "output" in testcase:
                 out_path = os.path.join(test_case_dir, "{}.out".format(i+1))
                 with open(out_path, "w") as f:
-                    f.write(testcase['output'])
+                    f.write(testcase["output"])
 
         test_case_info = {"spj": spj, "test_cases": {}}
 
@@ -62,11 +62,11 @@ class TestCaseJsonProcessor:
                 test_case_info["test_cases"][str(i + 1)] = data
         else:
             for i, testcase in enumerate(testcases):
-                data = {'stripped_output_md5': hashlib.md5(testcase['output'].rstrip().encode('utf-8')).hexdigest(),
-                        'input_size': len(testcase['input']),
-                        'output_size': len(testcase['output']),
-                        'input_name': str(i+1) + ".in",
-                        'output_name': str(i+1) + ".out"}
+                data = {"stripped_output_md5": hashlib.md5(testcase["output"].rstrip().encode("utf-8")).hexdigest(),
+                        "input_size": len(testcase["input"]),
+                        "output_size": len(testcase["output"]),
+                        "input_name": str(i+1) + ".in",
+                        "output_name": str(i+1) + ".out"}
                 info.append(data)
                 test_case_info["test_cases"][str(i + 1)] = data
 
@@ -263,12 +263,12 @@ class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
         tags = data.pop("tags")
         data["created_by"] = request.user
 
-        testcases = data.get('testcases', [])
-        if not data['test_case_id']:
-            info, test_case_id = self.process_json(data, data['spj'])
-            data['test_case_id'] = test_case_id
+        testcases = data.get("testcases", [])
+        if not data["test_case_id"]:
+            info, test_case_id = self.process_json(data, data["spj"])
+            data["test_case_id"] = test_case_id
 
-        new_data = data.pop('testcases', None)
+        new_data = data.pop("testcases", None)
         if not new_data:
             data = new_data
         problem = Problem.objects.create(**data)
@@ -344,9 +344,9 @@ class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
         tags = data.pop("tags")
         data["languages"] = list(data["languages"])
 
-        if not data['test_case_id']:
-            info, test_case_id = self.process_json(data, data['spj'])
-            data['test_case_id'] = test_case_id
+        if not data["test_case_id"]:
+            info, test_case_id = self.process_json(data, data["spj"])
+            data["test_case_id"] = test_case_id
 
         for k, v in data.items():
             setattr(problem, k, v)
@@ -403,16 +403,16 @@ class ContestProblemAPI(ProblemBase, TestCaseJsonProcessor):
         if error_info:
             return self.error(error_info)
 
-        testcases = data.get('testcases', [])
-        if not data['test_case_id']:
-            info, test_case_id = self.process_json(data, data['spj'])
-            data['test_case_id'] = test_case_id
+        testcases = data.get("testcases", [])
+        if not data["test_case_id"]:
+            info, test_case_id = self.process_json(data, data["spj"])
+            data["test_case_id"] = test_case_id
 
         # todo check filename and score info
         data["contest"] = contest
         tags = data.pop("tags")
         data["created_by"] = request.user
-        new_data = data.pop('testcases', None)
+        new_data = data.pop("testcases", None)
         if not new_data:
             data = new_data
         problem = Problem.objects.create(**data)
@@ -495,9 +495,9 @@ class ContestProblemAPI(ProblemBase, TestCaseJsonProcessor):
         tags = data.pop("tags")
         data["languages"] = list(data["languages"])
 
-        if not data['test_case_id']:
-            info, test_case_id = self.process_json(data, data['spj'])
-            data['test_case_id'] = test_case_id
+        if not data["test_case_id"]:
+            info, test_case_id = self.process_json(data, data["spj"])
+            data["test_case_id"] = test_case_id
 
         for k, v in data.items():
             setattr(problem, k, v)
@@ -635,7 +635,7 @@ class ExportProblemAPI(APIView):
         delete_files.send_with_options(args=(path,), delay=300_000)
         resp = FileResponse(open(path, "rb"))
         resp["Content-Type"] = "application/zip"
-        resp["Content-Disposition"] = f"attachment;filename=problem-export.zip"
+        resp["Content-Disposition"] = "attachment;filename=problem-export.zip"
         return resp
 
 
@@ -800,20 +800,20 @@ class FPSProblemImport(CSRFExemptAPIView):
 
 def make_testcase_json(path):
     info = read_info(path)
-    test_cases = info['test_cases']
+    test_cases = info["test_cases"]
     ret = []
 
     for _, v in sorted(test_cases.items()):
-        input_fn = os.path.join(path, v['input_name'])
+        input_fn = os.path.join(path, v["input_name"])
         input_content = read_testcase(input_fn)
-        # v['input'] = content
+        # v["input"] = content
 
-        output_fn = os.path.join(path, v['output_name'])
+        output_fn = os.path.join(path, v["output_name"])
         output_content = read_testcase(output_fn)
-        # v['output'] = content
+        # v["output"] = content
         ret.append(
-            {'input': input_content,
-             'output': output_content}
+            {"input": input_content,
+             "output": output_content}
         )
 
     return ret
