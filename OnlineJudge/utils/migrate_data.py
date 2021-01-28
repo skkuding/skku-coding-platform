@@ -156,7 +156,7 @@ def import_problems():
                 creator_id = default_creator.id
             data["created_by_id"] = creator_id
             data.pop("created_by")
-            data["difficulty"] = ProblemDifficulty.Mid
+            data["difficulty"] = ProblemDifficulty.Level1
             if data["spj_language"]:
                 data["spj_language"] = languages_map[data["spj_language"]]
             data["samples"] = json.loads(data["samples"])

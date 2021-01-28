@@ -77,7 +77,3 @@ Modern browsers(chrome, firefox) and Internet Explorer 10+.
 + I'd appreciate a star if you find this helpful.
 + Thanks to everyone that contributes to this project.
 + Special thanks to [heb1c](https://github.com/hebicheng), who has given us a lot of suggestions.
-
-## License
-
-[MIT](http://opensource.org/licenses/MIT)

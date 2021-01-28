@@ -707,7 +707,7 @@ class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
                                                              languages=SysOptions.language_names,
                                                              created_by=request.user,
                                                              visible=False,
-                                                             difficulty=Difficulty.MID,
+                                                             difficulty=Difficulty.Level1,
                                                              total_score=sum(item["score"] for item in test_case_score)
                                                              if rule_type == ProblemRuleType.OI else 0,
                                                              test_case_id=test_case_id
@@ -759,7 +759,7 @@ class FPSProblemImport(CSRFExemptAPIView):
                                visible=False,
                                languages=SysOptions.language_names,
                                created_by=creator,
-                               difficulty=Difficulty.MID,
+                               difficulty=Difficulty.Level1,
                                test_case_id=problem_data["test_case_id"])
 
     def post(self, request):
