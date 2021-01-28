@@ -43,9 +43,9 @@ jobs:
 
       - name: Django Test
         working-directory: ${{ env.working-directory }}
-        continue-on-error: true
         run: python3 -m coverage run --include="$PWD/*" manage.py test
       
       - name: Result of Django Test
+        if: failure()
         working-directory: ${{ env.working-directory }}
-        run: ! python3 -m coverage report
+        run: python3 -m coverage report
