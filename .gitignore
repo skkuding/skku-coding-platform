@@ -1,3 +1,6 @@
+# Docker mount
+/data
+
 ### Django ###
 *.log
 *.pot
@@ -20,7 +23,6 @@ media
 
 # Distribution / Packaging
 bin/
-build/
 develop-eggs/
 dist/
 eggs/
