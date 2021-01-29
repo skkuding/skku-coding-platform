@@ -30,55 +30,6 @@ from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
 from ..utils import TEMPLATE_BASE, build_problem_template
 
 
-class TestCaseJsonProcessor:
-    def process_json(self, data, spj):
-        if 'testcases' not in data:
-            return APIError("No testcases in data")
-        testcases = data['testcases']
-
-        test_case_id = rand_str()
-        test_case_dir = os.path.join(settings.TEST_CASE_DIR, test_case_id)
-        os.mkdir(test_case_dir)
-        os.chmod(test_case_dir, 0o710)
-
-        for i, testcase in enumerate(testcases):
-            in_path = os.path.join(test_case_dir, "{}.in".format(i+1))
-            with open(in_path, "w") as f:
-                f.write(testcase['input'])
-
-            if 'output' in testcase:
-                out_path = os.path.join(test_case_dir, "{}.out".format(i+1))
-                with open(out_path, "w") as f:
-                    f.write(testcase['output'])
-
-        test_case_info = {"spj": spj, "test_cases": {}}
-
-        info = []
-
-        if spj:
-            for i, testcase in enumerate(testcases):
-                data = {"input_name": str(i+1)+".in", "input_size": len(testcase["input"])}
-                info.append(data)
-                test_case_info["test_cases"][str(i + 1)] = data
-        else:
-            for i, testcase in enumerate(testcases):
-                data = {'stripped_output_md5': hashlib.md5(testcase['output'].rstrip().encode('utf-8')).hexdigest(),
-                        'input_size': len(testcase['input']),
-                        'output_size': len(testcase['output']),
-                        'input_name': str(i+1) + ".in",
-                        'output_name': str(i+1) + ".out"}
-                info.append(data)
-                test_case_info["test_cases"][str(i + 1)] = data
-
-        with open(os.path.join(test_case_dir, "info"), "w", encoding="utf-8") as f:
-            f.write(json.dumps(test_case_info, indent=4))
-
-        for item in os.listdir(test_case_dir):
-            os.chmod(os.path.join(test_case_dir, item), 0o640)
-
-        return info, test_case_id
-
-
 class TestCaseZipProcessor(object):
     def process_zip(self, uploaded_zip_file, spj, dir=""):
         try:
@@ -244,7 +195,7 @@ class ProblemBase(APIView):
         data["languages"] = list(data["languages"])
 
 
-class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
+class ProblemAPI(ProblemBase):
     @problem_permission_required
     @validate_serializer(CreateProblemSerializer)
     def post(self, request):
@@ -262,15 +213,6 @@ class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
         # todo check filename and score info
         tags = data.pop("tags")
         data["created_by"] = request.user
-
-        testcases = data.get('testcases', [])
-        if not data['test_case_id']:
-            info, test_case_id = self.process_json(data, data['spj'])
-            data['test_case_id'] = test_case_id
-
-        new_data = data.pop('testcases', None)
-        if not new_data:
-            data = new_data
         problem = Problem.objects.create(**data)
 
         for item in tags:
@@ -279,7 +221,6 @@ class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
             except ProblemTag.DoesNotExist:
                 tag = ProblemTag.objects.create(name=item)
             problem.tags.add(tag)
-        problem.testcases = testcases
         return self.success(ProblemAdminSerializer(problem).data)
 
     @problem_permission_required
@@ -290,11 +231,6 @@ class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
         if problem_id:
             try:
                 problem = Problem.objects.get(id=problem_id)
-                test_case_dir = os.path.join(settings.TEST_CASE_DIR,
-                                             problem.test_case_id)
-                testcases = make_testcase_json(test_case_dir)
-                problem.testcases = testcases
-
                 ensure_created_by(problem, request.user)
                 return self.success(ProblemAdminSerializer(problem).data)
             except Problem.DoesNotExist:
@@ -312,11 +248,6 @@ class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
             problems = problems.filter(Q(title__icontains=keyword) | Q(_id__icontains=keyword))
         if not user.can_mgmt_all_problem():
             problems = problems.filter(created_by=user)
-        for problem in problems:
-            ex_testcases = [{"input": "hello", "output": "world"},
-                            {"input": "hello", "output": "world"}]
-            problem.testcases = ex_testcases
-
         return self.success(self.paginate_data(request, problems, ProblemAdminSerializer))
 
     @problem_permission_required
@@ -343,10 +274,6 @@ class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
         # todo check filename and score info
         tags = data.pop("tags")
         data["languages"] = list(data["languages"])
-
-        if not data['test_case_id']:
-            info, test_case_id = self.process_json(data, data['spj'])
-            data['test_case_id'] = test_case_id
 
         for k, v in data.items():
             setattr(problem, k, v)
@@ -379,7 +306,7 @@ class ProblemAPI(ProblemBase, TestCaseJsonProcessor):
         return self.success()
 
 
-class ContestProblemAPI(ProblemBase, TestCaseJsonProcessor):
+class ContestProblemAPI(ProblemBase):
     @validate_serializer(CreateContestProblemSerializer)
     def post(self, request):
         data = request.data
@@ -403,18 +330,10 @@ class ContestProblemAPI(ProblemBase, TestCaseJsonProcessor):
         if error_info:
             return self.error(error_info)
 
-        testcases = data.get('testcases', [])
-        if not data['test_case_id']:
-            info, test_case_id = self.process_json(data, data['spj'])
-            data['test_case_id'] = test_case_id
-
         # todo check filename and score info
         data["contest"] = contest
         tags = data.pop("tags")
         data["created_by"] = request.user
-        new_data = data.pop('testcases', None)
-        if not new_data:
-            data = new_data
         problem = Problem.objects.create(**data)
 
         for item in tags:
@@ -423,7 +342,6 @@ class ContestProblemAPI(ProblemBase, TestCaseJsonProcessor):
             except ProblemTag.DoesNotExist:
                 tag = ProblemTag.objects.create(name=item)
             problem.tags.add(tag)
-        problem.testcases = testcases
         return self.success(ProblemAdminSerializer(problem).data)
 
     def get(self, request):
@@ -433,10 +351,6 @@ class ContestProblemAPI(ProblemBase, TestCaseJsonProcessor):
         if problem_id:
             try:
                 problem = Problem.objects.get(id=problem_id)
-                test_case_dir = os.path.join(settings.TEST_CASE_DIR,
-                                             problem.test_case_id)
-                testcases = make_testcase_json(test_case_dir)
-                problem.testcases = testcases
                 ensure_created_by(problem.contest, user)
             except Problem.DoesNotExist:
                 return self.error("Problem does not exist")
@@ -455,10 +369,6 @@ class ContestProblemAPI(ProblemBase, TestCaseJsonProcessor):
         keyword = request.GET.get("keyword")
         if keyword:
             problems = problems.filter(title__contains=keyword)
-        for problem in problems:
-            ex_testcases = [{"input": "hello", "output": "world"},
-                            {"input": "hello", "output": "world"}]
-            problem.testcases = ex_testcases
         return self.success(self.paginate_data(request, problems, ProblemAdminSerializer))
 
     @validate_serializer(EditContestProblemSerializer)
@@ -494,10 +404,6 @@ class ContestProblemAPI(ProblemBase, TestCaseJsonProcessor):
         # todo check filename and score info
         tags = data.pop("tags")
         data["languages"] = list(data["languages"])
-
-        if not data['test_case_id']:
-            info, test_case_id = self.process_json(data, data['spj'])
-            data['test_case_id'] = test_case_id
 
         for k, v in data.items():
             setattr(problem, k, v)
@@ -796,34 +702,3 @@ class FPSProblemImport(CSRFExemptAPIView):
                 problem_data["test_case_score"] = score
                 self._create_problem(problem_data, request.user)
         return self.success({"import_count": len(problems)})
-
-
-def make_testcase_json(path):
-    info = read_info(path)
-    test_cases = info['test_cases']
-    ret = []
-
-    for _, v in sorted(test_cases.items()):
-        input_fn = os.path.join(path, v['input_name'])
-        input_content = read_testcase(input_fn)
-        # v['input'] = content
-
-        output_fn = os.path.join(path, v['output_name'])
-        output_content = read_testcase(output_fn)
-        # v['output'] = content
-        ret.append(
-            {'input': input_content,
-             'output': output_content}
-        )
-
-    return ret
-
-
-def read_info(path):
-    with open(os.path.join(path, "info"), "r") as f:
-        return json.load(f)
-
-
-def read_testcase(path):
-    with open(path, "r") as f:
-        return f.read()

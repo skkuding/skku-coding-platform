@@ -1,0 +1,51 @@
+name: Backend Tests
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  pull_request:
+    branches: master
+    paths: "OnlineJudge/**"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    env:
+      working-directory: ./OnlineJudge
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Python Packages
+        working-directory: ${{ env.working-directory }}
+        run: |
+          sudo apt-get install python3-setuptools
+          pip3 install wheel
+          pip3 install -r deploy/requirements.txt
+
+      - name: Create secret.key
+        working-directory: ${{ env.working-directory }}
+        run: echo `cat /dev/urandom | head -1 | md5sum | head -c 32` > data/config/secret.key
+
+      - name: Create Demo Database
+        working-directory: ${{ env.working-directory }}
+        run: ./init_db.sh
+
+      - name: Docker Containers List
+        run: docker ps -a
+
+      - name: Check Python Code Style
+        run: python3 -m flake8 OnlineJudge
+
+      - name: Django Test
+        working-directory: ${{ env.working-directory }}
+        run: python3 -m coverage run --include="$PWD/*" manage.py test
+      
+      - name: Result of Django Test
+        if: failure()
+        working-directory: ${{ env.working-directory }}
+        run: python3 -m coverage report
