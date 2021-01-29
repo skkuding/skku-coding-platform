@@ -39,6 +39,7 @@ jobs:
         run: docker ps -a
 
       - name: Check Python Code Style
+        working-directory: ${{ env.working-directory }}
         run: python3 -m flake8 OnlineJudge
 
       - name: Django Test

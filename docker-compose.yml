@@ -19,9 +19,9 @@ services:
       - POSTGRES_USER=onlinejudge
       - POSTGRES_PASSWORD=onlinejudge
 
-  judger:
-    image: skkunpc/judger
-    container_name: judger
+  judge-server:
+    image: skkunpc/judge-server
+    container_name: judge-server
     restart: always
     read_only: true
     cap_drop:
@@ -35,10 +35,10 @@ services:
       - /tmp
     volumes:
       - ./data/backend/test_case:/test_case:ro
-      - ./data/judger/log:/log
-      - ./data/judger/run:/judger
+      - ./data/judge-server/log:/log
+      - ./data/judge-server/run:/judge-server
     environment:
-      - SERVICE_URL=http://judger:8080
+      - SERVICE_URL=http://judge-server:8080
       - BACKEND_URL=http://coding-platform:8000/api/judge_server_heartbeat/
       - TOKEN=CHANGE_THIS
       # - judger_debug=1
@@ -50,7 +50,7 @@ services:
     depends_on:
       - oj-redis
       - oj-postgres
-      - judger
+      - judge-server
     volumes:
       - ./data/backend:/data
     environment:

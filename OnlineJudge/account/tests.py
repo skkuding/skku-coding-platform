@@ -36,38 +36,58 @@ class PermissionDecoratorTest(APITestCase):
 
 class DuplicateUserCheckAPITest(APITestCase):
     def setUp(self):
-        user = self.create_user("test", "test123", login=False)
-        user.email = "test@test.com"
+        user = self.create_user("2020123456", "test123", login=False)
+        user.email = "test@skku.edu"
         user.save()
         self.url = self.reverse("check_username_or_email")
 
     def test_duplicate_username(self):
-        resp = self.client.post(self.url, data={"username": "test"})
-        data = resp.data["data"]
-        self.assertEqual(data["username"], True)
-        resp = self.client.post(self.url, data={"username": "Test"})
-        self.assertEqual(resp.data["data"]["username"], True)
+        resp = self.client.post(self.url, data={"username": "2020123456"})
+        self.assertEqual(resp.data["data"]["username"], 1)
 
     def test_ok_username(self):
-        resp = self.client.post(self.url, data={"username": "test1"})
+        resp = self.client.post(self.url, data={"username": "2020987654"})
         data = resp.data["data"]
         self.assertFalse(data["username"])
 
     def test_duplicate_email(self):
-        resp = self.client.post(self.url, data={"email": "test@test.com"})
-        self.assertEqual(resp.data["data"]["email"], True)
-        resp = self.client.post(self.url, data={"email": "Test@Test.com"})
-        self.assertTrue(resp.data["data"]["email"])
+        resp = self.client.post(self.url, data={"email": "test@skku.edu"})
+        self.assertEqual(resp.data["data"]["email"], 1)
+        resp = self.client.post(self.url, data={"email": "Test@Skku.edu"})
+        self.assertEqual(resp.data["data"]["email"], 1)
 
     def test_ok_email(self):
-        resp = self.client.post(self.url, data={"email": "aa@test.com"})
+        resp = self.client.post(self.url, data={"email": "aa@skku.edu"})
         self.assertFalse(resp.data["data"]["email"])
+
+
+class WrongFormatUserCheckAPITest(APITestCase):
+    def setUp(self):
+        self.url = self.reverse("check_username_or_email")
+
+    def test_wrong_format_username(self):
+        resp = self.client.post(self.url, data={"username": "202012345"})
+        data = resp.data["data"]
+        self.assertEqual(data["username"], 2)
+        resp = self.client.post(self.url, data={"username": "20201234567"})
+        data = resp.data["data"]
+        self.assertEqual(data["username"], 2)
+        resp = self.client.post(self.url, data={"username": "2020hahaha"})
+        data = resp.data["data"]
+        self.assertEqual(data["username"], 2)
+        resp = self.client.post(self.url, data={"username": "1234567890"})
+        data = resp.data["data"]
+        self.assertEqual(data["username"], 2)
+
+    def test_not_university_email(self):
+        resp = self.client.post(self.url, data={"email": "hello@gmail.com"})
+        self.assertEqual(resp.data["data"]["email"], 2)
 
 
 class TFARequiredCheckAPITest(APITestCase):
     def setUp(self):
         self.url = self.reverse("tfa_required_check")
-        self.create_user("test", "test123", login=False)
+        self.create_user("2020222000", "test123", login=False)
 
     def test_not_required_tfa(self):
         resp = self.client.post(self.url, data={"username": "test"})
@@ -78,13 +98,13 @@ class TFARequiredCheckAPITest(APITestCase):
         user = User.objects.first()
         user.two_factor_auth = True
         user.save()
-        resp = self.client.post(self.url, data={"username": "test"})
+        resp = self.client.post(self.url, data={"username": "2020222000"})
         self.assertEqual(resp.data["data"]["result"], True)
 
 
 class UserLoginAPITest(APITestCase):
     def setUp(self):
-        self.username = self.password = "test"
+        self.username = self.password = "2020222000"
         self.user = self.create_user(username=self.username, password=self.password, login=False)
         self.login_url = self.reverse("user_login_api")
 
@@ -175,8 +195,9 @@ class UserRegisterAPITest(CaptchaTest):
         self.register_url = self.reverse("user_register_api")
         self.captcha = rand_str(4)
 
-        self.data = {"username": "test_user", "password": "testuserpassword",
-                     "real_name": "real_name", "email": "test@qduoj.com",
+        self.data = {"username": "2020111111", "password": "testuserpassword",
+                     "real_name": "real_name", "email": "test@skku.edu",
+                     "major": "Computer Science (컴퓨터공학과)",
                      "captcha": self._set_captcha(self.client.session)}
 
     def test_website_config_limit(self):
@@ -201,7 +222,7 @@ class UserRegisterAPITest(CaptchaTest):
         self.test_register_with_correct_info()
 
         self.data["captcha"] = self._set_captcha(self.client.session)
-        self.data["email"] = "test1@qduoj.com"
+        self.data["email"] = "test1@skku.edu"
         response = self.client.post(self.register_url, data=self.data)
         self.assertDictEqual(response.data, {"error": "error", "data": "Username already exists"})
 
@@ -209,14 +230,14 @@ class UserRegisterAPITest(CaptchaTest):
         self.test_register_with_correct_info()
 
         self.data["captcha"] = self._set_captcha(self.client.session)
-        self.data["username"] = "test_user1"
+        self.data["username"] = "2020111222"
         response = self.client.post(self.register_url, data=self.data)
         self.assertDictEqual(response.data, {"error": "error", "data": "Email already exists"})
 
 
 class SessionManagementAPITest(APITestCase):
     def setUp(self):
-        self.create_user("test", "test123")
+        self.create_user("2020222000", "test123")
         self.url = self.reverse("session_management_api")
         # launch a request to provide session data
         login_url = self.reverse("user_login_api")
@@ -246,12 +267,12 @@ class UserProfileAPITest(APITestCase):
         self.assertDictEqual(resp.data, {"error": None, "data": None})
 
     def test_get_profile(self):
-        self.create_user("test", "test123")
+        self.create_user("2020222000", "test123")
         resp = self.client.get(self.url)
         self.assertSuccess(resp)
 
     def test_update_profile(self):
-        self.create_user("test", "test123")
+        self.create_user("2020222000", "test123")
         update_data = {"real_name": "zemal", "submission_number": 233, "language": "en-US"}
         resp = self.client.put(self.url, data=update_data)
         self.assertSuccess(resp)
@@ -264,7 +285,7 @@ class UserProfileAPITest(APITestCase):
 class TwoFactorAuthAPITest(APITestCase):
     def setUp(self):
         self.url = self.reverse("two_factor_auth_api")
-        self.create_user("test", "test123")
+        self.create_user("2020222000", "test123")
 
     def _get_tfa_code(self):
         user = User.objects.first()
@@ -307,12 +328,12 @@ class TwoFactorAuthAPITest(APITestCase):
 @mock.patch("account.views.oj.send_email_async.send")
 class ApplyResetPasswordAPITest(CaptchaTest):
     def setUp(self):
-        self.create_user("test", "test123", login=False)
+        self.create_user("2020222000", "test123", login=False)
         user = User.objects.first()
-        user.email = "test@oj.com"
+        user.email = "test@g.skku.edu"
         user.save()
         self.url = self.reverse("apply_reset_password_api")
-        self.data = {"email": "test@oj.com", "captcha": self._set_captcha(self.client.session)}
+        self.data = {"email": "test@g.skku.edu", "captcha": self._set_captcha(self.client.session)}
 
     def _refresh_captcha(self):
         self.data["captcha"] = self._set_captcha(self.client.session)
@@ -341,7 +362,7 @@ class ApplyResetPasswordAPITest(CaptchaTest):
 
 class ResetPasswordAPITest(CaptchaTest):
     def setUp(self):
-        self.create_user("test", "test123", login=False)
+        self.create_user("2020222000", "test123", login=False)
         self.url = self.reverse("reset_password_api")
         user = User.objects.first()
         user.reset_password_token = "online_judge?"
@@ -354,7 +375,7 @@ class ResetPasswordAPITest(CaptchaTest):
     def test_reset_password_with_correct_token(self):
         resp = self.client.post(self.url, data=self.data)
         self.assertSuccess(resp)
-        self.assertTrue(self.client.login(username="test", password="test456"))
+        self.assertTrue(self.client.login(username="2020222000", password="test456"))
 
     def test_reset_password_with_invalid_token(self):
         self.data["token"] = "aaaaaaaaaaa"
@@ -372,8 +393,8 @@ class ResetPasswordAPITest(CaptchaTest):
 class UserChangeEmailAPITest(APITestCase):
     def setUp(self):
         self.url = self.reverse("user_change_email_api")
-        self.user = self.create_user("test", "test123")
-        self.new_mail = "test@oj.com"
+        self.user = self.create_user("2020222000", "test123")
+        self.new_mail = "test@skku.edu"
         self.data = {"password": "test123", "new_email": self.new_mail}
 
     def test_change_email_success(self):
@@ -398,7 +419,7 @@ class UserChangePasswordAPITest(APITestCase):
         self.url = self.reverse("user_change_password_api")
 
         # Create user at first
-        self.username = "test_user"
+        self.username = "2020222000"
         self.old_password = "testuserpassword"
         self.new_password = "new_password"
         self.user = self.create_user(username=self.username, password=self.old_password, login=False)
@@ -445,16 +466,16 @@ class UserChangePasswordAPITest(APITestCase):
 class UserRankAPITest(APITestCase):
     def setUp(self):
         self.url = self.reverse("user_rank_api")
-        self.create_user("test1", "test123", login=False)
-        self.create_user("test2", "test123", login=False)
-        test1 = User.objects.get(username="test1")
+        self.create_user("2011999999", "test123", login=False)
+        self.create_user("2012999999", "test123", login=False)
+        test1 = User.objects.get(username="2011999999")
         profile1 = test1.userprofile
         profile1.submission_number = 10
         profile1.accepted_number = 10
         profile1.total_score = 240
         profile1.save()
 
-        test2 = User.objects.get(username="test2")
+        test2 = User.objects.get(username="2012999999")
         profile2 = test2.userprofile
         profile2.submission_number = 15
         profile2.accepted_number = 10
@@ -465,15 +486,15 @@ class UserRankAPITest(APITestCase):
         resp = self.client.get(self.url, data={"rule": ContestRuleType.ACM})
         self.assertSuccess(resp)
         data = resp.data["data"]["results"]
-        self.assertEqual(data[0]["user"]["username"], "test1")
-        self.assertEqual(data[1]["user"]["username"], "test2")
+        self.assertEqual(data[0]["user"]["username"], "2011999999")
+        self.assertEqual(data[1]["user"]["username"], "2012999999")
 
     def test_get_oi_rank(self):
         resp = self.client.get(self.url, data={"rule": ContestRuleType.OI})
         self.assertSuccess(resp)
         data = resp.data["data"]["results"]
-        self.assertEqual(data[0]["user"]["username"], "test2")
-        self.assertEqual(data[1]["user"]["username"], "test1")
+        self.assertEqual(data[0]["user"]["username"], "2012999999")
+        self.assertEqual(data[1]["user"]["username"], "2011999999")
 
     def test_admin_role_filted(self):
         self.create_admin("admin", "admin123")
@@ -500,13 +521,13 @@ class ProfileProblemDisplayIDRefreshAPITest(APITestCase):
 class AdminUserTest(APITestCase):
     def setUp(self):
         self.user = self.create_super_admin(login=True)
-        self.username = self.password = "test"
+        self.username = self.password = "2015135790"
         self.regular_user = self.create_user(username=self.username, password=self.password, login=False)
         self.url = self.reverse("user_admin_api")
         self.data = {"id": self.regular_user.id, "username": self.username, "real_name": "test_name",
-                     "email": "test@qq.com", "admin_type": AdminType.REGULAR_USER,
-                     "problem_permission": ProblemPermission.OWN, "open_api": True,
-                     "two_factor_auth": False, "is_disabled": False}
+                     "email": "example@skku.edu", "major": "Computer Science (컴퓨터공학과)",
+                     "admin_type": AdminType.REGULAR_USER, "problem_permission": ProblemPermission.OWN,
+                     "open_api": True, "two_factor_auth": False, "is_disabled": False}
 
     def test_user_list(self):
         response = self.client.get(self.url)
@@ -517,13 +538,14 @@ class AdminUserTest(APITestCase):
         self.assertSuccess(response)
         resp_data = response.data["data"]
         self.assertEqual(resp_data["username"], self.username)
-        self.assertEqual(resp_data["email"], "test@qq.com")
+        self.assertEqual(resp_data["email"], "example@skku.edu")
+        self.assertEqual(resp_data["major"], "Computer Science (컴퓨터공학과)")
         self.assertEqual(resp_data["open_api"], True)
         self.assertEqual(resp_data["two_factor_auth"], False)
         self.assertEqual(resp_data["is_disabled"], False)
         self.assertEqual(resp_data["problem_permission"], ProblemPermission.NONE)
 
-        self.assertTrue(self.regular_user.check_password("test"))
+        self.assertTrue(self.regular_user.check_password("2015135790"))
 
     def test_edit_user_password(self):
         data = self.data
@@ -574,8 +596,8 @@ class AdminUserTest(APITestCase):
         self.assertEqual(User.objects.get(id=self.regular_user.id).open_api_appkey, key)
 
     def test_import_users(self):
-        data = {"users": [["user1", "pass1", "eami1@e.com"],
-                          ["user2", "pass3", "eamil3@e.com"]]
+        data = {"users": [["user1", "pass1", "eami1@skku.edu"],
+                          ["user2", "pass3", "eamil3@skku.edu"]]
                 }
         resp = self.client.post(self.url, data)
         self.assertSuccess(resp)
@@ -583,8 +605,8 @@ class AdminUserTest(APITestCase):
         self.assertEqual(User.objects.all().count(), 4)
 
     def test_import_duplicate_user(self):
-        data = {"users": [["user1", "pass1", "eami1@e.com"],
-                          ["user1", "pass1", "eami1@e.com"]]
+        data = {"users": [["user1", "pass1", "eami1@skku.edu"],
+                          ["user1", "pass1", "eami1@skku.edu"]]
                 }
         resp = self.client.post(self.url, data)
         self.assertFailed(resp, "DETAIL:  Key (username)=(user1) already exists.")
