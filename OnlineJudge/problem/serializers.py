@@ -10,7 +10,6 @@ from utils.serializers import LanguageNameMultiChoiceField, SPJLanguageNameChoic
 from .models import Problem, ProblemRuleType, ProblemTag, ProblemIOMode
 from .utils import parse_problem_template
 
-
 class TestCaseUploadForm(forms.Form):
     spj = forms.CharField(max_length=12)
     file = forms.FileField()
@@ -19,12 +18,6 @@ class TestCaseUploadForm(forms.Form):
 class CreateSampleSerializer(serializers.Serializer):
     input = serializers.CharField(trim_whitespace=False)
     output = serializers.CharField(trim_whitespace=False)
-
-
-class CreateTestcaseSerializer(serializers.Serializer):
-    input = serializers.CharField(trim_whitespace=False, allow_blank=True)
-    output = serializers.CharField(trim_whitespace=False, allow_blank=True)
-
 
 class CreateTestCaseScoreSerializer(serializers.Serializer):
     input_name = serializers.CharField(max_length=32)
@@ -57,8 +50,7 @@ class CreateOrEditProblemSerializer(serializers.Serializer):
     input_description = serializers.CharField()
     output_description = serializers.CharField()
     samples = serializers.ListField(child=CreateSampleSerializer(), allow_empty=False)
-    testcases = serializers.ListField(child=CreateTestcaseSerializer(), allow_empty=True)
-    test_case_id = serializers.CharField(max_length=32, allow_blank=True)
+    test_case_id = serializers.CharField(max_length=32)
     test_case_score = serializers.ListField(child=CreateTestCaseScoreSerializer(), allow_empty=True)
     time_limit = serializers.IntegerField(min_value=1, max_value=1000 * 60)
     memory_limit = serializers.IntegerField(min_value=1, max_value=1024)
@@ -118,15 +110,12 @@ class BaseProblemSerializer(serializers.ModelSerializer):
 
 
 class ProblemAdminSerializer(BaseProblemSerializer):
-    testcases = serializers.ListField(child=CreateTestcaseSerializer(), allow_empty=True)
-
     class Meta:
         model = Problem
         fields = "__all__"
 
 
 class ProblemSerializer(BaseProblemSerializer):
-    template = serializers.SerializerMethodField("get_public_template")
 
     class Meta:
         model = Problem

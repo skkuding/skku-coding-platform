@@ -538,7 +538,7 @@
           this.$error(response.data)
           return
         }
-        let fileList = response.data.info
+        let fileList = response.data.info // 왜 테케 api 호출한거의 response를 여기서 받지?
         for (let file of fileList) {
           file.score = (100 / fileList.length).toFixed(0)
           if (!file.output_name && this.problem.spj) {
@@ -654,14 +654,38 @@
         if (funcName === 'editContestProblem') {
           this.problem.contest_id = this.contest.id
         }
-        api[funcName](this.problem).then(res => {
-          if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
-            this.$router.push({name: 'contest-problem-list', params: {contestId: this.$route.params.contestId}})
-          } else {
-            this.$router.push({name: 'problem-list'})
-          }
-        }).catch(() => {
-        })
+
+        if (!this.testcase_file_upload) {
+          api.createTestCase([this.problem.testcases, this.problem.spj]).then(response => {
+            let fileList = response.data.data.info
+            for (let file of fileList) {
+              file.score = (100 / fileList.length).toFixed(0)
+              if (!file.output_name && this.problem.spj) {
+                file.output_name = '-'
+              }
+            }
+            this.problem.test_case_score = fileList
+            this.testCaseUploaded = true
+            this.problem.test_case_id = response.data.data.id
+            api[funcName](this.problem).then(res => {
+              if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
+                this.$router.push({name: 'contest-problem-list', params: {contestId: this.$route.params.contestId}})
+              } else {
+                this.$router.push({name: 'problem-list'})
+              }
+            }).catch(() => {
+            })
+          })
+        } else {
+          api[funcName](this.problem).then(res => {
+            if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
+              this.$router.push({name: 'contest-problem-list', params: {contestId: this.$route.params.contestId}})
+            } else {
+              this.$router.push({name: 'problem-list'})
+            }
+          }).catch(() => {
+          })
+        }
       }
     }
   }
