@@ -538,7 +538,7 @@
           this.$error(response.data)
           return
         }
-        let fileList = response.data.info // 왜 테케 api 호출한거의 response를 여기서 받지?
+        let fileList = response.data.info
         for (let file of fileList) {
           file.score = (100 / fileList.length).toFixed(0)
           if (!file.output_name && this.problem.spj) {
