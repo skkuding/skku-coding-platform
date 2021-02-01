@@ -11,6 +11,14 @@
         <Icon type="ios-email-outline" slot="prepend"></Icon>
         </Input>
       </FormItem>
+      <FormItem prop="major">
+        <Select v-model="formRegister.major" :placeholder="$t('m.RegisterMajor')" size="large" @on-enter="handleRegister" class="adjust">
+          <Icon type="ios-book-outline" slot="prepend"></Icon>
+          <Option v-for="item in majors" :key="item" :value="item">
+            {{item}}
+          </Option>
+        </Select>
+      </FormItem>
       <FormItem prop="password">
         <Input type="password" v-model="formRegister.password" :placeholder="$t('m.RegisterPassword')" size="large" @on-enter="handleRegister">
         <Icon type="ios-locked-outline" slot="prepend"></Icon>
@@ -67,8 +75,10 @@
     data () {
       const CheckUsernameNotExist = (rule, value, callback) => {
         api.checkUsernameOrEmail(value, undefined).then(res => {
-          if (res.data.data.username === true) {
+          if (res.data.data.username === 1) {
             callback(new Error(this.$i18n.t('m.The_username_already_exists')))
+          } else if (res.data.data.username === 2) {
+            callback(new Error(this.$i18n.t('m.The_username_is_not_student_ID')))
           } else {
             callback()
           }
@@ -76,8 +86,10 @@
       }
       const CheckEmailNotExist = (rule, value, callback) => {
         api.checkUsernameOrEmail(undefined, value).then(res => {
-          if (res.data.data.email === true) {
+          if (res.data.data.email === 1) {
             callback(new Error(this.$i18n.t('m.The_email_already_exists')))
+          } else if (res.data.data.email === 2) {
+            callback(new Error(this.$i18n.t('m.The_email_domain_not_match')))
           } else {
             callback()
           }
@@ -105,6 +117,7 @@
           password: '',
           passwordAgain: '',
           email: '',
+          major: '',
           captcha: ''
         },
         ruleRegister: {
@@ -115,6 +128,9 @@
           email: [
             {required: true, type: 'email', trigger: 'blur'},
             {validator: CheckEmailNotExist, trigger: 'blur'}
+          ],
+          major: [
+            {required: true, trigger: 'blur'}
           ],
           password: [
             {required: true, trigger: 'blur', min: 6, max: 20},
@@ -152,6 +168,26 @@
             this.btnRegisterLoading = false
           })
         })
+      }
+    },
+    props: {
+      majors: {
+        type: Array,
+        default: () => {
+          return [
+            'Computer Science and Engineering (소프트웨어학과)',
+            'Computer Science (컴퓨터공학과)',
+            'Engineering (공학계열)',
+            'Natural Science (자연과학계열)',
+            'School of Convergence (글로벌융합학부)',
+            'Biomedical Engineering (글로벌바이오메디컬공학과)',
+            'Electronic and Electrical Engineering (전자전기공학부)',
+            'Semiconductor Systems Engineering (반도체시스템공학과)',
+            'Sport Science (스포츠과학과)',
+            'Pharmacy (약학과)',
+            'Medicine (의예과/의학과)'
+          ]
+        }
       }
     },
     computed: {

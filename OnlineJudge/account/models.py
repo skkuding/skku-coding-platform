@@ -26,6 +26,7 @@ class UserManager(models.Manager):
 class User(AbstractBaseUser):
     username = models.TextField(unique=True)
     email = models.TextField(null=True)
+    major = models.TextField(null=True)
     create_time = models.DateTimeField(auto_now_add=True, null=True)
     # One of UserType
     admin_type = models.TextField(default=AdminType.REGULAR_USER)
@@ -92,8 +93,6 @@ class UserProfile(models.Model):
     blog = models.URLField(null=True)
     mood = models.TextField(null=True)
     github = models.TextField(null=True)
-    school = models.TextField(null=True)
-    major = models.TextField(null=True)
     language = models.TextField(null=True)
     # for ACM
     accepted_number = models.IntegerField(default=0)
