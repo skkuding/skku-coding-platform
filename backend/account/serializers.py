@@ -24,6 +24,10 @@ class UserRegisterSerializer(serializers.Serializer):
     captcha = serializers.CharField()
 
 
+class EmailAuthSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+
 class UserChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField()
     new_password = serializers.CharField(min_length=6)
