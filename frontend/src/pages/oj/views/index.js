@@ -16,6 +16,7 @@ const OIRank = () => import(/* webpackChunkName: "userRank" */ '@oj/views/rank/O
 
 const ApplyResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views/user/ApplyResetPassword.vue')
 const ResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views/user/ResetPassword.vue')
+const EmailAuth = () => import(/* webpackChunkName: "password" */ '@oj/views/user/EmailAuth.vue')
 
 const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
 
@@ -25,7 +26,7 @@ export {
   ProblemList, Problem,
   ACMRank, OIRank,
   SubmissionList, SubmissionDetails,
-  ApplyResetPassword, ResetPassword
+  ApplyResetPassword, ResetPassword, EmailAuth
 }
 /* 组件导出分为两类, 一类常用的直接导出，另一类诸如Login, Logout等用懒加载,懒加载不在此处导出
  *   在对应的route内加载

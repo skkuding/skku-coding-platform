@@ -98,6 +98,11 @@ export default {
       data
     })
   },
+  emailAuth (data) {
+    return ajax('email_auth', 'post', {
+      data
+    })
+  },
   changePassword (data) {
     return ajax('change_password', 'post', {
       data

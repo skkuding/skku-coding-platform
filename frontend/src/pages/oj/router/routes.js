@@ -4,6 +4,7 @@ import {
   ACMRank,
   Announcements,
   ApplyResetPassword,
+  EmailAuth,
   FAQ,
   Home,
   Logout,
@@ -44,6 +45,12 @@ export default [
     path: '/reset-password/:token',
     meta: { title: 'Reset Password' },
     component: ResetPassword
+  },
+  {
+    name: 'email-auth',
+    path: '/email-auth/:token',
+    meta: {title: 'Email Authentication'},
+    component: EmailAuth
   },
   {
     name: 'problem-list',
