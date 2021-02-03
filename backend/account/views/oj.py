@@ -263,7 +263,7 @@ class UserRegisterAPI(APIView):
 
 class EmailAuthAPI(APIView):
     @validate_serializer(EmailAuthSerializer)
-    def get(self, request):
+    def post(self, request):
         data = request.data
         try:
             user = User.objects.get(email_auth_token = data["token"])
