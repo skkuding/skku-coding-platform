@@ -1,153 +1,104 @@
 <template>
   <div>
-    <Form
-      ref="formLogin"
-      :model="formLogin"
-      :rules="ruleLogin"
-    >
-      <FormItem prop="username">
-        <Input
-          v-model="formLogin.username"
-          type="text"
-          :placeholder="$t('m.LoginUsername')"
-          size="large"
-          @on-enter="handleLogin"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-person-outline"
-        />
-        </Input>
-      </FormItem>
-      <FormItem prop="password">
-        <Input
-          v-model="formLogin.password"
-          type="password"
-          :placeholder="$t('m.LoginPassword')"
-          size="large"
-          @on-enter="handleLogin"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-locked-outline"
-        />
-        </Input>
-      </FormItem>
-      <FormItem
-        v-if="tfaRequired"
-        prop="tfa_code"
-      >
-        <Input
-          v-model="formLogin.tfa_code"
-          :placeholder="$t('m.TFA_Code')"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-lightbulb-outline"
-        />
-        </Input>
-      </FormItem>
-    </Form>
-    <div class="footer">
-      <Button
-        type="primary"
-        class="btn"
-        long
-        :loading="btnLoginLoading"
-        @click="handleLogin"
-      >
-        {{ $t('m.UserLogin') }}
-      </Button>
-      <a
-        v-if="website.allow_register"
-        @click.stop="handleBtnClick('register')"
-      >{{ $t('m.No_Account') }}</a>
-      <a
-        style="float: right"
-        @click.stop="goResetPassword"
-      >{{ $t('m.Forget_Password') }}</a>
+    <div style="border: solid 1px green; width:80px; height:80px">
+      Logo
     </div>
+    <div>
+      <p>SKKU</p>
+      <p>Coding Platform<p>
+    </div>
+    <b-form @on-enter="handleLogin" ref="formLogin" :model="formLogin">
+        <b-container fluid="xl">
+          <b-row class="mb-2">
+            <b-form-input v-model="formLogin.username" :placeholder="$t('m.LoginUsername')" @on-enter="handleLogin" />
+          </b-row>
+          <b-row class="mb-4">
+            <b-form-input type="password" v-model="formLogin.password" :placeholder="$t('m.LoginPassword')" @on-enter="handleLogin" />
+          </b-row>
+          <b-button @click="handleLogin" variant="success" style="width: 260px; height: 36px;">{{$t('m.UserLogin')}}</b-button>
+        </b-container>
+      </b-form>
+      <a class="modal-low" v-if="website.allow_register" @click.stop="handleBtnClick('register')">{{$t('m.No_Account')}}</a>
+      <a class="modal-low" @click.stop="goResetPassword" style="float: right">{{$t('m.Forget_Password')}}</a>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import api from '@oj/api'
-import { FormMixin } from '@oj/components/mixins'
+  import { mapGetters, mapActions } from 'vuex'
+  import api from '@oj/api'
+  import { FormMixin } from '@oj/components/mixins'
 
-export default {
-  mixins: [FormMixin],
-  data () {
-    const CheckRequiredTFA = (rule, value, callback) => {
-      if (value !== '') {
-        api.tfaRequiredCheck(value).then(res => {
-          this.tfaRequired = res.data.data.result
-        })
+  export default {
+    mixins: [FormMixin],
+    data () {
+      const CheckRequiredTFA = (rule, value, callback) => {
+        if (value !== '') {
+          api.tfaRequiredCheck(value).then(res => {
+            this.tfaRequired = res.data.data.result
+          })
+        }
+        callback()
       }
-      callback()
-    }
 
-    return {
-      tfaRequired: false,
-      btnLoginLoading: false,
-      formLogin: {
-        username: '',
-        password: '',
-        tfa_code: ''
-      },
-      ruleLogin: {
-        username: [
-          { required: true, trigger: 'blur' },
-          { validator: CheckRequiredTFA, trigger: 'blur' }
-        ],
-        password: [
-          { required: true, trigger: 'change', min: 6, max: 20 }
-        ]
+      return {
+        tfaRequired: false,
+        btnLoginLoading: false,
+        formLogin: {
+          username: '',
+          password: '',
+          tfa_code: ''
+        },
+        ruleLogin: {
+          username: [
+            {required: true, trigger: 'blur'},
+            {validator: CheckRequiredTFA, trigger: 'blur'}
+          ],
+          password: [
+            {required: true, trigger: 'change', min: 6, max: 20}
+          ]
+        }
       }
-    }
-  },
-  methods: {
-    ...mapActions(['changeModalStatus', 'getProfile']),
-    handleBtnClick (mode) {
-      this.changeModalStatus({
-        mode,
-        visible: true
-      })
     },
-    handleLogin () {
-      this.validateForm('formLogin').then(valid => {
+    methods: {
+      ...mapActions(['changeModalStatus', 'getProfile']),
+      handleBtnClick (mode) {
+        this.changeModalStatus({
+          mode,
+          visible: true
+        })
+      },
+      handleLogin () {
         this.btnLoginLoading = true
-        const formData = Object.assign({}, this.formLogin)
+        let formData = Object.assign({}, this.formLogin)
         if (!this.tfaRequired) {
-          delete formData.tfa_code
+          delete formData['tfa_code']
         }
         api.login(formData).then(res => {
           this.btnLoginLoading = false
-          this.changeModalStatus({ visible: false })
+          this.changeModalStatus({visible: false})
           this.getProfile()
           this.$success(this.$i18n.t('m.Welcome_back'))
         }, _ => {
           this.btnLoginLoading = false
         })
-      })
-    },
-    goResetPassword () {
-      this.changeModalStatus({ visible: false })
-      this.$router.push({ name: 'apply-reset-password' })
-    }
-  },
-  computed: {
-    ...mapGetters(['website', 'modalStatus']),
-    visible: {
-      get () {
-        return this.modalStatus.visible
       },
-      set (value) {
-        this.changeModalStatus({ visible: value })
+      goResetPassword () {
+        this.changeModalStatus({visible: false})
+        this.$router.push({name: 'apply-reset-password'})
+      }
+    },
+    computed: {
+      ...mapGetters(['website', 'modalStatus']),
+      visible: {
+        get () {
+          return this.modalStatus.visible
+        },
+        set (value) {
+          this.changeModalStatus({visible: value})
+        }
       }
     }
   }
-}
 </script>
 
 <style scoped lang="less">
