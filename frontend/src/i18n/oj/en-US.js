@@ -109,6 +109,7 @@ export const m = {
   // Cancel.vue
   Cancel: 'Cancel',
   // ContestDetail.vue
+  Notice: 'Notice',
   Problems: 'Problems',
   Announcements: 'Announcements',
   Submissions: 'Submissions',
