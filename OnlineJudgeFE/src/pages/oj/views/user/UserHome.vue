@@ -1,58 +1,102 @@
 <template>
   <div class="container">
     <div class="avatar-container">
-      <img class="avatar" :src="profile.avatar"/>
+      <img
+        class="avatar"
+        :src="profile.avatar"
+      >
     </div>
     <Card :padding="100">
       <div v-if="profile.user">
         <p style="margin-top: -10px">
-          <span v-if="profile.user" class="emphasis">{{profile.user.username}}</span>
+          <span
+            v-if="profile.user"
+            class="emphasis"
+          >{{ profile.user.username }}</span>
         </p>
         <p v-if="profile.mood">
-          {{profile.mood}}
+          {{ profile.mood }}
         </p>
-        <hr id="split"/>
+        <hr id="split">
 
         <div class="flex-container">
           <div class="left">
-            <p>{{$t('m.UserHomeSolved')}}</p>
-            <p class="emphasis">{{profile.accepted_number}}</p>
+            <p>{{ $t('m.UserHomeSolved') }}</p>
+            <p class="emphasis">
+              {{ profile.accepted_number }}
+            </p>
           </div>
           <div class="middle">
-            <p>{{$t('m.UserHomeserSubmissions')}}</p>
-            <p class="emphasis">{{profile.submission_number}}</p>
+            <p>{{ $t('m.UserHomeserSubmissions') }}</p>
+            <p class="emphasis">
+              {{ profile.submission_number }}
+            </p>
           </div>
           <div class="right">
-            <p>{{$t('m.UserHomeScore')}}</p>
-            <p class="emphasis">{{profile.total_score}}</p>
+            <p>{{ $t('m.UserHomeScore') }}</p>
+            <p class="emphasis">
+              {{ profile.total_score }}
+            </p>
           </div>
         </div>
         <div id="problems">
-          <div v-if="problems.length">{{$t('m.List_Solved_Problems')}}
-            <Poptip v-if="refreshVisible" trigger="hover" placement="right-start">
-              <Icon type="ios-help-outline"></Icon>
+          <div v-if="problems.length">
+            {{ $t('m.List_Solved_Problems') }}
+            <Poptip
+              v-if="refreshVisible"
+              trigger="hover"
+              placement="right-start"
+            >
+              <Icon type="ios-help-outline" />
               <div slot="content">
                 <p>If you find the following problem id does not exist,<br> try to click the button.</p>
-                <Button type="info" @click="freshProblemDisplayID">regenerate</Button>
+                <Button
+                  type="info"
+                  @click="freshProblemDisplayID"
+                >
+                  regenerate
+                </Button>
               </div>
             </Poptip>
           </div>
-          <p v-else>{{$t('m.UserHomeIntro')}}</p>
+          <p v-else>
+            {{ $t('m.UserHomeIntro') }}
+          </p>
           <div class="btns">
-            <div class="problem-btn" v-for="problemID of problems" :key="problemID">
-              <Button type="ghost" @click="goProblem(problemID)">{{problemID}}</Button>
+            <div
+              v-for="problemID of problems"
+              :key="problemID"
+              class="problem-btn"
+            >
+              <Button
+                type="ghost"
+                @click="goProblem(problemID)"
+              >
+                {{ problemID }}
+              </Button>
             </div>
           </div>
         </div>
         <div id="icons">
           <a :href="profile.github">
-            <Icon type="social-github-outline" size="30"></Icon>
+            <Icon
+              type="social-github-outline"
+              size="30"
+            />
           </a>
           <a :href="'mailto:'+ profile.user.email">
-            <Icon class="icon" type="ios-email-outline" size="30"></Icon>
+            <Icon
+              class="icon"
+              type="ios-email-outline"
+              size="30"
+            />
           </a>
           <a :href="profile.blog">
-            <Icon class="icon" type="ios-world-outline" size="30"></Icon>
+            <Icon
+              class="icon"
+              type="ios-world-outline"
+              size="30"
+            />
           </a>
         </div>
       </div>
@@ -60,73 +104,73 @@
   </div>
 </template>
 <script>
-  import { mapActions } from 'vuex'
-  import time from '@/utils/time'
-  import api from '@oj/api'
+import { mapActions } from 'vuex'
+import time from '@/utils/time'
+import api from '@oj/api'
 
-  export default {
-    data () {
-      return {
-        username: '',
-        profile: {},
-        problems: []
-      }
+export default {
+  data () {
+    return {
+      username: '',
+      profile: {},
+      problems: []
+    }
+  },
+  mounted () {
+    this.init()
+  },
+  methods: {
+    ...mapActions(['changeDomTitle']),
+    init () {
+      this.username = this.$route.query.username
+      api.getUserInfo(this.username).then(res => {
+        this.changeDomTitle({ title: res.data.data.user.username })
+        this.profile = res.data.data
+        this.getSolvedProblems()
+        const registerTime = time.utcToLocal(this.profile.user.create_time, 'YYYY-MM-D')
+        console.log('The guy registered at ' + registerTime + '.')
+      })
     },
-    mounted () {
-      this.init()
-    },
-    methods: {
-      ...mapActions(['changeDomTitle']),
-      init () {
-        this.username = this.$route.query.username
-        api.getUserInfo(this.username).then(res => {
-          this.changeDomTitle({title: res.data.data.user.username})
-          this.profile = res.data.data
-          this.getSolvedProblems()
-          let registerTime = time.utcToLocal(this.profile.user.create_time, 'YYYY-MM-D')
-          console.log('The guy registered at ' + registerTime + '.')
-        })
-      },
-      getSolvedProblems () {
-        let ACMProblems = this.profile.acm_problems_status.problems || {}
-        let OIProblems = this.profile.oi_problems_status.problems || {}
-        // todo oi problems
-        let ACProblems = []
-        for (let problems of [ACMProblems, OIProblems]) {
-          Object.keys(problems).forEach(problemID => {
-            if (problems[problemID]['status'] === 0) {
-              ACProblems.push(problems[problemID]['_id'])
-            }
-          })
-        }
-        ACProblems.sort()
-        this.problems = ACProblems
-      },
-      goProblem (problemID) {
-        this.$router.push({name: 'problem-details', params: {problemID: problemID}})
-      },
-      freshProblemDisplayID () {
-        api.freshDisplayID().then(res => {
-          this.$success('Update successfully')
-          this.init()
+    getSolvedProblems () {
+      const ACMProblems = this.profile.acm_problems_status.problems || {}
+      const OIProblems = this.profile.oi_problems_status.problems || {}
+      // todo oi problems
+      const ACProblems = []
+      for (const problems of [ACMProblems, OIProblems]) {
+        Object.keys(problems).forEach(problemID => {
+          if (problems[problemID].status === 0) {
+            ACProblems.push(problems[problemID]._id)
+          }
         })
       }
+      ACProblems.sort()
+      this.problems = ACProblems
     },
-    computed: {
-      refreshVisible () {
-        if (!this.username) return true
-        if (this.username && this.username === this.$store.getters.user.username) return true
-        return false
-      }
+    goProblem (problemID) {
+      this.$router.push({ name: 'problem-details', params: { problemID: problemID } })
     },
-    watch: {
-      '$route' (newVal, oldVal) {
-        if (newVal !== oldVal) {
-          this.init()
-        }
+    freshProblemDisplayID () {
+      api.freshDisplayID().then(res => {
+        this.$success('Update successfully')
+        this.init()
+      })
+    }
+  },
+  computed: {
+    refreshVisible () {
+      if (!this.username) return true
+      if (this.username && this.username === this.$store.getters.user.username) return true
+      return false
+    }
+  },
+  watch: {
+    '$route' (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.init()
       }
     }
   }
+}
 </script>
 
 <style lang="less" scoped>

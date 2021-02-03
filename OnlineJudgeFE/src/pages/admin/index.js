@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App.vue'
 import store from '@/store'
@@ -38,19 +37,19 @@ Vue.use(Element, {
 })
 
 Vue.prototype.$error = (msg) => {
-  Vue.prototype.$message({'message': msg, 'type': 'error'})
+  Vue.prototype.$message({ message: msg, type: 'error' })
 }
 
 Vue.prototype.$warning = (msg) => {
-  Vue.prototype.$message({'message': msg, 'type': 'warning'})
+  Vue.prototype.$message({ message: msg, type: 'warning' })
 }
 
 Vue.prototype.$success = (msg) => {
   if (!msg) {
-    Vue.prototype.$message({'message': 'Succeeded', 'type': 'success'})
+    Vue.prototype.$message({ message: 'Succeeded', type: 'success' })
   } else {
-    Vue.prototype.$message({'message': msg, 'type': 'success'})
+    Vue.prototype.$message({ message: msg, type: 'success' })
   }
 }
 
-new Vue(Vue.util.extend({router, store, i18n}, App)).$mount('#app')
+new Vue(Vue.util.extend({ router, store, i18n }, App)).$mount('#app')

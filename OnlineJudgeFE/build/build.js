@@ -1,20 +1,20 @@
 'use strict'
+import ora from 'ora'
+import rm from 'rimraf'
+import { join } from 'path'
+import webpack from 'webpack'
+import { build } from '../config'
+import { red, cyan, yellow } from 'chalk'
+import webpackConfig from './webpack.prod.conf'
+
 require('./check-versions')()
 
 process.env.NODE_ENV = 'production'
 
-const ora = require('ora')
-const rm = require('rimraf')
-const path = require('path')
-const chalk = require('chalk')
-const webpack = require('webpack')
-const config = require('../config')
-const webpackConfig = require('./webpack.prod.conf')
-
 const spinner = ora('building for production...')
 spinner.start()
 
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
+rm(join(build.assetsRoot, build.assetsSubDirectory), err => {
   if (err) throw err
   webpack(webpackConfig, function (err, stats) {
     spinner.stop()
@@ -28,12 +28,12 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
     }) + '\n\n')
 
     if (stats.hasErrors()) {
-      console.log(chalk.red('  Build failed with errors.\n'))
+      console.log(red('  Build failed with errors.\n'))
       process.exit(1)
     }
 
-    console.log(chalk.cyan('  Congratulations, the project built complete without error\n'))
-    console.log(chalk.yellow(
+    console.log(cyan('  Congratulations, the project built complete without error\n'))
+    console.log(yellow(
       ' You can now check the onlinejudge in http://YouIP/'
     ))
   })

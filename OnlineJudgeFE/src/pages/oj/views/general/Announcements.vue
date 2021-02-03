@@ -1,114 +1,159 @@
 <template>
-  <Panel shadow :padding="10">
+  <Panel
+    shadow
+    :padding="10"
+  >
     <div slot="title">
-      {{title}}
+      {{ title }}
     </div>
     <div slot="extra">
-      <Button v-if="listVisible" type="info" @click="init" :loading="btnLoading">{{$t('m.Refresh')}}</Button>
-      <Button v-else type="ghost" icon="ios-undo" @click="goBack">{{$t('m.Back')}}</Button>
+      <Button
+        v-if="listVisible"
+        type="info"
+        :loading="btnLoading"
+        @click="init"
+      >
+        {{ $t('m.Refresh') }}
+      </Button>
+      <Button
+        v-else
+        type="ghost"
+        icon="ios-undo"
+        @click="goBack"
+      >
+        {{ $t('m.Back') }}
+      </Button>
     </div>
 
-    <transition-group name="announcement-animate" mode="in-out">
-      <div class="no-announcement" v-if="!announcements.length" key="no-announcement">
-        <p>{{$t('m.No_Announcements')}}</p>
+    <transition-group
+      name="announcement-animate"
+      mode="in-out"
+    >
+      <div
+        v-if="!announcements.length"
+        key="no-announcement"
+        class="no-announcement"
+      >
+        <p>{{ $t('m.No_Announcements') }}</p>
       </div>
       <template v-if="listVisible">
-        <ul class="announcements-container" key="list">
-          <li v-for="announcement in announcements" :key="announcement.title">
+        <ul
+          key="list"
+          class="announcements-container"
+        >
+          <li
+            v-for="announcement in announcements"
+            :key="announcement.title"
+          >
             <div class="flex-container">
-              <div class="title"><a class="entry" @click="goAnnouncement(announcement)">
-                {{announcement.title}}</a></div>
-              <div class="date">{{announcement.create_time | localtime }}</div>
-              <div class="creator"> {{$t('m.By')}} {{announcement.created_by.username}}</div>
+              <div class="title">
+                <a
+                  class="entry"
+                  @click="goAnnouncement(announcement)"
+                >
+                  {{ announcement.title }}</a>
+              </div>
+              <div class="date">
+                {{ announcement.create_time | localtime }}
+              </div>
+              <div class="creator">
+                {{ $t('m.By') }} {{ announcement.created_by.username }}
+              </div>
             </div>
           </li>
         </ul>
-        <Pagination v-if="!isContest"
-                    key="page"
-                    :total="total"
-                    :page-size="limit"
-                    @on-change="getAnnouncementList">
-        </Pagination>
+        <Pagination
+          v-if="!isContest"
+          key="page"
+          :total="total"
+          :page-size="limit"
+          @on-change="getAnnouncementList"
+        />
       </template>
 
       <template v-else>
-        <div v-katex v-html="announcement.content" key="content" class="content-container markdown-body"></div>
+        <div
+          key="content"
+          v-katex
+          class="content-container markdown-body"
+          v-html="announcement.content"
+        />
       </template>
     </transition-group>
   </Panel>
 </template>
 
 <script>
-  import api from '@oj/api'
-  import Pagination from '@oj/components/Pagination'
+import api from '@oj/api'
+import Pagination from '@oj/components/Pagination'
 
-  export default {
-    name: 'Announcement',
-    components: {
-      Pagination
-    },
-    data () {
-      return {
-        limit: 10,
-        total: 10,
-        btnLoading: false,
-        announcements: [],
-        announcement: '',
-        listVisible: true
+export default {
+  name: 'Announcement',
+  components: {
+    Pagination
+  },
+  data () {
+    return {
+      limit: 10,
+      total: 10,
+      btnLoading: false,
+      announcements: [],
+      announcement: '',
+      listVisible: true
+    }
+  },
+  computed: {
+    title () {
+      if (this.listVisible) {
+        return this.isContest ? this.$i18n.t('m.Contest_Announcements') : this.$i18n.t('m.Announcements')
+      } else {
+        return this.announcement.title
       }
     },
-    mounted () {
-      this.init()
-    },
-    methods: {
-      init () {
-        if (this.isContest) {
-          this.getContestAnnouncementList()
-        } else {
-          this.getAnnouncementList()
-        }
-      },
-      getAnnouncementList (page = 1) {
-        this.btnLoading = true
-        api.getAnnouncementList((page - 1) * this.limit, this.limit).then(res => {
-          this.btnLoading = false
-          this.announcements = res.data.data.results
-          this.total = res.data.data.total
-        }, () => {
-          this.btnLoading = false
-        })
-      },
-      getContestAnnouncementList () {
-        this.btnLoading = true
-        api.getContestAnnouncementList(this.$route.params.contestID).then(res => {
-          this.btnLoading = false
-          this.announcements = res.data.data
-        }, () => {
-          this.btnLoading = false
-        })
-      },
-      goAnnouncement (announcement) {
-        this.announcement = announcement
-        this.listVisible = false
-      },
-      goBack () {
-        this.listVisible = true
-        this.announcement = ''
+    isContest () {
+      return !!this.$route.params.contestID
+    }
+  },
+  mounted () {
+    this.init()
+  },
+  methods: {
+    init () {
+      if (this.isContest) {
+        this.getContestAnnouncementList()
+      } else {
+        this.getAnnouncementList()
       }
     },
-    computed: {
-      title () {
-        if (this.listVisible) {
-          return this.isContest ? this.$i18n.t('m.Contest_Announcements') : this.$i18n.t('m.Announcements')
-        } else {
-          return this.announcement.title
-        }
-      },
-      isContest () {
-        return !!this.$route.params.contestID
-      }
+    getAnnouncementList (page = 1) {
+      this.btnLoading = true
+      api.getAnnouncementList((page - 1) * this.limit, this.limit).then(res => {
+        this.btnLoading = false
+        this.announcements = res.data.data.results
+        this.total = res.data.data.total
+      }, () => {
+        this.btnLoading = false
+      })
+    },
+    getContestAnnouncementList () {
+      this.btnLoading = true
+      api.getContestAnnouncementList(this.$route.params.contestID).then(res => {
+        this.btnLoading = false
+        this.announcements = res.data.data
+      }, () => {
+        this.btnLoading = false
+      })
+    },
+    goAnnouncement (announcement) {
+      this.announcement = announcement
+      this.listVisible = false
+    },
+    goBack () {
+      this.listVisible = true
+      this.announcement = ''
     }
   }
+}
 </script>
 
 <style scoped lang="less">

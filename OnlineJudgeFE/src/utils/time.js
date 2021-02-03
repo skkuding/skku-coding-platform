@@ -7,9 +7,9 @@ function utcToLocal (utcDt, format = 'YYYY-M-D  HH:mm:ss') {
 
 // get duration from startTime to endTime, return like 3 days, 2 hours, one year ..
 function duration (startTime, endTime) {
-  let start = moment(startTime)
-  let end = moment(endTime)
-  let duration = moment.duration(start.diff(end, 'seconds'), 'seconds')
+  const start = moment(startTime)
+  const end = moment(endTime)
+  const duration = moment.duration(start.diff(end, 'seconds'), 'seconds')
   if (duration.days() !== 0) {
     return duration.humanize()
   }
@@ -17,7 +17,7 @@ function duration (startTime, endTime) {
 }
 
 function secondFormat (seconds) {
-  let m = moment.duration(seconds, 'seconds')
+  const m = moment.duration(seconds, 'seconds')
   return Math.floor(m.asHours()) + ':' + m.minutes() + ':' + m.seconds()
 }
 

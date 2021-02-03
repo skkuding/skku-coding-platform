@@ -1,5 +1,5 @@
 export const m = {
-    // 404.vue
+  // 404.vue
   Go_Home: '返回主页',
   // Problem.vue
   Description: '题目描述',

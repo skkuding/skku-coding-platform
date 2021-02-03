@@ -1,60 +1,63 @@
 <template>
   <div>
-    <NavBar></NavBar>
+    <NavBar />
     <div class="content-app">
-      <transition name="fadeInUp" mode="out-in">
-        <router-view></router-view>
+      <transition
+        name="fadeInUp"
+        mode="out-in"
+      >
+        <router-view />
       </transition>
       <div class="footer">
-        <p v-html="website.website_footer"></p>
+        <p v-html="website.website_footer" />
         <p>
           <span v-if="version">&nbsp; Version: {{ version }}</span>
         </p>
         <p> Test </p>
       </div>
     </div>
-    <BackTop></BackTop>
+    <BackTop />
   </div>
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
-  import NavBar from '@oj/components/NavBar.vue'
+import { mapActions, mapState } from 'vuex'
+import NavBar from '@oj/components/NavBar.vue'
 
-  export default {
-    name: 'app',
-    components: {
-      NavBar
+export default {
+  name: 'App',
+  components: {
+    NavBar
+  },
+  data () {
+    return {
+      version: process.env.VERSION
+    }
+  },
+  created () {
+    try {
+      document.body.removeChild(document.getElementById('app-loader'))
+    } catch (e) {
+    }
+  },
+  mounted () {
+    this.getWebsiteConfig()
+  },
+  methods: {
+    ...mapActions(['getWebsiteConfig', 'changeDomTitle'])
+  },
+  computed: {
+    ...mapState(['website'])
+  },
+  watch: {
+    'website' () {
+      this.changeDomTitle()
     },
-    data () {
-      return {
-        version: process.env.VERSION
-      }
-    },
-    created () {
-      try {
-        document.body.removeChild(document.getElementById('app-loader'))
-      } catch (e) {
-      }
-    },
-    mounted () {
-      this.getWebsiteConfig()
-    },
-    methods: {
-      ...mapActions(['getWebsiteConfig', 'changeDomTitle'])
-    },
-    computed: {
-      ...mapState(['website'])
-    },
-    watch: {
-      'website' () {
-        this.changeDomTitle()
-      },
-      '$route' () {
-        this.changeDomTitle()
-      }
+    '$route' () {
+      this.changeDomTitle()
     }
   }
+}
 </script>
 
 <style lang="less">
@@ -72,7 +75,6 @@
       outline-width: 0;
     }
   }
-
 
   @media screen and (max-width: 1200px) {
   .content-app {
@@ -98,6 +100,5 @@
   .fadeInUp-enter-active {
     animation: fadeInUp .8s;
   }
-
 
 </style>

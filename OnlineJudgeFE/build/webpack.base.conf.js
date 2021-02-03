@@ -4,8 +4,10 @@ const glob = require('glob')
 const webpack = require('webpack')
 const utils = require('./utils')
 const config = require('../config')
+const ESLintPlugin = require('eslint-webpack-plugin')
 const vueLoaderConfig = require('./vue-loader.conf')
-const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -13,8 +15,8 @@ function resolve (dir) {
 
 function getEntries () {
   const base = {
-    'oj': ['./src/pages/oj/index.js'],
-    'admin': ['./src/pages/admin/index.js']
+    oj: ['./src/pages/oj/index.js'],
+    admin: ['./src/pages/admin/index.js']
   }
   if (process.env.USE_SENTRY === '1') {
     Object.keys(base).forEach(entry => {
@@ -26,20 +28,19 @@ function getEntries () {
 
 // get all entries
 const entries = getEntries()
-console.log("All entries: ")
+console.log('All entries: ')
 Object.keys(entries).forEach(entry => {
   console.log(entry)
   entries[entry].forEach(ele => {
-    console.log("- %s", ele)
+    console.log('- %s', ele)
   })
   console.log()
 })
 
 // prepare vendor asserts
-const globOptions = {cwd: resolve('static/js')};
-let vendorAssets = glob.sync('vendor.dll.*.js', globOptions);
+const globOptions = { cwd: resolve('static/js') }
+let vendorAssets = glob.sync('vendor.dll.*.js', globOptions)
 vendorAssets = vendorAssets.map(file => 'static/js/' + file)
-
 
 module.exports = {
   entry: entries,
@@ -54,7 +55,7 @@ module.exports = {
     modules: ['node_modules'],
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
+      vue$: 'vue/dist/vue.esm.js',
       '@': resolve('src'),
       '@oj': resolve('src/pages/oj'),
       '@admin': resolve('src/pages/admin'),
@@ -63,15 +64,6 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.(js|vue)$/,
-        loader: 'eslint-loader',
-        enforce: 'pre',
-        include: [resolve('src')],
-        options: {
-          formatter: require('eslint-friendly-formatter')
-        }
-      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -110,14 +102,20 @@ module.exports = {
     ]
   },
   plugins: [
+    new ESLintPlugin({
+      extensions: ['js', 'vue'],
+      files: [resolve('src')],
+      formatter: require('eslint-friendly-formatter')
+    }),
     new webpack.DllReferencePlugin({
       context: __dirname,
       manifest: require('./vendor-manifest.json')
     }),
-    new HtmlWebpackIncludeAssetsPlugin({
+    new HtmlWebpackTagsPlugin({
       assets: [vendorAssets[0]],
       files: ['index.html', 'admin/index.html'],
       append: false
     }),
+    new VueLoaderPlugin()
   ]
 }

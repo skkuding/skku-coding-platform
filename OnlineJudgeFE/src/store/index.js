@@ -29,7 +29,7 @@ const rootMutations = {
   [types.UPDATE_WEBSITE_CONF] (state, payload) {
     state.website = payload.websiteConfig
   },
-  [types.CHANGE_MODAL_STATUS] (state, {mode, visible}) {
+  [types.CHANGE_MODAL_STATUS] (state, { mode, visible }) {
     if (mode !== undefined) {
       state.modalStatus.mode = mode
     }
@@ -40,17 +40,17 @@ const rootMutations = {
 }
 
 const rootActions = {
-  getWebsiteConfig ({commit}) {
+  getWebsiteConfig ({ commit }) {
     api.getWebsiteConf().then(res => {
       commit(types.UPDATE_WEBSITE_CONF, {
         websiteConfig: res.data.data
       })
     })
   },
-  changeModalStatus ({commit}, payload) {
+  changeModalStatus ({ commit }, payload) {
     commit(types.CHANGE_MODAL_STATUS, payload)
   },
-  changeDomTitle ({commit, state}, payload) {
+  changeDomTitle ({ commit, state }, payload) {
     if (payload && payload.title) {
       window.document.title = state.website.website_name_shortcut + ' | ' + payload.title
     } else {

@@ -1,48 +1,68 @@
 <template>
-  <el-card :body-style="{padding: 0, height: '100%'}" class="info-card">
-    <el-row type="flex" class="info-card-container">
-      <el-col :span="8" :style="{'background-color': color}" class="height-100">
-        <i :class="['info-card-icon', icon]" :style="{'font-size': iconSize}"></i>
+  <el-card
+    :body-style="{padding: 0, height: '100%'}"
+    class="info-card"
+  >
+    <el-row
+      type="flex"
+      class="info-card-container"
+    >
+      <el-col
+        :span="8"
+        :style="{'background-color': color}"
+        class="height-100"
+      >
+        <i
+          :class="['info-card-icon', icon]"
+          :style="{'font-size': iconSize}"
+        />
       </el-col>
-      <el-col :span="16" class="info-card-text">
-        <p :style="textStyle">{{value}}</p>
-        <p style="font-weight: 300;">{{message}}</p>
+      <el-col
+        :span="16"
+        class="info-card-text"
+      >
+        <p :style="textStyle">
+          {{ value }}
+        </p>
+        <p style="font-weight: 300;">
+          {{ message }}
+        </p>
       </el-col>
     </el-row>
   </el-card>
 </template>
 
 <script>
-  export default {
-    name: 'inforCard',
-    props: {
-      value: [String, Number],
-      color: String,
-      message: String,
-      icon: String,
-      iconSize: {
-        type: String,
-        default: '35px'
-      },
-      countSize: {
-        type: String,
-        default: '25px'
-      },
-      countWeight: {
-        type: Number,
-        default: 700
-      }
+export default {
+  name: 'InforCard',
+  props: {
+    value: [String, Number],
+    color: String,
+    message: String,
+    icon: String,
+    iconSize: {
+      type: String,
+      default: '35px'
     },
-    computed: {
-      textStyle () {
-        return {
-          'font-size': this.countSize,
-          'font-weight': this.countWeight,
-          color: this.color
-        }
+    countSize: {
+      type: String,
+      default: '25px'
+    },
+    countWeight: {
+      type: Number,
+      default: 700
+    }
+  },
+  computed: {
+    textStyle () {
+      return {
+        'font-size': this.countSize,
+        'font-weight': this.countWeight,
+        color: this.color
       }
     }
   }
+}
 </script>
 
 <style lang="less" scoped>

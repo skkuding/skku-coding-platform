@@ -1,60 +1,86 @@
 <template>
-  <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px"
-           class="demo-ruleForm login-container">
-    <h3 class="title">{{$t('m.Welcome_to_Login')}}</h3>
+  <el-form
+    ref="ruleForm2"
+    :model="ruleForm2"
+    :rules="rules2"
+    label-position="left"
+    label-width="0px"
+    class="demo-ruleForm login-container"
+  >
+    <h3 class="title">
+      {{ $t('m.Welcome_to_Login') }}
+    </h3>
     <el-form-item prop="account">
-      <el-input type="text" v-model="ruleForm2.account" auto-complete="off" :placeholder="$t('m.username')" @keyup.enter.native="handleLogin"></el-input>
+      <el-input
+        v-model="ruleForm2.account"
+        type="text"
+        auto-complete="off"
+        :placeholder="$t('m.username')"
+        @keyup.enter.native="handleLogin"
+      />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input type="password" v-model="ruleForm2.password" auto-complete="off" :placeholder="$t('m.password')" @keyup.enter.native="handleLogin"></el-input>
+      <el-input
+        v-model="ruleForm2.password"
+        type="password"
+        auto-complete="off"
+        :placeholder="$t('m.password')"
+        @keyup.enter.native="handleLogin"
+      />
     </el-form-item>
     <el-form-item style="width:100%;">
-      <el-button type="primary" style="width:100%;" @click.native.prevent="handleLogin" :loading="logining">{{$t('m.GO')}}
+      <el-button
+        type="primary"
+        style="width:100%;"
+        :loading="logining"
+        @click.native.prevent="handleLogin"
+      >
+        {{ $t('m.GO') }}
       </el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-  import api from '../../api'
+import api from '../../api'
 
-  export default {
-    data () {
-      return {
-        logining: false,
-        ruleForm2: {
-          account: '',
-          password: ''
-        },
-        rules2: {
-          account: [
-            {required: true, trigger: 'blur'}
-          ],
-          password: [
-            {required: true, trigger: 'blur'}
-          ]
-        },
-        checked: true
-      }
-    },
-    methods: {
-      handleLogin (ev) {
-        this.$refs.ruleForm2.validate((valid) => {
-          if (valid) {
-            this.logining = true
-            api.login(this.ruleForm2.account, this.ruleForm2.password).then(data => {
-              this.logining = false
-              this.$router.push({name: 'dashboard'})
-            }, () => {
-              this.logining = false
-            })
-          } else {
-            this.$error('Please check the error fields')
-          }
-        })
-      }
+export default {
+  data () {
+    return {
+      logining: false,
+      ruleForm2: {
+        account: '',
+        password: ''
+      },
+      rules2: {
+        account: [
+          { required: true, trigger: 'blur' }
+        ],
+        password: [
+          { required: true, trigger: 'blur' }
+        ]
+      },
+      checked: true
+    }
+  },
+  methods: {
+    handleLogin (ev) {
+      this.$refs.ruleForm2.validate((valid) => {
+        if (valid) {
+          this.logining = true
+          api.login(this.ruleForm2.account, this.ruleForm2.password).then(data => {
+            this.logining = false
+            this.$router.push({ name: 'dashboard' })
+          }, () => {
+            this.logining = false
+          })
+        } else {
+          this.$error('Please check the error fields')
+        }
+      })
     }
   }
+}
 </script>
 
 <style lang="less" scoped>

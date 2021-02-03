@@ -4,4 +4,4 @@ const ContestProblemList = () => import(/* webpackChunkName: "contest" */ './chi
 const ContestRank = () => import(/* webpackChunkName: "contest" */ './children/ContestRank.vue')
 const ACMContestHelper = () => import(/* webpackChunkName: "contest" */ './children/ACMHelper.vue')
 
-export {ContestDetails, ContestList, ContestProblemList, ContestRank, ACMContestHelper}
+export { ContestDetails, ContestList, ContestProblemList, ContestRank, ACMContestHelper }

@@ -1,43 +1,54 @@
 <template>
-  <Card :padding="padding" :shadow="shadow" :dis-hover="disHover" :bordered="bordered">
-    <div slot="title" class="panel-title">
-      <slot name="title"></slot>
+  <Card
+    :padding="padding"
+    :shadow="shadow"
+    :dis-hover="disHover"
+    :bordered="bordered"
+  >
+    <div
+      slot="title"
+      class="panel-title"
+    >
+      <slot name="title" />
     </div>
-    <div slot="extra" class="panel-extra">
-      <slot name="extra"></slot>
+    <div
+      slot="extra"
+      class="panel-extra"
+    >
+      <slot name="extra" />
     </div>
     <div class="panel-body">
-      <slot></slot>
+      <slot />
     </div>
   </Card>
 </template>
 
 <script>
-  export default {
-    name: 'Panel',
-    props: {
-      shadow: {
-        required: false,
-        type: Boolean,
-        default: false
-      },
-      padding: {
-        required: false,
-        type: Number,
-        default: 0
-      },
-      disHover: {
-        required: false,
-        type: Boolean,
-        default: false
-      },
-      bordered: {
-        required: false,
-        type: Boolean,
-        default: true
-      }
+export default {
+  name: 'Panel',
+  props: {
+    shadow: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    padding: {
+      required: false,
+      type: Number,
+      default: 0
+    },
+    disHover: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    bordered: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
+}
 </script>
 
 <style lang="less">

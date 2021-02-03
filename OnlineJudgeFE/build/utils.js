@@ -16,7 +16,6 @@ exports.cssLoaders = function (options) {
   const cssLoader = {
     loader: 'css-loader',
     options: {
-      minimize: process.env.NODE_ENV === 'production',
       sourceMap: options.sourceMap
     }
   }
@@ -50,7 +49,7 @@ exports.cssLoaders = function (options) {
     css: generateLoaders(),
     postcss: generateLoaders(),
     less: generateLoaders('less'),
-    sass: generateLoaders('sass', {indentedSyntax: true}),
+    sass: generateLoaders('sass', { indentedSyntax: true }),
     scss: generateLoaders('sass'),
     stylus: generateLoaders('stylus'),
     styl: generateLoaders('stylus')
@@ -73,5 +72,5 @@ exports.styleLoaders = function (options) {
 
 exports.getNodeEnv = function () {
   const NODE_ENV = process.env.NODE_ENV
-  return NODE_ENV ? NODE_ENV: 'production'
+  return NODE_ENV || 'production'
 }

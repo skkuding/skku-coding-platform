@@ -1,59 +1,68 @@
 <template>
   <div>
-    <div style="padding-bottom: 10px;">
-    </div>
+    <div style="padding-bottom: 10px;" />
     <panel title="Export Problems (beta)">
       <div slot="header">
         <el-input
           v-model="keyword"
           prefix-icon="el-icon-search"
-          placeholder="Keywords">
-        </el-input>
+          placeholder="Keywords"
+        />
       </div>
-      <el-table :data="problems"
-                v-loading="loadingProblems" @selection-change="handleSelectionChange">
+      <el-table
+        v-loading="loadingProblems"
+        :data="problems"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column
           type="selection"
-          width="60">
-        </el-table-column>
+          width="60"
+        />
         <el-table-column
           label="ID"
           width="100"
-          prop="id">
-        </el-table-column>
+          prop="id"
+        />
         <el-table-column
           label="DisplayID"
           width="200"
-          prop="_id">
-        </el-table-column>
+          prop="_id"
+        />
         <el-table-column
           label="Title"
-          prop="title">
-        </el-table-column>
+          prop="title"
+        />
         <el-table-column
           prop="created_by.username"
-          label="Author">
-        </el-table-column>
+          label="Author"
+        />
         <el-table-column
           prop="create_time"
-          label="Create Time">
+          label="Create Time"
+        >
           <template slot-scope="scope">
-            {{scope.row.create_time | localtime }}
+            {{ scope.row.create_time | localtime }}
           </template>
         </el-table-column>
       </el-table>
 
       <div class="panel-options">
-        <el-button type="primary" size="small" v-show="selected_problems.length"
-                   @click="exportProblems" icon="el-icon-fa-arrow-down">Export
+        <el-button
+          v-show="selected_problems.length"
+          type="primary"
+          size="small"
+          icon="el-icon-fa-arrow-down"
+          @click="exportProblems"
+        >
+          Export
         </el-button>
         <el-pagination
           class="page"
           layout="prev, pager, next"
-          @current-change="getProblems"
           :page-size="limit"
-          :total="total">
-        </el-pagination>
+          :total="total"
+          @current-change="getProblems"
+        />
       </div>
     </panel>
     <panel title="Import QDUOJ Problems (beta)">
@@ -68,9 +77,24 @@
         :on-change="onFile1Change"
         :auto-upload="false"
         :on-success="uploadSucceeded"
-        :on-error="uploadFailed">
-        <el-button size="small" type="primary" icon="el-icon-fa-upload" slot="trigger">Choose File</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload('QDU')">Upload</el-button>
+        :on-error="uploadFailed"
+      >
+        <el-button
+          slot="trigger"
+          size="small"
+          type="primary"
+          icon="el-icon-fa-upload"
+        >
+          Choose File
+        </el-button>
+        <el-button
+          style="margin-left: 10px;"
+          size="small"
+          type="success"
+          @click="submitUpload('QDU')"
+        >
+          Upload
+        </el-button>
       </el-upload>
     </panel>
 
@@ -86,88 +110,103 @@
         :on-change="onFile2Change"
         :auto-upload="false"
         :on-success="uploadSucceeded"
-        :on-error="uploadFailed">
-        <el-button size="small" type="primary" icon="el-icon-fa-upload" slot="trigger">Choose File</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload('FPS')">Upload</el-button>
+        :on-error="uploadFailed"
+      >
+        <el-button
+          slot="trigger"
+          size="small"
+          type="primary"
+          icon="el-icon-fa-upload"
+        >
+          Choose File
+        </el-button>
+        <el-button
+          style="margin-left: 10px;"
+          size="small"
+          type="success"
+          @click="submitUpload('FPS')"
+        >
+          Upload
+        </el-button>
       </el-upload>
     </panel>
   </div>
 </template>
 <script>
-  import api from '@admin/api'
-  import utils from '@/utils/utils'
+import api from '@admin/api'
+import utils from '@/utils/utils'
 
-  export default {
-    name: 'import_and_export',
-    data () {
-      return {
-        fileList1: [],
-        fileList2: [],
-        page: 1,
-        limit: 10,
-        total: 0,
-        loadingProblems: false,
-        loadingImporting: false,
-        keyword: '',
-        problems: [],
-        selected_problems: []
-      }
-    },
-    mounted () {
+export default {
+  name: 'ImportAndExport',
+  data () {
+    return {
+      fileList1: [],
+      fileList2: [],
+      page: 1,
+      limit: 10,
+      total: 0,
+      loadingProblems: false,
+      loadingImporting: false,
+      keyword: '',
+      problems: [],
+      selected_problems: []
+    }
+  },
+  watch: {
+    'keyword' () {
       this.getProblems()
+    }
+  },
+  mounted () {
+    this.getProblems()
+  },
+  methods: {
+    handleSelectionChange (val) {
+      this.selected_problems = val
     },
-    methods: {
-      handleSelectionChange (val) {
-        this.selected_problems = val
-      },
-      getProblems (page = 1) {
-        let params = {
-          keyword: this.keyword,
-          offset: (page - 1) * this.limit,
-          limit: this.limit
-        }
-        this.loadingProblems = true
-        api.getProblemList(params).then(res => {
-          this.problems = res.data.data.results
-          this.total = res.data.data.total
-          this.loadingProblems = false
-        })
-      },
-      exportProblems () {
-        let params = []
-        for (let p of this.selected_problems) {
-          params.push('problem_id=' + p.id)
-        }
-        let url = '/admin/export_problem?' + params.join('&')
-        utils.downloadFile(url)
-      },
-      submitUpload (ref) {
-        this.$refs[ref].submit()
-      },
-      onFile1Change (file, fileList) {
-        this.fileList1 = fileList.slice(-1)
-      },
-      onFile2Change (file, fileList) {
-        this.fileList2 = fileList.slice(-1)
-      },
-      uploadSucceeded (response) {
-        if (response.error) {
-          this.$error(response.data)
-        } else {
-          this.$success('Successfully imported ' + response.data.import_count + ' problems')
-          this.getProblems()
-        }
-      },
-      uploadFailed () {
-        this.$error('Upload failed')
+    getProblems (page = 1) {
+      const params = {
+        keyword: this.keyword,
+        offset: (page - 1) * this.limit,
+        limit: this.limit
       }
+      this.loadingProblems = true
+      api.getProblemList(params).then(res => {
+        this.problems = res.data.data.results
+        this.total = res.data.data.total
+        this.loadingProblems = false
+      })
     },
-    watch: {
-      'keyword' () {
+    exportProblems () {
+      const params = []
+      for (const p of this.selected_problems) {
+        params.push('problem_id=' + p.id)
+      }
+      const url = '/admin/export_problem?' + params.join('&')
+      utils.downloadFile(url)
+    },
+    submitUpload (ref) {
+      this.$refs[ref].submit()
+    },
+    onFile1Change (file, fileList) {
+      this.fileList1 = fileList.slice(-1)
+    },
+    onFile2Change (file, fileList) {
+      this.fileList2 = fileList.slice(-1)
+    },
+    uploadSucceeded (response) {
+      if (response.error) {
+        this.$error(response.data)
+      } else {
+        this.$success('Successfully imported ' + response.data.import_count + ' problems')
         this.getProblems()
       }
+    },
+    uploadFailed () {
+      this.$error('Upload failed')
     }
   }
+}
 </script>
 
 <style scoped lang="less">

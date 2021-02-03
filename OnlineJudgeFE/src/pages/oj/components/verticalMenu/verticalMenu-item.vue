@@ -1,32 +1,35 @@
 <template>
-  <li @click.stop="handleClick" :class="{disabled: disabled}">
-    <slot></slot>
+  <li
+    :class="{disabled: disabled}"
+    @click.stop="handleClick"
+  >
+    <slot />
   </li>
 </template>
 
 <script>
-  import Emitter from '../mixins/emitter'
+import Emitter from '../mixins/emitter'
 
-  export default {
-    name: 'VerticalMenu-item',
-    mixins: [Emitter],
-    props: {
-      route: {
-        type: [String, Object]
-      },
-      disabled: {
-        type: Boolean,
-        default: false
-      }
+export default {
+  name: 'VerticalMenuItem',
+  mixins: [Emitter],
+  props: {
+    route: {
+      type: [String, Object]
     },
-    methods: {
-      handleClick () {
-        if (this.route) {
-          this.dispatch('VerticalMenu', 'on-click', this.route)
-        }
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
+  methods: {
+    handleClick () {
+      if (this.route) {
+        this.dispatch('VerticalMenu', 'on-click', this.route)
       }
     }
   }
+}
 </script>
 
 <style scoped lang="less">

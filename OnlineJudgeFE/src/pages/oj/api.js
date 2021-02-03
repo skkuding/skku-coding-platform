@@ -14,7 +14,7 @@ export default {
     })
   },
   getAnnouncementList (offset, limit) {
-    let params = {
+    const params = {
       offset: offset,
       limit: limit
     }
@@ -115,7 +115,7 @@ export default {
     return ajax('problem/tags', 'get')
   },
   getProblemList (offset, limit, searchParams) {
-    let params = {
+    const params = {
       paging: true,
       offset,
       limit
@@ -140,7 +140,7 @@ export default {
     })
   },
   getContestList (offset, limit, searchParams) {
-    let params = {
+    const params = {
       offset,
       limit
     }
@@ -245,7 +245,7 @@ export default {
     })
   },
   getUserRank (offset, limit, rule = 'acm') {
-    let params = {
+    const params = {
       offset,
       limit,
       rule
@@ -280,7 +280,7 @@ export default {
  */
 function ajax (url, method, options) {
   if (options !== undefined) {
-    var {params = {}, data = {}} = options
+    var { params = {}, data = {} } = options
   } else {
     params = data = {}
   }
@@ -297,7 +297,7 @@ function ajax (url, method, options) {
         reject(res)
         // 若后端返回为登录，则为session失效，应退出当前登录用户
         if (res.data.data.startsWith('Please login')) {
-          store.dispatch('changeModalStatus', {'mode': 'login', 'visible': true})
+          store.dispatch('changeModalStatus', { mode: 'login', visible: true })
         }
       } else {
         resolve(res)

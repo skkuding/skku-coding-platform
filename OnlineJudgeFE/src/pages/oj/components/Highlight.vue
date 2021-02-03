@@ -1,36 +1,39 @@
 <template>
-  <pre v-highlight="code"><code :class="language" :style="styleObject"></code></pre>
+  <pre v-highlight="code"><code
+:class="language"
+                                :style="styleObject"
+  /></pre>
 </template>
 
 <script>
-  export default {
-    name: 'highlight',
-    data () {
-      return {
-        styleObject: {
-          'border-left': '2px solid green'
-        }
-      }
+export default {
+  name: 'Highlight',
+  props: {
+    language: {
+      type: String
     },
-    props: {
-      language: {
-        type: String
-      },
-      code: {
-        required: true,
-        type: String
-      },
-      borderColor: {
-        type: String,
-        default: 'green'
-      }
+    code: {
+      required: true,
+      type: String
     },
-    watch: {
-      'borderColor' (newVal, oldVal) {
-        this.styleObject['border-left'] = '2.5px solid ' + newVal
+    borderColor: {
+      type: String,
+      default: 'green'
+    }
+  },
+  data () {
+    return {
+      styleObject: {
+        'border-left': '2px solid green'
       }
     }
+  },
+  watch: {
+    'borderColor' (newVal, oldVal) {
+      this.styleObject['border-left'] = '2.5px solid ' + newVal
+    }
   }
+}
 </script>
 
 <style scoped lang="less">

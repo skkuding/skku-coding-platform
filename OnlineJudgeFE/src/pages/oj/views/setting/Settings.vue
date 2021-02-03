@@ -3,14 +3,26 @@
     <Card :padding="0">
       <div class="flex-container">
         <div class="menu">
-          <Menu accordion @on-select="goRoute" :activeName="activeName" style="text-align: center;" width="auto">
+          <Menu
+            accordion
+            :active-name="activeName"
+            style="text-align: center;"
+            width="auto"
+            @on-select="goRoute"
+          >
             <div class="avatar-editor">
               <div class="avatar-container">
-                <img class="avatar" :src="profile.avatar"/>
+                <img
+                  class="avatar"
+                  :src="profile.avatar"
+                >
                 <div class="avatar-mask">
                   <a @click.stop="goRoute({name: 'profile-setting'})">
                     <div class="mask-content">
-                      <Icon type="camera" size="30"></Icon>
+                      <Icon
+                        type="camera"
+                        size="30"
+                      />
                       <p class="text">change avatar</p>
                     </div>
                   </a>
@@ -18,14 +30,20 @@
               </div>
             </div>
 
-            <Menu-item name="/setting/profile">{{$t('m.Profile')}}</Menu-item>
-            <Menu-item name="/setting/account">{{$t('m.Account')}}</Menu-item>
-            <Menu-item name="/setting/security">{{$t('m.Security')}}</Menu-item>
+            <Menu-item name="/setting/profile">
+              {{ $t('m.Profile') }}
+            </Menu-item>
+            <Menu-item name="/setting/account">
+              {{ $t('m.Account') }}
+            </Menu-item>
+            <Menu-item name="/setting/security">
+              {{ $t('m.Security') }}
+            </Menu-item>
           </Menu>
         </div>
         <div class="panel">
           <transition name="fadeInUp">
-            <router-view></router-view>
+            <router-view />
           </transition>
         </div>
       </div>
@@ -33,22 +51,22 @@
   </div>
 </template>
 <script>
-  import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
-  export default {
-    name: 'profile',
-    methods: {
-      goRoute (routePath) {
-        this.$router.push(routePath)
-      }
-    },
-    computed: {
-      ...mapGetters(['profile']),
-      activeName () {
-        return this.$route.path
-      }
+export default {
+  name: 'Profile',
+  methods: {
+    goRoute (routePath) {
+      this.$router.push(routePath)
+    }
+  },
+  computed: {
+    ...mapGetters(['profile']),
+    activeName () {
+      return this.$route.path
     }
   }
+}
 </script>
 
 <style lang="less" scoped>

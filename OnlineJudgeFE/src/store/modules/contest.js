@@ -27,9 +27,9 @@ const getters = {
   },
   contestStatus: (state, getters) => {
     if (!getters.contestLoaded) return null
-    let startTime = moment(state.contest.start_time)
-    let endTime = moment(state.contest.end_time)
-    let now = state.now
+    const startTime = moment(state.contest.start_time)
+    const endTime = moment(state.contest.end_time)
+    const now = state.now
 
     if (startTime > now) {
       return CONTEST_STATUS.NOT_START
@@ -78,16 +78,16 @@ const getters = {
   },
   countdown: (state, getters) => {
     if (getters.contestStatus === CONTEST_STATUS.NOT_START) {
-      let duration = moment.duration(getters.contestStartTime.diff(state.now, 'seconds'), 'seconds')
+      const duration = moment.duration(getters.contestStartTime.diff(state.now, 'seconds'), 'seconds')
       // time is too long
       if (duration.weeks() > 0) {
         return 'Start At ' + duration.humanize()
       }
-      let texts = [Math.floor(duration.asHours()), duration.minutes(), duration.seconds()]
+      const texts = [Math.floor(duration.asHours()), duration.minutes(), duration.seconds()]
       return '-' + texts.join(':')
     } else if (getters.contestStatus === CONTEST_STATUS.UNDERWAY) {
-      let duration = moment.duration(getters.contestEndTime.diff(state.now, 'seconds'), 'seconds')
-      let texts = [Math.floor(duration.asHours()), duration.minutes(), duration.seconds()]
+      const duration = moment.duration(getters.contestEndTime.diff(state.now, 'seconds'), 'seconds')
+      const texts = [Math.floor(duration.asHours()), duration.minutes(), duration.seconds()]
       return '-' + texts.join(':')
     } else {
       return 'Ended'
@@ -100,7 +100,7 @@ const mutations = {
     state.contest = payload.contest
   },
   [types.CHANGE_CONTEST_ITEM_VISIBLE] (state, payload) {
-    state.itemVisible = {...state.itemVisible, ...payload}
+    state.itemVisible = { ...state.itemVisible, ...payload }
   },
   [types.CHANGE_RANK_FORCE_UPDATE] (state, payload) {
     state.forceUpdate = payload.value
@@ -115,7 +115,7 @@ const mutations = {
     state.access = payload.access
   },
   [types.CLEAR_CONTEST] (state) {
-    state.contest = {created_by: {}}
+    state.contest = { created_by: {} }
     state.contestProblems = []
     state.access = false
     state.itemVisible = {
@@ -134,13 +134,13 @@ const mutations = {
 }
 
 const actions = {
-  getContest ({commit, rootState, dispatch}) {
+  getContest ({ commit, rootState, dispatch }) {
     return new Promise((resolve, reject) => {
       api.getContest(rootState.route.params.contestID).then((res) => {
         resolve(res)
-        let contest = res.data.data
-        commit(types.CHANGE_CONTEST, {contest: contest})
-        commit(types.NOW, {now: moment(contest.now)})
+        const contest = res.data.data
+        commit(types.CHANGE_CONTEST, { contest: contest })
+        commit(types.NOW, { now: moment(contest.now) })
         if (contest.contest_type === CONTEST_TYPE.PRIVATE) {
           dispatch('getContestAccess')
         }
@@ -149,7 +149,7 @@ const actions = {
       })
     })
   },
-  getContestProblems ({commit, rootState}) {
+  getContestProblems ({ commit, rootState }) {
     return new Promise((resolve, reject) => {
       api.getContestProblemList(rootState.route.params.contestID).then(res => {
         res.data.data.sort((a, b) => {
@@ -160,17 +160,17 @@ const actions = {
           }
           return -1
         })
-        commit(types.CHANGE_CONTEST_PROBLEMS, {contestProblems: res.data.data})
+        commit(types.CHANGE_CONTEST_PROBLEMS, { contestProblems: res.data.data })
         resolve(res)
       }, () => {
-        commit(types.CHANGE_CONTEST_PROBLEMS, {contestProblems: []})
+        commit(types.CHANGE_CONTEST_PROBLEMS, { contestProblems: [] })
       })
     })
   },
-  getContestAccess ({commit, rootState}) {
+  getContestAccess ({ commit, rootState }) {
     return new Promise((resolve, reject) => {
       api.getContestAccess(rootState.route.params.contestID).then(res => {
-        commit(types.CONTEST_ACCESS, {access: res.data.data.access})
+        commit(types.CONTEST_ACCESS, { access: res.data.data.access })
         resolve(res)
       }).catch()
     })

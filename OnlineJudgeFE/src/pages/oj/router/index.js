@@ -2,9 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import routes from './routes'
 import storage from '@/utils/storage'
-import {STORAGE_KEY} from '@/utils/constants'
-import {sync} from 'vuex-router-sync'
-import {types, default as store} from '../../../store'
+import { STORAGE_KEY } from '@/utils/constants'
+import { sync } from 'vuex-router-sync'
+import store, { types } from '../../../store'
 
 Vue.use(VueRouter)
 
@@ -14,7 +14,7 @@ const router = new VueRouter({
     if (savedPosition) {
       return savedPosition
     } else {
-      return {x: 0, y: 0}
+      return { x: 0, y: 0 }
     }
   },
   routes
@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!storage.get(STORAGE_KEY.AUTHED)) {
       Vue.prototype.$error('Please login first')
-      store.commit(types.CHANGE_MODAL_STATUS, {mode: 'login', visible: true})
+      store.commit(types.CHANGE_MODAL_STATUS, { mode: 'login', visible: true })
       next({
         name: 'home'
       })

@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -63,4 +62,4 @@ Vue.prototype.$error = (s) => Vue.prototype.$Message.error(s)
 Vue.prototype.$info = (s) => Vue.prototype.$Message.info(s)
 Vue.prototype.$success = (s) => Vue.prototype.$Message.success(s)
 
-new Vue(Vue.util.extend({router, store, i18n}, App)).$mount('#app')
+new Vue(Vue.util.extend({ router, store, i18n }, App)).$mount('#app')
