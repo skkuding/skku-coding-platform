@@ -1,53 +1,10 @@
 <template>
   <div class="container">
-    <Card :padding="0">
-      <div class="flex-container">
-        <div class="menu">
-          <Menu
-            accordion
-            :active-name="activeName"
-            style="text-align: center;"
-            width="auto"
-            @on-select="goRoute"
-          >
-            <div class="avatar-editor">
-              <div class="avatar-container">
-                <img
-                  class="avatar"
-                  :src="profile.avatar"
-                >
-                <div class="avatar-mask">
-                  <a @click.stop="goRoute({name: 'profile-setting'})">
-                    <div class="mask-content">
-                      <Icon
-                        type="camera"
-                        size="30"
-                      />
-                      <p class="text">change avatar</p>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <Menu-item name="/setting/profile">
-              {{ $t('m.Profile') }}
-            </Menu-item>
-            <Menu-item name="/setting/account">
-              {{ $t('m.Account') }}
-            </Menu-item>
-            <Menu-item name="/setting/security">
-              {{ $t('m.Security') }}
-            </Menu-item>
-          </Menu>
-        </div>
         <div class="panel">
           <transition name="fadeInUp">
             <router-view />
           </transition>
         </div>
-      </div>
-    </Card>
   </div>
 </template>
 <script>

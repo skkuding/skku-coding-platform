@@ -176,8 +176,13 @@ export const m = {
   ChangeEmail: 'Change Email',
   Update_Password: 'Update Password',
   // ProfileSetting.vue
-  Avatar_Setting: 'Avatar Setting',
-  Profile_Setting: 'Profile Setting',
+  Profile_Setting: 'Setting',
+  Change_Language: 'Change Language',
+  Change_Major: 'Change Major',
+  Change_Semester: 'Change Semester',
+  Preferred_Language: 'Preferred Language',
+  Major: 'Major',
+  Semester: 'Semester',
   // SecuritySettig
   Sessions: 'Sessions',
   Two_Factor_Authentication: 'Two Factor Authentication',
@@ -187,7 +192,7 @@ export const m = {
   TFA_Code: 'Code from your TFA app',
   No_Account: 'No account? Register now!',
   Forget_Password: 'Forget Password',
-  UserLogin: 'Login',
+  UserLogin: 'Sign In',
   Welcome_back: 'Welcome back to OJ',
   // OIRank.vue
   OI_Ranklist: 'OI Ranklist',
@@ -225,7 +230,7 @@ export const m = {
   password_does_not_match: 'password does not match',
   Thanks_for_registering: 'Thanks for your registering, you can login now',
   // ResetPassword.vue and ApplyResetPassword.vue
-  Reset_Password: 'Lost Password',
+  Reset_Password: 'Password Recovery',
   RPassword: 'Password',
   RPassword_Again: 'Password Again',
   RCaptcha: 'Captcha',
@@ -235,6 +240,7 @@ export const m = {
   // EmailAuth.vue
   Email_Authentication: 'Email Authentication',
   Your_email_has_authenticated: 'Your email has authenticated.',
+  Back_to_Sign_In: 'Back to Sign In',
   // Save.vue
   Save: 'Save',
   // Simditor.vue
