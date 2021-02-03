@@ -122,36 +122,18 @@ dmypy.json
 # profiling data
 .prof
 
-OnlineJudge/data/log/*
-!OnlineJudge/data/log/.gitkeep
-OnlineJudge/data/test_case/*
-!OnlineJudge/data/test_case/.gitkeep
-OnlineJudge/data/ssl/*
-!OnlineJudge/data/ssl/.gitkeep
-OnlineJudge/data/public/upload/*
-!OnlineJudge/data/public/upload/.gitkeep
-OnlineJudge/data/public/avatar/*
-!OnlineJudge/data/public/avatar/default.png
-OnlineJudge/data/config/*
-!OnlineJudge/data/config/.gitkeep
+backend/data/config/*
+backend/data/log/*
+backend/data/public/*
+backend/data/ssl/*
+backend/data/test_case/*
+!**.gitkeep
 
 http_locations.conf
 https_locations.conf
 
-### vscode ###
-.vscode/*
-# !.vscode/settings.json
-# !.vscode/tasks.json
-# !.vscode/launch.json
-# !.vscode/extensions.json
-# *.code-workspace
 
-
-### OnlineJudgeDeploy ###
-OnlineJudgeDeploy/data/
-
-
-### OnlineJudgeFE ###
+### frontend ###
 # Logs
 logs
 *.log
@@ -221,6 +203,3 @@ test.vue
 # build
 vendor-manifest.json
 vendor.dll*.js
-
-# docker container data
-data/
