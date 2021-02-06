@@ -1,13 +1,13 @@
 module.exports = {
   root: true,
   parserOptions: {
-    parser: '@babel/eslint-parser',
+    parser: 'babel-eslint',
     sourceType: 'module',
     requireConfigFile: false
   },
   extends: [
     'standard',
-    'plugin:vue/recommended'
+    'plugin:vue/essential'
   ],
   plugins: ['vue'],
   rules: {
