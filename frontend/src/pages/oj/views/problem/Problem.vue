@@ -107,7 +107,7 @@
           type="flex"
           justify="space-between"
         >
-          <Col :span="10" />
+          <Col :span="10">
           <div
             v-if="statusVisible"
             class="status"
@@ -157,7 +157,7 @@
           </div>
           </Col>
 
-          <Col :span="12" />
+          <Col :span="12">
           <template v-if="captchaRequired">
             <div class="captcha-container">
               <Tooltip

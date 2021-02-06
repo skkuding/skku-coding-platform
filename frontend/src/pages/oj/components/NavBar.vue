@@ -7,12 +7,8 @@
       class="oj-menu"
       @on-select="handleRoute"
     >
-      <!-- <div class="logo"><span>{{website.website_name}}</span></div> -->
       <div class="logo">
-        <span><img
-          src="https://www.skku.edu/_res/skku//img/common/logo.png"
-          style="margin-top: 10px;"
-        ></span>
+        <span><img src="https://www.skku.edu/_res/skku//img/common/logo.png"></span>
       </div>
       <Menu-item name="/">
         <Icon type="home" />
@@ -138,13 +134,9 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import VueSimpleAlert from 'vue-simple-alert'
 import { mapGetters, mapActions } from 'vuex'
 import login from '@oj/views/user/Login'
 import register from '@oj/views/user/Register'
-
-Vue.use(VueSimpleAlert)
 
 export default {
   components: {
@@ -175,7 +167,7 @@ export default {
   },
   computed: {
     ...mapGetters(['website', 'modalStatus', 'user', 'isAuthenticated', 'isAdminRole']),
-    // 跟随路由变化
+    // Follow routing changes
     activeMenu () {
       return '/' + this.$route.path.split('/')[1]
     },
@@ -209,9 +201,8 @@ export default {
     .logo {
       margin-left: 2%;
       margin-right: 2%;
-      font-size: 20px;
       float: left;
-      line-height: 60px;
+      height: 100%;
     }
 
     .drop-menu {
@@ -229,7 +220,6 @@ export default {
       margin-right: 10px;
     }
   }
-
   .modal {
     &-title {
       font-size: 18px;

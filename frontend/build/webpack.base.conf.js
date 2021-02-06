@@ -1,49 +1,30 @@
 'use strict'
 const path = require('path')
-const glob = require('glob')
-const webpack = require('webpack')
 const utils = require('./utils')
 const config = require('../config')
-const ESLintPlugin = require('eslint-webpack-plugin')
 const vueLoaderConfig = require('./vue-loader.conf')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-function getEntries () {
-  const base = {
-    oj: ['./src/pages/oj/index.js'],
-    admin: ['./src/pages/admin/index.js']
+const createLintingRule = () => ({
+  test: /\.(js|vue)$/,
+  loader: 'eslint-loader',
+  enforce: 'pre',
+  include: [resolve('src'), resolve('test')],
+  options: {
+    formatter: require('eslint-friendly-formatter'),
+    emitWarning: !config.dev.showEslintErrorsInOverlay
   }
-  if (process.env.USE_SENTRY === '1') {
-    Object.keys(base).forEach(entry => {
-      base[entry].push('./src/utils/sentry.js')
-    })
-  }
-  return base
-}
-
-// get all entries
-const entries = getEntries()
-console.log('All entries: ')
-Object.keys(entries).forEach(entry => {
-  console.log(entry)
-  entries[entry].forEach(ele => {
-    console.log('- %s', ele)
-  })
-  console.log()
 })
 
-// prepare vendor asserts
-const globOptions = { cwd: resolve('static/js') }
-let vendorAssets = glob.sync('vendor.dll.*.js', globOptions)
-vendorAssets = vendorAssets.map(file => 'static/js/' + file)
-
 module.exports = {
-  entry: entries,
+  context: path.resolve(__dirname, '../'),
+  entry: {
+    oj: './src/pages/oj/index.js',
+    admin: './src/pages/admin/index.js'
+  },
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
@@ -52,18 +33,18 @@ module.exports = {
       : config.dev.assetsPublicPath
   },
   resolve: {
-    modules: ['node_modules'],
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      vue$: 'vue/dist/vue.esm.js',
+      'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
       '@oj': resolve('src/pages/oj'),
       '@admin': resolve('src/pages/admin'),
-      '~': resolve('src/components')
+      '~': resolve('node_modules')
     }
   },
   module: {
     rules: [
+      ...(config.dev.useEslint ? [createLintingRule()] : []),
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -71,9 +52,8 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader?cacheDirectory=true',
-        exclude: /node_modules/,
-        include: [resolve('src'), resolve('test')]
+        loader: 'babel-loader',
+        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -101,21 +81,16 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new ESLintPlugin({
-      extensions: ['js', 'vue'],
-      files: [resolve('src')],
-      formatter: require('eslint-friendly-formatter')
-    }),
-    new webpack.DllReferencePlugin({
-      context: __dirname,
-      manifest: require('./vendor-manifest.json')
-    }),
-    new HtmlWebpackTagsPlugin({
-      assets: [vendorAssets[0]],
-      files: ['index.html', 'admin/index.html'],
-      append: false
-    }),
-    new VueLoaderPlugin()
-  ]
+  node: {
+    // prevent webpack from injecting useless setImmediate polyfill because Vue
+    // source contains it (although only uses it if it's native).
+    setImmediate: false,
+    // prevent webpack from injecting mocks to Node native modules
+    // that does not make sense for the client
+    dgram: 'empty',
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty',
+    child_process: 'empty'
+  }
 }

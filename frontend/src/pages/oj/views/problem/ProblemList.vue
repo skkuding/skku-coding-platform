@@ -3,7 +3,7 @@
     type="flex"
     :gutter="18"
   >
-    <Col :span="19" />
+    <Col :span="19">
     <Panel shadow>
       <div slot="title">
         {{ $t('m.Problem_List') }}
@@ -89,7 +89,7 @@
 
     </Col>
 
-    <Col :span="5" />
+    <Col :span="5">
     <Panel :padding="10">
       <div
         slot="title"

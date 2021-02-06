@@ -3,7 +3,7 @@
     type="flex"
     justify="space-around"
   >
-    <Col :span="22" />
+    <Col :span="22">
     <panel
       v-if="contests.length"
       shadow

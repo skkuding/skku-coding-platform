@@ -12,7 +12,7 @@
           :placeholder="$t('m.LoginUsername')"
           size="large"
           @on-enter="handleLogin"
-        />
+        >
         <Icon
           slot="prepend"
           type="ios-person-outline"
@@ -26,7 +26,7 @@
           :placeholder="$t('m.LoginPassword')"
           size="large"
           @on-enter="handleLogin"
-        />
+        >
         <Icon
           slot="prepend"
           type="ios-locked-outline"
@@ -40,7 +40,7 @@
         <Input
           v-model="formLogin.tfa_code"
           :placeholder="$t('m.TFA_Code')"
-        />
+        >
         <Icon
           slot="prepend"
           type="ios-lightbulb-outline"

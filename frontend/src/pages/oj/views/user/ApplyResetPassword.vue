@@ -20,7 +20,7 @@
             v-model="formResetPassword.email"
             :placeholder="$t('m.ApplyEmail')"
             size="large"
-          />
+          >
           <Icon
             slot="prepend"
             type="ios-email-outline"
@@ -37,7 +37,7 @@
                 v-model="formResetPassword.captcha"
                 :placeholder="$t('m.RCaptcha')"
                 size="large"
-              />
+              >
               <Icon
                 slot="prepend"
                 type="ios-lightbulb-outline"

@@ -21,7 +21,7 @@
             type="password"
             :placeholder="$t('m.RPassword')"
             size="large"
-          />
+          >
           <Icon
             slot="prepend"
             type="ios-locked-outline"
@@ -34,7 +34,7 @@
             type="password"
             :placeholder="$t('m.RPassword_Again')"
             size="large"
-          />
+          >
           <Icon
             slot="prepend"
             type="ios-locked-outline"
@@ -51,7 +51,7 @@
                 v-model="formResetPassword.captcha"
                 :placeholder="$t('m.RCaptcha')"
                 size="large"
-              />
+              >
               <Icon
                 slot="prepend"
                 type="ios-lightbulb-outline"

@@ -112,7 +112,7 @@
         :gutter="30"
         justify="space-around"
       >
-        <Col :span="11" />
+        <Col :span="11">
         <FormItem label="Real Name">
           <Input v-model="formProfile.real_name" />
         </FormItem>
@@ -138,7 +138,7 @@
         </Form-item>
         </Col>
 
-        <Col :span="11" />
+        <Col :span="11">
         <Form-item label="Mood">
           <Input v-model="formProfile.mood" />
         </Form-item>

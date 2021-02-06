@@ -1,6 +1,6 @@
 <template>
   <Row type="flex">
-    <Col :span="24" />
+    <Col :span="24">
     <Panel
       id="contest-card"
       shadow
@@ -84,7 +84,7 @@
             <Col
               :span="18"
               class="contest-main"
-            />
+            >
             <p class="title">
               <a
                 class="entry"
@@ -128,7 +128,7 @@
             <Col
               :span="4"
               style="text-align: center"
-            />
+            >
             <Tag
               type="dot"
               :color="CONTEST_STATUS_REVERSE[contest.status].color"

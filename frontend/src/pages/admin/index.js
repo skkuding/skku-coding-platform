@@ -5,6 +5,10 @@ import i18n from '@/i18n'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 import filters from '@/utils/filters'
 import router from './router'
 import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
@@ -15,6 +19,7 @@ import Panel from './components/Panel.vue'
 import IconBtn from './components/btn/IconBtn.vue'
 import Save from './components/btn/Save.vue'
 import Cancel from './components/btn/Cancel.vue'
+import '@/styles/bootstrap.scss'
 import './style.less'
 
 // register global utility filters.
@@ -26,15 +31,21 @@ Vue.use(VueAnalytics, {
   id: GOOGLE_ANALYTICS_ID,
   router
 })
+
+Vue.use(Element, {
+  i18n: (key, value) => i18n.t(key, value)
+})
+
+Vue.use(BootstrapVue)
+Vue.use(BootstrapVueIcons)
+
 Vue.use(katex)
 Vue.component(IconBtn.name, IconBtn)
 Vue.component(Panel.name, Panel)
 Vue.component(Save.name, Save)
 Vue.component(Cancel.name, Cancel)
 
-Vue.use(Element, {
-  i18n: (key, value) => i18n.t(key, value)
-})
+Vue.config.devtools = true
 
 Vue.prototype.$error = (msg) => {
   Vue.prototype.$message({ message: msg, type: 'error' })

@@ -6,7 +6,7 @@
     <Col
       id="status"
       :span="20"
-    />
+    >
     <Alert
       :type="status.type"
       show-icon
@@ -33,7 +33,7 @@
     <Col
       v-if="submission.info && !isCE"
       :span="20"
-    />
+    >
     <Table
       stripe
       :loading="loading"
@@ -43,7 +43,7 @@
     />
     </Col>
 
-    <Col :span="20" />
+    <Col :span="20">
     <Highlight
       :code="submission.code"
       :language="submission.language"
@@ -53,7 +53,7 @@
     <Col
       v-if="submission.can_unshare"
       :span="20"
-    />
+    >
     <div id="share-btn">
       <Button
         v-if="submission.shared"

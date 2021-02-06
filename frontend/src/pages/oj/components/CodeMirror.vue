@@ -5,7 +5,7 @@
       justify="space-between"
       class="header"
     >
-      <Col :span="12" />
+      <Col :span="12">
       <div>
         <span>{{ $t('m.Language') }}:</span>
         <Select
@@ -52,7 +52,7 @@
         >
       </div>
       </Col>
-      <Col :span="12" />
+      <Col :span="12">
       <div class="fl-right">
         <span>{{ $t('m.Theme') }}:</span>
         <Select

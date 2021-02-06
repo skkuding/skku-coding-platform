@@ -12,7 +12,7 @@
           :placeholder="$t('m.RegisterUsername')"
           size="large"
           @on-enter="handleRegister"
-        />
+        >
         <Icon
           slot="prepend"
           type="ios-person-outline"
@@ -25,7 +25,7 @@
           :placeholder="$t('m.Email_Address')"
           size="large"
           @on-enter="handleRegister"
-        />
+        >
         <Icon
           slot="prepend"
           type="ios-email-outline"
@@ -60,7 +60,7 @@
           :placeholder="$t('m.RegisterPassword')"
           size="large"
           @on-enter="handleRegister"
-        />
+        >
         <Icon
           slot="prepend"
           type="ios-locked-outline"
@@ -74,7 +74,7 @@
           :placeholder="$t('m.Password_Again')"
           size="large"
           @on-enter="handleRegister"
-        />
+        >
         <Icon
           slot="prepend"
           type="ios-locked-outline"
@@ -92,7 +92,7 @@
               :placeholder="$t('m.Captcha')"
               size="large"
               @on-enter="handleRegister"
-            />
+            >
             <Icon
               slot="prepend"
               type="ios-lightbulb-outline"
