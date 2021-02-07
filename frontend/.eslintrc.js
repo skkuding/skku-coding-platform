@@ -1,26 +1,18 @@
 module.exports = {
   root: true,
-  parserOptions: {
-    parser: 'babel-eslint',
-    sourceType: 'module',
-    requireConfigFile: false
+  env: {
+    node: true
   },
   extends: [
-    'standard',
-    'plugin:vue/essential'
+    'plugin:vue/essential',
+    '@vue/standard'
   ],
-  plugins: ['vue'],
+  parserOptions: {
+    parser: 'babel-eslint'
+  },
   rules: {
-    // allow paren-less arrow functions
-    'arrow-parens': 'off',
-    // allow async-await
-    'generator-star-spacing': 'off',
-    // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-irregular-whitespace': ['error', {
-      skipComments: true,
-      skipTemplates: true
-    }],
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'vue/no-parsing-error': ['error', {
       'x-invalid-end-tag': false
     }]
