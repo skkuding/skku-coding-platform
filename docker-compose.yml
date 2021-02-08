@@ -1,13 +1,12 @@
 version: "3.8"
 services:
-
   oj-redis:
     image: redis:4.0-alpine
     container_name: oj-redis
     restart: always
     volumes:
       - ./data/redis:/data
-  
+
   oj-postgres:
     image: postgres:10-alpine
     container_name: oj-postgres
@@ -42,7 +41,7 @@ services:
       - BACKEND_URL=http://coding-platform:8000/api/judge_server_heartbeat/
       - TOKEN=CHANGE_THIS
       # - judger_debug=1
-  
+
   coding-platform:
     image: skkunpc/coding-platform
     container_name: coding-platform

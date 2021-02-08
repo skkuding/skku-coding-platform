@@ -1,0 +1,19 @@
+$enable-shadows: true;
+$enable-gradients: true;
+$grid-breakpoints: (
+  xs: 0,
+  sm: 456px,
+  md: 789px,
+  lg: 999px,
+  xl: 1234px
+);
+$bv-enable-table-stacked: false;
+
+// Include Bootstrap and BootstrapVue SCSS files
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~bootstrap-vue/src/index.scss';
+
+// General style overrides and custom classes
+body {
+  margin: 0;
+}
