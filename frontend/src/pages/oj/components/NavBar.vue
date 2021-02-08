@@ -119,7 +119,7 @@
         slot="header"
         class="modal-title"
       >
-        {{ $t('m.Welcome_to') }} {{ website.website_name }}
+        {{ $t('m.Welcome_to') }} {{ website.website_name_shortcut }}
       </div>
       <component
         :is="modalStatus.mode"

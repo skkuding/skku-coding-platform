@@ -109,7 +109,7 @@ class OptionKeys:
 class OptionDefaultValue:
     website_base_url = "http://127.0.0.1"
     website_name = "SKKU Coding Platform"
-    website_name_shortcut = "SKKU CP"
+    website_name_shortcut = "Coding Platform"
     website_footer = "SKKU Coding Platform by SKKU NPC Club"
     allow_register = True
     submission_list_show_all = True
