@@ -49,7 +49,7 @@ export default [
   {
     name: 'email-auth',
     path: '/email-auth/:token',
-    meta: {title: 'Email Authentication'},
+    meta: { title: 'Email Authentication' },
     component: EmailAuth
   },
   {
