@@ -15,7 +15,7 @@ module.exports = {
     admin: {
       entry: './src/pages/admin/index.js',
       template: './src/pages/admin/index.html',
-      filename: 'admin.html',
+      filename: 'admin/index.html',
       title: 'SKKU Coding Platform Admin',
       chunks: ['chunk-vendors', 'chunk-common', 'admin']
     }
