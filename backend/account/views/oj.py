@@ -254,7 +254,7 @@ class UserRegisterAPI(APIView):
         send_email_async.send(from_name=SysOptions.website_name_shortcut,
                               to_email=user.email,
                               to_name=user.username,
-                              subject=f"Email Authentication",
+                              subject="Email Authentication",
                               content=email_html)
 
         UserProfile.objects.create(user=user)
@@ -266,7 +266,7 @@ class EmailAuthAPI(APIView):
     def post(self, request):
         data = request.data
         try:
-            user = User.objects.get(email_auth_token = data["token"])
+            user = User.objects.get(email_auth_token=data["token"])
         except User.DoesNotExist:
             return self.error("Token does not exist")
         user.email_auth_token = None
