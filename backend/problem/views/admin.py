@@ -1,7 +1,6 @@
 import hashlib
 import json
 import os
-import shutil
 import tempfile
 import zipfile
 from wsgiref.util import FileWrapper
@@ -29,6 +28,7 @@ from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
                            ExportProblemRequestSerialzier, UploadProblemForm, ImportProblemSerializer,
                            FPSProblemSerializer)
 from ..utils import TEMPLATE_BASE, build_problem_template
+
 
 class TestCaseZipProcessor(object):
     def process_zip(self, uploaded_zip_file, spj, dir=""):
@@ -143,7 +143,7 @@ class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
         response["Content-Length"] = os.path.getsize(file_name)
         return response
 
-    def post(self, request): 
+    def post(self, request):
         form = TestCaseUploadForm(request.POST, request.FILES)
         if form.is_valid():
             spj = form.cleaned_data["spj"] == "true"
@@ -158,6 +158,7 @@ class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
         os.remove(zip_file)
         return self.success({"id": test_case_id, "info": info, "spj": spj})
 
+
 class TestCaseTextAPI(APIView):
     def post(self, request):
         testcases = request.data[0]
@@ -171,12 +172,12 @@ class TestCaseTextAPI(APIView):
         for i, testcase in enumerate(testcases):
             in_path = os.path.join(test_case_dir, "{}.in".format(i+1))
             with open(in_path, "w") as f:
-                f.write(testcase['input'])
+                f.write(testcase["input"])
 
-            if 'output' in testcase:
+            if "output" in testcase:
                 out_path = os.path.join(test_case_dir, "{}.out".format(i+1))
                 with open(out_path, "w") as f:
-                    f.write(testcase['output'])
+                    f.write(testcase["output"])
 
         test_case_info = {"spj": spj, "test_cases": {}}
 
@@ -189,11 +190,11 @@ class TestCaseTextAPI(APIView):
                 test_case_info["test_cases"][str(i + 1)] = data
         else:
             for i, testcase in enumerate(testcases):
-                data = {'stripped_output_md5': hashlib.md5(testcase['output'].rstrip().encode('utf-8')).hexdigest(),
-                        'input_size': len(testcase['input']),
-                        'output_size': len(testcase['output']),
-                        'input_name': str(i+1) + ".in",
-                        'output_name': str(i+1) + ".out"}
+                data = {"stripped_output_md5": hashlib.md5(testcase["output"].rstrip().encode("utf-8")).hexdigest(),
+                        "input_size": len(testcase["input"]),
+                        "output_size": len(testcase["output"]),
+                        "input_name": str(i+1) + ".in",
+                        "output_name": str(i+1) + ".out"}
                 info.append(data)
                 test_case_info["test_cases"][str(i + 1)] = data
 

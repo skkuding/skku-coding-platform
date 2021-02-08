@@ -313,382 +313,382 @@
 </template>
 
 <script>
-  import Simditor from '../../components/Simditor'
-  import Accordion from '../../components/Accordion'
-  import CodeMirror from '../../components/CodeMirror'
-  import api from '../../api'
+import Simditor from '../../components/Simditor'
+import Accordion from '../../components/Accordion'
+import CodeMirror from '../../components/CodeMirror'
+import api from '../../api'
 
-  export default {
-    name: 'Problem',
-    components: {
-      Simditor,
-      Accordion,
-      CodeMirror
-    },
-    data () {
-      return {
-        rules: {
-          _id: {required: true, message: 'Display ID is required', trigger: 'blur'},
-          title: {required: true, message: 'Title is required', trigger: 'blur'},
-          input_description: {required: true, message: 'Input Description is required', trigger: 'blur'},
-          output_description: {required: true, message: 'Output Description is required', trigger: 'blur'}
-        },
-        loadingCompile: false,
-        mode: '',
-        contest: {},
-        problem: {
-          languages: [],
-          io_mode: {'io_mode': 'Standard IO', 'input': 'input.txt', 'output': 'output.txt'}
-        },
-        reProblem: {
-          languages: [],
-          io_mode: {'io_mode': 'Standard IO', 'input': 'input.txt', 'output': 'output.txt'}
-        },
-        testCaseUploaded: false,
-        testcase_file_upload: false,
-        allLanguage: {},
-        inputVisible: false,
-        tagInput: '',
-        template: {},
+export default {
+  name: 'Problem',
+  components: {
+    Simditor,
+    Accordion,
+    CodeMirror
+  },
+  data () {
+    return {
+      rules: {
+        _id: { required: true, message: 'Display ID is required', trigger: 'blur' },
+        title: { required: true, message: 'Title is required', trigger: 'blur' },
+        input_description: { required: true, message: 'Input Description is required', trigger: 'blur' },
+        output_description: { required: true, message: 'Output Description is required', trigger: 'blur' }
+      },
+      loadingCompile: false,
+      mode: '',
+      contest: {},
+      problem: {
+        languages: [],
+        io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
+      },
+      reProblem: {
+        languages: [],
+        io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
+      },
+      testCaseUploaded: false,
+      testcase_file_upload: false,
+      allLanguage: {},
+      inputVisible: false,
+      tagInput: '',
+      template: {},
+      title: '',
+      spjMode: '',
+      disableRuleType: false,
+      routeName: '',
+      error: {
+        tags: '',
+        spj: '',
+        languages: '',
+        testCase: ''
+      }
+    }
+  },
+  mounted () {
+    this.routeName = this.$route.name
+    if (this.routeName === 'edit-problem' || this.routeName === 'edit-contest-problem') {
+      this.mode = 'edit'
+    } else {
+      this.mode = 'add'
+    }
+    api.getLanguages().then(res => {
+      this.problem = this.reProblem = {
+        _id: '',
         title: '',
-        spjMode: '',
-        disableRuleType: false,
-        routeName: '',
-        error: {
-          tags: '',
-          spj: '',
-          languages: '',
-          testCase: ''
-        }
+        description: '',
+        input_description: '',
+        output_description: '',
+        time_limit: 1000,
+        memory_limit: 256,
+        difficulty: 'Low',
+        visible: true,
+        share_submission: false,
+        tags: [],
+        languages: [],
+        template: {},
+        samples: [{ input: '', output: '' }],
+        testcases: [{ input: '', output: '' }],
+        spj: false,
+        spj_language: '',
+        spj_code: '',
+        spj_compile_ok: false,
+        test_case_id: '',
+        test_case_score: [],
+        rule_type: 'ACM',
+        hint: '',
+        source: '',
+        io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
       }
-    },
-    mounted () {
-      this.routeName = this.$route.name
-      if (this.routeName === 'edit-problem' || this.routeName === 'edit-contest-problem') {
-        this.mode = 'edit'
+      const contestID = this.$route.params.contestId
+      if (contestID) {
+        this.problem.contest_id = this.reProblem.contest_id = contestID
+        this.disableRuleType = true
+        api.getContest(contestID).then(res => {
+          this.problem.rule_type = this.reProblem.rule_type = res.data.data.rule_type
+          this.contest = res.data.data
+        })
+      }
+
+      this.problem.spj_language = 'C'
+
+      const allLanguage = res.data.data
+      this.allLanguage = allLanguage
+
+      // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
+      if (this.mode === 'edit') {
+        this.title = this.$i18n.t('m.Edit_Problem')
+        const funcName = { 'edit-problem': 'getProblem', 'edit-contest-problem': 'getContestProblem' }[this.routeName]
+        api[funcName](this.$route.params.problemId).then(problemRes => {
+          const data = problemRes.data.data
+          if (!data.spj_code) {
+            data.spj_code = ''
+          }
+          data.spj_language = data.spj_language || 'C'
+          this.problem = data
+          this.testCaseUploaded = true
+        })
       } else {
-        this.mode = 'add'
+        this.title = this.$i18n.t('m.Add_Problem')
+        for (const item of allLanguage.languages) {
+          this.problem.languages.push(item.name)
+        }
       }
-      api.getLanguages().then(res => {
-        this.problem = this.reProblem = {
-          _id: '',
-          title: '',
-          description: '',
-          input_description: '',
-          output_description: '',
-          time_limit: 1000,
-          memory_limit: 256,
-          difficulty: 'Low',
-          visible: true,
-          share_submission: false,
-          tags: [],
-          languages: [],
-          template: {},
-          samples: [{input: '', output: ''}],
-          testcases: [{input: '', output: ''}],
-          spj: false,
-          spj_language: '',
-          spj_code: '',
-          spj_compile_ok: false,
-          test_case_id: '',
-          test_case_score: [],
-          rule_type: 'ACM',
-          hint: '',
-          source: '',
-          io_mode: {'io_mode': 'Standard IO', 'input': 'input.txt', 'output': 'output.txt'}
-        }
-        let contestID = this.$route.params.contestId
-        if (contestID) {
-          this.problem.contest_id = this.reProblem.contest_id = contestID
-          this.disableRuleType = true
-          api.getContest(contestID).then(res => {
-            this.problem.rule_type = this.reProblem.rule_type = res.data.data.rule_type
-            this.contest = res.data.data
-          })
-        }
-
-        this.problem.spj_language = 'C'
-
-        let allLanguage = res.data.data
-        this.allLanguage = allLanguage
-
-        // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
-        if (this.mode === 'edit') {
-          this.title = this.$i18n.t('m.Edit_Problem')
-          let funcName = {'edit-problem': 'getProblem', 'edit-contest-problem': 'getContestProblem'}[this.routeName]
-          api[funcName](this.$route.params.problemId).then(problemRes => {
-            let data = problemRes.data.data
-            if (!data.spj_code) {
-              data.spj_code = ''
-            }
-            data.spj_language = data.spj_language || 'C'
-            this.problem = data
-            this.testCaseUploaded = true
-          })
-        } else {
-          this.title = this.$i18n.t('m.Add_Problem')
-          for (let item of allLanguage.languages) {
-            this.problem.languages.push(item.name)
-          }
-        }
-      })
+    })
+  },
+  watch: {
+    '$route' () {
+      this.$refs.form.resetFields()
+      this.problem = this.reProblem
     },
-    watch: {
-      '$route' () {
-        this.$refs.form.resetFields()
-        this.problem = this.reProblem
-      },
-      'problem.languages' (newVal) {
-        let data = {}
-        // use deep copy to avoid infinite loop
-        let languages = JSON.parse(JSON.stringify(newVal)).sort()
-        for (let item of languages) {
-          if (this.template[item] === undefined) {
-            let langConfig = this.allLanguage.languages.find(lang => {
-              return lang.name === item
-            })
-            if (this.problem.template[item] === undefined) {
-              data[item] = {checked: false, code: langConfig.config.template, mode: langConfig.content_type}
-            } else {
-              data[item] = {checked: true, code: this.problem.template[item], mode: langConfig.content_type}
-            }
+    'problem.languages' (newVal) {
+      const data = {}
+      // use deep copy to avoid infinite loop
+      const languages = JSON.parse(JSON.stringify(newVal)).sort()
+      for (const item of languages) {
+        if (this.template[item] === undefined) {
+          const langConfig = this.allLanguage.languages.find(lang => {
+            return lang.name === item
+          })
+          if (this.problem.template[item] === undefined) {
+            data[item] = { checked: false, code: langConfig.config.template, mode: langConfig.content_type }
           } else {
-            data[item] = this.template[item]
+            data[item] = { checked: true, code: this.problem.template[item], mode: langConfig.content_type }
           }
+        } else {
+          data[item] = this.template[item]
         }
-        this.template = data
-      },
-      'problem.spj_language' (newVal) {
-        this.spjMode = this.allLanguage.spj_languages.find(item => {
-          return item.name === this.problem.spj_language
-        }).content_type
       }
+      this.template = data
     },
-    methods: {
-      switchSpj () {
-        if (this.testCaseUploaded) {
-          this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-          }).then(() => {
-            this.problem.spj = !this.problem.spj
-            this.resetTestCase()
-          }).catch(() => {
-          })
-        } else {
+    'problem.spj_language' (newVal) {
+      this.spjMode = this.allLanguage.spj_languages.find(item => {
+        return item.name === this.problem.spj_language
+      }).content_type
+    }
+  },
+  methods: {
+    switchSpj () {
+      if (this.testCaseUploaded) {
+        this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
           this.problem.spj = !this.problem.spj
-        }
-      },
-      switchTestcase () {
-        if (this.testCaseUploaded) {
-          this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', {
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-          }).then(() => {
-            this.testcase_file_upload = !this.testcase_file_upload
-            this.resetTestCase()
-          }).catch(() => {
-          })
-        } else {
-          this.testcase_file_upload = !this.testcase_file_upload
-        }
-      },
-      querySearch (queryString, cb) {
-        api.getProblemTagList().then(res => {
-          let tagList = []
-          for (let tag of res.data.data) {
-            tagList.push({value: tag.name})
-          }
-          cb(tagList)
+          this.resetTestCase()
         }).catch(() => {
         })
-      },
-      resetTestCase () {
-        this.testCaseUploaded = false
-        this.problem.test_case_score = []
-        this.problem.test_case_id = ''
-      },
-      addTag () {
-        let inputValue = this.tagInput
-        if (inputValue) {
-          this.problem.tags.push(inputValue)
-        }
-        this.inputVisible = false
-        this.tagInput = ''
-      },
-      closeTag (tag) {
-        this.problem.tags.splice(this.problem.tags.indexOf(tag), 1)
-      },
-      addSample () {
-        this.problem.samples.push({input: '', output: ''})
-      },
-      deleteSample (index) {
-        this.problem.samples.splice(index, 1)
-      },
-      addTestCase () {
-        this.problem.testcases.push({input: '', output: ''})
-      },
-      deleteTestCase (index) {
-        this.problem.testcases.splice(index, 1)
-      },
-      uploadSucceeded (response) {
-        if (response.error) {
-          this.$error(response.data)
-          return
-        }
-        let fileList = response.data.info
-        for (let file of fileList) {
-          file.score = (100 / fileList.length).toFixed(0)
-          if (!file.output_name && this.problem.spj) {
-            file.output_name = '-'
-          }
-        }
-        this.problem.test_case_score = fileList
-        this.testCaseUploaded = true
-        this.problem.test_case_id = response.data.id
-      },
-      uploadFailed () {
-        this.$error('Upload failed')
-      },
-      compileSPJ () {
-        let data = {
-          id: this.problem.id,
-          spj_code: this.problem.spj_code,
-          spj_language: this.problem.spj_language
-        }
-        this.loadingCompile = true
-        api.compileSPJ(data).then(res => {
-          this.loadingCompile = false
-          this.problem.spj_compile_ok = true
-          this.error.spj = ''
-        }, err => {
-          this.loadingCompile = false
-          this.problem.spj_compile_ok = false
-          const h = this.$createElement
-          this.$msgbox({
-            title: 'Compile Error',
-            type: 'error',
-            message: h('pre', err.data.data),
-            showCancelButton: false,
-            closeOnClickModal: false,
-            customClass: 'dialog-compile-error'
-          })
-        })
-      },
-      submit () {
-        if (!this.problem.samples.length) {
-          this.$error('Sample is required')
-          return
-        }
-        for (let sample of this.problem.samples) {
-          if (!sample.input || !sample.output) {
-            this.$error('Sample input and output is required')
-            return
-          }
-        }
-
-        if (!this.problem.tags.length) {
-          this.error.tags = 'Please add at least one tag'
-          this.$error(this.error.tags)
-          return
-        }
-        if (this.problem.spj) {
-          if (!this.problem.spj_code) {
-            this.error.spj = 'Spj code is required'
-            this.$error(this.error.spj)
-          } else if (!this.problem.spj_compile_ok) {
-            this.error.spj = 'SPJ code has not been successfully compiled'
-          }
-          if (this.error.spj) {
-            this.$error(this.error.spj)
-            return
-          }
-        }
-        if (!this.problem.languages.length) {
-          this.error.languages = 'Please choose at least one language for problem'
-          this.$error(this.error.languages)
-          return
-        }
-        if (!this.testcase_file_upload) {
-          for (let testcase of this.problem.testcases) {
-            if (!testcase.input || !testcase.output) {
-              this.$error('Testcase input and output is required')
-              return
-            }
-          }
+      } else {
+        this.problem.spj = !this.problem.spj
+      }
+    },
+    switchTestcase () {
+      if (this.testCaseUploaded) {
+        this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.testcase_file_upload = !this.testcase_file_upload
           this.resetTestCase()
-        } else if (!this.testCaseUploaded) {
-          this.error.testCase = 'Test case is not uploaded yet'
-          this.$error(this.error.testCase)
+        }).catch(() => {
+        })
+      } else {
+        this.testcase_file_upload = !this.testcase_file_upload
+      }
+    },
+    querySearch (queryString, cb) {
+      api.getProblemTagList().then(res => {
+        const tagList = []
+        for (const tag of res.data.data) {
+          tagList.push({ value: tag.name })
+        }
+        cb(tagList)
+      }).catch(() => {
+      })
+    },
+    resetTestCase () {
+      this.testCaseUploaded = false
+      this.problem.test_case_score = []
+      this.problem.test_case_id = ''
+    },
+    addTag () {
+      const inputValue = this.tagInput
+      if (inputValue) {
+        this.problem.tags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.tagInput = ''
+    },
+    closeTag (tag) {
+      this.problem.tags.splice(this.problem.tags.indexOf(tag), 1)
+    },
+    addSample () {
+      this.problem.samples.push({ input: '', output: '' })
+    },
+    deleteSample (index) {
+      this.problem.samples.splice(index, 1)
+    },
+    addTestCase () {
+      this.problem.testcases.push({ input: '', output: '' })
+    },
+    deleteTestCase (index) {
+      this.problem.testcases.splice(index, 1)
+    },
+    uploadSucceeded (response) {
+      if (response.error) {
+        this.$error(response.data)
+        return
+      }
+      const fileList = response.data.info
+      for (const file of fileList) {
+        file.score = (100 / fileList.length).toFixed(0)
+        if (!file.output_name && this.problem.spj) {
+          file.output_name = '-'
+        }
+      }
+      this.problem.test_case_score = fileList
+      this.testCaseUploaded = true
+      this.problem.test_case_id = response.data.id
+    },
+    uploadFailed () {
+      this.$error('Upload failed')
+    },
+    compileSPJ () {
+      const data = {
+        id: this.problem.id,
+        spj_code: this.problem.spj_code,
+        spj_language: this.problem.spj_language
+      }
+      this.loadingCompile = true
+      api.compileSPJ(data).then(res => {
+        this.loadingCompile = false
+        this.problem.spj_compile_ok = true
+        this.error.spj = ''
+      }, err => {
+        this.loadingCompile = false
+        this.problem.spj_compile_ok = false
+        const h = this.$createElement
+        this.$msgbox({
+          title: 'Compile Error',
+          type: 'error',
+          message: h('pre', err.data.data),
+          showCancelButton: false,
+          closeOnClickModal: false,
+          customClass: 'dialog-compile-error'
+        })
+      })
+    },
+    submit () {
+      if (!this.problem.samples.length) {
+        this.$error('Sample is required')
+        return
+      }
+      for (const sample of this.problem.samples) {
+        if (!sample.input || !sample.output) {
+          this.$error('Sample input and output is required')
           return
         }
-        if (this.problem.rule_type === 'OI') {
-          for (let item of this.problem.test_case_score) {
-            try {
-              if (parseInt(item.score) <= 0) {
-                this.$error('Invalid test case score')
-                return
-              }
-            } catch (e) {
-              this.$error('Test case score must be an integer')
+      }
+
+      if (!this.problem.tags.length) {
+        this.error.tags = 'Please add at least one tag'
+        this.$error(this.error.tags)
+        return
+      }
+      if (this.problem.spj) {
+        if (!this.problem.spj_code) {
+          this.error.spj = 'Spj code is required'
+          this.$error(this.error.spj)
+        } else if (!this.problem.spj_compile_ok) {
+          this.error.spj = 'SPJ code has not been successfully compiled'
+        }
+        if (this.error.spj) {
+          this.$error(this.error.spj)
+          return
+        }
+      }
+      if (!this.problem.languages.length) {
+        this.error.languages = 'Please choose at least one language for problem'
+        this.$error(this.error.languages)
+        return
+      }
+      if (!this.testcase_file_upload) {
+        for (const testcase of this.problem.testcases) {
+          if (!testcase.input || !testcase.output) {
+            this.$error('Testcase input and output is required')
+            return
+          }
+        }
+        this.resetTestCase()
+      } else if (!this.testCaseUploaded) {
+        this.error.testCase = 'Test case is not uploaded yet'
+        this.$error(this.error.testCase)
+        return
+      }
+      if (this.problem.rule_type === 'OI') {
+        for (const item of this.problem.test_case_score) {
+          try {
+            if (parseInt(item.score) <= 0) {
+              this.$error('Invalid test case score')
               return
             }
+          } catch (e) {
+            this.$error('Test case score must be an integer')
+            return
           }
         }
-        this.problem.languages = this.problem.languages.sort()
-        this.problem.template = {}
-        for (let k in this.template) {
-          if (this.template[k].checked) {
-            this.problem.template[k] = this.template[k].code
-          }
+      }
+      this.problem.languages = this.problem.languages.sort()
+      this.problem.template = {}
+      for (const k in this.template) {
+        if (this.template[k].checked) {
+          this.problem.template[k] = this.template[k].code
         }
-        let funcName = {
-          'create-problem': 'createProblem',
-          'edit-problem': 'editProblem',
-          'create-contest-problem': 'createContestProblem',
-          'edit-contest-problem': 'editContestProblem'
-        }[this.routeName]
-        // edit contest problem 时, contest_id会被后来的请求覆盖掉
-        if (funcName === 'editContestProblem') {
-          this.problem.contest_id = this.contest.id
-        }
+      }
+      const funcName = {
+        'create-problem': 'createProblem',
+        'edit-problem': 'editProblem',
+        'create-contest-problem': 'createContestProblem',
+        'edit-contest-problem': 'editContestProblem'
+      }[this.routeName]
+      // edit contest problem 时, contest_id会被后来的请求覆盖掉
+      if (funcName === 'editContestProblem') {
+        this.problem.contest_id = this.contest.id
+      }
 
-        if (!this.testcase_file_upload) {
-          api.createTestCase([this.problem.testcases, this.problem.spj]).then(response => {
-            let fileList = response.data.data.info
-            for (let file of fileList) {
-              file.score = (100 / fileList.length).toFixed(0)
-              if (!file.output_name && this.problem.spj) {
-                file.output_name = '-'
-              }
+      if (!this.testcase_file_upload) {
+        api.createTestCase([this.problem.testcases, this.problem.spj]).then(response => {
+          const fileList = response.data.data.info
+          for (const file of fileList) {
+            file.score = (100 / fileList.length).toFixed(0)
+            if (!file.output_name && this.problem.spj) {
+              file.output_name = '-'
             }
-            this.problem.test_case_score = fileList
-            this.testCaseUploaded = true
-            this.problem.test_case_id = response.data.data.id
-            api[funcName](this.problem).then(res => {
-              if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
-                this.$router.push({name: 'contest-problem-list', params: {contestId: this.$route.params.contestId}})
-              } else {
-                this.$router.push({name: 'problem-list'})
-              }
-            }).catch(() => {
-            })
-          })
-        } else {
+          }
+          this.problem.test_case_score = fileList
+          this.testCaseUploaded = true
+          this.problem.test_case_id = response.data.data.id
           api[funcName](this.problem).then(res => {
             if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
-              this.$router.push({name: 'contest-problem-list', params: {contestId: this.$route.params.contestId}})
+              this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })
             } else {
-              this.$router.push({name: 'problem-list'})
+              this.$router.push({ name: 'problem-list' })
             }
           }).catch(() => {
           })
-        }
+        })
+      } else {
+        api[funcName](this.problem).then(res => {
+          if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
+            this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })
+          } else {
+            this.$router.push({ name: 'problem-list' })
+          }
+        }).catch(() => {
+        })
       }
     }
   }
+}
 </script>
 
 <style lang="less" scoped>
@@ -749,4 +749,3 @@
     overflow-x: scroll;
   }
 </style>
-
