@@ -1,4 +1,91 @@
 <template>
+  <div>
+    <b-card
+      title="Problem list"
+      class="border-0"
+      bg-variant="transparent"
+    >
+      <div class="category-container mb-2">
+        <b-dropdown text="Difficulty">
+          <b-dropdown-item href="#">Level1</b-dropdown-item>
+          <b-dropdown-item href="#">Level2</b-dropdown-item>
+          <b-dropdown-item href="#">Level3</b-dropdown-item>
+          <b-dropdown-item href="#">Level4</b-dropdown-item>
+          <b-dropdown-item href="#">Level5</b-dropdown-item>
+          <b-dropdown-item href="#">Level6</b-dropdown-item>
+          <b-dropdown-item href="#">Level7</b-dropdown-item>
+        </b-dropdown>
+        <div>
+          <b-form-checkbox v-model="checked" name="check-button" switch class="mr-2">
+            tags
+          </b-form-checkbox>
+        </div>
+        <b-input-group class="col-4">
+          <b-input-group-prepend is-text>
+            <b-icon icon="search"></b-icon>
+          </b-input-group-prepend>
+          <b-form-input placeholder="keywords"></b-form-input>
+        </b-input-group>
+      </div>
+      <div class="table">
+        <b-table
+          hover
+          :items="items"
+          :per-page="perPage"
+          :current-page="currentPage"
+          head-variant="light"
+        ></b-table>
+      </div>
+      <div class="pagination">
+        <b-pagination
+          aria-controls="notice-list"
+          v-model="currentPage"
+          :total-rows=100
+          :per-page="perPage"
+          limit="3"
+        ></b-pagination>
+      </div>
+    </b-card>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      perPage: 10,
+      currentPage: 1,
+      items: [
+        { number: 154, title: '가파른 경사', level: 'level1', submissions: 132, AC_rate: '92.14%' },
+        { number: 1006, title: '습격자 호루라기', level: 'level2', submissions: 56, AC_rate: '0.61%' },
+        { number: 1626, title: '두번째 JMT', level: 'level3', submissions: 89, AC_rate: '83.33%' }
+      ]
+    }
+  },
+  computed: {
+    rows () {
+      return this.items.length
+    }
+  }
+}
+</script>
+
+<style>
+  .pagination{
+    display: flex;
+    justify-content: flex-end;
+  }
+  .category-container{
+    display:flex;
+    justify-content:flex-end;
+  }
+  .dropdown-toggle{
+    margin-right:2em;
+  }
+</style>
+
+<!--
+<template>
   <Row
     type="flex"
     :gutter="18"
@@ -358,3 +445,4 @@ export default {
     margin-top: 10px;
   }
 </style>
+-->

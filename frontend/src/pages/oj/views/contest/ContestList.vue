@@ -1,4 +1,62 @@
 <template>
+  <div>
+    <b-card
+      title="All Contest"
+      class="border-0"
+      bg-variant="transparent"
+    >
+      <div class="table">
+        <b-table
+          hover
+          :items="items"
+          :per-page="perPage"
+          :current-page="currentPage"
+          head-variant="light"
+        ></b-table>
+      </div>
+      <div class="pagination">
+          <b-pagination
+            aria-controls="notice-list"
+            v-model="currentPage"
+            :total-rows=100
+            :per-page="perPage"
+            limit="3"
+          ></b-pagination>
+      </div>
+    </b-card>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      perPage: 10,
+      currentPage: 1,
+      items: [
+        { title: 'SKKU Coding Platform 2차 모의대회', start_time: '2021-12-31 15:00', duration: '02:00', status: 'Ongoing' },
+        { title: 'SKKU Coding Platform 3차 모의대회', start_time: '2021-01-01 15:30', duration: '02:15', status: 'Before Start 29:02:07' },
+        { title: 'SKKU Coding Platform 모의대회', start_time: '2021-02-20 15:00', duration: '03:00', status: 'Ended' }
+      ]
+    }
+  },
+  computed: {
+    rows () {
+      return this.items.length
+    }
+  }
+}
+</script>
+
+<style>
+  .pagination{
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>
+
+<!--
+<template>
   <Row type="flex">
     <Col :span="24">
     <Panel
@@ -298,3 +356,4 @@ export default {
     }
   }
 </style>
+-->
