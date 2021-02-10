@@ -26,9 +26,6 @@
         </CarouselItem>
       </Carousel>
     </panel>
-    <div>
-      <b-button>owow</b-button>
-    </div>
     <Announcements class="announcement"></Announcements>
     </Col>
   </Row>

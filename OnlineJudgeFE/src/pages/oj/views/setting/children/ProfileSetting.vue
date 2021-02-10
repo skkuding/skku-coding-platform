@@ -12,7 +12,7 @@
 
       <b-form>
         <h3 class="columnName">{{$t('m.Major')}}</h3>
-          <b-form-select v-model="formProfile.major" :options="majors"></b-form-select>
+          <b-form-select v-model="formProfile.major" :options="majors" :selected="formProfile.major"></b-form-select>
         <b-button variant="success" @click="updateProfile" :loading="loadingSaveBtn"> 
           {{$t('m.Change_Major')}}
         </b-button>
@@ -20,7 +20,7 @@
 
       <b-form>
         <h3 class="columnName">{{$t('m.Semester')}}</h3>
-          <b-form-select v-model="formProfile.semester" :options="semesters"></b-form-select>
+          <b-form-select v-model="formProfile.semester" :options="semesters" :selected="formProfile.semester"></b-form-select>
         <b-button variant="success" @click="updateProfile" :loading="loadingSaveBtn"> 
           {{$t('m.Change_Semester')}}
         </b-button>
@@ -31,16 +31,16 @@
       <b-form>
         <h3 class="columnName">{{$t('m.ChangePassword')}}</h3>
         <b-form-group label="Current Password" prop="old_password">
-          <b-form-input type="password" v-model="formPassword.old_password"></b-form-input>
+          <b-form-input type="password" v-model="formPassword.old_password" required></b-form-input>
         </b-form-group>
         <b-form-group label="New Password" prop="new_password">
-          <b-form-input type="password" v-model="formPassword.new_password"></b-form-input>
+          <b-form-input type="password" v-model="formPassword.new_password" required></b-form-input>
         </b-form-group>
         <b-form-group label="Confirm New Password" prop="again_password">
-          <b-form-input type="password" v-model="formPassword.again_password"></b-form-input>
+          <b-form-input type="password" v-model="formPassword.again_password" required></b-form-input>
         </b-form-group>
         <b-form-group v-if="visible.tfaRequired" label="Two Factor Auth" prop="tfa_coded">
-          <b-form-input type="password" v-model="formPassword.again_password"></b-form-input>
+          <b-form-input type="password" v-model="formPassword.again_password" required></b-form-input>
         </b-form-group>
         <b-form-group v-if="visible.passwordAlert">
           <b-alert variant="success">You will need to login again after 5 seconds..</b-alert>
@@ -104,6 +104,10 @@
         callback()
       }
       return {
+        loading: {
+          btnPassword: false,
+          btnEmail: false
+        },
         loadingSaveBtn: false,
         loadingUploadBtn: false,
         uploadModalVisible: false,
@@ -127,10 +131,19 @@
           { value: 'd', text: 'This one is disabled', disabled: true }
         ],
         majors: [
-          { value: null, text: 'Major' },
-          { value: 'CS', text: 'Computer Science' },
-          { value: 'SW', text: 'Software' },
-          { value: 'Others', text: 'Others' }
+          {value: null, text: 'Major'},
+          {value: 'CS', text: 'Computer Science (컴퓨터공학과)'},
+          {value: 'CSE', text: 'Computer Science and Engineering (소프트웨어학과)'},
+          {value: 'Eng', text: 'Engineering (공학계열)'},
+          {value: 'Nat.Sci', text: 'Natural Science (자연과학계열)'},
+          {value: 'SOC', text: 'School of Convergence (글로벌융합학부)'},
+          {value: 'BE', text: 'Biomedical Engineering (글로벌바이오메디컬공학과)'},
+          {value: 'EE', text: 'Electronic and Electrical Engineering (전자전기공학부)'},
+          {value: 'SSE', text: 'Semiconductor Systems Engineering (반도체시스템공학과)'},
+          {value: 'SS', text: 'Sport Science (스포츠과학과)'},
+          {value: 'Phar.', text: 'Pharmacy (약학과)'},
+          {value: 'Medi.', text: 'Medicine (의예과/의학과)'},
+          {value: 'Others', text: 'Others (이 외 다른 학과)'}
         ],
         semesters: [
           { value: null, text: 'Semesters' },
@@ -181,7 +194,13 @@
           this.formProfile[element] = profile[element]
         }
       })
+      let user = this.$store.getters.user // major도 이렇게 받아올 수 있는데 api 호출을 해야하나? <<- 전공 수정해도 이게 되는지 보자
+      // let userId = user.username
       this.formEmail.old_email = this.$store.getters.user.email || ''
+      // api.getUserInfo(userId).then(res => {
+      //   this.formProfile.major = res.data.data.user.major
+      // })
+      this.formProfile.major = user.major
     },
     methods: {
       checkFileType (file) {
@@ -241,9 +260,10 @@
           this.uploadModalVisible = true
         })
       },
-      updateProfile () {
+      updateProfile () { // major는 유저에 있는데 얘는 유저 프로필을 업뎃..ㅎㅎ
         this.loadingSaveBtn = true
         let updateData = utils.filterEmptyValue(Object.assign({}, this.formProfile))
+        console.log(updateData)
         api.updateProfile(updateData).then(res => {
           this.$success('Success')
           this.$store.commit(types.CHANGE_PROFILE, {profile: res.data.data})
@@ -253,46 +273,48 @@
         })
       },
       changePassword () {
-        this.validateForm('formPassword').then(valid => {
-          this.loading.btnPassword = true
-          let data = Object.assign({}, this.formPassword)
-          delete data.again_password
-          if (!this.visible.tfaRequired) {
-            delete data.tfa_code
+        this.loading.btnPassword = true
+        let data = Object.assign({}, this.formPassword)
+        if (data.again_password !== data.new_password) {
+          return this.$error('New password does not match')
+        }
+        if (data.old_password === data.new_password) {
+          return this.$error('The new password doesn\'t change')
+        }
+        delete data.again_password
+        if (!this.visible.tfaRequired) {
+          delete data.tfa_code
+        }
+        api.changePassword(data).then(res => {
+          this.loading.btnPassword = false
+          this.visible.passwordAlert = true
+          this.$success('Update password successfully')
+          setTimeout(() => {
+            this.visible.passwordAlert = false
+            this.$router.push({name: 'logout'})
+          }, 3000)
+        }, res => {
+          if (res.data.data === 'tfa_required') {
+            this.visible.tfaRequired = true
           }
-          api.changePassword(data).then(res => {
-            this.loading.btnPassword = false
-            this.visible.passwordAlert = true
-            this.$success('Update password successfully')
-            setTimeout(() => {
-              this.visible.passwordAlert = false
-              this.$router.push({name: 'logout'})
-            }, 5000)
-          }, res => {
-            if (res.data.data === 'tfa_required') {
-              this.visible.tfaRequired = true
-            }
-            this.loading.btnPassword = false
-          })
+          this.loading.btnPassword = false
         })
       },
       changeEmail () {
-        this.validateForm('formEmail').then(valid => {
-          this.loading.btnEmail = true
-          let data = Object.assign({}, this.formEmail)
-          if (!this.visible.tfaRequired) {
-            delete data.tfa_code
+        this.loading.btnEmail = true
+        let data = Object.assign({}, this.formEmail)
+        if (!this.visible.tfaRequired) {
+          delete data.tfa_code
+        }
+        api.changeEmail(data).then(res => {
+          this.loading.btnEmail = false
+          this.visible.emailAlert = true
+          this.$success('Change email successfully')
+          // this.$refs.formEmail.resetFields() // FormValidation 꺼임
+        }, res => {
+          if (res.data.data === 'tfa_required') {
+            this.visible.tfaRequired = true
           }
-          api.changeEmail(data).then(res => {
-            this.loading.btnEmail = false
-            this.visible.emailAlert = true
-            this.$success('Change email successfully')
-            this.$refs.formEmail.resetFields()
-          }, res => {
-            if (res.data.data === 'tfa_required') {
-              this.visible.tfaRequired = true
-            }
-          })
         })
       }
 
