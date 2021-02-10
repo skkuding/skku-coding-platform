@@ -192,6 +192,10 @@ REST_FRAMEWORK = {
     )
 }
 
+SPECTACULAR_SETTINGS = {
+    'SERVERS': [{"url": 'http://localhost/'}],
+}
+
 REDIS_URL = "redis://%s:%s" % (REDIS_CONF["host"], REDIS_CONF["port"])
 
 

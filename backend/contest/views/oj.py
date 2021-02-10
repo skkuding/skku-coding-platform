@@ -4,6 +4,7 @@ import xlsxwriter
 from django.http import HttpResponse
 from django.utils.timezone import now
 from django.core.cache import cache
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from problem.models import Problem
 from utils.api import APIView, validate_serializer
@@ -20,6 +21,23 @@ from ..serializers import OIContestRankSerializer, ACMContestRankSerializer
 
 
 class ContestAnnouncementListAPI(APIView):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='contest_id',
+                description='Unique id of contest',
+                required=True,
+                type=int,
+            ),
+            OpenApiParameter(
+                name='max_id',
+                description='Announcements posted later than id',
+                type=int,
+            ),
+        ],
+        request=None,
+        description='Get Contest Announcement List',
+    )
     @check_contest_permission(check_type="announcements")
     def get(self, request):
         contest_id = request.GET.get("contest_id")
@@ -33,6 +51,17 @@ class ContestAnnouncementListAPI(APIView):
 
 
 class ContestAPI(APIView):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                description='Unique id of contest',
+                required=True,
+                type=int,
+            ),
+        ],
+        description='More descriptive text',
+    )
     def get(self, request):
         id = request.GET.get("id")
         if not id or not check_is_id(id):

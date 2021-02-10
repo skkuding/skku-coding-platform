@@ -6,6 +6,7 @@ from django.http import HttpResponse, QueryDict
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+from drf_spectacular.views import SpectacularAPIView
 
 logger = logging.getLogger("")
 
@@ -50,16 +51,8 @@ class JSONResponse(object):
         return resp
 
 
-class APIView(View):
+class APIView(SpectacularAPIView):
     """
-    Django view的父类, 和django-rest-framework的用法基本一致
-     - request.data获取解析之后的json或者urlencoded数据, dict类型
-     - self.success, self.error和self.invalid_serializer可以根据业需求修改,
-        写到父类中是为了不同的人开发写法统一,不再使用自己的success/error格式
-     - self.response 返回一个django HttpResponse, 具体在self.response_class中实现
-     - parse请求的类需要定义在request_parser中, 目前只支持json和urlencoded的类型, 用来解析请求的数据
-
-
     The parent class of Django view, and the usage of django-rest-framework is basically the same
       - request.data to get parsed json or urlencoded data, dict type
       - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
