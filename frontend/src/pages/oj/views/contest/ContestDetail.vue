@@ -1,9 +1,128 @@
 <template>
-  <div>
-    <b-card
-      title="SKKU Coding Platform 2차 모의대회"
-      class="border-0"
-      bg-variant="transparent"
+    <div>
+        <b-card title="SKKU Coding Platform 2차 모의대회" class="border-0" bg-variant="transparent">
+          <div class="status mb-2">
+            <b-badge pill variant="primary">Ongoing</b-badge>
+          </div>
+          <div class="table">
+            <b-table
+              hover
+              :items="items"
+              :per-page="perPage"
+              :current-page="currentPage"
+              head-variant="light"
+            ></b-table>
+          </div>
+          <div class="pagination">
+              <b-pagination
+                aria-controls="notice-list"
+                v-model="currentPage"
+                :total-rows=100
+                :per-page="perPage"
+                limit="3"
+              ></b-pagination>
+          </div>
+        </b-card>
+    </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      perPage: 10,
+      currentPage: 1,
+      items: [
+        { number: 'A', title: '가파른 경사' },
+        { number: 'B', title: '습격자 호루라기' },
+        { number: 'C', title: '두번째 JMT' }
+      ]
+    }
+  },
+  computed: {
+    rows () {
+      return this.items.length
+    }
+  }
+}
+</script>
+
+<style>
+  .pagination{
+
+    display: flex;
+    justify-content: flex-end;
+  }
+  .status{
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>
+
+<!--
+<template>
+  <div class="flex-container">
+    <div id="contest-main">
+      <transition name="fadeInUp">
+        <router-view />
+      </transition>
+      <div
+        v-if="route_name === 'contest-details'"
+        class="flex-container"
+      >
+        <template>
+          <div id="contest-desc">
+            <Panel
+              :padding="20"
+              shadow
+            >
+              <div slot="title">
+                {{ contest.title }}
+              </div>
+              <div slot="extra">
+                <Tag
+                  type="dot"
+                  :color="countdownColor"
+                >
+                  <span id="countdown">{{ countdown }}</span>
+                </Tag>
+              </div>
+              <div
+                class="markdown-body"
+                v-html="contest.description"
+              />
+              <div
+                v-if="passwordFormVisible"
+                class="contest-password"
+              >
+                <Input
+                  v-model="contestPassword"
+                  type="password"
+                  placeholder="contest password"
+                  class="contest-password-input"
+                  @on-enter="checkPassword"
+                />
+                <Button
+                  type="info"
+                  @click="checkPassword"
+                >
+                  Enter
+                </Button>
+              </div>
+            </Panel>
+            <Table
+              :columns="columns"
+              :data="contest_table"
+              disabled-hover
+              style="margin-bottom: 40px;"
+            />
+          </div>
+        </template>
+      </div>
+    </div>
+    <div
+      v-show="showMenu"
+      id="contest-menu"
     >
       <div class="status mb-2">
         <b-badge pill variant="primary">Ongoing</b-badge>

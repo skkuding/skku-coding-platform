@@ -1,14 +1,127 @@
 <template>
   <div>
-    <div class="table">
-      <b-table
-        hover
-        :items="contests"
-        :fields="contestListFields"
-        :per-page="perPage"
-        :current-page="currentPage"
-        head-variant="light"
-        @row-clicked="goContest"
+    <b-card
+      title="All Contest"
+      class="border-0"
+      bg-variant="transparent"
+    >
+      <div class="table">
+        <b-table
+          hover
+          :items="items"
+          :per-page="perPage"
+          :current-page="currentPage"
+          head-variant="light"
+        ></b-table>
+      </div>
+      <div class="pagination">
+          <b-pagination
+            aria-controls="notice-list"
+            v-model="currentPage"
+            :total-rows=100
+            :per-page="perPage"
+            limit="3"
+          ></b-pagination>
+      </div>
+    </b-card>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      perPage: 10,
+      currentPage: 1,
+      items: [
+        { title: 'SKKU Coding Platform 2차 모의대회', start_time: '2021-12-31 15:00', duration: '02:00', status: 'Ongoing' },
+        { title: 'SKKU Coding Platform 3차 모의대회', start_time: '2021-01-01 15:30', duration: '02:15', status: 'Before Start 29:02:07' },
+        { title: 'SKKU Coding Platform 모의대회', start_time: '2021-02-20 15:00', duration: '03:00', status: 'Ended' }
+      ]
+    }
+  },
+  computed: {
+    rows () {
+      return this.items.length
+    }
+  }
+}
+</script>
+
+<style>
+  .pagination{
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>
+
+<!--
+<template>
+  <Row type="flex">
+    <Col :span="24">
+    <Panel
+      id="contest-card"
+      shadow
+    >
+      <div slot="title">
+        {{ query.rule_type === '' ? this.$i18n.t('m.All') : query.rule_type }} {{ $t('m.Contests') }}
+      </div>
+      <div slot="extra">
+        <ul class="filter">
+          <li>
+            <Dropdown @on-click="onRuleChange">
+              <span>{{ query.rule_type === '' ? this.$i18n.t('m.Rule') : this.$i18n.t('m.' + query.rule_type) }}
+                <Icon type="arrow-down-b" />
+              </span>
+              <Dropdown-menu slot="list">
+                <Dropdown-item name="">
+                  {{ $t('m.All') }}
+                </Dropdown-item>
+                <Dropdown-item name="OI">
+                  {{ $t('m.OI') }}
+                </Dropdown-item>
+                <Dropdown-item name="ACM">
+                  {{ $t('m.ACM') }}
+                </Dropdown-item>
+              </Dropdown-menu>
+            </Dropdown>
+          </li>
+          <li>
+            <Dropdown @on-click="onStatusChange">
+              <span>{{ query.status === '' ? this.$i18n.t('m.Status') : this.$i18n.t('m.' + CONTEST_STATUS_REVERSE[query.status].name.replace(/ /g,"_")) }}
+                <Icon type="arrow-down-b" />
+              </span>
+              <Dropdown-menu slot="list">
+                <Dropdown-item name="">
+                  {{ $t('m.All') }}
+                </Dropdown-item>
+                <Dropdown-item name="0">
+                  {{ $t('m.Underway') }}
+                </Dropdown-item>
+                <Dropdown-item name="1">
+                  {{ $t('m.Not_Started') }}
+                </Dropdown-item>
+                <Dropdown-item name="-1">
+                  {{ $t('m.Ended') }}
+                </Dropdown-item>
+              </Dropdown-menu>
+            </Dropdown>
+          </li>
+          <li>
+            <Input
+              id="keyword"
+              v-model="query.keyword"
+              icon="ios-search-strong"
+              placeholder="Keyword"
+              @on-enter="changeRoute"
+              @on-click="changeRoute"
+            />
+          </li>
+        </ul>
+      </div>
+      <p
+        v-if="contests.length == 0"
+        id="no-contest"
       >
         <template #cell(start_time)="data">
           {{ getTimeFormat(data.value, "YYYY-M-D HH:mm") }}
@@ -206,4 +319,7 @@ export default {
 }
 </style>
 -->
+<<<<<<< HEAD
 © 2021 GitHub, Inc.
+=======
+>>>>>>> problem list
