@@ -194,7 +194,7 @@
           this.formProfile[element] = profile[element]
         }
       })
-      let user = this.$store.getters.user // major도 이렇게 받아올 수 있는데 api 호출을 해야하나? <<- 전공 수정해도 이게 되는지 보자
+      let user = this.$store.getters.user
       // let userId = user.username
       this.formEmail.old_email = this.$store.getters.user.email || ''
       // api.getUserInfo(userId).then(res => {
@@ -260,7 +260,7 @@
           this.uploadModalVisible = true
         })
       },
-      updateProfile () { // major는 유저에 있는데 얘는 유저 프로필을 업뎃..ㅎㅎ
+      updateProfile () {
         this.loadingSaveBtn = true
         let updateData = utils.filterEmptyValue(Object.assign({}, this.formProfile))
         console.log(updateData)
@@ -310,7 +310,6 @@
           this.loading.btnEmail = false
           this.visible.emailAlert = true
           this.$success('Change email successfully')
-          // this.$refs.formEmail.resetFields() // FormValidation 꺼임
         }, res => {
           if (res.data.data === 'tfa_required') {
             this.visible.tfaRequired = true
