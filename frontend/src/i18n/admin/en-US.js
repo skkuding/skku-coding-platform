@@ -17,6 +17,7 @@ export const m = {
   Contest: 'Contest',
   Contest_List: 'Contest List',
   Create_Contest: 'Create Contest',
+  Statistics: 'Statistics',
   // User.vue
   User_User: 'User',
   Import_User: 'Import User',
@@ -125,5 +126,7 @@ export const m = {
   Welcome_to_Login: 'Welcome to Login',
   GO: 'GO',
   username: 'username',
-  password: 'password'
+  password: 'password',
+  // Statistics.vue
+  Select_Contests: 'Select Contests'
 }

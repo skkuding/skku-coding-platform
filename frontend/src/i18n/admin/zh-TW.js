@@ -17,6 +17,7 @@ export const m = {
   Contest: '比賽',
   Contest_List: '比賽列表',
   Create_Contest: '建立比賽',
+  Statistics: '统计',
   // User.vue
   User_User: '使用者',
   Import_User: '匯入使用者',
@@ -106,5 +107,7 @@ export const m = {
   DashBoardJudge_Server: 'Judge 伺服器',
   HTTPS_Status: 'HTTPS 狀態',
   Force_HTTPS: '強制 HTTPS',
-  CDN_HOST: 'CDN HOST'
+  CDN_HOST: 'CDN HOST',
+  // Statistics.vue
+  Select_Contests: '选择比赛'
 }

@@ -64,6 +64,9 @@
         {{ $t('m.Create_Contest') }}
       </el-menu-item>
     </el-submenu>
+    <el-menu-item index="/statistics">
+      <i class="el-icon-data-line" />{{ $t('m.Statistics') }}
+    </el-menu-item>
   </el-menu>
 </template>
 

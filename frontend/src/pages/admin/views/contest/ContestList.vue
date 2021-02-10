@@ -79,7 +79,7 @@
         </el-table-column>
         <el-table-column
           fixed="right"
-          width="250"
+          width="240"
           label="Operation"
         >
           <div slot-scope="scope">
@@ -99,9 +99,14 @@
               @click.native="goContestAnnouncement(scope.row.id)"
             />
             <icon-btn
-              icon="download"
               name="Download Accepted Submissions"
+              icon="download"
               @click.native="openDownloadOptions(scope.row.id)"
+            />
+            <icon-btn
+              name="See Statistics for each Contest"
+              icon="line-chart"
+              @click.native="goContestStatistics(scope.row.id)"
             />
           </div>
         </el-table-column>
@@ -204,6 +209,9 @@ export default {
     },
     goContestProblemList (contestId) {
       this.$router.push({ name: 'contest-problem-list', params: { contestId } })
+    },
+    goContestStatistics (contestId) {
+      this.$router.push({ name: 'contest-statistics', params: { contestId } })
     },
     handleVisibleSwitch (row) {
       api.editContest(row)

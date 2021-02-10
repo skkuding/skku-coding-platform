@@ -17,6 +17,7 @@ export const m = {
   Contest: '比赛&练习',
   Contest_List: '比赛列表',
   Create_Contest: '创建比赛',
+  Statistics: '统计',
   // User.vue
   User_User: '用户',
   Import_User: '导入用户',
@@ -120,5 +121,7 @@ export const m = {
   Welcome_to_Login: '欢迎登录 OnlineJudge 后台管理系统',
   GO: '登录',
   username: '用户名',
-  password: '密码'
+  password: '密码',
+  // Statistics.vue
+  Select_Contests: '選擇比賽'
 }
