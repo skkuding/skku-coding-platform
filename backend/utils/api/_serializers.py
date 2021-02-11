@@ -10,5 +10,5 @@ class UsernameSerializer(serializers.Serializer):
         self.need_real_name = kwargs.pop("need_real_name", False)
         super().__init__(*args, **kwargs)
 
-    def get_real_name(self, obj):
+    def get_real_name(self, obj) -> str:
         return obj.userprofile.real_name if self.need_real_name else None

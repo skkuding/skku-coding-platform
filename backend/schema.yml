@@ -9,14 +9,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -110,14 +102,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -128,144 +112,6 @@ paths:
         '204':
           description: No response body
   /api/admin/compile_spj/:
-    get:
-      operationId: api_admin_compile_spj_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
     post:
       operationId: api_admin_compile_spj_create
       description: Uploading testcase
@@ -306,14 +152,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -334,12 +172,59 @@ paths:
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
       parameters:
       - in: query
-        name: format
+        name: allowed_ip_ranges
+        schema:
+          type: array
+          items:
+            type: string
+        required: true
+      - in: query
+        name: description
         schema:
           type: string
+        required: true
+      - in: query
+        name: end_time
+        schema:
+          type: string
+          format: date-time
+        required: true
+      - in: query
+        name: password
+        schema:
+          type: string
+          maxLength: 32
+        required: true
+      - in: query
+        name: real_time_rank
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: rule_type
+        schema:
           enum:
-          - json
-          - yaml
+          - ACM
+          - OI
+          type: string
+        required: true
+      - in: query
+        name: start_time
+        schema:
+          type: string
+          format: date-time
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 128
+        required: true
+      - in: query
+        name: visible
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -360,12 +245,57 @@ paths:
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
       parameters:
       - in: query
-        name: format
+        name: allowed_ip_ranges
+        schema:
+          type: array
+          items:
+            type: string
+        required: true
+      - in: query
+        name: description
         schema:
           type: string
-          enum:
-          - json
-          - yaml
+        required: true
+      - in: query
+        name: end_time
+        schema:
+          type: string
+          format: date-time
+        required: true
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: password
+        schema:
+          type: string
+          nullable: true
+          maxLength: 32
+        required: true
+      - in: query
+        name: real_time_rank
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: start_time
+        schema:
+          type: string
+          format: date-time
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 128
+        required: true
+      - in: query
+        name: visible
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -378,21 +308,7 @@ paths:
   /api/admin/contest/acm_helper/:
     get:
       operationId: api_admin_contest_acm_helper_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
+      description: Get ACM contest rank
       tags:
       - api
       security:
@@ -413,12 +329,25 @@ paths:
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
       parameters:
       - in: query
-        name: format
+        name: checked
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: contest_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: problem_id
         schema:
           type: string
-          enum:
-          - json
-          - yaml
+        required: true
+      - in: query
+        name: rank_id
+        schema:
+          type: integer
+        required: true
       tags:
       - api
       security:
@@ -429,144 +358,6 @@ paths:
         '200':
           description: No response body
   /api/admin/contest/add_problem_from_public/:
-    get:
-      operationId: api_admin_contest_add_problem_from_public_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
     post:
       operationId: api_admin_contest_add_problem_from_public_create
       description: Add new problems into the contest.
@@ -605,15 +396,19 @@ paths:
   /api/admin/contest/announcement/:
     get:
       operationId: api_admin_contest_announcement_retrieve
-      description: Get one contest_announcement or contest_announcement list.
+      description: Get single contest announcement, or contest announcement list of
+        a contest
       parameters:
       - in: query
-        name: format
+        name: contest_id
         schema:
-          type: string
-          enum:
-          - json
-          - yaml
+          type: integer
+        description: Id of contest
+      - in: query
+        name: id
+        schema:
+          type: integer
+        description: Id of contest announcement
       tags:
       - api
       security:
@@ -628,12 +423,26 @@ paths:
       description: Create one contest_announcement.
       parameters:
       - in: query
-        name: format
+        name: content
         schema:
           type: string
-          enum:
-          - json
-          - yaml
+        required: true
+      - in: query
+        name: contest_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 128
+        required: true
+      - in: query
+        name: visible
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -648,12 +457,23 @@ paths:
       description: update contest_announcement
       parameters:
       - in: query
-        name: format
+        name: content
         schema:
           type: string
-          enum:
-          - json
-          - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 128
+      - in: query
+        name: visible
+        schema:
+          type: boolean
       tags:
       - api
       security:
@@ -668,12 +488,11 @@ paths:
       description: Delete one contest_announcement.
       parameters:
       - in: query
-        name: format
+        name: id
         schema:
-          type: string
-          enum:
-          - json
-          - yaml
+          type: integer
+        description: Id of contest announcement to delete
+        required: true
       tags:
       - api
       security:
@@ -1120,8 +939,8 @@ paths:
         '204':
           description: No response body
   /api/admin/contest_problem/make_public/:
-    get:
-      operationId: api_admin_contest_problem_make_public_retrieve
+    post:
+      operationId: api_admin_contest_problem_make_public_create
       description: |-
         The parent class of Django view, and the usage of django-rest-framework is basically the same
           - request.data to get parsed json or urlencoded data, dict type
@@ -1350,12 +1169,15 @@ paths:
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
       parameters:
       - in: query
-        name: format
+        name: contest_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: exclude_admin
         schema:
           type: string
-          enum:
-          - json
-          - yaml
+        description: Set value '1' to exclude admin
       tags:
       - api
       security:
@@ -1397,14 +1219,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -1445,144 +1259,6 @@ paths:
         '200':
           description: No response body
   /api/admin/import_fps/:
-    get:
-      operationId: api_admin_import_fps_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
     post:
       operationId: api_admin_import_fps_create
       description: tmp
@@ -1689,144 +1365,6 @@ paths:
         '200':
           description: No response body
   /api/admin/import_problem/:
-    get:
-      operationId: api_admin_import_problem_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
     post:
       operationId: api_admin_import_problem_create
       description: Import problems through .zip file
@@ -1957,14 +1495,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -2509,7 +2039,6 @@ paths:
         of the given arguments and keywords.
       parameters:
       - in: query
-        name: format
         schema:
           type: string
           enum:
@@ -2569,8 +2098,6 @@ paths:
           maxLength: 32
         required: true
       tags:
-      - api
-      security:
       - cookieAuth: []
       - basicAuth: []
       - {}
@@ -2609,14 +2136,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -2631,14 +2150,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -2649,157 +2160,11 @@ paths:
         '200':
           description: No response body
   /api/admin/smtp_test/:
-    get:
-      operationId: api_admin_smtp_test_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
     post:
       operationId: api_admin_smtp_test_create
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -2815,14 +2180,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -2873,14 +2230,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -2891,8 +2240,8 @@ paths:
         '200':
           description: No response body
   /api/admin/upload_file/:
-    get:
-      operationId: api_admin_upload_file_retrieve
+    post:
+      operationId: api_admin_upload_file_create
       description: |-
         The parent class of Django view, and the usage of django-rest-framework is basically the same
           - request.data to get parsed json or urlencoded data, dict type
@@ -2900,109 +2249,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
       tags:
       - api
       security:
@@ -3011,24 +2257,163 @@ paths:
       - {}
       responses:
         '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
+          description: No response body
+  /api/admin/upload_image/:
+    post:
+      operationId: api_admin_upload_image_create
+      description: |-
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/admin/user/:
+    get:
+      operationId: api_admin_user_retrieve
+      description: |-
+        partial(func, *args, **keywords) - new function with partial application
+        of the given arguments and keywords.
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_admin_user_create
+      description: |-
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: api_admin_user_update
+      description: |-
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: api_admin_user_destroy
+      description: |-
+        partial(func, *args, **keywords) - new function with partial application
+        of the given arguments and keywords.
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/admin/versions/:
+    get:
+      operationId: api_admin_versions_retrieve
+      description: |-
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/admin/website/:
+    get:
+      operationId: api_admin_website_retrieve
+      description: |-
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_admin_website_create
+      description: |-
+        partial(func, *args, **keywords) - new function with partial application
+        of the given arguments and keywords.
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/announcement/:
+    get:
+      operationId: api_announcement_retrieve
+      description: |-
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/apply_reset_password/:
     post:
       operationId: api_admin_upload_file_create
       description: Use enctype=multipart/form-data in Frontend
@@ -3049,9 +2434,9 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/admin/upload_image/:
+  /api/captcha/:
     get:
-      operationId: api_admin_upload_image_retrieve
+      operationId: api_captcha_retrieve
       description: |-
         The parent class of Django view, and the usage of django-rest-framework is basically the same
           - request.data to get parsed json or urlencoded data, dict type
@@ -3059,109 +2444,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
       tags:
       - api
       security:
@@ -3170,24 +2452,8 @@ paths:
       - {}
       responses:
         '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
+          description: No response body
+  /api/change_email/:
     post:
       operationId: api_admin_upload_image_create
       description: Use enctype=multipart/form-data in Frontend
@@ -3208,20 +2474,49 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/admin/user/:
-    get:
-      operationId: api_admin_user_retrieve
+  /api/change_password/:
+    post:
+      operationId: api_change_password_create
       description: |-
-        partial(func, *args, **keywords) - new function with partial application
-        of the given arguments and keywords.
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/check_username_or_email:
+    post:
+      operationId: api_check_username_or_email_create
+      description: check username or email is duplicate
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/contest/:
+    get:
+      operationId: api_contest_retrieve
+      description: Contest details
       parameters:
       - in: query
-        name: format
+        name: id
         schema:
-          type: string
-          enum:
-          - json
-          - yaml
+          type: integer
+        description: Unique id of contest
+        required: true
       tags:
       - api
       security:
@@ -3236,12 +2531,16 @@ paths:
       description: Import User
       parameters:
       - in: query
-        name: format
+        name: contest_id
         schema:
-          type: string
-          enum:
-          - json
-          - yaml
+          type: integer
+        description: Unique id of contest
+        required: true
+      - in: query
+        name: max_id
+        schema:
+          type: integer
+        description: Announcements posted later than id
       tags:
       - api
       security:
@@ -3275,9 +2574,20 @@ paths:
         name: format
         schema:
           type: string
+          maxLength: 30
+        required: true
+      tags:
+      - api
+        schema:
+          type: string
           enum:
           - json
           - yaml
+      - in: query
+        name: problem_id
+        schema:
+          type: integer
+        description: Unique id of problem
       tags:
       - api
       security:
@@ -3287,40 +2597,20 @@ paths:
       responses:
         '200':
           description: No response body
-    delete:
-      operationId: api_admin_user_destroy
-      description: |-
-        partial(func, *args, **keywords) - new function with partial application
-        of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '204':
-          description: No response body
-  /api/admin/versions/:
+  /api/contest_rank/:
     get:
       operationId: api_admin_versions_retrieve
       description: Get ReleaseNotes
       parameters:
       - in: query
-        name: format
+        name: download_csv
+        schema:
+          type: boolean
+      - in: query
+        name: force_refresh
         schema:
           type: string
-          enum:
-          - json
-          - yaml
+        description: Set value '1' to force refresh
       tags:
       - api
       security:
@@ -3330,40 +2620,63 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/admin/website/:
+  /api/contest_submissions/:
     get:
       operationId: api_admin_website_retrieve
       description: Get Website Config
       parameters:
       - in: query
-        name: format
+        name: keyword
         schema:
           type: string
-          enum:
-          - json
-          - yaml
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
-    post:
-      operationId: api_admin_website_create
-      description: |-
-        partial(func, *args, **keywords) - new function with partial application
-        of the given arguments and keywords.
-      parameters:
+        description: Keyword of contest title to be included
       - in: query
-        name: format
+        name: limit
+        schema:
+          type: integer
+          default: 10
+        description: Length of contest list
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          default: 0
+        description: Id of first contest of list
+      - in: query
+        name: rule_type
         schema:
           type: string
-          enum:
-          - json
-          - yaml
+        description: Rule type (ACM or OI)
+      - in: query
+        name: status
+        schema:
+          type: integer
+        description: Contest status (NOT_START(1), UNDERWAY(0), ENDED(-1))
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contest'
+          description: ''
+  /api/judge_server_heartbeat/:
+    post:
+      operationId: api_judge_server_heartbeat_create
+      description: |-
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
       tags:
       - api
       security:
@@ -3373,7 +2686,7 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/announcement/:
+  /api/languages/:
     get:
       operationId: api_announcement_retrieve
       description: Get Announcement
@@ -3394,9 +2707,22 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/apply_reset_password/:
+  /api/login/:
+    post:
+      operationId: api_login_create
+      description: User login api
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/logout/:
     get:
-      operationId: api_apply_reset_password_retrieve
+      operationId: api_logout_retrieve
       description: |-
         The parent class of Django view, and the usage of django-rest-framework is basically the same
           - request.data to get parsed json or urlencoded data, dict type
@@ -3404,7 +2730,60 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/open_api_appkey/:
+    post:
+      operationId: api_open_api_appkey_create
+      description: |-
+        partial(func, *args, **keywords) - new function with partial application
+        of the given arguments and keywords.
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/pickone/:
+    get:
+      operationId: api_pickone_retrieve
+      description: |-
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/problem/:
+    get:
+      operationId: api_problem_list
+      description: Get problems that satisfy specific condition(id, tag, keyword and
+        so on..)
       parameters:
+      - in: query
+        name: Difficulty
+        schema:
+          type: string
+        description: Difficulty of problem you want to search with.
       - in: query
         name: format
         schema:
@@ -3413,100 +2792,33 @@ paths:
           - json
           - yaml
       - in: query
-        name: lang
+        name: keyword
         schema:
           type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
+        description: Keyword of problem's title you want to search with.
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Maximun number of problem list. Working when 'problem_id' is
+          not set.
+        required: true
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: Start number of the problem in the list.
+        required: true
+      - in: query
+        name: problem_id
+        schema:
+          type: integer
+        description: Unique id of problem. It set, a specific problem is returned.
+      - in: query
+        name: tag
+        schema:
+          type: string
+        description: Tag of problem you want to search with.
       tags:
       - api
       security:
@@ -3518,23 +2830,28 @@ paths:
           content:
             application/vnd.oai.openapi:
               schema:
-                type: object
-                additionalProperties: {}
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
             application/yaml:
               schema:
-                type: object
-                additionalProperties: {}
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
             application/vnd.oai.openapi+json:
               schema:
-                type: object
-                additionalProperties: {}
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
             application/json:
               schema:
-                type: object
-                additionalProperties: {}
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
           description: ''
-    post:
-      operationId: api_apply_reset_password_create
+  /api/problem/tags/:
+    get:
+      operationId: api_problem_tags_retrieve
       description: |-
         The parent class of Django view, and the usage of django-rest-framework is basically the same
           - request.data to get parsed json or urlencoded data, dict type
@@ -3542,14 +2859,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -3559,24 +2868,11 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/captcha/:
+  /api/profile/:
     get:
-      operationId: api_captcha_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
+      operationId: api_profile_retrieve
+      description: Determine whether to log in, and return user information if logged
+        in
       tags:
       - api
       security:
@@ -3586,9 +2882,8 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/change_email/:
-    get:
-      operationId: api_change_email_retrieve
+    put:
+      operationId: api_profile_update
       description: |-
         The parent class of Django view, and the usage of django-rest-framework is basically the same
           - request.data to get parsed json or urlencoded data, dict type
@@ -3777,119 +3072,12 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/change_password/:
+  /api/profile/fresh_display_id:
     get:
-      operationId: api_change_password_retrieve
+      operationId: api_profile_fresh_display_id_retrieve
       description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
+        partial(func, *args, **keywords) - new function with partial application
+        of the given arguments and keywords.
       tags:
       - api
       security:
@@ -5353,14 +4541,6 @@ paths:
     post:
       operationId: api_register_create
       description: User register api
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5371,144 +4551,6 @@ paths:
         '200':
           description: No response body
   /api/reset_password/:
-    get:
-      operationId: api_reset_password_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
     post:
       operationId: api_reset_password_create
       description: |-
@@ -5518,14 +4560,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5541,14 +4575,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5563,14 +4589,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5586,14 +4604,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5612,14 +4622,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5635,14 +4637,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5661,14 +4655,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5687,14 +4673,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5714,14 +4692,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5741,14 +4711,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5759,155 +4721,9 @@ paths:
         '200':
           description: No response body
   /api/tfa_required/:
-    get:
-      operationId: api_tfa_required_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
     post:
       operationId: api_tfa_required_create
       description: Check TFA is required
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5923,14 +4739,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5945,14 +4753,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5967,14 +4767,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -5985,157 +4777,11 @@ paths:
         '200':
           description: No response body
   /api/upload_avatar/:
-    get:
-      operationId: api_upload_avatar_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - hu
-          - hy
-          - ia
-          - id
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - th
-          - tr
-          - tt
-          - udm
-          - uk
-          - ur
-          - vi
-          - zh-hans
-          - zh-hant
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/vnd.oai.openapi:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/yaml:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/vnd.oai.openapi+json:
-              schema:
-                type: object
-                additionalProperties: {}
-            application/json:
-              schema:
-                type: object
-                additionalProperties: {}
-          description: ''
     post:
       operationId: api_upload_avatar_create
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -6155,14 +4801,6 @@ paths:
             Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
           - self.response returns a django HttpResponse, which is implemented in self.response_class
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
@@ -6198,14 +4836,6 @@ paths:
       description: |-
         partial(func, *args, **keywords) - new function with partial application
         of the given arguments and keywords.
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
       tags:
       - api
       security:
