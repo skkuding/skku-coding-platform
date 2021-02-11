@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBar />
+    <Header />
     <div class="content-app">
       <transition
         name="fadeInUp"
@@ -8,26 +8,18 @@
       >
         <router-view />
       </transition>
-      <div class="footer">
-        <p v-html="website.website_footer" />
-        <p>
-          <span v-if="version">&nbsp; Version: {{ version }}</span>
-        </p>
-        <p> Test </p>
-      </div>
     </div>
-    <BackTop />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
-import NavBar from '@oj/components/NavBar.vue'
+import Header from '@oj/components/Header.vue'
 
 export default {
   name: 'App',
   components: {
-    NavBar
+    Header
   },
   data () {
     return {
@@ -62,21 +54,21 @@ export default {
 
 <style lang="less">
 
-  * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-  }
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 
-  a {
-    text-decoration: none;
-    background-color: transparent;
-    &:active, &:hover {
-      outline-width: 0;
-    }
+a {
+  text-decoration: none;
+  background-color: transparent;
+  &:active, &:hover {
+    outline-width: 0;
   }
+}
 
-  @media screen and (max-width: 1200px) {
+@media screen and (max-width: 1200px) {
   .content-app {
     margin-top: 160px;
     padding: 0 2%;
@@ -90,15 +82,8 @@ export default {
   }
 }
 
-  .footer {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    text-align: center;
-    font-size: small;
-  }
-
-  .fadeInUp-enter-active {
-    animation: fadeInUp .8s;
-  }
+.fadeInUp-enter-active {
+  animation: fadeInUp .8s;
+}
 
 </style>
