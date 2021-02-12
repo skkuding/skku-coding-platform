@@ -166,18 +166,19 @@ class TestCaseTextAPI(APIView):
 
         test_case_id = rand_str()
         test_case_dir = os.path.join(settings.TEST_CASE_DIR, test_case_id)
-        os.mkdir(test_case_dir)
-        os.chmod(test_case_dir, 0o710)
+        os.mkdir(test_case_dir, mode=0o710)
 
         for i, testcase in enumerate(testcases):
-            in_path = os.path.join(test_case_dir, "{}.in".format(i+1))
+            in_path = os.path.join(test_case_dir, f"{i+1}.in")
             with open(in_path, "w") as f:
                 f.write(testcase["input"])
-
-            if "output" in testcase:
-                out_path = os.path.join(test_case_dir, "{}.out".format(i+1))
+            
+            try:
+                out_path = os.path.join(test_case_dir, f"{i+1}.out")
                 with open(out_path, "w") as f:
                     f.write(testcase["output"])
+            except "output" not in testcase:
+                return self.error("output file does not exist.")
 
         test_case_info = {"spj": spj, "test_cases": {}}
 
@@ -185,7 +186,7 @@ class TestCaseTextAPI(APIView):
 
         if spj:
             for i, testcase in enumerate(testcases):
-                data = {"input_name": str(i+1)+".in", "input_size": len(testcase["input"])}
+                data = {"input_name": f"{i+1}.in", "input_size": len(testcase["input"])}
                 info.append(data)
                 test_case_info["test_cases"][str(i + 1)] = data
         else:
