@@ -232,8 +232,8 @@ class UserRegisterAPI(APIView):
         data["username"] = data["username"].lower()
         data["email"] = data["email"].lower()
         captcha = Captcha(request)
-        if not captcha.check(data["captcha"]):
-            return self.error("Invalid captcha")
+        # if not captcha.check(data["captcha"]):
+        #     return self.error("Invalid captcha")
         if User.objects.filter(username=data["username"]).exists():
             return self.error("Username already exists")
         if not re.match(r"^20[0-9]{8}$", data["username"]):

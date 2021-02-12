@@ -28,6 +28,11 @@ from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
                            ExportProblemRequestSerialzier, UploadProblemForm, ImportProblemSerializer,
                            FPSProblemSerializer)
 from ..utils import TEMPLATE_BASE, build_problem_template
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_yasg.utils import swagger_auto_schema , get_consumes
+from drf_yasg import openapi
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 
 
 class TestCaseZipProcessor(object):
@@ -112,7 +117,18 @@ class TestCaseZipProcessor(object):
 
 class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
     request_parsers = ()
-
+    parser_classes=[MultiPartParser]
+    @swagger_auto_schema (
+        manual_parameters=[
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem that you want to get test cases",
+                required=True
+            )
+        ],
+        operation_description="Get testcase of certain problem."
+    )
     def get(self, request):
         problem_id = request.GET.get("problem_id")
         if not problem_id:
@@ -143,6 +159,17 @@ class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
         response["Content-Length"] = os.path.getsize(file_name)
         return response
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="spj", in_=openapi.IN_FORM, type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                name="file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE
+            )
+        ],
+        operation_description="Upload testcases. Returned \'id\' would be used when uploading problems(for \'testcase_id\')"
+    )
     def post(self, request):
         form = TestCaseUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -210,6 +237,10 @@ class TestCaseTextAPI(APIView):
 
 class CompileSPJAPI(APIView):
     @validate_serializer(CompileSPJSerializer)
+    @swagger_auto_schema(
+        request_body=(CompileSPJSerializer),
+        operation_description="Post code for special judge."
+    )
     def post(self, request):
         data = request.data
         spj_version = rand_str(8)
@@ -247,6 +278,10 @@ class ProblemBase(APIView):
 class ProblemAPI(ProblemBase):
     @problem_permission_required
     @validate_serializer(CreateProblemSerializer)
+    @swagger_auto_schema(
+        request_body=CreateProblemSerializer,
+        operation_description="Uploading problem."
+    )
     def post(self, request):
         data = request.data
         _id = data["_id"]
@@ -273,6 +308,26 @@ class ProblemAPI(ProblemBase):
         return self.success(ProblemAdminSerializer(problem).data)
 
     @problem_permission_required
+    @swagger_auto_schema (
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem. ",
+            ),
+            openapi.Parameter(
+                name="rule_type", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="Rule type of problem: ACM or OI",
+            ),
+            openapi.Parameter(
+                name="keyword", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="keyword of problem\'s title you want to search with",
+            ),
+        ],
+        operation_description="Get problem list"
+    )
     def get(self, request):
         problem_id = request.GET.get("id")
         rule_type = request.GET.get("rule_type")
@@ -301,6 +356,10 @@ class ProblemAPI(ProblemBase):
 
     @problem_permission_required
     @validate_serializer(EditProblemSerializer)
+    @swagger_auto_schema(
+        request_body=(EditProblemSerializer),
+        operation_description="Editing problem."
+    )
     def put(self, request):
         data = request.data
         problem_id = data.pop("id")
@@ -339,6 +398,17 @@ class ProblemAPI(ProblemBase):
         return self.success()
 
     @problem_permission_required
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem.",
+                required=True
+            ),
+        ],
+        operation_description="Delete certain problem."
+    )
     def delete(self, request):
         id = request.GET.get("id")
         if not id:
@@ -357,6 +427,10 @@ class ProblemAPI(ProblemBase):
 
 class ContestProblemAPI(ProblemBase):
     @validate_serializer(CreateContestProblemSerializer)
+    @swagger_auto_schema(
+        request_body=(CreateContestProblemSerializer),
+        operation_description="Create problems for contest."
+    )
     def post(self, request):
         data = request.data
         try:
@@ -392,7 +466,28 @@ class ContestProblemAPI(ProblemBase):
                 tag = ProblemTag.objects.create(name=item)
             problem.tags.add(tag)
         return self.success(ProblemAdminSerializer(problem).data)
-
+    
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem.",
+            ),
+            openapi.Parameter(
+                name="contest_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of contest.",
+                required=True
+            ),
+            openapi.Parameter(
+                name="keyword", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="keyword of problem\'s title you want to search with",
+            ),
+        ],
+        operation_description="Get problems of certain contest. If problem_id is set, certain problem would be returned."
+    )
     def get(self, request):
         problem_id = request.GET.get("id")
         contest_id = request.GET.get("contest_id")
@@ -421,6 +516,10 @@ class ContestProblemAPI(ProblemBase):
         return self.success(self.paginate_data(request, problems, ProblemAdminSerializer))
 
     @validate_serializer(EditContestProblemSerializer)
+    @swagger_auto_schema(
+        request_body=(EditContestProblemSerializer),
+        operation_description="Edit problems of contest."
+    )
     def put(self, request):
         data = request.data
         user = request.user
@@ -467,6 +566,17 @@ class ContestProblemAPI(ProblemBase):
             problem.tags.add(tag)
         return self.success()
 
+    @swagger_auto_schema (
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem.",
+                required=True
+            ),
+        ],
+        operation_description="Delete certain problem of contest."
+    )
     def delete(self, request):
         id = request.GET.get("id")
         if not id:
@@ -488,6 +598,10 @@ class ContestProblemAPI(ProblemBase):
 class MakeContestProblemPublicAPIView(APIView):
     @validate_serializer(ContestProblemMakePublicSerializer)
     @problem_permission_required
+    @swagger_auto_schema (
+        request_body=(ContestProblemMakePublicSerializer),
+        description="Make contest problems as public problems."
+    )
     def post(self, request):
         data = request.data
         display_id = data.get("display_id")
@@ -518,6 +632,10 @@ class MakeContestProblemPublicAPIView(APIView):
 
 class AddContestProblemAPI(APIView):
     @validate_serializer(AddContestProblemSerializer)
+    @swagger_auto_schema(
+        request_body=(AddContestProblemSerializer),
+        operation_description="Add problems from public problems into the contest."
+    )
     def post(self, request):
         data = request.data
         try:
@@ -575,8 +693,12 @@ class ExportProblemAPI(APIView):
                                arcname=f"{index}/testcase/{v['output_name']}",
                                compress_type=compression)
 
+    @swagger_auto_schema (
+        request_body=ExportProblemRequestSerialzier,
+        operation_description="Export problems as .zip file."
+    )
     @validate_serializer(ExportProblemRequestSerialzier)
-    def get(self, request):
+    def post(self, request):
         problems = Problem.objects.filter(id__in=request.data["problem_id"])
         for problem in problems:
             if problem.contest:
@@ -596,7 +718,15 @@ class ExportProblemAPI(APIView):
 
 class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
     request_parsers = ()
-
+    parser_classes=[MultiPartParser]
+    @swagger_auto_schema(
+        operation_description="Import problems through .zip file",
+        manual_parameters=[
+            openapi.Parameter(
+                name="file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE
+            )
+        ]
+    )
     def post(self, request):
         form = UploadProblemForm(request.POST, request.FILES)
         if form.is_valid():
@@ -716,7 +846,15 @@ class FPSProblemImport(CSRFExemptAPIView):
                                created_by=creator,
                                difficulty=Difficulty.Level1,
                                test_case_id=problem_data["test_case_id"])
-
+    parser_classes=[MultiPartParser]
+    @swagger_auto_schema(
+        operation_description="Import Free Problem Set problems. Filename extension must be \'.xml\'",
+        manual_parameters=[
+            openapi.Parameter(
+                name="file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE
+            )
+        ]
+    )
     def post(self, request):
         form = UploadProblemForm(request.POST, request.FILES)
         if form.is_valid():

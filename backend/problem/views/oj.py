@@ -5,15 +5,25 @@ from account.decorators import check_contest_permission
 from ..models import ProblemTag, Problem, ProblemRuleType
 from ..serializers import ProblemSerializer, TagSerializer, ProblemSafeSerializer
 from contest.models import ContestRuleType
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_yasg.utils import swagger_auto_schema 
+from drf_yasg import openapi
 
 
 class ProblemTagAPI(APIView):
+    @swagger_auto_schema(
+        operation_description="Pick a set of problems that contain certain tag.",
+        query_serializer=TagSerializer
+    )
     def get(self, request):
         tags = ProblemTag.objects.annotate(problem_count=Count("problem")).filter(problem_count__gt=0)
         return self.success(TagSerializer(tags, many=True).data)
 
 
 class PickOneAPI(APIView):
+    @swagger_auto_schema(
+        operation_description="Pick one problem arbitrarily",
+    )
     def get(self, request):
         problems = Problem.objects.filter(contest_id__isnull=True, visible=True)
         count = problems.count()
@@ -41,6 +51,42 @@ class ProblemAPI(APIView):
                 else:
                     problem["my_status"] = oi_problems_status.get(str(problem["id"]), {}).get("status")
 
+    @swagger_auto_schema(
+        operation_description="Get problems that satisfy specific condition(id, tag, keyword and so on..)",
+        manual_parameters=[
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem. It set, a specific problem is returned.",
+            ),
+            openapi.Parameter(
+                name="limit", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Maximun number of problem list. Working when \'problem_id\' is not set.",
+                required=True
+            ),
+            openapi.Parameter(
+                name="offset", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Start number of the problem in the list.",
+            ),
+            openapi.Parameter(
+                name="tag", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="Tag of problem you want to search with.",
+            ),
+            openapi.Parameter(
+                name="keyword", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="Keyword of problem\'s title you want to search with.",
+            ),
+            openapi.Parameter(
+                name="Difficulty", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="Difficulty of problem you want to search with.",
+            ),
+        ],
+    )
     def get(self, request):
         #  question details page
         problem_id = request.GET.get("problem_id")
@@ -91,6 +137,24 @@ class ContestProblemAPI(APIView):
             for problem in queryset_values:
                 problem["my_status"] = problems_status.get(str(problem["id"]), {}).get("status")
 
+    @check_contest_permission(check_type="problems")
+    @swagger_auto_schema(
+        operation_description="Get problem of specific contest. If \'problem_id\' is not set, whole problems of the contest would be returned.",
+        manual_parameters=[
+            openapi.Parameter(
+                name="contest_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of contest",
+                required=True
+            ),
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem",
+            )
+        ]
+    )
+    
     @check_contest_permission(check_type="problems")
     def get(self, request):
         problem_id = request.GET.get("problem_id")
