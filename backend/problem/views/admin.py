@@ -159,6 +159,55 @@ class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
         return self.success({"id": test_case_id, "info": info, "spj": spj})
 
 
+class TestCaseTextAPI(APIView):
+    def post(self, request):
+        testcases = request.data[0]
+        spj = request.data[1]
+
+        test_case_id = rand_str()
+        test_case_dir = os.path.join(settings.TEST_CASE_DIR, test_case_id)
+        os.mkdir(test_case_dir, mode=0o710)
+
+        try:
+            for i, testcase in enumerate(testcases):
+                in_path = os.path.join(test_case_dir, f"{i+1}.in")
+                with open(in_path, "w") as f:
+                    f.write(testcase["input"])
+
+                out_path = os.path.join(test_case_dir, f"{i+1}.out")
+                with open(out_path, "w") as f:
+                    f.write(testcase["output"])
+        except KeyError:
+            return self.error("input or output file does not exist.")
+
+        test_case_info = {"spj": spj, "test_cases": {}}
+
+        info = []
+
+        if spj:
+            for i, testcase in enumerate(testcases):
+                data = {"input_name": f"{i+1}.in", "input_size": len(testcase["input"])}
+                info.append(data)
+                test_case_info["test_cases"][str(i + 1)] = data
+        else:
+            for i, testcase in enumerate(testcases):
+                data = {"stripped_output_md5": hashlib.md5(testcase["output"].rstrip().encode("utf-8")).hexdigest(),
+                        "input_size": len(testcase["input"]),
+                        "output_size": len(testcase["output"]),
+                        "input_name": f"{i+1}.in",
+                        "output_name": f"{i+1}.out"}
+                info.append(data)
+                test_case_info["test_cases"][str(i + 1)] = data
+
+        with open(os.path.join(test_case_dir, "info"), "w", encoding="utf-8") as f:
+            f.write(json.dumps(test_case_info, indent=4))
+
+        for item in os.listdir(test_case_dir):
+            os.chmod(os.path.join(test_case_dir, item), 0o640)
+
+        return self.success({"id": test_case_id, "info": info, "spj": spj})
+
+
 class CompileSPJAPI(APIView):
     @validate_serializer(CompileSPJSerializer)
     def post(self, request):

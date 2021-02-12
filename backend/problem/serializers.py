@@ -118,7 +118,6 @@ class ProblemAdminSerializer(BaseProblemSerializer):
 
 
 class ProblemSerializer(BaseProblemSerializer):
-    template = serializers.SerializerMethodField("get_public_template")
 
     class Meta:
         model = Problem
