@@ -10,7 +10,6 @@ from utils.serializers import LanguageNameMultiChoiceField, SPJLanguageNameChoic
 from .models import Problem, ProblemRuleType, ProblemTag, ProblemIOMode
 from .utils import parse_problem_template
 
-
 class TestCaseUploadForm(forms.Form):
     spj = forms.CharField(max_length=12)
     file = forms.FileField()
@@ -19,7 +18,6 @@ class TestCaseUploadForm(forms.Form):
 class CreateSampleSerializer(serializers.Serializer):
     input = serializers.CharField(trim_whitespace=False)
     output = serializers.CharField(trim_whitespace=False)
-
 
 class CreateTestCaseScoreSerializer(serializers.Serializer):
     input_name = serializers.CharField(max_length=32)

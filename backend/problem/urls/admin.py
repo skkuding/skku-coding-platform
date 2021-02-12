@@ -4,7 +4,6 @@ from ..views.admin import (ContestProblemAPI, ProblemAPI, TestCaseAPI, MakeConte
                            CompileSPJAPI, AddContestProblemAPI, ExportProblemAPI, ImportProblemAPI,
                            FPSProblemImport, TestCaseTextAPI)
 
-
 urlpatterns = [
     url(r"^test_case/?$", TestCaseAPI.as_view(), name="test_case_api"),
     url(r"^compile_spj/?$", CompileSPJAPI.as_view(), name="compile_spj"),
