@@ -168,17 +168,17 @@ class TestCaseTextAPI(APIView):
         test_case_dir = os.path.join(settings.TEST_CASE_DIR, test_case_id)
         os.mkdir(test_case_dir, mode=0o710)
 
-        for i, testcase in enumerate(testcases):
-            in_path = os.path.join(test_case_dir, f"{i+1}.in")
-            with open(in_path, "w") as f:
-                f.write(testcase["input"])
+        try:
+            for i, testcase in enumerate(testcases):
+                in_path = os.path.join(test_case_dir, f"{i+1}.in")
+                with open(in_path, "w") as f:
+                    f.write(testcase["input"])
 
-            try:
                 out_path = os.path.join(test_case_dir, f"{i+1}.out")
                 with open(out_path, "w") as f:
                     f.write(testcase["output"])
-            except "output" not in testcase:
-                return self.error("output file does not exist")
+        except KeyError:
+                return self.error("input or output file does not exist.")
 
         test_case_info = {"spj": spj, "test_cases": {}}
 
@@ -194,8 +194,8 @@ class TestCaseTextAPI(APIView):
                 data = {"stripped_output_md5": hashlib.md5(testcase["output"].rstrip().encode("utf-8")).hexdigest(),
                         "input_size": len(testcase["input"]),
                         "output_size": len(testcase["output"]),
-                        "input_name": str(i+1) + ".in",
-                        "output_name": str(i+1) + ".out"}
+                        "input_name": f"{i+1}.in",
+                        "output_name": f"{i+1}.out"}
                 info.append(data)
                 test_case_info["test_cases"][str(i + 1)] = data
 
