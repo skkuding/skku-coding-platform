@@ -178,7 +178,7 @@ class TestCaseTextAPI(APIView):
                 with open(out_path, "w") as f:
                     f.write(testcase["output"])
         except KeyError:
-                return self.error("input or output file does not exist.")
+            return self.error("input or output file does not exist.")
 
         test_case_info = {"spj": spj, "test_cases": {}}
 
