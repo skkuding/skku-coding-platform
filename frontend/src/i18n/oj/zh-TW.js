@@ -223,6 +223,9 @@ export const m = {
   ApplyEmail: 'E-mail',
   Send_Password_Reset_Email: '傳送密碼重設 E-mail',
   Your_password_has_been_reset: '你的密碼已重置',
+  // EmailAuth.vue
+  Email_Authentication: '邮件认证',
+  Your_email_has_authenticated: '您的电子邮件已通过验证',
   // Save.vue
   Save: '存檔',
   // Simditor.vue

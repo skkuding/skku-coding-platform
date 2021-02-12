@@ -22,7 +22,7 @@ from ..decorators import login_required
 from ..models import User, UserProfile, AdminType
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
-                           UserRegisterSerializer, UsernameOrEmailCheckSerializer,
+                           UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
                            RankInfoSerializer, UserChangeEmailSerializer, SSOSerializer)
 from ..serializers import (TwoFactorAuthCodeSerializer, UserProfileSerializer,
                            EditUserProfileSerializer, ImageUploadForm)
@@ -165,6 +165,8 @@ class UserLoginAPI(APIView):
         if user:
             if user.is_disabled:
                 return self.error("Your account has been disabled")
+            if not user.has_email_auth:
+                return self.error("Your need to authenticate your email")
             if not user.two_factor_auth:
                 auth.login(request, user)
                 return self.success("Succeeded")
@@ -239,8 +241,37 @@ class UserRegisterAPI(APIView):
             return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
         user = User.objects.create(username=data["username"], email=data["email"], major=data["major"])
         user.set_password(data["password"])
+
+        user.has_email_auth = False
+        user.email_auth_token = rand_str()
         user.save()
+        render_data = {
+            "username": user.username,
+            "website_name": SysOptions.website_name,
+            "link": f"{SysOptions.website_base_url}/email-auth/{user.email_auth_token}"
+        }
+        email_html = render_to_string("email_auth.html", render_data)
+        send_email_async.send(from_name=SysOptions.website_name_shortcut,
+                              to_email=user.email,
+                              to_name=user.username,
+                              subject="Email Authentication",
+                              content=email_html)
+
         UserProfile.objects.create(user=user)
+        return self.success("Succeeded")
+
+
+class EmailAuthAPI(APIView):
+    @validate_serializer(EmailAuthSerializer)
+    def post(self, request):
+        data = request.data
+        try:
+            user = User.objects.get(email_auth_token=data["token"])
+        except User.DoesNotExist:
+            return self.error("Token does not exist")
+        user.email_auth_token = None
+        user.has_email_auth = True
+        user.save()
         return self.success("Succeeded")
 
 
