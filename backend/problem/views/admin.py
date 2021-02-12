@@ -172,7 +172,7 @@ class TestCaseTextAPI(APIView):
             in_path = os.path.join(test_case_dir, f"{i+1}.in")
             with open(in_path, "w") as f:
                 f.write(testcase["input"])
-            
+
             try:
                 out_path = os.path.join(test_case_dir, f"{i+1}.out")
                 with open(out_path, "w") as f:
