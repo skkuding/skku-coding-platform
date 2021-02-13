@@ -35,6 +35,7 @@ VENDOR_APPS = [
     'rest_framework',
     'django_dramatiq',
     'django_dbconn_retry',
+    'drf_yasg',
     'drf_spectacular',
 ]
 
@@ -192,8 +193,9 @@ REST_FRAMEWORK = {
     )
 }
 
-SPECTACULAR_SETTINGS = {
-    'SERVERS': [{"url": 'http://localhost/'}],
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': 'http://localhost/api/login',
+    'LOGOUT_URL': 'http://localhost/api/logout'
 }
 
 REDIS_URL = "redis://%s:%s" % (REDIS_CONF["host"], REDIS_CONF["port"])

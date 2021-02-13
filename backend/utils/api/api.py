@@ -5,8 +5,7 @@ import logging
 from django.http import HttpResponse, QueryDict
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
-from drf_spectacular.views import SpectacularAPIView
+from rest_framework.views import APIView as view
 
 logger = logging.getLogger("")
 
@@ -51,7 +50,7 @@ class JSONResponse(object):
         return resp
 
 
-class APIView(SpectacularAPIView):
+class APIView(view):
     """
     The parent class of Django view, and the usage of django-rest-framework is basically the same
       - request.data to get parsed json or urlencoded data, dict type
@@ -177,7 +176,7 @@ def validate_serializer(serializer):
             request = args[1]
             s = serializer(data=request.data)
             if s.is_valid():
-                request.data = s.data
+                request.data.update(s.data)
                 request.serializer = s
                 return view_method(*args, **kwargs)
             else:

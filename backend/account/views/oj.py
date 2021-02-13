@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from drf_yasg.utils import swagger_auto_schema
 from otpauth import OtpAuth
 
 from problem.models import Problem
@@ -154,6 +155,7 @@ class CheckTFARequiredAPI(APIView):
 
 
 class UserLoginAPI(APIView):
+    @swagger_auto_schema(request_body=UserLoginSerializer)
     @validate_serializer(UserLoginSerializer)
     def post(self, request):
         """
@@ -217,6 +219,7 @@ class UsernameOrEmailCheck(APIView):
 
 
 class UserRegisterAPI(APIView):
+    @swagger_auto_schema(request_body=UserRegisterSerializer)
     @validate_serializer(UserRegisterSerializer)
     def post(self, request):
         """
