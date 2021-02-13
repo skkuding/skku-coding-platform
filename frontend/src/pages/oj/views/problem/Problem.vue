@@ -115,7 +115,7 @@
         </b-row>
       </b-col>
     </b-row>
-    <b-sidebar id="sidebar" no-header shadow>
+    <b-sidebar id="sidebar" no-header backdrop>
       <template #default="{ hide }">
         <div id="sidebar-container">
           <b-container>
@@ -508,7 +508,7 @@ export default {
     border-bottom: 2px solid white;
   }
 
-  #language-dropdown {
+  /deep/ #language-dropdown button{
     background: #45576C;
   }
 
