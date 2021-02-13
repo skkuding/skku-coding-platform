@@ -15,6 +15,7 @@
               <div class="oj-captcha-img">
                 <img :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
               </div>
+            </div>
           </b-row>
           <b-button @click="sendEmail" variant="success" style="width: 260px; height: 36px;">{{$t('m.Send_Password_Reset_Email')}}</b-button>
         </b-container>
@@ -29,64 +30,64 @@
   </Panel>
 </template>
 <script>
-  import api from '@oj/api'
-  import {FormMixin} from '@oj/components/mixins'
+import api from '@oj/api'
+import { FormMixin } from '@oj/components/mixins'
 
-  export default {
-    mixins: [FormMixin],
-    data () {
-      const CheckEmailExist = (rule, value, callback) => {
-        if (value !== '') {
-          api.checkUsernameOrEmail(undefined, value).then(res => {
-            if (res.data.data.email === false) {
-              callback(new Error(this.$i18n.t('m.The_email_doesnt_exist')))
-            } else {
-              callback()
-            }
-          }, _ => callback())
-        } else {
-          callback()
-        }
-      }
-      return {
-        captchaSrc: '',
-        successApply: false,
-        btnLoading: false,
-        formResetPassword: {
-          email: '',
-          captcha: ''
-        },
-        ruleResetPassword: {
-          email: [
-            {required: true, type: 'email', trigger: 'blur'},
-            {validator: CheckEmailExist, trigger: 'blur'}
-          ],
-          captcha: [
-            {required: true, trigger: 'blur', min: 1, max: 10}
-          ]
-        }
-      }
-    },
-    mounted () {
-      this.getCaptchaSrc()
-    },
-    methods: {
-      sendEmail () {
-        this.btnLoading = true
-        api.applyResetPassword(this.formResetPassword).then(res => {
-          // 伪加载
-          setTimeout(() => {
-            this.btnLoading = false
-            this.successApply = true
-          }, 2000)
-        }, _ => {
-          this.btnLoading = false
-          this.formResetPassword.captcha = ''
-          this.getCaptchaSrc()
-        })
+export default {
+  mixins: [FormMixin],
+  data () {
+    const CheckEmailExist = (rule, value, callback) => {
+      if (value !== '') {
+        api.checkUsernameOrEmail(undefined, value).then(res => {
+          if (res.data.data.email === false) {
+            callback(new Error(this.$i18n.t('m.The_email_doesnt_exist')))
+          } else {
+            callback()
+          }
+        }, _ => callback())
+      } else {
+        callback()
       }
     }
+    return {
+      captchaSrc: '',
+      successApply: false,
+      btnLoading: false,
+      formResetPassword: {
+        email: '',
+        captcha: ''
+      },
+      ruleResetPassword: {
+        email: [
+          { required: true, type: 'email', trigger: 'blur' },
+          { validator: CheckEmailExist, trigger: 'blur' }
+        ],
+        captcha: [
+          { required: true, trigger: 'blur', min: 1, max: 10 }
+        ]
+      }
+    }
+  },
+  mounted () {
+    this.getCaptchaSrc()
+  },
+  methods: {
+    sendEmail () {
+      this.btnLoading = true
+      api.applyResetPassword(this.formResetPassword).then(res => {
+        // 伪加载
+        setTimeout(() => {
+          this.btnLoading = false
+          this.successApply = true
+        }, 2000)
+      }, _ => {
+        this.btnLoading = false
+        this.formResetPassword.captcha = ''
+        this.getCaptchaSrc()
+      })
+    }
   }
+}
 </script>
 
 <style scoped lang="less">

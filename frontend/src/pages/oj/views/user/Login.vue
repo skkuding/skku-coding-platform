@@ -5,7 +5,7 @@
     </div>
     <div>
       <p>SKKU</p>
-      <p>Coding Platform<p>
+      <p>Coding Platform</p>
     </div>
     <b-form @on-enter="handleLogin" ref="formLogin" :model="formLogin">
         <b-container fluid="xl">
@@ -24,81 +24,81 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex'
-  import api from '@oj/api'
-  import { FormMixin } from '@oj/components/mixins'
+import { mapGetters, mapActions } from 'vuex'
+import api from '@oj/api'
+import { FormMixin } from '@oj/components/mixins'
 
-  export default {
-    mixins: [FormMixin],
-    data () {
-      const CheckRequiredTFA = (rule, value, callback) => {
-        if (value !== '') {
-          api.tfaRequiredCheck(value).then(res => {
-            this.tfaRequired = res.data.data.result
-          })
-        }
-        callback()
+export default {
+  mixins: [FormMixin],
+  data () {
+    const CheckRequiredTFA = (rule, value, callback) => {
+      if (value !== '') {
+        api.tfaRequiredCheck(value).then(res => {
+          this.tfaRequired = res.data.data.result
+        })
       }
+      callback()
+    }
 
-      return {
-        tfaRequired: false,
-        btnLoginLoading: false,
-        formLogin: {
-          username: '',
-          password: '',
-          tfa_code: ''
-        },
-        ruleLogin: {
-          username: [
-            {required: true, trigger: 'blur'},
-            {validator: CheckRequiredTFA, trigger: 'blur'}
-          ],
-          password: [
-            {required: true, trigger: 'change', min: 6, max: 20}
-          ]
-        }
-      }
-    },
-    methods: {
-      ...mapActions(['changeModalStatus', 'getProfile']),
-      handleBtnClick (mode) {
-        this.changeModalStatus({
-          mode,
-          visible: true
-        })
+    return {
+      tfaRequired: false,
+      btnLoginLoading: false,
+      formLogin: {
+        username: '',
+        password: '',
+        tfa_code: ''
       },
-      handleLogin () {
-        this.btnLoginLoading = true
-        let formData = Object.assign({}, this.formLogin)
-        if (!this.tfaRequired) {
-          delete formData['tfa_code']
-        }
-        api.login(formData).then(res => {
-          this.btnLoginLoading = false
-          this.changeModalStatus({visible: false})
-          this.getProfile()
-          this.$success(this.$i18n.t('m.Welcome_back'))
-        }, _ => {
-          this.btnLoginLoading = false
-        })
-      },
-      goResetPassword () {
-        this.changeModalStatus({visible: false})
-        this.$router.push({name: 'apply-reset-password'})
+      ruleLogin: {
+        username: [
+          { required: true, trigger: 'blur' },
+          { validator: CheckRequiredTFA, trigger: 'blur' }
+        ],
+        password: [
+          { required: true, trigger: 'change', min: 6, max: 20 }
+        ]
       }
+    }
+  },
+  methods: {
+    ...mapActions(['changeModalStatus', 'getProfile']),
+    handleBtnClick (mode) {
+      this.changeModalStatus({
+        mode,
+        visible: true
+      })
     },
-    computed: {
-      ...mapGetters(['website', 'modalStatus']),
-      visible: {
-        get () {
-          return this.modalStatus.visible
-        },
-        set (value) {
-          this.changeModalStatus({visible: value})
-        }
+    handleLogin () {
+      this.btnLoginLoading = true
+      const formData = Object.assign({}, this.formLogin)
+      if (!this.tfaRequired) {
+        delete formData.tfa_code
+      }
+      api.login(formData).then(res => {
+        this.btnLoginLoading = false
+        this.changeModalStatus({ visible: false })
+        this.getProfile()
+        this.$success(this.$i18n.t('m.Welcome_back'))
+      }, _ => {
+        this.btnLoginLoading = false
+      })
+    },
+    goResetPassword () {
+      this.changeModalStatus({ visible: false })
+      this.$router.push({ name: 'apply-reset-password' })
+    }
+  },
+  computed: {
+    ...mapGetters(['website', 'modalStatus']),
+    visible: {
+      get () {
+        return this.modalStatus.visible
+      },
+      set (value) {
+        this.changeModalStatus({ visible: value })
       }
     }
   }
+}
 </script>
 
 <style scoped lang="less">
