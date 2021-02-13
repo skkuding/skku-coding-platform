@@ -122,6 +122,36 @@
             <b-row class="sidebar-row bottom-border">
               <b-icon icon="x" scale="2.2" @click="hide"/>
             </b-row>
+            <b-row class="sidebar-row bottom-border">
+              <h2>
+                <b-icon class="sidebar-icon" icon="hash" scale="1.3" shift-v="1"/>
+                Problem List
+              </h2>
+              <ul id="problem-list">
+                <li>A.가파른 경사</li>
+                <li>B.습격자 초라기</li>
+                <li>C.두번째 MST</li>
+                <li>D.채권관계</li>
+              </ul>
+            </b-row>
+            <b-row class="sidebar-row">
+              <h2>
+                <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
+                Clarification
+              </h2>
+              <h2>
+                <b-icon class="sidebar-icon" icon="person" scale="1.2"/>
+                My Submissions
+              </h2>
+              <h2>
+                <b-icon class="sidebar-icon" icon="people" scale="1.2"/>
+                All Submissions
+              </h2>
+              <h2>
+                <b-icon class="sidebar-icon" icon="bar-chart-line" scale="1.2"/>
+                Standings
+              </h2>
+            </b-row>
           </b-container>
         </div>
       </template>
@@ -591,11 +621,34 @@ export default {
 
   .sidebar-row {
     padding: 15px 15px;
-    padding-left: 20px;
+    padding-left: 25px;
+
+    .sidebar-icon {
+      margin-right: 7px;
+    }
+
+    h2 {
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    #problem-list {
+      margin-left: 30px;
+
+      li {
+        list-style-type: none;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        font-size: 18px;
+      }
+    }
   }
 
   .bottom-border {
     border-bottom: 1px solid #3B4F56;
   }
+
 }
 </style>
