@@ -1,8 +1,7 @@
 <template>
-  <div>
-    <div v-if="$route.name == 'problem-details'">
-        <router-view/>
-    </div>
+  <div v-if="$route.name == 'problem-details'">
+      <router-view/>
+  </div>
     <div v-else>
       <Header></Header>
       <div class="content-app">

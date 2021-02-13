@@ -29,7 +29,7 @@
     <b-navbar id="inner-header" type="dark">
       <b-navbar-nav>
         <b-nav-item class="menu-icon" active>
-          <b-icon icon="list" scale="1.8" shift-v="-3"/>
+          <b-icon icon="list" scale="1.8" shift-v="-3" v-b-toggle.sidebar/>
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav>
@@ -81,18 +81,51 @@
         <p>네 줄에 걸쳐 높이 h가 주어진다. (0 h 100)</p>
         <h2>Output</h2>
         <p>만약 네 개의 높이가 증가(strictly increasing)하면 “Uphill”, 감소(strictly decreasing)하면 “Downhill”을 출력한다. 또한 높이가 일정하다면 “Flat Land”를 출력하고, 어느 경우에도 속하지 않으면 “Unknown”을 출력한다.</p>
-        <h2>Sample Input 1</h2>
+        <h2>
+          Sample Input 1
+          <b-icon icon="clipboard" class="copy-icon" scale="0.8"/>
+        </h2>
         <p class="sample-io">
           1<br>10<br>12<br>13<br>
         </p>
-        <h2>Sample Output 1</h2>
+        <h2>
+          Sample Output 1
+          <b-icon icon="clipboard" class="copy-icon" scale="0.8"/>
+         </h2>
         <p class="sample-io">
           Uphill
         </p>
       </b-col>
       <b-col id="console" cols="7">
+        <b-row id="editor">
+        </b-row>
+        <b-row id="io">
+          <b-row class="io-header">
+            <b-col class="io-header-cell right-border">Input</b-col>
+            <b-col class="io-header-cell">Output</b-col>
+          </b-row>
+          <b-row class="io-content">
+            <b-col class="io-content-cell right-border">
+              1<br>10<br>12<br>13
+            </b-col>
+            <b-col class="io-content-cell">
+             Uphill
+            </b-col>
+          </b-row>
+        </b-row>
       </b-col>
     </b-row>
+    <b-sidebar id="sidebar" no-header shadow>
+      <template #default="{ hide }">
+        <div id="sidebar-container">
+          <b-container>
+            <b-row class="sidebar-row bottom-border">
+              <b-icon icon="x" scale="2.2" @click="hide"/>
+            </b-row>
+          </b-container>
+        </div>
+      </template>
+    </b-sidebar>
   </div>
 </template>
 
@@ -415,6 +448,8 @@ export default {
 
 <style lang="less" scoped>
 #container {
+  display: flex;
+  flex-flow: column;
   height: 100vh;
 }
 
@@ -464,7 +499,7 @@ export default {
 #problem-container {
   padding: 0;
   margin: 0;
-  height: 100%;
+  flex: 1 1 auto;
 
   #problem-description {
     background: #173747;
@@ -483,6 +518,11 @@ export default {
       margin-bottom: 40px;
     }
 
+    .copy-icon {
+      position: absolute;
+      right: 17px;
+    }
+
     .sample-io {
       min-height: 90px;
       padding: 12px;
@@ -492,7 +532,70 @@ export default {
   }
 
   #console {
+    display: flex;
+    padding: 0;
+    flex-flow: column;
     background: #24272D;
+
+    #editor {
+      margin: 0;
+      padding: 0;
+      flex: 1 1 auto;
+    }
+
+    #io {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 40%;
+      flex: 0 1 500px;
+      border-top: 1px solid #3B4F56;
+      display: flex;
+      flex-flow: column;
+
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .right-border {
+        border-right: 1px solid #3B4F56;
+      }
+
+      .io-header {
+        flex: 0 1 auto;
+        color: #829BB5;
+        border-bottom: 1px solid #3B4F56;
+
+        .io-header-cell {
+          padding: 3px 15px;
+        }
+      }
+
+      .io-content {
+        flex: 1 1 auto;
+        color: white;
+
+        .io-content-cell {
+          padding: 10px 15px;
+        }
+      }
+    }
+  }
+}
+
+#sidebar-container {
+  height: 100%;
+  background: #24272D;
+  color: white;
+
+  .sidebar-row {
+    padding: 15px 15px;
+    padding-left: 20px;
+  }
+
+  .bottom-border {
+    border-bottom: 1px solid #3B4F56;
   }
 }
 </style>
