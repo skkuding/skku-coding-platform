@@ -1,5 +1,6 @@
 from account.decorators import super_admin_required
 from utils.api import APIView, validate_serializer
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from announcement.models import Announcement
 from announcement.serializers import (AnnouncementSerializer, CreateAnnouncementSerializer,
@@ -7,6 +8,11 @@ from announcement.serializers import (AnnouncementSerializer, CreateAnnouncement
 
 
 class AnnouncementAdminAPI(APIView):
+    @extend_schema(
+        parameters=[CreateAnnouncementSerializer],
+        description='Create Announcement'
+    )
+
     @validate_serializer(CreateAnnouncementSerializer)
     @super_admin_required
     def post(self, request):
@@ -19,6 +25,11 @@ class AnnouncementAdminAPI(APIView):
                                                    created_by=request.user,
                                                    visible=data["visible"])
         return self.success(AnnouncementSerializer(announcement).data)
+    
+    @extend_schema(
+        parameters=[EditAnnouncementSerializer],
+        description='Edit Announcement'
+    )
 
     @validate_serializer(EditAnnouncementSerializer)
     @super_admin_required
@@ -37,6 +48,20 @@ class AnnouncementAdminAPI(APIView):
         announcement.save()
 
         return self.success(AnnouncementSerializer(announcement).data)
+    
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+            ),
+            OpenApiParameter(
+                name="visible",
+                type=bool,
+            )
+        ],
+        description='Get Announcement'
+    )
 
     @super_admin_required
     def get(self, request):
@@ -55,6 +80,16 @@ class AnnouncementAdminAPI(APIView):
             announcement = announcement.filter(visible=True)
         return self.success(self.paginate_data(request, announcement, AnnouncementSerializer))
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+                description="unique announcement id"
+            )
+        ],
+        description='Delete Announcement'
+    )
     @super_admin_required
     def delete(self, request):
         if request.GET.get("id"):

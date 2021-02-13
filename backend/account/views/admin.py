@@ -16,8 +16,15 @@ from ..models import AdminType, ProblemPermission, User, UserProfile
 from ..serializers import EditUserSerializer, UserAdminSerializer, GenerateUserSerializer
 from ..serializers import ImportUserSeralizer
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+
+
 
 class UserAdminAPI(APIView):
+    @extend_schema(
+        parameters=[ImportUserSeralizer],
+        description="Import User"
+    )
     @validate_serializer(ImportUserSeralizer)
     @super_admin_required
     def post(self, request):
@@ -42,7 +49,11 @@ class UserAdminAPI(APIView):
             #    duplicate key value violates unique constraint "user_username_key"
             #    DETAIL:  Key (username)=(root11) already exists.
             return self.error(str(e).split("\n")[1])
-
+    
+    @extend_schema(
+        parameters=[EditUserSerializer],
+        description="Edit user api"
+    )
     @validate_serializer(EditUserSerializer)
     @super_admin_required
     def put(self, request):
@@ -100,6 +111,21 @@ class UserAdminAPI(APIView):
         UserProfile.objects.filter(user=user).update(real_name=data["real_name"])
         return self.success(UserAdminSerializer(user).data)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+                description="unique user id"
+            ),
+            OpenApiParameter(
+                name="keyword",
+                type=str,
+                description="user keyword"
+            ),
+        ],
+        description='Get User'
+    )
     @super_admin_required
     def get(self, request):
         """
@@ -122,6 +148,16 @@ class UserAdminAPI(APIView):
                                Q(email__icontains=keyword))
         return self.success(self.paginate_data(request, user, UserAdminSerializer))
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+                description="unique user id"
+            ),
+        ],
+        description='Delete User'
+    )
     @super_admin_required
     def delete(self, request):
         id = request.GET.get("id")
@@ -135,6 +171,17 @@ class UserAdminAPI(APIView):
 
 
 class GenerateUserAPI(APIView):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="file_id",
+                type=int,
+                description="unique file_id",
+                required=True
+            ),
+        ],
+        description='Delete User'
+    )
     @super_admin_required
     def get(self, request):
         """
@@ -156,6 +203,10 @@ class GenerateUserAPI(APIView):
         response["Content-Type"] = "application/xlsx"
         return response
 
+    @extend_schema(
+        parameters=[GenerateUserSerializer],
+        description="Generate User"
+    )
     @validate_serializer(GenerateUserSerializer)
     @super_admin_required
     def post(self, request):

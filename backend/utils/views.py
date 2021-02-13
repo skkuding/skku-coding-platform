@@ -5,12 +5,17 @@ from utils.shortcuts import rand_str
 from utils.api import CSRFExemptAPIView
 import logging
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+
 logger = logging.getLogger(__name__)
 
 
 class SimditorImageUploadAPIView(CSRFExemptAPIView):
     request_parsers = ()
-
+    
+    @extend_schema(
+        description = "Use enctype=multipart/form-data in Frontend"
+    )
     def post(self, request):
         form = ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -47,6 +52,9 @@ class SimditorImageUploadAPIView(CSRFExemptAPIView):
 class SimditorFileUploadAPIView(CSRFExemptAPIView):
     request_parsers = ()
 
+    @extend_schema(
+        description = "Use enctype=multipart/form-data in Frontend"
+    )
     def post(self, request):
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():

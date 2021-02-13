@@ -13,6 +13,8 @@ from django.conf import settings
 from django.utils import timezone
 from requests.exceptions import RequestException
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+
 from account.decorators import super_admin_required
 from account.models import User
 from contest.models import Contest
@@ -31,6 +33,10 @@ from .serializers import (CreateEditWebsiteConfigSerializer,
 
 
 class SMTPAPI(APIView):
+    @extend_schema(
+        parameters = [],
+        description = "Get SMTP Config"
+    )
     @super_admin_required
     def get(self, request):
         smtp = SysOptions.smtp_config
@@ -39,12 +45,20 @@ class SMTPAPI(APIView):
         smtp.pop("password")
         return self.success(smtp)
 
+    @extend_schema(
+        parameters = [CreateSMTPConfigSerializer],
+        description = "Create SMTP Config"
+    )
     @super_admin_required
     @validate_serializer(CreateSMTPConfigSerializer)
     def post(self, request):
         SysOptions.smtp_config = request.data
         return self.success()
 
+    @extend_schema(
+        parameters = [EditSMTPConfigSerializer],
+        description = "Edit SMTP Config"
+    )
     @super_admin_required
     @validate_serializer(EditSMTPConfigSerializer)
     def put(self, request):
@@ -59,6 +73,11 @@ class SMTPAPI(APIView):
 
 
 class SMTPTestAPI(APIView):
+
+    @extend_schema(
+        parameters = [TestSMTPConfigSerializer],
+        description = "Create Test SMTP Config"
+    )
     @super_admin_required
     @validate_serializer(TestSMTPConfigSerializer)
     def post(self, request):
@@ -88,12 +107,21 @@ class SMTPTestAPI(APIView):
 
 
 class WebsiteConfigAPI(APIView):
+    
+    @extend_schema(
+        parameters = [],
+        description = "Get Website Config"
+    )
     def get(self, request):
         ret = {key: getattr(SysOptions, key) for key in
                ["website_base_url", "website_name", "website_name_shortcut",
                 "website_footer", "allow_register", "submission_list_show_all"]}
         return self.success(ret)
 
+    @extend_schema(
+        parameters = [CreateEditWebsiteConfigSerializer],
+        description = "Create Website Config"
+    )
     @super_admin_required
     @validate_serializer(CreateEditWebsiteConfigSerializer)
     def post(self, request):
@@ -106,12 +134,27 @@ class WebsiteConfigAPI(APIView):
 
 
 class JudgeServerAPI(APIView):
+
+    @extend_schema(
+        parameters = [],
+        description = "Get JudgeServer Toekn & Status"
+    )
     @super_admin_required
     def get(self, request):
         servers = JudgeServer.objects.all().order_by("-last_heartbeat")
         return self.success({"token": SysOptions.judge_server_token,
                              "servers": JudgeServerSerializer(servers, many=True).data})
 
+    @extend_schema(
+        parameters = [
+            OpenApiParameter(
+                name='hostname',
+                type=str,
+                required= True,
+                )
+        ],
+        description = "Delete JudgeServer By Hostname"
+    )
     @super_admin_required
     def delete(self, request):
         hostname = request.GET.get("hostname")
@@ -119,6 +162,10 @@ class JudgeServerAPI(APIView):
             JudgeServer.objects.filter(hostname=hostname).delete()
         return self.success()
 
+    @extend_schema(
+        parameters = [EditJudgeServerSerializer],
+        description ="Edit JudgeServer able"
+    )
     @validate_serializer(EditJudgeServerSerializer)
     @super_admin_required
     def put(self, request):
@@ -130,6 +177,11 @@ class JudgeServerAPI(APIView):
 
 
 class JudgeServerHeartbeatAPI(CSRFExemptAPIView):
+
+    @extend_schema(
+        parameters = [JudgeServerHeartbeatSerializer],
+        description ="Create JudgeServer Status"
+    )
     @validate_serializer(JudgeServerHeartbeatSerializer)
     def post(self, request):
         data = request.data
@@ -164,11 +216,20 @@ class JudgeServerHeartbeatAPI(CSRFExemptAPIView):
 
 
 class LanguagesAPI(APIView):
+    @extend_schema(
+        parameters = [],
+        description ="Get Langugaes Config"
+    )
     def get(self, request):
         return self.success({"languages": SysOptions.languages, "spj_languages": SysOptions.spj_languages})
 
 
 class TestCasePruneAPI(APIView):
+
+    @extend_schema(
+        parameters = [],
+        description ="Get Test Case"
+    )
     @super_admin_required
     def get(self, request):
         """
@@ -183,6 +244,16 @@ class TestCasePruneAPI(APIView):
                 ret_data.append({"id": d.name, "create_time": d.stat().st_mtime})
         return self.success(ret_data)
 
+    @extend_schema(
+        parameters = [
+            OpenApiParameter(
+                name="id",
+                type=int,
+                required=True,
+            )
+        ],
+        description ="Delete Test Case"
+    )
     @super_admin_required
     def delete(self, request):
         test_case_id = request.GET.get("id")
@@ -209,6 +280,10 @@ class TestCasePruneAPI(APIView):
 
 
 class ReleaseNotesAPI(APIView):
+    @extend_schema(
+        parameters = [],
+        description ="Get ReleaseNotes"
+    )
     def get(self, request):
         try:
             resp = requests.get("https://raw.githubusercontent.com/skku-npc/skku-coding-platform/master/backend/docs/data.json?_=" + str(time.time()),
@@ -223,6 +298,10 @@ class ReleaseNotesAPI(APIView):
 
 
 class DashboardInfoAPI(APIView):
+    @extend_schema(
+        parameters = [],
+        description ="Get DashBoardInfo"
+    )
     def get(self, request):
         today = datetime.today()
         today_submission_count = Submission.objects.filter(

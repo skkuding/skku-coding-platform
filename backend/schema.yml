@@ -28,14 +28,14 @@ paths:
           description: No response body
     post:
       operationId: api_admin_announcement_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Create Announcement
       parameters:
+      - in: query
+        name: content
+        schema:
+          type: string
+          maxLength: 8388608
+        required: true
       - in: query
         name: format
         schema:
@@ -43,6 +43,17 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 64
+        required: true
+      - in: query
+        name: visible
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -54,14 +65,14 @@ paths:
           description: No response body
     put:
       operationId: api_admin_announcement_update
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Edit Announcement
       parameters:
+      - in: query
+        name: content
+        schema:
+          type: string
+          maxLength: 8388608
+        required: true
       - in: query
         name: format
         schema:
@@ -69,6 +80,22 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 64
+        required: true
+      - in: query
+        name: visible
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -1265,13 +1292,7 @@ paths:
   /api/admin/dashboard_info:
     get:
       operationId: api_admin_dashboard_info_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Get DashBoardInfo
       parameters:
       - in: query
         name: format
@@ -1280,6 +1301,34 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: number_from
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: number_to
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: password_length
+        schema:
+          type: integer
+          maximum: 16
+          default: 8
+      - in: query
+        name: prefix
+        schema:
+          type: string
+          maxLength: 16
+        required: true
+      - in: query
+        name: suffix
+        schema:
+          type: string
+          maxLength: 16
+        required: true
       tags:
       - api
       security:
@@ -1367,13 +1416,7 @@ paths:
           description: No response body
     post:
       operationId: api_admin_generate_user_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Generate User
       parameters:
       - in: query
         name: format
@@ -1382,6 +1425,16 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: is_disabled
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -1923,13 +1976,7 @@ paths:
           description: No response body
     put:
       operationId: api_admin_judge_server_update
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Edit JudgeServer able
       parameters:
       - in: query
         name: format
@@ -2437,6 +2484,15 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: users
+        schema:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        required: true
       tags:
       - api
       security:
@@ -2459,6 +2515,59 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: is_disabled
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: major
+        schema:
+          type: string
+          maxLength: 128
+        required: true
+      - in: query
+        name: open_api
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: password
+        schema:
+          type: string
+          minLength: 6
+      - in: query
+        name: problem_permission
+        schema:
+          enum:
+          - None
+          - Own
+          - All
+          type: string
+        required: true
+      - in: query
+        name: real_name
+        schema:
+          type: string
+          nullable: true
+          maxLength: 32
+        required: true
+      - in: query
+        name: two_factor_auth
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: username
+        schema:
+          type: string
+          maxLength: 32
+        required: true
       tags:
       - api
       security:
@@ -2482,6 +2591,10 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: visible
+        schema:
+          type: boolean
       tags:
       - api
       security:
@@ -2918,13 +3031,7 @@ paths:
           description: ''
     post:
       operationId: api_admin_upload_file_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Use enctype=multipart/form-data in Frontend
       parameters:
       - in: query
         name: format
@@ -3083,13 +3190,7 @@ paths:
           description: ''
     post:
       operationId: api_admin_upload_image_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Use enctype=multipart/form-data in Frontend
       parameters:
       - in: query
         name: format
@@ -3132,13 +3233,7 @@ paths:
           description: No response body
     post:
       operationId: api_admin_user_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Import User
       parameters:
       - in: query
         name: format
@@ -3158,14 +3253,24 @@ paths:
           description: No response body
     put:
       operationId: api_admin_user_update
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Edit user api
       parameters:
+      - in: query
+        name: admin_type
+        schema:
+          enum:
+          - Regular User
+          - Admin
+          - Super Admin
+          type: string
+        required: true
+      - in: query
+        name: email
+        schema:
+          type: string
+          format: email
+          maxLength: 64
+        required: true
       - in: query
         name: format
         schema:
@@ -3207,13 +3312,7 @@ paths:
   /api/admin/versions/:
     get:
       operationId: api_admin_versions_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Get ReleaseNotes
       parameters:
       - in: query
         name: format
@@ -3234,13 +3333,7 @@ paths:
   /api/admin/website/:
     get:
       operationId: api_admin_website_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Get Website Config
       parameters:
       - in: query
         name: format
@@ -3283,13 +3376,7 @@ paths:
   /api/announcement/:
     get:
       operationId: api_announcement_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Get Announcement
       parameters:
       - in: query
         name: format
@@ -3655,6 +3742,32 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: hostname
+        schema:
+          type: string
+          maxLength: 128
+        required: true
+      - in: query
+        name: judger_version
+        schema:
+          type: string
+          maxLength: 32
+        required: true
+      - in: query
+        name: memory
+        schema:
+          type: number
+          format: float
+          maximum: 100
+          minimum: 0
+        required: true
+      - in: query
+        name: service_url
+        schema:
+          type: string
+          maxLength: 256
+        required: true
       tags:
       - api
       security:
@@ -4490,14 +4603,29 @@ paths:
           description: ''
     post:
       operationId: api_judge_server_heartbeat_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Create JudgeServer Status
       parameters:
+      - in: query
+        name: action
+        schema:
+          enum:
+          - heartbeat
+          type: string
+        required: true
+      - in: query
+        name: cpu
+        schema:
+          type: number
+          format: float
+          maximum: 100
+          minimum: 0
+        required: true
+      - in: query
+        name: cpu_core
+        schema:
+          type: integer
+          minimum: 1
+        required: true
       - in: query
         name: format
         schema:
@@ -4517,13 +4645,7 @@ paths:
   /api/languages/:
     get:
       operationId: api_languages_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Get Langugaes Config
       parameters:
       - in: query
         name: format
@@ -6053,13 +6175,7 @@ paths:
   /api/website/:
     get:
       operationId: api_website_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Get Website Config
       parameters:
       - in: query
         name: format
