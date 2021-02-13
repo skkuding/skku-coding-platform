@@ -29,7 +29,7 @@
     <b-navbar id="inner-header" type="dark">
       <b-navbar-nav>
         <b-nav-item class="menu-icon" active>
-          <b-icon icon="list" scale="1.8" shift-v="-3" v-b-toggle.sidebar/>
+          <b-icon icon="list" scale="1.8" shift-v="-3"/>
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav>
@@ -81,118 +81,18 @@
         <p>네 줄에 걸쳐 높이 h가 주어진다. (0 h 100)</p>
         <h2>Output</h2>
         <p>만약 네 개의 높이가 증가(strictly increasing)하면 “Uphill”, 감소(strictly decreasing)하면 “Downhill”을 출력한다. 또한 높이가 일정하다면 “Flat Land”를 출력하고, 어느 경우에도 속하지 않으면 “Unknown”을 출력한다.</p>
-        <h2>
-          Sample Input 1
-          <b-icon icon="clipboard" class="copy-icon" scale="0.8"/>
-        </h2>
+        <h2>Sample Input 1</h2>
         <p class="sample-io">
           1<br>10<br>12<br>13<br>
         </p>
-        <h2>
-          Sample Output 1
-          <b-icon icon="clipboard" class="copy-icon" scale="0.8"/>
-         </h2>
+        <h2>Sample Output 1</h2>
         <p class="sample-io">
           Uphill
         </p>
       </b-col>
       <b-col id="console" cols="7">
-        <b-row id="editor">
-        </b-row>
-        <b-row id="io">
-          <b-row class="io-header">
-            <b-col class="io-header-cell right-border">Input</b-col>
-            <b-col class="io-header-cell">Output</b-col>
-          </b-row>
-          <b-row class="io-content">
-            <b-col class="io-content-cell right-border">
-              1<br>10<br>12<br>13
-            </b-col>
-            <b-col class="io-content-cell">
-             Uphill
-            </b-col>
-          </b-row>
-        </b-row>
       </b-col>
     </b-row>
-    <b-sidebar id="sidebar" no-header backdrop>
-      <template #default="{ hide }">
-        <div id="sidebar-container">
-          <b-container>
-            <b-row class="sidebar-row bottom-border">
-              <b-icon icon="x" scale="2.2" @click="hide"/>
-            </b-row>
-            <b-row class="sidebar-row bottom-border">
-              <h2>
-                <b-icon class="sidebar-icon" icon="hash" scale="1.3" shift-v="1"/>
-                Problem List
-              </h2>
-              <ul id="problem-list">
-                <li>A.가파른 경사</li>
-                <li>B.습격자 초라기</li>
-                <li>C.두번째 MST</li>
-                <li>D.채권관계</li>
-              </ul>
-            </b-row>
-            <b-row class="sidebar-row">
-              <h2 v-b-modal.clarifications-modal>
-                <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
-                Clarification
-              </h2>
-              <h2 v-b-modal.my-submissions-modal>
-                <b-icon class="sidebar-icon" icon="person" scale="1.2"/>
-                My Submissions
-              </h2>
-              <h2 v-b-modal.all-submissions-modal>
-                <b-icon class="sidebar-icon" icon="people" scale="1.2"/>
-                All Submissions
-              </h2>
-              <h2>
-                <b-icon class="sidebar-icon" icon="bar-chart-line" scale="1.2"/>
-                Standings
-              </h2>
-            </b-row>
-          </b-container>
-        </div>
-      </template>
-    </b-sidebar>
-
-    <div id="modal-wrapper">
-      <b-modal id="clarifications-modal" centered hide-backdrop hide-footer>
-        <template #modal-header="{ close }">
-          <div class="modal-title-close">
-            <h1>Clarifications</h1>
-            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
-          </div>
-        </template>
-        <div id="clarifications-table">
-          <b-table :items="clarifications"></b-table>
-        </div>
-      </b-modal>
-      <b-modal id="my-submissions-modal" centered hide-backdrop hide-footer>
-        <template #modal-header="{ close }">
-          <div class="modal-title-close">
-            <h1>My Submissions</h1>
-            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
-          </div>
-        </template>
-        <div id="my-submissions-table">
-          <b-table class="align-center" :items="my_submissions"></b-table>
-        </div>
-      </b-modal>
-
-      <b-modal id="all-submissions-modal" centered hide-backdrop hide-footer>
-        <template #modal-header="{ close }">
-          <div class="modal-title-close">
-            <h1>All Submissions</h1>
-            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
-          </div>
-        </template>
-        <div id="all-submissions-table">
-          <b-table class="align-center" :items="all_submissions"></b-table>
-        </div>
-      </b-modal>
-    </div>
   </div>
 </template>
 
@@ -208,18 +108,6 @@ export default {
   components: {
   },
   mixins: [FormMixin],
-  beforeRouteEnter (to, from, next) {
-    const problemCode = storage.get(buildProblemCodeKey(to.params.problemID, to.params.contestID))
-    if (problemCode) {
-      next(vm => {
-        vm.language = problemCode.language
-        vm.code = problemCode.code // get the left code.
-        vm.theme = problemCode.theme
-      })
-    } else {
-      next()
-    }
-  },
   data () {
     return {
       clarifications: [
@@ -303,6 +191,18 @@ export default {
         tags: [],
         io_mode: { io_mode: 'Standard IO' }
       }
+    }
+  },
+  beforeRouteEnter (to, from, next) {
+    const problemCode = storage.get(buildProblemCodeKey(to.params.problemID, to.params.contestID))
+    if (problemCode) {
+      next(vm => {
+        vm.language = problemCode.language
+        vm.code = problemCode.code
+        vm.theme = problemCode.theme
+      })
+    } else {
+      next()
     }
   },
   mounted () {
@@ -515,13 +415,13 @@ export default {
 
 <style lang="less" scoped>
 #container {
-  display: flex;
-  flex-flow: column;
   height: 100vh;
 }
+
 #main-header {
   background: #0B232F;
 }
+
 #inner-header {
   height: 58px;
   padding-top: 0px;
@@ -529,52 +429,60 @@ export default {
   padding-left: 15px;
   background: #173747;
   border-bottom: 1px solid #3B4F56;
+
   .menu-icon {
     margin-right: 10px;
   }
+
   .active-link {
     a {
       margin-top: 9px;
     }
+
     height: 58px;
     border-bottom: 2px solid white;
   }
-  /deep/ #language-dropdown button{
+
+  #language-dropdown {
     background: #45576C;
   }
+
   /deep/ #language-dropdown ul {
     background: #45576C;
     left: -90px;
+
     li a {
       color: white;
     }
+
     li a:hover {
       background: #2F3B49;
     }
   }
 }
+
 #problem-container {
   padding: 0;
   margin: 0;
-  flex: 1 1 auto;
+  height: 100%;
+
   #problem-description {
     background: #173747;
     border-right: 1px solid #3B4F56;
     padding-left: 20px;
     color: white;
+
     h2 {
       font-size: 20px;
       margin-top: 25px;
       margin-bottom: 15px;
     }
+
     p {
       font-size: 15px;
       margin-bottom: 40px;
     }
-    .copy-icon {
-      position: absolute;
-      right: 17px;
-    }
+
     .sample-io {
       min-height: 90px;
       padding: 12px;
@@ -582,136 +490,9 @@ export default {
       background: #24272D;
     }
   }
+
   #console {
-    display: flex;
-    padding: 0;
-    flex-flow: column;
     background: #24272D;
-    #editor {
-      margin: 0;
-      padding: 0;
-      flex: 1 1 auto;
-    }
-    #io {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 40%;
-      flex: 0 1 500px;
-      border-top: 1px solid #3B4F56;
-      display: flex;
-      flex-flow: column;
-      * {
-        margin: 0;
-        padding: 0;
-      }
-      .right-border {
-        border-right: 1px solid #3B4F56;
-      }
-      .io-header {
-        flex: 0 1 auto;
-        color: #829BB5;
-        border-bottom: 1px solid #3B4F56;
-        .io-header-cell {
-          padding: 3px 15px;
-        }
-      }
-      .io-content {
-        flex: 1 1 auto;
-        color: white;
-        .io-content-cell {
-          padding: 10px 15px;
-        }
-      }
-    }
-  }
-}
-#sidebar-container {
-  height: 100%;
-  background: #24272D;
-  color: white;
-  .sidebar-row {
-    padding: 15px 15px;
-    padding-left: 25px;
-    .sidebar-icon {
-      margin-right: 7px;
-    }
-    h2 {
-      width: 100%;
-      margin-top: 10px;
-      margin-bottom: 20px;
-      font-size: 18px;
-    }
-    #problem-list {
-      margin-left: 30px;
-      li {
-        list-style-type: none;
-        margin-top: 10px;
-        margin-bottom: 20px;
-        font-size: 18px;
-      }
-    }
-  }
-  .bottom-border {
-    border-bottom: 1px solid #3B4F56;
-  }
-}
-/deep/ .modal {
-  .modal-dialog {
-    min-width: 1200px;
-    .modal-content {
-      border-radius: 10px;
-      background: #24272D;
-      color: white;
-      .modal-header {
-        border-bottom: none;
-        .modal-title-close {
-          width: 100%;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          h1 {
-            display: inline-block;
-            margin-top: 10px;
-            margin-left: 10px;
-            font-size: 35px;
-          }
-        }
-      }
-      .modal-body {
-        padding: 0;
-        #clarifications-table {
-          table {
-            color: white;
-            th {
-              min-width: 230px;
-              padding: 15px 25px;
-              border: none;
-            }
-            td {
-              min-width: 230px;
-              padding: 15px 25px;
-              border-top: 1px solid #3B4F56;
-            }
-          }
-        }
-        #my-submissions-table, #all-submissions-table {
-          table {
-            color: white;
-            th {
-              min-width: 100px;
-              padding: 15px 25px;
-              border: none;
-            }
-            td {
-              min-width: 100px;
-              padding: 15px 25px;
-              border-top: 1px solid #3B4F56;
-            }
-          }
-        }
-      }
-    }
   }
 }
 </style>

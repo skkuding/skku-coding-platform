@@ -1,12 +1,17 @@
 <template>
   <div>
-    <Header />
-    <div class="content-app">
-      <transition name="fadeInUp" mode="out-in">
-        <router-view></router-view>
-      </transition>
+    <div v-if="$route.name == 'problem-details'">
+        <router-view/>
     </div>
-    <Footer />
+    <div v-else>
+      <Header></Header>
+      <div class="content-app">
+        <transition name="fadeInUp" mode="out-in">
+          <router-view/>
+        </transition>
+      </div>
+      <Footer />
+    </div>
   </div>
 </template>
 
@@ -17,7 +22,7 @@ import Footer from '@oj/components/Footer.vue'
 import api from '@oj/api'
 
 export default {
-  name: 'App',
+  name: 'app',
   components: {
     Header,
     Footer
