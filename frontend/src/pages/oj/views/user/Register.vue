@@ -50,110 +50,107 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex'
-  import api from '@oj/api'
-  import { FormMixin } from '@oj/components/mixins'
-
-  export default {
-    mixins: [FormMixin],
-    mounted () {
-      this.getCaptchaSrc()
-    },
-    data () {
-      const CheckUsernameNotExist = (rule, value, callback) => {
-        api.checkUsernameOrEmail(value, undefined).then(res => {
-          if (res.data.data.username === 1) {
-            callback(new Error(this.$i18n.t('m.The_username_already_exists')))
-          } else if (res.data.data.username === 2) {
-            callback(new Error(this.$i18n.t('m.The_username_is_not_student_ID')))
-          } else {
-            callback()
-          }
-        }, _ => callback())
-      }
-      const CheckEmailNotExist = (rule, value, callback) => {
-        api.checkUsernameOrEmail(undefined, value).then(res => {
-          if (res.data.data.email === 1) {
-            callback(new Error(this.$i18n.t('m.The_email_already_exists')))
-          } else if (res.data.data.email === 2) {
-            callback(new Error(this.$i18n.t('m.The_email_domain_not_match')))
-          } else {
-            callback()
-          }
-        }, _ => callback())
-      }
-      const CheckPassword = (rule, value, callback) => {
-        if (this.formRegister.password !== '') {
-          // 对第二个密码框再次验证
-          this.$refs.formRegister.validateField('passwordAgain')
-        }
-        callback()
-      }
-
-      const CheckAgainPassword = (rule, value, callback) => {
-        if (value !== this.formRegister.password) {
-          callback(new Error(this.$i18n.t('m.password_does_not_match')))
-        }
-        callback()
-      }
-
-      return {
-        btnRegisterLoading: false,
-        formRegister: {
-          username: '',
-          password: '',
-          passwordAgain: '',
-          email: '',
-          major: null,
-          captcha: ''
-        },
-        majors: [
-            {value: null, text: 'Major'},
-            {value: 'CSE', text: 'Computer Science and Engineering (소프트웨어학과)'},
-            {value: 'CS', text: 'Computer Science (컴퓨터공학과)'},
-            {value: 'Eng', text: 'Engineering (공학계열)'},
-            {value: 'Nat.Sci', text: 'Natural Science (자연과학계열)'},
-            {value: 'SOC', text: 'School of Convergence (글로벌융합학부)'},
-            {value: 'BE', text: 'Biomedical Engineering (글로벌바이오메디컬공학과)'},
-            {value: 'EE', text: 'Electronic and Electrical Engineering (전자전기공학부)'},
-            {value: 'SSE', text: 'Semiconductor Systems Engineering (반도체시스템공학과)'},
-            {value: 'SS', text: 'Sport Science (스포츠과학과)'},
-            {value: 'Phar.', text: 'Pharmacy (약학과)'},
-            {value: 'Medi.', text: 'Medicine (의예과/의학과)'},
-            {value: 'Others', text: 'Others (이 외 다른 학과)'}
-        ]
-      }
-    },
-    methods: {
-      ...mapActions(['changeModalStatus', 'getProfile']),
-      switchMode (mode) {
-        this.changeModalStatus({
-          mode,
-          visible: true
-        })
+import { mapGetters, mapActions } from 'vuex'
+import api from '@oj/api'
+import { FormMixin } from '@oj/components/mixins'
+export default {
+  mixins: [FormMixin],
+  mounted () {
+    this.getCaptchaSrc()
+  },
+  data () {
+    // const CheckUsernameNotExist = (rule, value, callback) => {
+    //   api.checkUsernameOrEmail(value, undefined).then(res => {
+    //     if (res.data.data.username === 1) {
+    //         callback(new Error(this.$i18n.t('m.The_username_already_exists')))
+    //     } else if (res.data.data.username === 2) {
+    //       callback(new Error(this.$i18n.t('m.The_username_is_not_student_ID')))
+    //     } else {
+    //       callback()
+    //     }
+    //   }, _ => callback())
+    // }
+    // const CheckEmailNotExist = (rule, value, callback) => {
+    //   api.checkUsernameOrEmail(undefined, value).then(res => {
+    //     if (res.data.data.email === 1) {
+    //       callback(new Error(this.$i18n.t('m.The_email_already_exists')))
+    //     } else if (res.data.data.email === 2) {
+    //       callback(new Error(this.$i18n.t('m.The_email_domain_not_match')))
+    //     } else {
+    //       callback()
+    //     }
+    //   }, _ => callback())
+    // }
+    // const CheckPassword = (rule, value, callback) => {
+    //   if (this.formRegister.password !== '') {
+    //     // 对第二个密码框再次验证
+    //     this.$refs.formRegister.validateField('passwordAgain')
+    //   }
+    //   callback()
+    // }
+  //  const CheckAgainPassword = (rule, value, callback) => {
+  //     if (value !== this.formRegister.spassword) {
+  //       callback(new Error(this.$i18n.t('m.password_does_not_match')))
+  //     }
+  //     callback()
+  //   }
+    return {
+      btnRegisterLoading: false,
+      formRegister: {
+        username: '',
+        password: '',
+        passwordAgain: '',
+        email: '',
+        major: null,
+        captcha: ''
       },
-      handleRegister () {
-        let formData = Object.assign({}, this.formRegister)
-        if (formData.password !== formData.passwordAgain) {
-          return this.$error('Password does not match')
-        }
-        delete formData['passwordAgain']
-        this.btnRegisterLoading = true
-        api.register(formData).then(res => {
-          this.$success(this.$i18n.t('m.Thanks_for_registering'))
-          this.switchMode('login')
-          this.btnRegisterLoading = false
-        }, _ => {
-          this.getCaptchaSrc()
-          this.formRegister.captcha = ''
-          this.btnRegisterLoading = false
-        })
-      }
-    },
-    computed: {
-      ...mapGetters(['website', 'modalStatus'])
+      majors: [
+        { value: null, text: 'Major' },
+        { value: 'CSE', text: 'Computer Science and Engineering (소프트웨어학과)' },
+        { value: 'CS', text: 'Computer Science (컴퓨터공학과)' },
+        { value: 'Eng', text: 'Engineering (공학계열)' },
+        { value: 'Nat.Sci', text: 'Natural Science (자연과학계열)' },
+        { value: 'SOC', text: 'School of Convergence (글로벌융합학부)' },
+        { value: 'BE', text: 'Biomedical Engineering (글로벌바이오메디컬공학과)' },
+        { value: 'EE', text: 'Electronic and Electrical Engineering (전자전기공학부)' },
+        { value: 'SSE', text: 'Semiconductor Systems Engineering (반도체시스템공학과)' },
+        { value: 'SS', text: 'Sport Science (스포츠과학과)' },
+        { value: 'Phar.', text: 'Pharmacy (약학과)' },
+        { value: 'Medi.', text: 'Medicine (의예과/의학과)' },
+        { value: 'Others', text: 'Others (이 외 다른 학과)' }
+      ]
     }
+  },
+  methods: {
+    ...mapActions(['changeModalStatus', 'getProfile']),
+    switchMode (mode) {
+      this.changeModalStatus({
+        mode,
+        visible: true
+      })
+    },
+    handleRegister () {
+      const formData = Object.assign({}, this.formRegister)
+      if (formData.password !== formData.passwordAgain) {
+        return this.$error('Password does not match')
+      }
+      delete formData.passwordAgain
+      this.btnRegisterLoading = true
+      api.register(formData).then(res => {
+        this.$success(this.$i18n.t('m.Thanks_for_registering'))
+        this.switchMode('login')
+        this.btnRegisterLoading = false
+      }, _ => {
+        this.getCaptchaSrc()
+        this.formRegister.captcha = ''
+        this.btnRegisterLoading = false
+      })
+    }
+  },
+  computed: {
+    ...mapGetters(['website', 'modalStatus'])
   }
+}
 </script>
 
 <style scoped lang="less">
