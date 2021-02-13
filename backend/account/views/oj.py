@@ -12,6 +12,8 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from otpauth import OtpAuth
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from problem.models import Problem
 from utils.constants import ContestRuleType
@@ -31,6 +33,16 @@ from ..tasks import send_email_async
 
 
 class UserProfileAPI(APIView):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="username",
+                description="To use user from username",
+                type=str,
+            ),
+        ],
+        description = "Find out user is exit, and return UserProfileSerializer",
+    )
     @method_decorator(ensure_csrf_cookie)
     def get(self, request, **kwargs):
         """
@@ -52,6 +64,10 @@ class UserProfileAPI(APIView):
             return self.error("User does not exist")
         return self.success(UserProfileSerializer(user.userprofile, show_real_name=show_real_name).data)
 
+    @extend_schema(
+        parameters=[EditUserProfileSerializer],
+        description="Put user info",
+    )
     @validate_serializer(EditUserProfileSerializer)
     @login_required
     def put(self, request):
@@ -66,6 +82,15 @@ class UserProfileAPI(APIView):
 class AvatarUploadAPI(APIView):
     parser_classes = []
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="form",
+                type=OpenApiTypes.BINARY,
+                required=True,
+            ),
+        ],
+    )
     @login_required
     def post(self, request):
         form = ImageUploadForm(request.POST, request.FILES)
@@ -106,7 +131,11 @@ class TwoFactorAuthAPI(APIView):
         label = f"{SysOptions.website_name_shortcut}:{user.username}"
         image = qrcode.make(OtpAuth(token).to_uri("totp", label, SysOptions.website_name.replace(" ", "")))
         return self.success(img2base64(image))
-
+    @extend_schema(
+        parameters=[
+            TwoFactorAuthCodeSerializer
+        ],
+    )
     @login_required
     @validate_serializer(TwoFactorAuthCodeSerializer)
     def post(self, request):
@@ -122,6 +151,11 @@ class TwoFactorAuthAPI(APIView):
         else:
             return self.error("Invalid code")
 
+    @extend_schema(
+        parameters=[
+            TwoFactorAuthCodeSerializer
+        ],
+    )
     @login_required
     @validate_serializer(TwoFactorAuthCodeSerializer)
     def put(self, request):
@@ -138,6 +172,11 @@ class TwoFactorAuthAPI(APIView):
 
 
 class CheckTFARequiredAPI(APIView):
+    @extend_schema(
+        parameters=[
+            UsernameOrEmailCheckSerializer
+        ],
+    )
     @validate_serializer(UsernameOrEmailCheckSerializer)
     def post(self, request):
         """
@@ -193,11 +232,12 @@ class UserLogoutAPI(APIView):
 
 
 class UsernameOrEmailCheck(APIView):
+    @extend_schema(
+        parameters=[UsernameOrEmailCheckSerializer],
+        description="Check username or email is duplicate",
+    )
     @validate_serializer(UsernameOrEmailCheckSerializer)
     def post(self, request):
-        """
-        check username or email is duplicate
-        """
         data = request.data
         # 1 means already exist.
         # 2 means not student ID / university email
@@ -282,6 +322,11 @@ class EmailAuthAPI(APIView):
 
 
 class UserChangeEmailAPI(APIView):
+    @extend_schema(
+        parameters=[
+            UserChangeEmailSerializer
+        ],
+    )
     @validate_serializer(UserChangeEmailSerializer)
     @login_required
     def post(self, request):
@@ -306,6 +351,11 @@ class UserChangeEmailAPI(APIView):
 
 
 class UserChangePasswordAPI(APIView):
+    @extend_schema(
+        parameters=[
+            UserChangePasswordSerializer
+        ],
+    )
     @validate_serializer(UserChangePasswordSerializer)
     @login_required
     def post(self, request):
@@ -329,6 +379,11 @@ class UserChangePasswordAPI(APIView):
 
 
 class ApplyResetPasswordAPI(APIView):
+    @extend_schema(
+        parameters=[
+            ApplyResetPasswordSerializer
+        ],
+    )
     @validate_serializer(ApplyResetPasswordSerializer)
     def post(self, request):
         if request.user.is_authenticated:
@@ -362,6 +417,11 @@ class ApplyResetPasswordAPI(APIView):
 
 
 class ResetPasswordAPI(APIView):
+    @extend_schema(
+        parameters=[
+            ResetPasswordSerializer
+        ],
+    )
     @validate_serializer(ResetPasswordSerializer)
     def post(self, request):
         data = request.data
@@ -410,6 +470,15 @@ class SessionManagementAPI(APIView):
             request.user.save()
         return self.success(result)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="session_key",
+                type=str,
+                required=True,     
+            ),
+        ],    
+    )
     @login_required
     def delete(self, request):
         session_key = request.GET.get("session_key")
@@ -425,6 +494,14 @@ class SessionManagementAPI(APIView):
 
 
 class UserRankAPI(APIView):
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="rule_type"
+                type=str
+            ),
+        ],
+    )
     def get(self, request):
         rule_type = request.GET.get("rule")
         if rule_type not in ContestRuleType.choices():
@@ -458,6 +535,9 @@ class ProfileProblemDisplayIDRefreshAPI(APIView):
 
 
 class OpenAPIAppkeyAPI(APIView):
+    @extend_schema(
+        description="Get user from request, if it exist then insert appkey in user, if not return error",
+    )
     @login_required
     def post(self, request):
         user = request.user
@@ -470,6 +550,9 @@ class OpenAPIAppkeyAPI(APIView):
 
 
 class SSOAPI(CSRFExemptAPIView):
+    @extend_schema(
+        description="Get token which is consist of random string"
+    )
     @login_required
     def get(self, request):
         token = rand_str()
@@ -477,6 +560,12 @@ class SSOAPI(CSRFExemptAPIView):
         request.user.save()
         return self.success({"token": token})
 
+
+    @extend_schema(
+        parameters=[
+            SSOSerializer
+        ],
+    )
     @method_decorator(csrf_exempt)
     @validate_serializer(SSOSerializer)
     def post(self, request):
