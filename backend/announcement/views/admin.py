@@ -1,5 +1,6 @@
 from account.decorators import super_admin_required
 from utils.api import APIView, validate_serializer
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from announcement.models import Announcement
 from announcement.serializers import (AnnouncementSerializer, CreateAnnouncementSerializer,
@@ -25,6 +26,11 @@ class AnnouncementAdminAPI(APIView):
                                                    created_by=request.user,
                                                    visible=data["visible"])
         return self.success(AnnouncementSerializer(announcement).data)
+    
+    @extend_schema(
+        parameters=[EditAnnouncementSerializer],
+        description='Edit Announcement'
+    )
 
     @swagger_auto_schema(
         request_body=EditAnnouncementSerializer,
@@ -47,6 +53,20 @@ class AnnouncementAdminAPI(APIView):
         announcement.save()
 
         return self.success(AnnouncementSerializer(announcement).data)
+    
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+            ),
+            OpenApiParameter(
+                name="visible",
+                type=bool,
+            )
+        ],
+        description='Get Announcement'
+    )
 
     @swagger_auto_schema(
         manual_parameters=[
