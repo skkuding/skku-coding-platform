@@ -135,7 +135,7 @@
               </ul>
             </b-row>
             <b-row class="sidebar-row">
-              <h2 v-b-modal.clarification-modal>
+              <h2 v-b-modal.clarifications-modal>
                 <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
                 Clarification
               </h2>
@@ -158,23 +158,39 @@
     </b-sidebar>
 
     <div id="modal-wrapper">
-      <b-modal id="clarification-modal" title="Clarifications" centered hide-backdrop hide-footer>
+      <b-modal id="clarifications-modal" centered hide-backdrop hide-footer>
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>Clarifications</h1>
             <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
           </div>
         </template>
-        <div class="modal-table">
+        <div id="clarifications-table">
           <b-table :items="clarifications"></b-table>
         </div>
       </b-modal>
-      <b-modal id="my-submissions-modal" title="My Submissions" centered hide-backdrop hide-footer>
-
+      <b-modal id="my-submissions-modal" centered hide-backdrop hide-footer>
+        <template #modal-header="{ close }">
+          <div class="modal-title-close">
+            <h1>My Submissions</h1>
+            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
+          </div>
+        </template>
+        <div id="my-submissions-table">
+          <b-table class="align-center" :items="my_submissions"></b-table>
+        </div>
       </b-modal>
 
-      <b-modal id="all-submissions-modal" title="All Submissions" centered hide-backdrop hide-footer>
-
+      <b-modal id="all-submissions-modal" centered hide-backdrop hide-footer>
+        <template #modal-header="{ close }">
+          <div class="modal-title-close">
+            <h1>All Submissions</h1>
+            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
+          </div>
+        </template>
+        <div id="all-submissions-table">
+          <b-table class="align-center" :items="all_submissions"></b-table>
+        </div>
       </b-modal>
     </div>
   </div>
@@ -228,9 +244,48 @@ export default {
           result: 'Time Limit Exceed'
         }
       ],
-      all_submissions: {
-
-      },
+      all_submissions: [
+        {
+          problem: 'A.가파른 경사',
+          submission_time: '2021-01-05 10:30:21',
+          language: 'C++',
+          user: 'root',
+          code_size: '544 Bytes',
+          result: 'Accepted'
+        },
+        {
+          problem: 'A.가파른 경사',
+          submission_time: '2021-01-05 10:30:21',
+          language: 'Python3',
+          user: 'yooljunee',
+          code_size: '543 Bytes',
+          result: 'Wrong Answer'
+        },
+        {
+          problem: 'A.가파른 경사',
+          submission_time: '2021-01-05 10:30:21',
+          language: 'Java',
+          user: 'myngryoon',
+          code_size: '542 Bytes',
+          result: 'Time Limit Exceed'
+        },
+        {
+          problem: 'A.가파른 경사',
+          submission_time: '2021-01-05 10:30:21',
+          language: 'C',
+          user: 'didojoa',
+          code_size: '541 Bytes',
+          result: 'Runtime Error'
+        },
+        {
+          problem: 'A.가파른 경사',
+          submission_time: '2021-01-05 10:30:21',
+          language: 'C++',
+          user: 'hatemincho',
+          code_size: '540 Bytes',
+          result: 'Compile Error'
+        }
+      ],
       statusVisible: false,
       captchaRequired: false,
       graphVisible: false,
@@ -679,6 +734,7 @@ export default {
           h1 {
             display: inline-block;
             margin-top: 10px;
+            margin-left: 10px;
             font-size: 35px;
           }
         }
@@ -687,19 +743,39 @@ export default {
       .modal-body {
         padding: 0;
 
-        .modal-table table {
-          color: white;
+        #clarifications-table {
+          table {
+            color: white;
 
-          th {
-            min-width: 150px;
-            padding: 15px 25px;
-            border: none;
+            th {
+              min-width: 230px;
+              padding: 15px 25px;
+              border: none;
+            }
+
+            td {
+              min-width: 230px;
+              padding: 15px 25px;
+              border-top: 1px solid #3B4F56;
+            }
           }
+        }
 
-          td {
-            min-width: 150px;
-            padding: 15px 25px;
-            border-top: 1px solid #3B4F56;
+        #my-submissions-table, #all-submissions-table {
+          table {
+            color: white;
+
+            th {
+              min-width: 100px;
+              padding: 15px 25px;
+              border: none;
+            }
+
+            td {
+              min-width: 100px;
+              padding: 15px 25px;
+              border-top: 1px solid #3B4F56;
+            }
           }
         }
       }
