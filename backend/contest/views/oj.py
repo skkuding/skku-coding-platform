@@ -24,19 +24,19 @@ class ContestAnnouncementListAPI(APIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name='contest_id',
-                description='Unique id of contest',
+                name="contest_id",
+                description="Unique id of contest",
                 required=True,
                 type=int,
             ),
             OpenApiParameter(
-                name='max_id',
-                description='Announcements posted later than id',
+                name="max_id",
+                description="Announcements posted later than id",
                 type=int,
             ),
         ],
         request=None,
-        description='Get Contest Announcement List',
+        description="Get Contest Announcement List",
     )
     @check_contest_permission(check_type="announcements")
     def get(self, request):
@@ -54,13 +54,13 @@ class ContestAPI(APIView):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name='id',
-                description='Unique id of contest',
+                name="id",
+                description="Unique id of contest",
                 required=True,
                 type=int,
             ),
         ],
-        description='More descriptive text',
+        description="More descriptive text",
     )
     def get(self, request):
         id = request.GET.get("id")
