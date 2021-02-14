@@ -166,7 +166,7 @@
           </div>
         </template>
         <div class="modal-table">
-          <b-table hover :items="clarifications"></b-table>
+          <b-table :items="clarifications"></b-table>
         </div>
       </b-modal>
       <b-modal id="my-submissions-modal" title="My Submissions" centered hide-backdrop hide-footer>
@@ -658,26 +658,52 @@ export default {
   }
 }
 
-/deep/ .modal-content {
-  border-radius: 10px;
-  background: #24272D;
-  color: white;
+/deep/ .modal {
+  .modal-dialog {
+    min-width: 1200px;
 
-  .modal-title-close {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    .modal-content {
+      border-radius: 10px;
+      background: #24272D;
+      color: white;
 
-    h1 {
-      display: inline-block;
-      margin-top: 10px;
-      font-size: 35px;
+      .modal-header {
+        border-bottom: none;
+
+        .modal-title-close {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+
+          h1 {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 35px;
+          }
+        }
+      }
+
+      .modal-body {
+        padding: 0;
+
+        .modal-table table {
+          color: white;
+
+          th {
+            min-width: 150px;
+            padding: 15px 25px;
+            border: none;
+          }
+
+          td {
+            min-width: 150px;
+            padding: 15px 25px;
+            border-top: 1px solid #3B4F56;
+          }
+        }
+      }
     }
-  }
-
-  /deep/ .modal-table table {
-    color: white;
   }
 }
 
