@@ -1,25 +1,20 @@
 <template>
   <div>
     <Header />
-    <div class="content-app">
-      <transition
-        name="fadeInUp"
-        mode="out-in"
-      >
-        <router-view />
-      </transition>
-    </div>
+    <Banner />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
 import Header from '@oj/components/Header.vue'
+import Banner from '@oj/components/Banner.vue'
 
 export default {
   name: 'App',
   components: {
-    Header
+    Header,
+    Banner
   },
   data () {
     return {
