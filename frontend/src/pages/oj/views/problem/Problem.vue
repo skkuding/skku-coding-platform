@@ -135,15 +135,15 @@
               </ul>
             </b-row>
             <b-row class="sidebar-row">
-              <h2>
+              <h2 v-b-modal.clarification-modal>
                 <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
                 Clarification
               </h2>
-              <h2>
+              <h2 v-b-modal.my-submissions-modal>
                 <b-icon class="sidebar-icon" icon="person" scale="1.2"/>
                 My Submissions
               </h2>
-              <h2>
+              <h2 v-b-modal.all-submissions-modal>
                 <b-icon class="sidebar-icon" icon="people" scale="1.2"/>
                 All Submissions
               </h2>
@@ -156,6 +156,27 @@
         </div>
       </template>
     </b-sidebar>
+
+    <div id="modal-wrapper">
+      <b-modal id="clarification-modal" title="Clarifications" centered hide-backdrop hide-footer>
+        <template #modal-header="{ close }">
+          <div class="modal-title-close">
+            <h1>Clarifications</h1>
+            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
+          </div>
+        </template>
+        <div class="modal-table">
+          <b-table hover :items="clarifications"></b-table>
+        </div>
+      </b-modal>
+      <b-modal id="my-submissions-modal" title="My Submissions" centered hide-backdrop hide-footer>
+
+      </b-modal>
+
+      <b-modal id="all-submissions-modal" title="All Submissions" centered hide-backdrop hide-footer>
+
+      </b-modal>
+    </div>
   </div>
 </template>
 
@@ -181,49 +202,35 @@ export default {
           modified_time: '2021-01-05 10:22:30'
         }
       ],
-      my_submissions: [],
-      all_submissions: [
+      my_submissions: [
         {
           problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
+          submission_time: '2021-01-07 10:30:21',
           language: 'C++',
-          user: 'root',
-          code_size: '544 Bytes',
+          user: 'ME',
+          code_size: '542 Bytes',
           result: 'Accepted'
         },
         {
           problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
-          language: 'Python3',
-          user: 'yooljunee',
+          submission_time: '2021-01-06 10:30:21',
+          language: 'C++',
+          user: 'ME',
           code_size: '543 Bytes',
           result: 'Wrong Answer'
         },
         {
           problem: 'A.가파른 경사',
           submission_time: '2021-01-05 10:30:21',
-          language: 'Java',
-          user: 'myngryoon',
-          code_size: '542 Bytes',
-          result: 'Time Limit Exceed'
-        },
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
-          language: 'C',
-          user: 'didojoa',
-          code_size: '541 Bytes',
-          result: 'Runtime Error'
-        },
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
           language: 'C++',
-          user: 'hatemincho',
-          code_size: '540 Bytes',
-          result: 'Compile Error'
+          user: 'ME',
+          code_size: '544 Bytes',
+          result: 'Time Limit Exceed'
         }
       ],
+      all_submissions: {
+
+      },
       statusVisible: false,
       captchaRequired: false,
       graphVisible: false,
@@ -649,6 +656,29 @@ export default {
   .bottom-border {
     border-bottom: 1px solid #3B4F56;
   }
-
 }
+
+/deep/ .modal-content {
+  border-radius: 10px;
+  background: #24272D;
+  color: white;
+
+  .modal-title-close {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    h1 {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 35px;
+    }
+  }
+
+  /deep/ .modal-table table {
+    color: white;
+  }
+}
+
 </style>
