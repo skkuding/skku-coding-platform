@@ -28,11 +28,9 @@ from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
                            ExportProblemRequestSerialzier, UploadProblemForm, ImportProblemSerializer,
                            FPSProblemSerializer)
 from ..utils import TEMPLATE_BASE, build_problem_template
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_yasg.utils import swagger_auto_schema , get_consumes
+from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework.decorators import parser_classes
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.parsers import MultiPartParser
 
 
 class TestCaseZipProcessor(object):
@@ -117,8 +115,9 @@ class TestCaseZipProcessor(object):
 
 class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
     request_parsers = ()
-    parser_classes=[MultiPartParser]
-    @swagger_auto_schema (
+    parser_classes = [MultiPartParser]
+
+    @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
                 name="problem_id", in_=openapi.IN_QUERY,
@@ -308,7 +307,7 @@ class ProblemAPI(ProblemBase):
         return self.success(ProblemAdminSerializer(problem).data)
 
     @problem_permission_required
-    @swagger_auto_schema (
+    @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
                 name="id", in_=openapi.IN_QUERY,
@@ -466,7 +465,7 @@ class ContestProblemAPI(ProblemBase):
                 tag = ProblemTag.objects.create(name=item)
             problem.tags.add(tag)
         return self.success(ProblemAdminSerializer(problem).data)
-    
+
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -566,7 +565,7 @@ class ContestProblemAPI(ProblemBase):
             problem.tags.add(tag)
         return self.success()
 
-    @swagger_auto_schema (
+    @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
                 name="id", in_=openapi.IN_QUERY,
@@ -598,7 +597,7 @@ class ContestProblemAPI(ProblemBase):
 class MakeContestProblemPublicAPIView(APIView):
     @validate_serializer(ContestProblemMakePublicSerializer)
     @problem_permission_required
-    @swagger_auto_schema (
+    @swagger_auto_schema(
         request_body=(ContestProblemMakePublicSerializer),
         description="Make contest problems as public problems."
     )
@@ -693,7 +692,7 @@ class ExportProblemAPI(APIView):
                                arcname=f"{index}/testcase/{v['output_name']}",
                                compress_type=compression)
 
-    @swagger_auto_schema (
+    @swagger_auto_schema(
         request_body=ExportProblemRequestSerialzier,
         operation_description="Export problems as .zip file."
     )
@@ -718,7 +717,8 @@ class ExportProblemAPI(APIView):
 
 class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
     request_parsers = ()
-    parser_classes=[MultiPartParser]
+    parser_classes = [MultiPartParser]
+
     @swagger_auto_schema(
         operation_description="Import problems through .zip file",
         manual_parameters=[
@@ -805,6 +805,7 @@ class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
 
 class FPSProblemImport(CSRFExemptAPIView):
     request_parsers = ()
+    parser_classes = [MultiPartParser]
 
     def _create_problem(self, problem_data, creator):
         if problem_data["time_limit"]["unit"] == "ms":
@@ -846,7 +847,7 @@ class FPSProblemImport(CSRFExemptAPIView):
                                created_by=creator,
                                difficulty=Difficulty.Level1,
                                test_case_id=problem_data["test_case_id"])
-    parser_classes=[MultiPartParser]
+
     @swagger_auto_schema(
         operation_description="Import Free Problem Set problems. Filename extension must be \'.xml\'",
         manual_parameters=[

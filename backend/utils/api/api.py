@@ -142,7 +142,7 @@ class APIView(view):
     def dispatch(self, request, *args, **kwargs):
         if self.request_parsers:
             try:
-                request.data=self._get_request_data(self.request)
+                request.data = self._get_request_data(self.request)
             except ValueError as e:
                 return self.error(err="invalid-request", msg=str(e))
         try:

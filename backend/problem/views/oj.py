@@ -5,8 +5,7 @@ from account.decorators import check_contest_permission
 from ..models import ProblemTag, Problem, ProblemRuleType
 from ..serializers import ProblemSerializer, TagSerializer, ProblemSafeSerializer
 from contest.models import ContestRuleType
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_yasg.utils import swagger_auto_schema 
+from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 
@@ -154,7 +153,6 @@ class ContestProblemAPI(APIView):
             )
         ]
     )
-    
     @check_contest_permission(check_type="problems")
     def get(self, request):
         problem_id = request.GET.get("problem_id")
