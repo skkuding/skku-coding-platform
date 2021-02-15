@@ -176,7 +176,7 @@ def validate_serializer(serializer):
             request = args[1]
             s = serializer(data=request.data)
             if s.is_valid():
-                request.data.update(s.data)
+                request._full_data = s.data
                 request.serializer = s
                 return view_method(*args, **kwargs)
             else:
