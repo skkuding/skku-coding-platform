@@ -1,7 +1,7 @@
 import functools
+import io
 import json
 import logging
-import io
 
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator

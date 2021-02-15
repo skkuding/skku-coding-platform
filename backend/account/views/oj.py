@@ -245,6 +245,9 @@ class UserRegisterAPI(APIView):
         user = User.objects.create(username=data["username"], email=data["email"], major=data["major"])
         user.set_password(data["password"])
 
+        if not SysOptions.smtp_config:
+            return self.error("Email authorization failed.")
+
         user.has_email_auth = False
         user.email_auth_token = rand_str()
         user.save()

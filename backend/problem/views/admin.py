@@ -275,7 +275,7 @@ class ProblemBase(APIView):
 
 
 class ProblemAPI(ProblemBase):
-    # @problem_permission_required
+    @problem_permission_required
     @validate_serializer(CreateProblemSerializer)
     @swagger_auto_schema(
         request_body=CreateProblemSerializer,

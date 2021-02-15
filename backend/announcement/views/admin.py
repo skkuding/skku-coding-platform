@@ -9,9 +9,8 @@ from drf_yasg import openapi
 
 
 class AnnouncementAdminAPI(APIView):
-
     @swagger_auto_schema(
-        request_body=(CreateAnnouncementSerializer),
+        request_body=CreateAnnouncementSerializer,
         operation_description="Create Announcement"
     )
     @validate_serializer(CreateAnnouncementSerializer)
@@ -28,7 +27,7 @@ class AnnouncementAdminAPI(APIView):
         return self.success(AnnouncementSerializer(announcement).data)
 
     @swagger_auto_schema(
-        request_body=(EditAnnouncementSerializer),
+        request_body=EditAnnouncementSerializer,
         operation_description="Edit Announcement"
     )
     @validate_serializer(EditAnnouncementSerializer)

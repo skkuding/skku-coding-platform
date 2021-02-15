@@ -1,7 +1,8 @@
-from utils.api import APIView
+from drf_yasg.utils import swagger_auto_schema
+
 from announcement.models import Announcement
 from announcement.serializers import AnnouncementSerializer
-from drf_yasg.utils import swagger_auto_schema
+from utils.api import APIView
 
 
 class AnnouncementAPI(APIView):

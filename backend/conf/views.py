@@ -14,6 +14,7 @@ from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from requests.exceptions import RequestException
+from rest_framework.parsers import MultiPartParser, JSONParser
 
 from account.decorators import super_admin_required
 from account.models import User
@@ -30,18 +31,15 @@ from .serializers import (CreateEditWebsiteConfigSerializer,
                           CreateSMTPConfigSerializer, EditSMTPConfigSerializer,
                           JudgeServerHeartbeatSerializer,
                           JudgeServerSerializer, TestSMTPConfigSerializer, EditJudgeServerSerializer)
-from rest_framework.parsers import MultiPartParser, JSONParser
 
 
 class SMTPAPI(APIView):
-    @swagger_auto_schema(
-        operation_description="Get SMTP Config"
-    )
+    @swagger_auto_schema(operation_description="Get SMTP Config")
     @super_admin_required
     def get(self, request):
         smtp = SysOptions.smtp_config
         if not smtp:
-            return self.error()
+            return self.success(None)
         smtp.pop("password")
         return self.success(smtp)
 
@@ -73,7 +71,6 @@ class SMTPAPI(APIView):
 
 
 class SMTPTestAPI(APIView):
-
     @swagger_auto_schema(
         request_body=TestSMTPConfigSerializer,
         operation_description="Create Test SMTP Config"
@@ -107,11 +104,7 @@ class SMTPTestAPI(APIView):
 
 
 class WebsiteConfigAPI(APIView):
-
-    @swagger_auto_schema(
-        manual_parameters=[],
-        operation_description="Get Website Config"
-    )
+    @swagger_auto_schema(operation_description="Get Website Config")
     def get(self, request):
         ret = {key: getattr(SysOptions, key) for key in
                ["website_base_url", "website_name", "website_name_shortcut",
@@ -136,10 +129,7 @@ class WebsiteConfigAPI(APIView):
 class JudgeServerAPI(APIView):
     parser_classes = [JSONParser, MultiPartParser]
 
-    @swagger_auto_schema(
-        manual_parameters=[],
-        operation_description="Get JudgeServer Toekn & Status"
-    )
+    @swagger_auto_schema(operation_description="Get JudgeServer Toekn & Status")
     @super_admin_required
     def get(self, request):
         servers = JudgeServer.objects.all().order_by("-last_heartbeat")
@@ -162,7 +152,7 @@ class JudgeServerAPI(APIView):
         return self.success()
 
     @swagger_auto_schema(
-        request_body=(EditJudgeServerSerializer),
+        request_body=EditJudgeServerSerializer,
         operation_description="Edit JudgeServer able"
     )
     @validate_serializer(EditJudgeServerSerializer)
@@ -176,9 +166,8 @@ class JudgeServerAPI(APIView):
 
 
 class JudgeServerHeartbeatAPI(CSRFExemptAPIView):
-
     @swagger_auto_schema(
-        request_body=(JudgeServerHeartbeatSerializer),
+        request_body=JudgeServerHeartbeatSerializer,
         operation_description="Create JudgeServer Status"
     )
     @validate_serializer(JudgeServerHeartbeatSerializer)
@@ -215,20 +204,13 @@ class JudgeServerHeartbeatAPI(CSRFExemptAPIView):
 
 
 class LanguagesAPI(APIView):
-    @swagger_auto_schema(
-        manual_parameters=[],
-        operation_description="Get Langugaes Config"
-    )
+    @swagger_auto_schema(operation_description="Get Langugaes Config")
     def get(self, request):
         return self.success({"languages": SysOptions.languages, "spj_languages": SysOptions.spj_languages})
 
 
 class TestCasePruneAPI(APIView):
-
-    @swagger_auto_schema(
-        manual_parameters=[],
-        operation_description="Return Orphan Testcase List"
-    )
+    @swagger_auto_schema(operation_description="Return Orphan Testcase List")
     @super_admin_required
     def get(self, request):
         """
@@ -279,10 +261,7 @@ class TestCasePruneAPI(APIView):
 
 
 class ReleaseNotesAPI(APIView):
-    @swagger_auto_schema(
-        manual_parameters=[],
-        operation_description="Get ReleaseNotes"
-    )
+    @swagger_auto_schema(operation_description="Get ReleaseNotes")
     def get(self, request):
         try:
             resp = requests.get("https://raw.githubusercontent.com/skku-npc/skku-coding-platform/master/backend/docs/data.json?_=" + str(time.time()),
@@ -297,10 +276,7 @@ class ReleaseNotesAPI(APIView):
 
 
 class DashboardInfoAPI(APIView):
-    @swagger_auto_schema(
-        manual_parameters=[],
-        operation_description="Get DashBoardInfo"
-    )
+    @swagger_auto_schema(operation_description="Get DashBoardInfo")
     def get(self, request):
         today = datetime.today()
         today_submission_count = Submission.objects.filter(

@@ -216,7 +216,7 @@ class UserRegisterAPITest(CaptchaTest):
 
     def test_register_with_correct_info(self):
         response = self.client.post(self.register_url, data=self.data)
-        self.assertDictEqual(response.data, {"error": None, "data": "Succeeded"})
+        self.assertDictEqual(response.data, {"error": "error", "data": "Email authorization failed."})
 
     def test_username_already_exists(self):
         self.test_register_with_correct_info()
