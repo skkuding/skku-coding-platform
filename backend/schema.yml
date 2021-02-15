@@ -241,13 +241,7 @@ paths:
           description: ''
     post:
       operationId: api_admin_compile_spj_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Uploading testcase
       parameters:
       - in: query
         name: format
@@ -256,6 +250,16 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: spj_code
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: spj_language
+        schema:
+          type: string
+        required: true
       tags:
       - api
       security:
@@ -538,14 +542,18 @@ paths:
           description: ''
     post:
       operationId: api_admin_contest_add_problem_from_public_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Add new problems into the contest.
       parameters:
+      - in: query
+        name: contest_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: display_id
+        schema:
+          type: string
+        required: true
       - in: query
         name: format
         schema:
@@ -553,6 +561,11 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: problem_id
+        schema:
+          type: integer
+        required: true
       tags:
       - api
       security:
@@ -655,12 +668,28 @@ paths:
           - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
       parameters:
       - in: query
+        name: contest_id
+        schema:
+          type: integer
+        description: Unique id of contest
+        required: true
+      - in: query
         name: format
         schema:
           type: string
           enum:
           - json
           - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        description: Unique id of problem
+      - in: query
+        name: keyword
+        schema:
+          type: integer
+        description: keyword of problem's title you want to search with
       tags:
       - api
       security:
@@ -672,14 +701,38 @@ paths:
           description: No response body
     post:
       operationId: api_admin_contest_problem_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Create problems for contest.
       parameters:
+      - in: query
+        name: _id
+        schema:
+          type: string
+          nullable: true
+          maxLength: 32
+        required: true
+      - in: query
+        name: contest_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: difficulty
+        schema:
+          enum:
+          - Level1
+          - Level2
+          - Level3
+          - Level4
+          - Level5
+          - Level6
+          - Level7
+          type: string
+        required: true
       - in: query
         name: format
         schema:
@@ -687,6 +740,134 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: hint
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: input_description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: io_mode
+        schema:
+          $ref: '#/components/schemas/ProblemIOMode'
+        required: true
+      - in: query
+        name: languages
+        schema:
+          type: array
+          items: {}
+        required: true
+      - in: query
+        name: memory_limit
+        schema:
+          type: integer
+          maximum: 1024
+          minimum: 1
+        required: true
+      - in: query
+        name: output_description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: rule_type
+        schema:
+          enum:
+          - ACM
+          - OI
+          type: string
+        required: true
+      - in: query
+        name: samples
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSample'
+        required: true
+      - in: query
+        name: share_submission
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: source
+        schema:
+          type: string
+          nullable: true
+          maxLength: 256
+        required: true
+      - in: query
+        name: spj
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: spj_code
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: spj_compile_ok
+        schema:
+          type: boolean
+          default: false
+      - in: query
+        name: spj_language
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: tags
+        schema:
+          type: array
+          items:
+            type: string
+        required: true
+      - in: query
+        name: template
+        schema:
+          type: object
+          additionalProperties:
+            type: string
+        required: true
+      - in: query
+        name: test_case_id
+        schema:
+          type: string
+          maxLength: 32
+        required: true
+      - in: query
+        name: test_case_score
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateTestCaseScore'
+        required: true
+      - in: query
+        name: time_limit
+        schema:
+          type: integer
+          maximum: 60000
+          minimum: 1
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 1024
+        required: true
+      - in: query
+        name: visible
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -698,14 +879,38 @@ paths:
           description: No response body
     put:
       operationId: api_admin_contest_problem_update
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Edit problems of contest.
       parameters:
+      - in: query
+        name: _id
+        schema:
+          type: string
+          nullable: true
+          maxLength: 32
+        required: true
+      - in: query
+        name: contest_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: difficulty
+        schema:
+          enum:
+          - Level1
+          - Level2
+          - Level3
+          - Level4
+          - Level5
+          - Level6
+          - Level7
+          type: string
+        required: true
       - in: query
         name: format
         schema:
@@ -713,6 +918,139 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: hint
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: input_description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: io_mode
+        schema:
+          $ref: '#/components/schemas/ProblemIOMode'
+        required: true
+      - in: query
+        name: languages
+        schema:
+          type: array
+          items: {}
+        required: true
+      - in: query
+        name: memory_limit
+        schema:
+          type: integer
+          maximum: 1024
+          minimum: 1
+        required: true
+      - in: query
+        name: output_description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: rule_type
+        schema:
+          enum:
+          - ACM
+          - OI
+          type: string
+        required: true
+      - in: query
+        name: samples
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSample'
+        required: true
+      - in: query
+        name: share_submission
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: source
+        schema:
+          type: string
+          nullable: true
+          maxLength: 256
+        required: true
+      - in: query
+        name: spj
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: spj_code
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: spj_compile_ok
+        schema:
+          type: boolean
+          default: false
+      - in: query
+        name: spj_language
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: tags
+        schema:
+          type: array
+          items:
+            type: string
+        required: true
+      - in: query
+        name: template
+        schema:
+          type: object
+          additionalProperties:
+            type: string
+        required: true
+      - in: query
+        name: test_case_id
+        schema:
+          type: string
+          maxLength: 32
+        required: true
+      - in: query
+        name: test_case_score
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateTestCaseScore'
+        required: true
+      - in: query
+        name: time_limit
+        schema:
+          type: integer
+          maximum: 60000
+          minimum: 1
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 1024
+        required: true
+      - in: query
+        name: visible
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -739,6 +1077,12 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        description: Unique id of problem
+        required: true
       tags:
       - api
       security:
@@ -889,14 +1233,14 @@ paths:
           description: ''
     post:
       operationId: api_admin_contest_problem_make_public_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Make contest problems as public problems.
       parameters:
+      - in: query
+        name: display_id
+        schema:
+          type: string
+          maxLength: 32
+        required: true
       - in: query
         name: format
         schema:
@@ -904,6 +1248,11 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
       tags:
       - api
       security:
@@ -970,13 +1319,7 @@ paths:
   /api/admin/export_problem/:
     get:
       operationId: api_admin_export_problem_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Export problems as .zip file.
       parameters:
       - in: query
         name: format
@@ -985,6 +1328,11 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: problem_id
+        schema:
+          type: integer
+        description: Unique id of problem.
       tags:
       - api
       security:
@@ -1184,14 +1532,22 @@ paths:
           description: ''
     post:
       operationId: api_admin_import_fps_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: tmp
       parameters:
+      - in: query
+        name: append
+        schema:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          nullable: true
+        required: true
+      - in: query
+        name: description
+        schema:
+          type: string
+        required: true
       - in: query
         name: format
         schema:
@@ -1199,6 +1555,77 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: hint
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: input
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: memory_limit
+        schema:
+          $ref: '#/components/schemas/Unit'
+        required: true
+      - in: query
+        name: output
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: prepend
+        schema:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          nullable: true
+        required: true
+      - in: query
+        name: samples
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSample'
+        required: true
+      - in: query
+        name: source
+        schema:
+          type: string
+          nullable: true
+          maxLength: 200
+        required: true
+      - in: query
+        name: spj
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/SPJ'
+          nullable: true
+        required: true
+      - in: query
+        name: template
+        schema:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          nullable: true
+        required: true
+      - in: query
+        name: time_limit
+        schema:
+          $ref: '#/components/schemas/Unit'
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 128
+        required: true
       tags:
       - api
       security:
@@ -1349,14 +1776,26 @@ paths:
           description: ''
     post:
       operationId: api_admin_import_problem_create
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Import problems through .zip file
       parameters:
+      - in: query
+        name: answers
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+        required: true
+      - in: query
+        name: description
+        schema:
+          $ref: '#/components/schemas/FormatValue'
+        required: true
+      - in: query
+        name: display_id
+        schema:
+          type: string
+          maxLength: 128
+        required: true
       - in: query
         name: format
         schema:
@@ -1364,6 +1803,92 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: hint
+        schema:
+          $ref: '#/components/schemas/FormatValue'
+        required: true
+      - in: query
+        name: input_description
+        schema:
+          $ref: '#/components/schemas/FormatValue'
+        required: true
+      - in: query
+        name: memory_limit
+        schema:
+          type: integer
+          maximum: 10240
+          minimum: 1
+        required: true
+      - in: query
+        name: output_description
+        schema:
+          $ref: '#/components/schemas/FormatValue'
+        required: true
+      - in: query
+        name: rule_type
+        schema:
+          enum:
+          - ACM
+          - OI
+          type: string
+        required: true
+      - in: query
+        name: samples
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSample'
+        required: true
+      - in: query
+        name: source
+        schema:
+          type: string
+          nullable: true
+          maxLength: 200
+        required: true
+      - in: query
+        name: spj
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/SPJ'
+          nullable: true
+        required: true
+      - in: query
+        name: tags
+        schema:
+          type: array
+          items:
+            type: string
+        required: true
+      - in: query
+        name: template
+        schema:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Template'
+        required: true
+      - in: query
+        name: test_case_score
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestCaseScore'
+          nullable: true
+        required: true
+      - in: query
+        name: time_limit
+        schema:
+          type: integer
+          maximum: 60000
+          minimum: 1
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 128
+        required: true
       tags:
       - api
       security:
@@ -1447,9 +1972,7 @@ paths:
   /api/admin/problem/:
     get:
       operationId: api_admin_problem_retrieve
-      description: |-
-        partial(func, *args, **keywords) - new function with partial application
-        of the given arguments and keywords.
+      description: Get problem list
       parameters:
       - in: query
         name: format
@@ -1458,6 +1981,21 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        description: Unique id of problem
+      - in: query
+        name: keyword
+        schema:
+          type: string
+        description: keyword of problem's title you want to search with
+      - in: query
+        name: rule_type
+        schema:
+          type: integer
+        description: 'Rule type of problem: ACM or OI'
       tags:
       - api
       security:
@@ -1469,10 +2007,47 @@ paths:
           description: No response body
     post:
       operationId: api_admin_problem_create
-      description: |-
-        partial(func, *args, **keywords) - new function with partial application
-        of the given arguments and keywords.
+      description: Uploading problem.
       parameters:
+      - in: query
+        name: _id
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: accepted_number
+        schema:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+      - in: query
+        name: contest
+        schema:
+          type: integer
+          nullable: true
+        required: true
+      - in: query
+        name: create_time
+        schema:
+          type: string
+          format: date-time
+        required: true
+      - in: query
+        name: created_by
+        schema:
+          $ref: '#/components/schemas/Username'
+        required: true
+      - in: query
+        name: description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: difficulty
+        schema:
+          type: string
+        required: true
       - in: query
         name: format
         schema:
@@ -1480,6 +2055,155 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: hint
+        schema:
+          type: string
+          nullable: true
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: input_description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: io_mode
+        schema:
+          type: object
+          additionalProperties: {}
+      - in: query
+        name: is_public
+        schema:
+          type: boolean
+      - in: query
+        name: languages
+        schema:
+          type: object
+          additionalProperties: {}
+        required: true
+      - in: query
+        name: last_update_time
+        schema:
+          type: string
+          format: date-time
+          nullable: true
+      - in: query
+        name: memory_limit
+        schema:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        required: true
+      - in: query
+        name: output_description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: rule_type
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: samples
+        schema:
+          type: object
+          additionalProperties: {}
+        required: true
+      - in: query
+        name: share_submission
+        schema:
+          type: boolean
+      - in: query
+        name: source
+        schema:
+          type: string
+          nullable: true
+      - in: query
+        name: spj
+        schema:
+          type: boolean
+      - in: query
+        name: spj_code
+        schema:
+          type: string
+          nullable: true
+      - in: query
+        name: spj_compile_ok
+        schema:
+          type: boolean
+      - in: query
+        name: spj_language
+        schema:
+          type: string
+          nullable: true
+      - in: query
+        name: spj_version
+        schema:
+          type: string
+          nullable: true
+      - in: query
+        name: statistic_info
+        schema:
+          type: object
+          additionalProperties: {}
+      - in: query
+        name: submission_number
+        schema:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+      - in: query
+        name: tags
+        schema:
+          type: array
+          items:
+            type: string
+        required: true
+      - in: query
+        name: template
+        schema:
+          type: object
+          additionalProperties: {}
+        required: true
+      - in: query
+        name: test_case_id
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: test_case_score
+        schema:
+          type: object
+          additionalProperties: {}
+        required: true
+      - in: query
+        name: time_limit
+        schema:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: total_score
+        schema:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+      - in: query
+        name: visible
+        schema:
+          type: boolean
       tags:
       - api
       security:
@@ -1491,10 +2215,33 @@ paths:
           description: No response body
     put:
       operationId: api_admin_problem_update
-      description: |-
-        partial(func, *args, **keywords) - new function with partial application
-        of the given arguments and keywords.
+      description: Editing problem.
       parameters:
+      - in: query
+        name: _id
+        schema:
+          type: string
+          nullable: true
+          maxLength: 32
+        required: true
+      - in: query
+        name: description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: difficulty
+        schema:
+          enum:
+          - Level1
+          - Level2
+          - Level3
+          - Level4
+          - Level5
+          - Level6
+          - Level7
+          type: string
+        required: true
       - in: query
         name: format
         schema:
@@ -1502,6 +2249,139 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: hint
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: input_description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: io_mode
+        schema:
+          $ref: '#/components/schemas/ProblemIOMode'
+        required: true
+      - in: query
+        name: languages
+        schema:
+          type: array
+          items: {}
+        required: true
+      - in: query
+        name: memory_limit
+        schema:
+          type: integer
+          maximum: 1024
+          minimum: 1
+        required: true
+      - in: query
+        name: output_description
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: rule_type
+        schema:
+          enum:
+          - ACM
+          - OI
+          type: string
+        required: true
+      - in: query
+        name: samples
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSample'
+        required: true
+      - in: query
+        name: share_submission
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: source
+        schema:
+          type: string
+          nullable: true
+          maxLength: 256
+        required: true
+      - in: query
+        name: spj
+        schema:
+          type: boolean
+        required: true
+      - in: query
+        name: spj_code
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: spj_compile_ok
+        schema:
+          type: boolean
+          default: false
+      - in: query
+        name: spj_language
+        schema:
+          type: string
+          nullable: true
+        required: true
+      - in: query
+        name: tags
+        schema:
+          type: array
+          items:
+            type: string
+        required: true
+      - in: query
+        name: template
+        schema:
+          type: object
+          additionalProperties:
+            type: string
+        required: true
+      - in: query
+        name: test_case_id
+        schema:
+          type: string
+          maxLength: 32
+        required: true
+      - in: query
+        name: test_case_score
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateTestCaseScore'
+        required: true
+      - in: query
+        name: time_limit
+        schema:
+          type: integer
+          maximum: 60000
+          minimum: 1
+        required: true
+      - in: query
+        name: title
+        schema:
+          type: string
+          maxLength: 1024
+        required: true
+      - in: query
+        name: visible
+        schema:
+          type: boolean
+        required: true
       tags:
       - api
       security:
@@ -1514,8 +2394,12 @@ paths:
     delete:
       operationId: api_admin_problem_destroy
       description: |-
-        partial(func, *args, **keywords) - new function with partial application
-        of the given arguments and keywords.
+        The parent class of Django view, and the usage of django-rest-framework is basically the same
+          - request.data to get parsed json or urlencoded data, dict type
+          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
+            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
+          - self.response returns a django HttpResponse, which is implemented in self.response_class
+          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
       parameters:
       - in: query
         name: format
@@ -1524,6 +2408,12 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: id
+        schema:
+          type: integer
+        description: Unique id of problem
+        required: true
       tags:
       - api
       security:
@@ -1847,6 +2737,11 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: problem_id
+        schema:
+          type: integer
+        description: Unique id of problem that you want to get test cases
       tags:
       - api
       security:
@@ -3343,14 +4238,15 @@ paths:
   /api/contest/problem/:
     get:
       operationId: api_contest_problem_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      description: Get problem of specific contest. If 'problem_id' is not set, whole
+        problems of the contest would be returned.
       parameters:
+      - in: query
+        name: contest_id
+        schema:
+          type: integer
+        description: Unique id of contest
+        required: true
       - in: query
         name: format
         schema:
@@ -3358,6 +4254,11 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: problem_id
+        schema:
+          type: integer
+        description: Unique id of problem
       tags:
       - api
       security:
@@ -4016,15 +4917,15 @@ paths:
           description: No response body
   /api/problem/:
     get:
-      operationId: api_problem_retrieve
-      description: |-
-        The parent class of Django view, and the usage of django-rest-framework is basically the same
-          - request.data to get parsed json or urlencoded data, dict type
-          - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-            Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-          - self.response returns a django HttpResponse, which is implemented in self.response_class
-          - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      operationId: api_problem_list
+      description: Get problems that satisfy specific condition(id, tag, keyword and
+        so on..)
       parameters:
+      - in: query
+        name: Difficulty
+        schema:
+          type: string
+        description: Difficulty of problem you want to search with.
       - in: query
         name: format
         schema:
@@ -4032,6 +4933,34 @@ paths:
           enum:
           - json
           - yaml
+      - in: query
+        name: keyword
+        schema:
+          type: string
+        description: Keyword of problem's title you want to search with.
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Maximun number of problem list. Working when 'problem_id' is
+          not set.
+        required: true
+      - in: query
+        name: offset
+        schema:
+          type: integer
+        description: Start number of the problem in the list.
+        required: true
+      - in: query
+        name: problem_id
+        schema:
+          type: integer
+        description: Unique id of problem. It set, a specific problem is returned.
+      - in: query
+        name: tag
+        schema:
+          type: string
+        description: Tag of problem you want to search with.
       tags:
       - api
       security:
@@ -4040,7 +4969,28 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
+            application/yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
+            application/vnd.oai.openapi+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
+          description: ''
   /api/problem/tags/:
     get:
       operationId: api_problem_tags_retrieve
@@ -5150,6 +6100,253 @@ paths:
         '200':
           description: No response body
 components:
+  schemas:
+    Answer:
+      type: object
+      properties:
+        code:
+          type: string
+        language:
+          type: string
+      required:
+      - code
+      - language
+    CreateSample:
+      type: object
+      properties:
+        input:
+          type: string
+        output:
+          type: string
+      required:
+      - input
+      - output
+    CreateTestCaseScore:
+      type: object
+      properties:
+        input_name:
+          type: string
+          maxLength: 32
+        output_name:
+          type: string
+          maxLength: 32
+        score:
+          type: integer
+          minimum: 0
+      required:
+      - input_name
+      - output_name
+      - score
+    FormatEnum:
+      enum:
+      - html
+      - markdown
+      type: string
+    FormatValue:
+      type: object
+      properties:
+        format:
+          $ref: '#/components/schemas/FormatEnum'
+        value:
+          type: string
+      required:
+      - format
+      - value
+    IoModeEnum:
+      enum:
+      - Standard IO
+      - File IO
+      type: string
+    Problem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tags:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        created_by:
+          $ref: '#/components/schemas/Username'
+        template:
+          type: string
+          readOnly: true
+        _id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        input_description:
+          type: string
+        output_description:
+          type: string
+        samples:
+          type: object
+          additionalProperties: {}
+        hint:
+          type: string
+          nullable: true
+        languages:
+          type: object
+          additionalProperties: {}
+        create_time:
+          type: string
+          format: date-time
+          readOnly: true
+        last_update_time:
+          type: string
+          format: date-time
+          nullable: true
+        time_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        memory_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        io_mode:
+          type: object
+          additionalProperties: {}
+        spj:
+          type: boolean
+        spj_language:
+          type: string
+          nullable: true
+        rule_type:
+          type: string
+        difficulty:
+          type: string
+        source:
+          type: string
+          nullable: true
+        total_score:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        submission_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        accepted_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        statistic_info:
+          type: object
+          additionalProperties: {}
+        share_submission:
+          type: boolean
+        contest:
+          type: integer
+          nullable: true
+      required:
+      - _id
+      - contest
+      - create_time
+      - created_by
+      - description
+      - difficulty
+      - id
+      - input_description
+      - languages
+      - memory_limit
+      - output_description
+      - rule_type
+      - samples
+      - tags
+      - template
+      - time_limit
+      - title
+    ProblemIOMode:
+      type: object
+      properties:
+        io_mode:
+          $ref: '#/components/schemas/IoModeEnum'
+        input:
+          type: string
+        output:
+          type: string
+      required:
+      - input
+      - io_mode
+      - output
+    SPJ:
+      type: object
+      properties:
+        code:
+          type: string
+        language:
+          type: string
+      required:
+      - code
+      - language
+    Template:
+      type: object
+      properties:
+        prepend:
+          type: string
+        template:
+          type: string
+        append:
+          type: string
+      required:
+      - append
+      - prepend
+      - template
+    TestCaseScore:
+      type: object
+      properties:
+        score:
+          type: integer
+          minimum: 1
+        input_name:
+          type: string
+          maxLength: 32
+        output_name:
+          type: string
+          maxLength: 32
+      required:
+      - input_name
+      - output_name
+      - score
+    Unit:
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/UnitEnum'
+        value:
+          type: integer
+          maximum: 60000
+          minimum: 1
+      required:
+      - unit
+      - value
+    UnitEnum:
+      enum:
+      - MB
+      - s
+      - ms
+      type: string
+    Username:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        real_name:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - real_name
+      - username
   securitySchemes:
     basicAuth:
       type: http
