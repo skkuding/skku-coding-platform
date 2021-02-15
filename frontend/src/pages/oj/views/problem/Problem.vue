@@ -318,18 +318,6 @@ export default {
       }
     }
   },
-  beforeRouteEnter (to, from, next) {
-    const problemCode = storage.get(buildProblemCodeKey(to.params.problemID, to.params.contestID))
-    if (problemCode) {
-      next(vm => {
-        vm.language = problemCode.language
-        vm.code = problemCode.code
-        vm.theme = problemCode.theme
-      })
-    } else {
-      next()
-    }
-  },
   mounted () {
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
     this.init()

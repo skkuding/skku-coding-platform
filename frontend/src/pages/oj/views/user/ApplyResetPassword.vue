@@ -1,77 +1,56 @@
 <template>
-  <Panel :padding="30" class="container">
-    <div slot="title" class="center">{{$t('m.Reset_Password')}}</div>
+    <div class="font-bold">
+      <div class="logo-title font-bold">
+        <h4>Password Recovery</h4>
+      </div>
     <template v-if="!successApply">
         <b-form ref="formResetPassword" :model="formResetPassword" :rules="ruleLogin">
         <b-container fluid="xl">
-          <b-row class="mb-2">
-            <b-form-input type="email" v-model="formResetPassword.email" :placeholder="$t('m.ApplyEmail')"/>
+          <b-row class="mb-4">
+            <b-form-input type="email" v-model="formResetPassword.email" placeholder="Your Email Address"/>
           </b-row>
           <b-row class="mb-4">
             <div class="oj-captcha">
               <div class="oj-captcha-code">
-                <b-form-input v-model="formResetPassword.captcha" :placeholder="$t('m.RCaptcha')"></b-form-input>
+                <b-form-input class="captcha-input" v-model="formResetPassword.captcha" placeholder="Captcha"></b-form-input>
               </div>
               <div class="oj-captcha-img">
-                <img :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
+                <img class="captcha-img" :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
               </div>
             </div>
           </b-row>
-          <b-button @click="sendEmail" variant="success" style="width: 260px; height: 36px;">{{$t('m.Send_Password_Reset_Email')}}</b-button>
+          <b-button @click="sendEmail" variant="success" class="sign-btn mb-4">Send Password Reset Email</b-button>
         </b-container>
       </b-form>
+      <div class="modal-low">
+        <a @click.stop="handleBtnClick('login')" style="display:block; text-align:center;">Back to Sign In</a>
+      </div>
     </template>
     <template v-else>
-      <Alert type="success" show-icon>
-        {{$t('Success')}}
-        <span slot="desc"> {{$t('Password_reset_mail_sent')}}</span>
-      </Alert>
+      <p>Email for password recovery is now sent to your email.</p>
+      <p>Please Check your mailbox. If you haven't received the mail, <a href="http://pf.kakao.com/_UKraK/chat">contact us</a>. </p>
     </template>
-  </Panel>
+  </div>
 </template>
 <script>
 import api from '@oj/api'
 import { FormMixin } from '@oj/components/mixins'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   mixins: [FormMixin],
   data () {
-    const CheckEmailExist = (rule, value, callback) => {
-      if (value !== '') {
-        api.checkUsernameOrEmail(undefined, value).then(res => {
-          if (res.data.data.email === false) {
-            callback(new Error(this.$i18n.t('m.The_email_doesnt_exist')))
-          } else {
-            callback()
-          }
-        }, _ => callback())
-      } else {
-        callback()
-      }
-    }
     return {
       captchaSrc: '',
       successApply: false,
       btnLoading: false,
-      formResetPassword: {
-        email: '',
-        captcha: ''
-      },
-      ruleResetPassword: {
-        email: [
-          { required: true, type: 'email', trigger: 'blur' },
-          { validator: CheckEmailExist, trigger: 'blur' }
-        ],
-        captcha: [
-          { required: true, trigger: 'blur', min: 1, max: 10 }
-        ]
-      }
     }
   },
   mounted () {
     this.getCaptchaSrc()
   },
   methods: {
+    ...mapActions(['changeModalStatus']),
     sendEmail () {
       this.btnLoading = true
       api.applyResetPassword(this.formResetPassword).then(res => {
@@ -85,12 +64,33 @@ export default {
         this.formResetPassword.captcha = ''
         this.getCaptchaSrc()
       })
+    },
+    handleBtnClick (mode) {
+      this.changeModalStatus({
+        visible: true,
+        mode: mode
+      })
+    }
+  },
+  computed: {
+    ...mapGetters(['website', 'modalStatus']),
+    visible: {
+      get () {
+        return this.modalStatus.visible
+      },
+      set (value) {
+        this.changeModalStatus({ visible: value })
+      }
     }
   }
 }
 </script>
 
 <style scoped lang="less">
+@font-face {
+  font-family: Manrope_bold;
+  src: url('../../../../fonts/Manrope-Bold.ttf');
+}
   .container {
     width: 450px;
     margin: auto;
@@ -101,5 +101,29 @@ export default {
       margin-top: 18px;
       text-align: center;
     }
+  }
+  .logo-title {
+    margin:8px 0 28px 0;
+    color: #8DC63F;
+    text-align:center;
+  }
+  .font-bold {
+      font-family: manrope_bold;
+  }
+  .sign-btn {
+    width:284px;
+    margin-left:18px;
+  }
+  .modal-low {
+      color:#808080;
+      font-size:14px;
+  }
+  .captcha-img {
+    margin-right:36px;
+    border-radius:8px;
+  }
+  .captcha-input {
+    width:140px;
+    margin-left:34px;
   }
 </style>

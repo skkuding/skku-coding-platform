@@ -25,7 +25,7 @@ from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
                            RankInfoSerializer, UserChangeEmailSerializer, SSOSerializer)
 from ..serializers import (TwoFactorAuthCodeSerializer, UserProfileSerializer,
-                           EditUserProfileSerializer, ImageUploadForm)
+                           EditUserProfileSerializer, ImageUploadForm, EditUserSettingSerializer, UserSerializer)
 from ..tasks import send_email_async
 
 
@@ -60,6 +60,37 @@ class UserProfileAPI(APIView):
             setattr(user_profile, k, v)
         user_profile.save()
         return self.success(UserProfileSerializer(user_profile, show_real_name=True).data)
+
+class UserSettingAPI(APIView):
+    @validate_serializer(EditUserSettingSerializer)
+    @login_required
+    def put(self, request):
+        data = request.data
+        user = request.user
+        setattr(user, "major", data["major"])
+        user.save()
+        return self.success(UserSerializer(user).data)
+
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request, **kwargs):
+        """
+        Determine whether to log in, and return user information if logged in
+        """
+        user = request.user
+        if not user.is_authenticated:
+            return self.success()
+        show_real_name = False
+        username = request.GET.get("username")
+        try:
+            if username:
+                user = User.objects.get(username=username, is_disabled=False)
+            else:
+                user = request.user
+                # The api returns your own information, you can return real_name
+                show_real_name = True
+        except User.DoesNotExist:
+            return self.error("User does not exist")
+        return self.success(UserSerializer(user).data)
 
 
 class AvatarUploadAPI(APIView):

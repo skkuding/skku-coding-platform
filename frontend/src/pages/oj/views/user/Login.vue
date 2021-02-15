@@ -1,25 +1,29 @@
 <template>
   <div>
-    <div style="border: solid 1px green; width:80px; height:80px">
-      Logo
+    <div class="logo">
+      <div class="logo-img">
+        <img src="../../../../assets/logo.svg" alt="" style="fill:red;"/>
+      </div>
+      <div class="logo-title font-bold">
+        <h4>SKKU</h4>
+        <h4>Coding Platform</h4>
+      </div>
     </div>
-    <div>
-      <p>SKKU</p>
-      <p>Coding Platform</p>
-    </div>
-    <b-form @on-enter="handleLogin" ref="formLogin" :model="formLogin">
+    <b-form @on-enter="handleLogin" ref="formLogin" :model="formLogin" class="font-bold">
         <b-container fluid="xl">
-          <b-row class="mb-2">
-            <b-form-input v-model="formLogin.username" :placeholder="$t('m.LoginUsername')" @on-enter="handleLogin" />
+          <b-row class="mb-4">
+            <b-form-input v-model="formLogin.username" placeholder="Student ID" @enter="handleLogin" />
           </b-row>
           <b-row class="mb-4">
-            <b-form-input type="password" v-model="formLogin.password" :placeholder="$t('m.LoginPassword')" @on-enter="handleLogin" />
+            <b-form-input type="password" v-model="formLogin.password" placeholder="Password" @enter="handleLogin" />
           </b-row>
-          <b-button @click="handleLogin" variant="success" style="width: 260px; height: 36px;">{{$t('m.UserLogin')}}</b-button>
+          <b-button class="sign-btn" @click="handleLogin" variant="outline">Sign In</b-button>
         </b-container>
       </b-form>
-      <a class="modal-low" v-if="website.allow_register" @click.stop="handleBtnClick('register')">{{$t('m.No_Account')}}</a>
-      <a class="modal-low" @click.stop="goResetPassword" style="float: right">{{$t('m.Forget_Password')}}</a>
+      <div class="modal-low mt-5 font-bold">
+        <a v-if="website.allow_register" @click.stop="handleBtnClick('register')" style="float:left">Register now</a>
+        <a @click.stop="handleBtnClick('ApplyResetPassword')" style="float: right;">Forgot Password</a>
+      </div>
   </div>
 </template>
 
@@ -31,15 +35,6 @@ import { FormMixin } from '@oj/components/mixins'
 export default {
   mixins: [FormMixin],
   data () {
-    const CheckRequiredTFA = (rule, value, callback) => {
-      if (value !== '') {
-        api.tfaRequiredCheck(value).then(res => {
-          this.tfaRequired = res.data.data.result
-        })
-      }
-      callback()
-    }
-
     return {
       tfaRequired: false,
       btnLoginLoading: false,
@@ -47,15 +42,6 @@ export default {
         username: '',
         password: '',
         tfa_code: ''
-      },
-      ruleLogin: {
-        username: [
-          { required: true, trigger: 'blur' },
-          { validator: CheckRequiredTFA, trigger: 'blur' }
-        ],
-        password: [
-          { required: true, trigger: 'change', min: 6, max: 20 }
-        ]
       }
     }
   },
@@ -77,7 +63,7 @@ export default {
         this.btnLoginLoading = false
         this.changeModalStatus({ visible: false })
         this.getProfile()
-        this.$success(this.$i18n.t('m.Welcome_back'))
+        this.$success('Welcome back!')
       }, _ => {
         this.btnLoginLoading = false
       })
@@ -102,6 +88,10 @@ export default {
 </script>
 
 <style scoped lang="less">
+@font-face {
+  font-family: Manrope_bold;
+  src: url('../../../../fonts/Manrope-Bold.ttf');
+}
   .footer {
     overflow: auto;
     margin-top: 20px;
@@ -113,5 +103,29 @@ export default {
         margin: 0;
       }
     }
+  }
+  .logo-img {
+    display:block;
+    width:116px;
+    height:136px;
+    margin-left:auto;
+    margin-right:auto;
+    filter:invert(68%) sepia(59%) saturate(458%) hue-rotate(42deg) brightness(94%) contrast(88%);
+  }
+ .logo-title {
+    margin:8px 0 28px 0;
+    color: #8DC63F;
+    text-align:center;
+  }
+  .sign-btn {
+    width:284px;
+    margin-left:18px;
+  }
+  .modal-low {
+    color:#808080;
+    font-size:14px;
+  }
+  .font-bold {
+    font-family: manrope_bold;
   }
 </style>
