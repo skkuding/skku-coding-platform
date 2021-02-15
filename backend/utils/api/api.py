@@ -1,11 +1,13 @@
 import functools
+import io
 import json
 import logging
 
-from django.http import HttpResponse, QueryDict
+from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView as view
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 
 logger = logging.getLogger("")
 
@@ -21,23 +23,8 @@ class ContentType(object):
     json_request = "application/json"
     json_response = "application/json;charset=UTF-8"
     url_encoded_request = "application/x-www-form-urlencoded"
+    multipart_request = "multipart/form-data"
     binary_response = "application/octet-stream"
-
-
-class JSONParser(object):
-    content_type = ContentType.json_request
-
-    @staticmethod
-    def parse(body):
-        return json.loads(body.decode("utf-8"))
-
-
-class URLEncodedParser(object):
-    content_type = ContentType.url_encoded_request
-
-    @staticmethod
-    def parse(body):
-        return QueryDict(body)
 
 
 class JSONResponse(object):
@@ -59,8 +46,8 @@ class APIView(view):
       - self.response returns a django HttpResponse, which is implemented in self.response_class
       - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
     """
-    request_parsers = (JSONParser, URLEncodedParser)
     response_class = JSONResponse
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
 
     def _get_request_data(self, request):
         if request.method not in ["GET", "DELETE"]:
@@ -68,14 +55,21 @@ class APIView(view):
             content_type = request.META.get("CONTENT_TYPE")
             if not content_type:
                 raise ValueError("content_type is required")
-            for parser in self.request_parsers:
-                if content_type.startswith(parser.content_type):
+            for parser in self.parser_classes:
+                if content_type.startswith(parser.media_type):
                     break
             # else means the for loop is not interrupted by break
             else:
                 raise ValueError("unknown content_type '%s'" % content_type)
             if body:
-                return parser.parse(body)
+                if parser == JSONParser:
+                    return parser().parse(io.BytesIO(body))
+                else:
+                    return parser().parse(
+                        io.BytesIO(body),
+                        media_type=content_type,
+                        parser_context={"request": request}
+                    )
             return {}
         return request.GET
 
@@ -140,7 +134,7 @@ class APIView(view):
         return data
 
     def dispatch(self, request, *args, **kwargs):
-        if self.request_parsers:
+        if self.parser_classes:
             try:
                 request.data = self._get_request_data(self.request)
             except ValueError as e:

@@ -28,6 +28,7 @@ from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
                            ExportProblemRequestSerialzier, UploadProblemForm, ImportProblemSerializer,
                            FPSProblemSerializer)
 from ..utils import TEMPLATE_BASE, build_problem_template
+
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.parsers import MultiPartParser
@@ -114,7 +115,6 @@ class TestCaseZipProcessor(object):
 
 
 class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
-    request_parsers = ()
     parser_classes = [MultiPartParser]
 
     @swagger_auto_schema(
@@ -716,7 +716,6 @@ class ExportProblemAPI(APIView):
 
 
 class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
-    request_parsers = ()
     parser_classes = [MultiPartParser]
 
     @swagger_auto_schema(
@@ -804,7 +803,6 @@ class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
 
 
 class FPSProblemImport(CSRFExemptAPIView):
-    request_parsers = ()
     parser_classes = [MultiPartParser]
 
     def _create_problem(self, problem_data, creator):

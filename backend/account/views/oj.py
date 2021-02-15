@@ -64,7 +64,7 @@ class UserProfileAPI(APIView):
 
 
 class AvatarUploadAPI(APIView):
-    request_parsers = ()
+    parser_classes = []
 
     @login_required
     def post(self, request):
@@ -244,6 +244,9 @@ class UserRegisterAPI(APIView):
             return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
         user = User.objects.create(username=data["username"], email=data["email"], major=data["major"])
         user.set_password(data["password"])
+
+        if not SysOptions.smtp_config:
+            return self.error("Email authorization failed.")
 
         user.has_email_auth = False
         user.email_auth_token = rand_str()
