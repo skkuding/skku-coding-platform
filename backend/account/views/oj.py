@@ -81,6 +81,7 @@ class UserProfileAPI(APIView):
         user_profile.save()
         return self.success(UserProfileSerializer(user_profile, show_real_name=True).data)
 
+
 class UserSettingAPI(APIView):
     @validate_serializer(EditUserSettingSerializer)
     @login_required

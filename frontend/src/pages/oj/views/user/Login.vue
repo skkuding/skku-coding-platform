@@ -109,4 +109,28 @@ export default {
   .font-bold {
     font-family: manrope_bold;
   }
+  .logo-img {
+    display:block;
+    width:116px;
+    height:136px;
+    margin-left:auto;
+    margin-right:auto;
+    filter:invert(68%) sepia(59%) saturate(458%) hue-rotate(42deg) brightness(94%) contrast(88%);
+  }
+ .logo-title {
+    margin:8px 0 28px 0;
+    color: #8DC63F;
+    text-align:center;
+  }
+  .sign-btn {
+    width:284px;
+    margin-left:18px;
+  }
+  .modal-low {
+    color:#808080;
+    font-size:14px;
+  }
+  .font-bold {
+    font-family: manrope_bold;
+  }
 </style>

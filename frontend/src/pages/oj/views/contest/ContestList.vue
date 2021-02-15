@@ -145,8 +145,11 @@ export default {
         this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
       }
     },
-    getFormat (value) {
+    getTimeFormat (value) {
       return time.utcToLocal(value, 'YYYY-MM-DD HH:mm')
+    },
+    getDuration (startTime, endTime) {
+      return time.duration(startTime, endTime)
     }
   },
   computed: {

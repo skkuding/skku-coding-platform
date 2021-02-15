@@ -239,7 +239,6 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../../fonts/Manrope-Bold.ttf');
   }
-
   .profileSetting {
     display:flex;
     justify-content: space-around;
