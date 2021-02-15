@@ -64,7 +64,7 @@ class UserProfileAPI(APIView):
 
 
 class AvatarUploadAPI(APIView):
-    request_parsers = ()
+    parser_classes = []
 
     @login_required
     def post(self, request):

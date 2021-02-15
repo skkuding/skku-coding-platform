@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class SimditorImageUploadAPIView(CSRFExemptAPIView):
-    request_parsers = ()
     parser_classes = [MultiPartParser]
 
     @swagger_auto_schema(
@@ -57,7 +56,6 @@ class SimditorImageUploadAPIView(CSRFExemptAPIView):
 
 
 class SimditorFileUploadAPIView(CSRFExemptAPIView):
-    request_parsers = ()
     parser_classes = [MultiPartParser]
 
     @swagger_auto_schema(

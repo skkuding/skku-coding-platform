@@ -716,7 +716,6 @@ class ExportProblemAPI(APIView):
 
 
 class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
-    request_parsers = ()
     parser_classes = [MultiPartParser]
 
     @swagger_auto_schema(
@@ -804,12 +803,7 @@ class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
 
 
 class FPSProblemImport(CSRFExemptAPIView):
-    request_parsers = ()
     parser_classes = [MultiPartParser]
-
-    # def __init__(self):
-    #     super().__init__()
-    #     print("###", self.request_parsers)
 
     def _create_problem(self, problem_data, creator):
         if problem_data["time_limit"]["unit"] == "ms":

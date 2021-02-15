@@ -18,7 +18,7 @@ class SubmissionRejudgeAPI(APIView):
         ],
         operation_description="Rejudge Submission"
     )
-    # @super_admin_required
+    @super_admin_required
     def get(self, request):
         id = request.GET.get("id")
         if not id:
