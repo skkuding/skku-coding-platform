@@ -16,14 +16,14 @@ from ..models import AdminType, ProblemPermission, User, UserProfile
 from ..serializers import EditUserSerializer, UserAdminSerializer, GenerateUserSerializer
 from ..serializers import ImportUserSeralizer
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class UserAdminAPI(APIView):
-    @extend_schema(
-        parameters=[ImportUserSeralizer],
-        description="Import User"
+    @swagger_auto_schema(
+        request_body=(ImportUserSeralizer),
+        operation_description="Import User"
     )
     @validate_serializer(ImportUserSeralizer)
     @super_admin_required
@@ -49,10 +49,10 @@ class UserAdminAPI(APIView):
             #    duplicate key value violates unique constraint "user_username_key"
             #    DETAIL:  Key (username)=(root11) already exists.
             return self.error(str(e).split("\n")[1])
-    
-    @extend_schema(
-        parameters=[EditUserSerializer],
-        description="Edit user api"
+
+    @swagger_auto_schema(
+        request_body=(EditUserSerializer),
+        operation_description="Edit user api"
     )
     @validate_serializer(EditUserSerializer)
     @super_admin_required
@@ -111,20 +111,20 @@ class UserAdminAPI(APIView):
         UserProfile.objects.filter(user=user).update(real_name=data["real_name"])
         return self.success(UserAdminSerializer(user).data)
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="id",
-                type=int,
-                description="unique user id"
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="unique user id",
             ),
-            OpenApiParameter(
-                name="keyword",
-                type=str,
-                description="user keyword"
+            openapi.Parameter(
+                name="keyword", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="user keyword",
             ),
         ],
-        description='Get User'
+        operation_description="Get User"
     )
     @super_admin_required
     def get(self, request):
@@ -148,15 +148,15 @@ class UserAdminAPI(APIView):
                                Q(email__icontains=keyword))
         return self.success(self.paginate_data(request, user, UserAdminSerializer))
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="id",
-                type=int,
-                description="unique user id"
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="unique user id",
             ),
         ],
-        description='Delete User'
+        operation_description="Delete User"
     )
     @super_admin_required
     def delete(self, request):
@@ -171,16 +171,16 @@ class UserAdminAPI(APIView):
 
 
 class GenerateUserAPI(APIView):
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="file_id",
-                type=int,
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="file_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
                 description="unique file_id",
                 required=True
             ),
         ],
-        description='Delete User'
+        operation_description="Get User Excel"
     )
     @super_admin_required
     def get(self, request):
@@ -203,9 +203,9 @@ class GenerateUserAPI(APIView):
         response["Content-Type"] = "application/xlsx"
         return response
 
-    @extend_schema(
-        parameters=[GenerateUserSerializer],
-        description="Generate User"
+    @swagger_auto_schema(
+        request_body=(GenerateUserSerializer),
+        operation_description="Generate User"
     )
     @validate_serializer(GenerateUserSerializer)
     @super_admin_required

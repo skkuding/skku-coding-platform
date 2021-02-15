@@ -3,10 +3,22 @@ from judge.tasks import judge_task
 # from judge.dispatcher import JudgeDispatcher
 from utils.api import APIView
 from ..models import Submission
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class SubmissionRejudgeAPI(APIView):
-    @super_admin_required
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="Unique id of submission.",
+            ),
+        ],
+        operation_description="Rejudge Submission"
+    )
+    # @super_admin_required
     def get(self, request):
         id = request.GET.get("id")
         if not id:

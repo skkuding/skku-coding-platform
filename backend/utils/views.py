@@ -5,16 +5,23 @@ from utils.shortcuts import rand_str
 from utils.api import CSRFExemptAPIView
 import logging
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.parsers import MultiPartParser
 
 logger = logging.getLogger(__name__)
 
 
 class SimditorImageUploadAPIView(CSRFExemptAPIView):
     request_parsers = ()
-    
-    @extend_schema(
-        description = "Use enctype=multipart/form-data in Frontend"
+    parser_classes = [MultiPartParser]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="image", in_=openapi.IN_FORM, type=openapi.TYPE_FILE
+            ),
+        ],
     )
     def post(self, request):
         form = ImageUploadForm(request.POST, request.FILES)
@@ -51,9 +58,14 @@ class SimditorImageUploadAPIView(CSRFExemptAPIView):
 
 class SimditorFileUploadAPIView(CSRFExemptAPIView):
     request_parsers = ()
+    parser_classes = [MultiPartParser]
 
-    @extend_schema(
-        description = "Use enctype=multipart/form-data in Frontend"
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE
+            ),
+        ],
     )
     def post(self, request):
         form = FileUploadForm(request.POST, request.FILES)

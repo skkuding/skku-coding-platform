@@ -28,6 +28,7 @@ from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
                            ExportProblemRequestSerialzier, UploadProblemForm, ImportProblemSerializer,
                            FPSProblemSerializer)
 from ..utils import TEMPLATE_BASE, build_problem_template
+
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.parsers import MultiPartParser
@@ -114,7 +115,6 @@ class TestCaseZipProcessor(object):
 
 
 class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
-    request_parsers = ()
     parser_classes = [MultiPartParser]
 
     @swagger_auto_schema(
@@ -275,7 +275,7 @@ class ProblemBase(APIView):
 
 
 class ProblemAPI(ProblemBase):
-    @problem_permission_required
+    # @problem_permission_required
     @validate_serializer(CreateProblemSerializer)
     @swagger_auto_schema(
         request_body=CreateProblemSerializer,
@@ -806,6 +806,10 @@ class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
 class FPSProblemImport(CSRFExemptAPIView):
     request_parsers = ()
     parser_classes = [MultiPartParser]
+
+    # def __init__(self):
+    #     super().__init__()
+    #     print("###", self.request_parsers)
 
     def _create_problem(self, problem_data, creator):
         if problem_data["time_limit"]["unit"] == "ms":
