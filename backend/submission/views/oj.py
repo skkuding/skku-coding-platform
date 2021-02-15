@@ -1,5 +1,8 @@
 import ipaddress
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from account.decorators import login_required, check_contest_permission
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
@@ -18,7 +21,7 @@ from ..serializers import SubmissionSafeModelSerializer, SubmissionListSerialize
 
 class SubmissionAPI(APIView):
     def throttling(self, request):
-        # 使用 open_api 的请求暂不做限制
+        # Requests using open_api are not restricted for the time being
         auth_method = getattr(request, "auth_method", "")
         if auth_method == "api_key":
             return
@@ -27,12 +30,6 @@ class SubmissionAPI(APIView):
         can_consume, wait = user_bucket.consume()
         if not can_consume:
             return "Please wait %d seconds" % (int(wait))
-
-        # ip_bucket = TokenBucket(key=request.session["ip"],
-        #                         redis_conn=cache, **SysOptions.throttling["ip"])
-        # can_consume, wait = ip_bucket.consume()
-        # if not can_consume:
-        #     return "Captcha is required"
 
     @check_contest_permission(check_type="problems")
     def check_contest_permission(self, request):
@@ -45,6 +42,7 @@ class SubmissionAPI(APIView):
                 if not any(user_ip in ipaddress.ip_network(cidr, strict=False) for cidr in contest.allowed_ip_ranges):
                     return self.error("Your IP is not allowed in this contest")
 
+    @swagger_auto_schema(request_body=CreateSubmissionSerializer)
     @validate_serializer(CreateSubmissionSerializer)
     @login_required
     def post(self, request):
@@ -86,6 +84,13 @@ class SubmissionAPI(APIView):
         else:
             return self.success({"submission_id": submission.id})
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING
+            )
+        ]
+    )
     @login_required
     def get(self, request):
         submission_id = request.GET.get("id")
@@ -106,6 +111,9 @@ class SubmissionAPI(APIView):
         submission_data["can_unshare"] = submission.check_user_permission(request.user, check_share=False)
         return self.success(submission_data)
 
+    @swagger_auto_schema(
+        request_body=ShareSubmissionSerializer
+    )
     @validate_serializer(ShareSubmissionSerializer)
     @login_required
     def put(self, request):
@@ -126,6 +134,31 @@ class SubmissionAPI(APIView):
 
 
 class SubmissionListAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="limit", in_=openapi.IN_QUERY, required=True, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="offset", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="myself", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                name="result", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="username", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                name="page", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            )
+        ]
+    )
     def get(self, request):
         if not request.GET.get("limit"):
             return self.error("Limit is needed")
@@ -155,6 +188,34 @@ class SubmissionListAPI(APIView):
 
 
 class ContestSubmissionListAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="limit", in_=openapi.IN_QUERY, required=True, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="offset", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="contest_id", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="myself", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                name="result", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="username", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                name="page", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            )
+        ]
+    )
     @check_contest_permission(check_type="submissions")
     def get(self, request):
         if not request.GET.get("limit"):
@@ -195,6 +256,13 @@ class ContestSubmissionListAPI(APIView):
 
 
 class SubmissionExistsAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY, required=True, type=openapi.TYPE_INTEGER
+            )
+        ]
+    )
     def get(self, request):
         if not request.GET.get("problem_id"):
             return self.error("Parameter error, problem_id is required")
