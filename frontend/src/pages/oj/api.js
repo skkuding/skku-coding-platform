@@ -59,6 +59,18 @@ export default {
       data: profile
     })
   },
+  updateUser (info) {
+    return ajax('user', 'put', {
+      data: info
+    })
+  },
+  getUser (username = undefined) {
+    return ajax('user', 'get', {
+      params: {
+        username
+      }
+    })
+  },
   freshDisplayID (userID) {
     return ajax('profile/fresh_display_id', 'get', {
       params: {

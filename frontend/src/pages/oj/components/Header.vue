@@ -39,31 +39,31 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>
-    <b-modal v-model="modalVisible">
-      <div slot="header" class="modal-title">
-        Welcome to {{ website.website_name_shortcut }}
-      </div>
+    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-md">
       <component
         :is="modalStatus.mode"
         v-if="modalVisible"
       />
-      <div
-        slot="footer"
-        style="display: none"
-      />
+    </b-modal>
+    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-md">
+      <profileSetting></profileSetting>
     </b-modal>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import login from '@oj/views/user/Login'
 import register from '@oj/views/user/Register'
+import login from '@oj/views/user/Login'
+import profileSetting from '@oj/views/setting/children/ProfileSetting'
+import ApplyResetPassword from '@oj/views/user/ApplyResetPassword'
 
 export default {
   components: {
     login,
-    register
+    register,
+    profileSetting,
+    ApplyResetPassword
   },
   mounted () {
     this.getProfile()
@@ -117,13 +117,21 @@ export default {
     text-decoration-color: #8dc63f;
   }
 }
-.header__menu {
-  width: 170px;
-  &:hover {
-    text-decoration: underline;
-  }
-  .active {
-    text-decoration: underline;
-  }
+
+/deep/ .modal-md > .modal-dialog > .modal-content > .modal-header {
+  padding-bottom:0;
+  padding-top:4px;
+}
+
+/deep/ .modal-md > .modal-dialog > .modal-content > .modal-body {
+  padding-top:0;
+}
+/deep/ .modal-md > .modal-dialog > .modal-content {
+  position:absolute;
+  /* top:80px; */
+  top:auto;
+  left:auto;
+  right:auto;
+  bottom:auto;
 }
 </style>

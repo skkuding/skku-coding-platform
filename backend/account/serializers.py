@@ -103,6 +103,10 @@ class EditUserSerializer(serializers.Serializer):
     is_disabled = serializers.BooleanField()
 
 
+class EditUserSettingSerializer(serializers.Serializer):
+    major = serializers.CharField(max_length=128)
+
+
 class EditUserProfileSerializer(serializers.Serializer):
     real_name = serializers.CharField(max_length=32, allow_null=True, required=False)
     avatar = serializers.CharField(max_length=256, allow_blank=True, required=False)

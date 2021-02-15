@@ -1,94 +1,56 @@
 <template>
-  <Panel
-    :padding="30"
-    class="container"
-  >
-    <div
-      slot="title"
-      class="center"
-    >
-      {{ $t('m.Reset_Password') }}
+  <b-modal ref="modal" centered hide-footer modal-class="modal-md">
+  <div class="font-bold">
+    <div class="logo-title font-bold">
+        <h4>Password Reset</h4>
     </div>
     <template v-if="!resetSuccess">
-      <Form
+      <b-form
         ref="formResetPassword"
         :model="formResetPassword"
-        :rules="ruleResetPassword"
+        @on-enter="resetPassword"
       >
-        <Form-item prop="password">
-          <Input
+      <b-container fluid="xl">
+        <b-row class="mb-4">
+          <b-form-input
             v-model="formResetPassword.password"
             type="password"
-            :placeholder="$t('m.RPassword')"
-            size="large"
+            placeholder="Password"
+            @on-enter="resetPassword"
           >
-          <Icon
-            slot="prepend"
-            type="ios-locked-outline"
-          />
-          </Input>
-        </Form-item>
-        <Form-item prop="passwordAgain">
-          <Input
+          </b-form-input>
+        </b-row>
+        <b-row class="mb-4">
+          <b-form-input
             v-model="formResetPassword.passwordAgain"
             type="password"
-            :placeholder="$t('m.RPassword_Again')"
-            size="large"
+            placeholder="Password Again"
+            @on-enter="resetPassword"
           >
-          <Icon
-            slot="prepend"
-            type="ios-locked-outline"
-          />
-          </Input>
-        </Form-item>
-        <Form-item
-          prop="captcha"
-          style="margin-bottom:10px"
-        >
-          <div id="captcha">
-            <div id="captchaCode">
-              <Input
-                v-model="formResetPassword.captcha"
-                :placeholder="$t('m.RCaptcha')"
-                size="large"
-              >
-              <Icon
-                slot="prepend"
-                type="ios-lightbulb-outline"
-              />
-              </Input>
+          </b-form-input>
+        </b-row>
+        <b-row class="mb-4">
+            <div class="oj-captcha">
+              <div class="oj-captcha-code">
+                <b-form-input class="captcha-input" v-model="formResetPassword.captcha" placeholder="Captcha"></b-form-input>
+              </div>
+              <div class="oj-captcha-img">
+                <img class="captcha-img" :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
+              </div>
             </div>
-            <div id="captchaImg">
-              <Tooltip
-                content="Click to refresh"
-                placement="top"
-              >
-                <img
-                  :src="captchaSrc"
-                  @click="getCaptchaSrc"
-                >
-              </Tooltip>
-            </div>
-          </div>
-        </Form-item>
-      </Form>
-      <Button
-        type="primary"
-        class="btn"
-        long
-        :loading="btnLoading"
+          </b-row>
+        </b-container>
+      </b-form>
+      <b-button
+        class="sign-btn"
+        variant="primary"
         @click="resetPassword"
-      >
-        {{ $t('m.Reset_Password') }}
-      </Button>
+        style="margin-left:32px;">
+        Reset Password
+      </b-button>
     </template>
-
-    <template v-else>
-      <Alert type="success">
-        {{ $t('m.Your_password_has_been_reset') }}
-      </Alert>
-    </template>
-  </Panel>
+  </div>
+  </b-modal>
 </template>
 
 <script>
@@ -99,92 +61,92 @@ export default {
   name: 'ResetPassword',
   mixins: [FormMixin],
   data () {
-    const CheckPassword = (rule, value, callback) => {
-      if (this.formResetPassword.passwdCheck !== '') {
-        // 对第二个密码框再次验证
-        this.$refs.formResetPassword.validateField('passwordAgain')
-      }
-      callback()
-    }
-
-    const CheckAgainPassword = (rule, value, callback) => {
-      if (value !== this.formResetPassword.password) {
-        callback(new Error(this.$i18n.t('m.password_does_not_match')))
-      }
-      callback()
-    }
     return {
       btnLoading: false,
       captchaSrc: '',
       resetSuccess: false,
-      formResetPassword: {
-        captcha: '',
-        password: '',
-        passwordAgain: '',
-        token: ''
-      },
-      ruleResetPassword: {
-        password: [
-          { required: true, trigger: 'blur', min: 6, max: 20 },
-          { validator: CheckPassword, trigger: 'blur' }
-        ],
-        passwordAgain: [
-          { required: true, validator: CheckAgainPassword, trigger: 'change' }
-        ],
-        captcha: [
-          { required: true, trigger: 'blur', min: 1, max: 10 }
-        ]
-      }
     }
   },
   mounted () {
     this.formResetPassword.token = this.$route.params.token
     this.getCaptchaSrc()
+    this.showModal()
   },
   methods: {
     resetPassword () {
-      this.validateForm('formResetPassword').then(valid => {
-        this.btnLoading = true
-        const data = Object.assign({}, this.formResetPassword)
-        delete data.passwordAgain
-        api.resetPassword(data).then(res => {
-          this.btnLoading = false
-          this.resetSuccess = true
-        }, _ => {
-          this.btnLoading = false
-          this.formResetPassword.captcha = ''
-          this.getCaptchaSrc()
-        })
+      this.btnLoading = true
+      const data = Object.assign({}, this.formResetPassword)
+      if (data.password !== data.passwordAgain) {
+        return this.$error('Password does not match')
+      }
+      delete data.passwordAgain
+      api.resetPassword(data).then(res => {
+        this.btnLoading = false
+        this.resetSuccess = true
+        this.$success('Update password successfully.\nPlease login with new password.')
+        setTimeout(() => {
+          this.$router.push({ name: 'logout' })
+        }, 2000)
+      }, _ => {
+        this.btnLoading = false
+        this.formResetPassword.captcha = ''
+        this.getCaptchaSrc()
       })
+    },
+    showModal () {
+      this.$refs.modal.show()
     }
   }
 }
 </script>
 <style lang="less" scoped>
+@font-face {
+  font-family: Manrope_bold;
+  src: url('../../../../fonts/Manrope-Bold.ttf');
+}
   .container {
     width: 450px;
     margin: auto;
     .center {
       text-align: center;
     }
-    #captcha {
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: space-between;
-      width: 100%;
-      height: 36px;
-      #captchaCode {
-        flex: auto;
-      }
-      #captchaImg {
-        margin-left: 10px;
-        padding: 3px;
-        flex: initial;
-      }
-    }
     .btn {
       margin-top: 18px;
       text-align: center;
     }
+  }
+  .logo-title {
+    margin:8px 0 28px 0;
+    color: #8DC63F;
+    text-align:center;
+  }
+  .font-bold {
+      font-family: manrope_bold;
+  }
+  .sign-btn {
+    width:284px;
+    margin-left:18px;
+  }
+  .captcha-img {
+    margin-right:36px;
+    border-radius:8px;
+  }
+  .captcha-input {
+    width:140px;
+    margin-left:34px;
+  }
+  /deep/ .modal-md > .modal-dialog > .modal-content > .modal-header {
+    padding-bottom:0;
+    padding-top:4px;
+  }
+  /deep/ .modal-md > .modal-dialog > .modal-content > .modal-body {
+    padding-top:0;
+  }
+  /deep/ .modal-md > .modal-dialog > .modal-content {
+    position:absolute;
+    top:auto;
+    left:auto;
+    right:auto;
+    bottom:auto;
   }
 </style>
