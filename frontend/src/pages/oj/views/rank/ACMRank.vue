@@ -1,34 +1,37 @@
 <template>
-    <div>
-      <b-card title="SKKU Coding Platform 2차 모의대회" class="border-0" bg-variant="transparent">
-        <div class="status mb-2">
-          <b-badge pill variant="primary">Ongoing</b-badge>
-        </div>
-        <div class="table">
-          <b-table
-            hover
-            :fields="ACMTableColumns"
-            :items="ContestProblemList"
-            :per-page="perPage"
-            :current-page="currentPage"
-            head-variant="light"
-          >
-            <template #cell(index)="data">
-              {{ data.index + 1 }}
-            </template>
-          </b-table>
-        </div>
-        <div class="pagination">
-            <b-pagination
-              aria-controls="notice-list"
-              v-model="currentPage"
-              :total-rows=100
-              :per-page="perPage"
-              limit="3"
-            ></b-pagination>
-        </div>
-      </b-card>
-    </div>
+  <Row
+    type="flex"
+    justify="space-around"
+  >
+    <Col :span="22">
+    <Panel :padding="10">
+      <div slot="title">
+        {{ $t('m.ACM_Ranklist') }}
+      </div>
+      <div class="echarts">
+        <ECharts
+          ref="chart"
+          :options="options"
+          auto-resize
+        />
+      </div>
+    </Panel>
+    <Table
+      :data="dataRank"
+      :columns="columns"
+      :loading="loadingTable"
+      size="large"
+    />
+    <Pagination
+      :total="total"
+      :page-size.sync="limit"
+      :current.sync="page"
+      show-sizer
+      @on-change="getRankData"
+      @on-page-size-change="getRankData(1)"
+    />
+    </Col>
+  </Row>
 </template>
 
 <script>
