@@ -1,4 +1,7 @@
 # flake8: noqa
+from problem.models import Problem, ProblemTag, ProblemDifficulty, ProblemRuleType
+from account.models import User, UserProfile, AdminType, ProblemPermission
+from django.conf import settings
 import os
 import sys
 import re
@@ -10,9 +13,6 @@ from json.decoder import JSONDecodeError
 sys.path.append("../")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "oj.settings")
 django.setup()
-from django.conf import settings
-from account.models import User, UserProfile, AdminType, ProblemPermission
-from problem.models import Problem, ProblemTag, ProblemDifficulty, ProblemRuleType
 
 admin_type_map = {
     0: AdminType.REGULAR_USER,

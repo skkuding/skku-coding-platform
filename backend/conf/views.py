@@ -16,8 +16,6 @@ from drf_yasg import openapi
 from requests.exceptions import RequestException
 from rest_framework.parsers import MultiPartParser, JSONParser
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-
 from account.decorators import super_admin_required
 from account.models import User
 from contest.models import Contest

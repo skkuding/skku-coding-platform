@@ -11,9 +11,9 @@ from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from otpauth import OtpAuth
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
+from rest_framework.parsers import MultiPartParser
 
 from problem.models import Problem
 from utils.constants import ContestRuleType
@@ -33,15 +33,17 @@ from ..tasks import send_email_async
 
 
 class UserProfileAPI(APIView):
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
                 name="username",
-                description="To use user from username",
-                type=str,
+                in_=openapi.IN_QUERY,
+                description="Specific user profile with `username`",
+                type=openapi.TYPE_STRING,
             ),
         ],
-        description = "Find out user is exit, and return UserProfileSerializer",
+        opearation_description="Get user information if logged in",
+        responses={200: UserProfileSerializer},
     )
     @method_decorator(ensure_csrf_cookie)
     def get(self, request, **kwargs):
@@ -64,9 +66,10 @@ class UserProfileAPI(APIView):
             return self.error("User does not exist")
         return self.success(UserProfileSerializer(user.userprofile, show_real_name=show_real_name).data)
 
-    @extend_schema(
-        parameters=[EditUserProfileSerializer],
-        description="Put user info",
+    @swagger_auto_schema(
+        request_body=EditUserProfileSerializer,
+        description="Update user profile",
+        responses={200: UserProfileSerializer},
     )
     @validate_serializer(EditUserProfileSerializer)
     @login_required
@@ -80,14 +83,15 @@ class UserProfileAPI(APIView):
 
 
 class AvatarUploadAPI(APIView):
-    parser_classes = []
+    parser_classes = [MultiPartParser]
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="form",
-                type=OpenApiTypes.BINARY,
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="image",
+                in_=openapi.IN_FORM,
                 required=True,
+                type=openapi.TYPE_FILE,
             ),
         ],
     )
@@ -116,6 +120,7 @@ class AvatarUploadAPI(APIView):
 
 
 class TwoFactorAuthAPI(APIView):
+    @swagger_auto_schema(operation_description="Get QR code")
     @login_required
     def get(self, request):
         """
@@ -131,10 +136,10 @@ class TwoFactorAuthAPI(APIView):
         label = f"{SysOptions.website_name_shortcut}:{user.username}"
         image = qrcode.make(OtpAuth(token).to_uri("totp", label, SysOptions.website_name.replace(" ", "")))
         return self.success(img2base64(image))
-    @extend_schema(
-        parameters=[
-            TwoFactorAuthCodeSerializer
-        ],
+
+    @swagger_auto_schema(
+        request_body=TwoFactorAuthCodeSerializer,
+        operation_description="Open 2FA",
     )
     @login_required
     @validate_serializer(TwoFactorAuthCodeSerializer)
@@ -151,10 +156,9 @@ class TwoFactorAuthAPI(APIView):
         else:
             return self.error("Invalid code")
 
-    @extend_schema(
-        parameters=[
-            TwoFactorAuthCodeSerializer
-        ],
+    @swagger_auto_schema(
+        request_body=TwoFactorAuthCodeSerializer,
+        operation_description="Turn off 2FA",
     )
     @login_required
     @validate_serializer(TwoFactorAuthCodeSerializer)
@@ -172,10 +176,9 @@ class TwoFactorAuthAPI(APIView):
 
 
 class CheckTFARequiredAPI(APIView):
-    @extend_schema(
-        parameters=[
-            UsernameOrEmailCheckSerializer
-        ],
+    @swagger_auto_schema(
+        request_body=UsernameOrEmailCheckSerializer,
+        operation_description="Check TFA is required",
     )
     @validate_serializer(UsernameOrEmailCheckSerializer)
     def post(self, request):
@@ -232,9 +235,9 @@ class UserLogoutAPI(APIView):
 
 
 class UsernameOrEmailCheck(APIView):
-    @extend_schema(
-        parameters=[UsernameOrEmailCheckSerializer],
-        description="Check username or email is duplicate",
+    @swagger_auto_schema(
+        request_body=UsernameOrEmailCheckSerializer,
+        description="Check if username or email is valid and not duplicate.\n0 means valid, 1 means duplicate, 2 means invlalid student ID or university email.",
     )
     @validate_serializer(UsernameOrEmailCheckSerializer)
     def post(self, request):
@@ -284,13 +287,15 @@ class UserRegisterAPI(APIView):
             return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
         user = User.objects.create(username=data["username"], email=data["email"], major=data["major"])
         user.set_password(data["password"])
+        user.has_email_auth = False
+        user.email_auth_token = rand_str()
+        user.save()
+
+        UserProfile.objects.create(user=user)
 
         if not SysOptions.smtp_config:
             return self.error("Email authorization failed.")
 
-        user.has_email_auth = False
-        user.email_auth_token = rand_str()
-        user.save()
         render_data = {
             "username": user.username,
             "website_name": SysOptions.website_name,
@@ -303,11 +308,14 @@ class UserRegisterAPI(APIView):
                               subject="Email Authentication",
                               content=email_html)
 
-        UserProfile.objects.create(user=user)
         return self.success("Succeeded")
 
 
 class EmailAuthAPI(APIView):
+    @swagger_auto_schema(
+        request_body=EmailAuthSerializer,
+        operation_description="Authorize user with url sent to email",
+    )
     @validate_serializer(EmailAuthSerializer)
     def post(self, request):
         data = request.data
@@ -322,10 +330,9 @@ class EmailAuthAPI(APIView):
 
 
 class UserChangeEmailAPI(APIView):
-    @extend_schema(
-        parameters=[
-            UserChangeEmailSerializer
-        ],
+    @swagger_auto_schema(
+        request_body=UserChangeEmailSerializer,
+        operation_description="Change user email",
     )
     @validate_serializer(UserChangeEmailSerializer)
     @login_required
@@ -351,10 +358,9 @@ class UserChangeEmailAPI(APIView):
 
 
 class UserChangePasswordAPI(APIView):
-    @extend_schema(
-        parameters=[
-            UserChangePasswordSerializer
-        ],
+    @swagger_auto_schema(
+        request_body=UserChangePasswordSerializer,
+        operation_description="Change user password",
     )
     @validate_serializer(UserChangePasswordSerializer)
     @login_required
@@ -379,10 +385,9 @@ class UserChangePasswordAPI(APIView):
 
 
 class ApplyResetPasswordAPI(APIView):
-    @extend_schema(
-        parameters=[
-            ApplyResetPasswordSerializer
-        ],
+    @swagger_auto_schema(
+        request_body=ApplyResetPasswordSerializer,
+        operation_description="Send link to email to reset password",
     )
     @validate_serializer(ApplyResetPasswordSerializer)
     def post(self, request):
@@ -417,10 +422,9 @@ class ApplyResetPasswordAPI(APIView):
 
 
 class ResetPasswordAPI(APIView):
-    @extend_schema(
-        parameters=[
-            ResetPasswordSerializer
-        ],
+    @swagger_auto_schema(
+        request_body=ResetPasswordSerializer,
+        operation_description="Get token from email and set new password",
     )
     @validate_serializer(ResetPasswordSerializer)
     def post(self, request):
@@ -442,6 +446,7 @@ class ResetPasswordAPI(APIView):
 
 
 class SessionManagementAPI(APIView):
+    @swagger_auto_schema(operation_description="Manage Session")
     @login_required
     def get(self, request):
         engine = import_module(settings.SESSION_ENGINE)
@@ -470,14 +475,17 @@ class SessionManagementAPI(APIView):
             request.user.save()
         return self.success(result)
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
                 name="session_key",
-                type=str,
-                required=True,     
+                in_=openapi.IN_QUERY,
+                description="Session Key",
+                type=openapi.TYPE_STRING,
+                required=True,
             ),
-        ],    
+        ],
+        operation_description="Delete session key"
     )
     @login_required
     def delete(self, request):
@@ -494,13 +502,16 @@ class SessionManagementAPI(APIView):
 
 
 class UserRankAPI(APIView):
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="rule_type"
-                type=str
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="rule",
+                in_=openapi.IN_QUERY,
+                description="Rule type of a contest ('ACM' or 'OI')",
+                type=openapi.TYPE_STRING,
             ),
         ],
+        operation_description="Get User Rank according to Rule Type"
     )
     def get(self, request):
         rule_type = request.GET.get("rule")
@@ -516,6 +527,9 @@ class UserRankAPI(APIView):
 
 
 class ProfileProblemDisplayIDRefreshAPI(APIView):
+    @swagger_auto_schema(
+        operation_description="Update Solved Problem List"
+    )
     @login_required
     def get(self, request):
         profile = request.user.userprofile
@@ -535,8 +549,8 @@ class ProfileProblemDisplayIDRefreshAPI(APIView):
 
 
 class OpenAPIAppkeyAPI(APIView):
-    @extend_schema(
-        description="Get user from request, if it exist then insert appkey in user, if not return error",
+    @swagger_auto_schema(
+        operation_description="Configure whether user can use open_api. If possible, generate APIAppkey.",
     )
     @login_required
     def post(self, request):
@@ -550,8 +564,8 @@ class OpenAPIAppkeyAPI(APIView):
 
 
 class SSOAPI(CSRFExemptAPIView):
-    @extend_schema(
-        description="Get token which is consist of random string"
+    @swagger_auto_schema(
+        operation_description="Generate token for SSO"
     )
     @login_required
     def get(self, request):
@@ -560,11 +574,9 @@ class SSOAPI(CSRFExemptAPIView):
         request.user.save()
         return self.success({"token": token})
 
-
-    @extend_schema(
-        parameters=[
-            SSOSerializer
-        ],
+    @swagger_auto_schema(
+        request_body=SSOSerializer,
+        operation_description="Find user corresponding with SSO token"
     )
     @method_decorator(csrf_exempt)
     @validate_serializer(SSOSerializer)

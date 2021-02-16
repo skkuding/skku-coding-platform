@@ -111,9 +111,7 @@ class SubmissionAPI(APIView):
         submission_data["can_unshare"] = submission.check_user_permission(request.user, check_share=False)
         return self.success(submission_data)
 
-    @swagger_auto_schema(
-        request_body=ShareSubmissionSerializer
-    )
+    @swagger_auto_schema(request_body=ShareSubmissionSerializer)
     @validate_serializer(ShareSubmissionSerializer)
     @login_required
     def put(self, request):

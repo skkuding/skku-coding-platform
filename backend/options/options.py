@@ -17,6 +17,7 @@ class my_property:
     2. ttl is callable, conditional cache
     3. Cache ttl seconds
     """
+
     def __init__(self, func=None, fset=None, ttl=None):
         self.fset = fset
         self.local = threading.local()
