@@ -6,22 +6,26 @@
       bg-variant="transparent"
     >
       <div class="category-container mb-2">
-        <b-dropdown text="Difficulty">
-          <b-dropdown-item href="#">Level1</b-dropdown-item>
-          <b-dropdown-item href="#">Level2</b-dropdown-item>
-          <b-dropdown-item href="#">Level3</b-dropdown-item>
-          <b-dropdown-item href="#">Level4</b-dropdown-item>
-          <b-dropdown-item href="#">Level5</b-dropdown-item>
-          <b-dropdown-item href="#">Level6</b-dropdown-item>
-          <b-dropdown-item href="#">Level7</b-dropdown-item>
+        <b-dropdown @on-click="filterByDifficulty" text="Difficulty">
+          <b-dropdown-item name="Level1">{{ $t('Level1') }}</b-dropdown-item>
+          <b-dropdown-item name="Level2">{{ $t('Level2') }}</b-dropdown-item>
+          <b-dropdown-item name="Level3">{{ $t('Level3') }}</b-dropdown-item>
+          <b-dropdown-item name="Level4">{{ $t('Level4') }}</b-dropdown-item>
+          <b-dropdown-item name="Level5">{{ $t('Level5') }}</b-dropdown-item>
+          <b-dropdown-item name="Level6">{{ $t('Level6') }}</b-dropdown-item>
+          <b-dropdown-item name="Level7">{{ $t('Level7') }}</b-dropdown-item>
         </b-dropdown>
         <div>
-          <b-form-checkbox v-model="checked" name="check-button" switch class="mr-2">
-            tags
+          <b-form-checkbox v-model="checked" name="check-button" switch class="mr-2" @on-change="handleTagsVisible">
+            {{ $t('m.Tags') }}
           </b-form-checkbox>
         </div>
-        <b-input-group class="col-4">
-          <b-input-group-prepend is-text>
+        <b-input-group
+          class="col-4"
+          @on-enter="filterByKeyword"
+          @on-click="filterByKeyword"
+        >
+          <b-input-group-prepend @on-click="filterByKeyword" is-text>
             <b-icon icon="search"></b-icon>
           </b-input-group-prepend>
           <b-form-input placeholder="keywords"></b-form-input>
@@ -30,11 +34,14 @@
       <div class="table">
         <b-table
           hover
-          :items="items"
+          :items="problemList"
+          :fields="problemTableColumns"
           :per-page="perPage"
           :current-page="currentPage"
           head-variant="light"
-        ></b-table>
+          :loading="loadings.table"
+        >
+        </b-table>
       </div>
       <div class="pagination">
         <b-pagination
@@ -50,21 +57,210 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import api from '@oj/api'
+import utils from '@/utils/utils'
+import { ProblemMixin } from '@oj/components/mixins'
+
 export default {
+  name: 'problemList',
+  mixins: [ProblemMixin],
   data () {
     return {
       perPage: 10,
       currentPage: 1,
-      items: [
-        { number: 154, title: '가파른 경사', level: 'level1', submissions: 132, AC_rate: '92.14%' },
-        { number: 1006, title: '습격자 호루라기', level: 'level2', submissions: 56, AC_rate: '0.61%' },
-        { number: 1626, title: '두번째 JMT', level: 'level3', submissions: 89, AC_rate: '83.33%' }
-      ]
+      problemTableColumns: [
+        {
+          label: '#',
+          key: '_id',
+          width: 50,
+          render: (h, params) => {
+            return h('Button', {
+              props: {
+                type: 'text',
+                size: 'large'
+              },
+              on: {
+                click: () => {
+                  this.$router.push({ name: 'problem-details', params: { problemID: params.row._id } })
+                }
+              }
+            }, params.row._id)
+          }
+        },
+        {
+          key: 'title',
+          label: this.$i18n.t('m.Title'),
+          width: 200,
+          render: (h, params) => {
+            return h('Button', {
+              props: {
+                type: 'text',
+                size: 'large'
+              },
+              on: {
+                click: () => {
+                  this.$router.push({ name: 'problem-details', params: { problemID: params.row._id } })
+                }
+              }
+            }, params.row.title)
+          }
+        },
+        {
+          key: 'difficulty',
+          label: this.$i18n.t('m.Level'),
+          render: (h, params) => {
+            const t = params.row.difficulty
+            let color = 'purple'
+            if (t === 'Level2') color = 'blue'
+            else if (t === 'Level3') color = 'green'
+            else if (t === 'Level4') color = 'yellowgreen'
+            else if (t === 'Level5') color = 'yellow'
+            else if (t === 'Level6') color = 'orange'
+            else if (t === 'Level7') color = 'red'
+            return h('Tag', {
+              props: {
+                color: color
+              }
+            }, this.$i18n.t('m.' + params.row.difficulty))
+          }
+        },
+        {
+          label: this.$i18n.t('m.Total'),
+          key: 'submission_number'
+        },
+        {
+          key: 'AC_Rate',
+          label: this.$i18n.t('m.AC_Rate'),
+          // formatter: params => {
+          //   return this.getACRate(params.row.accepted_number, params.row.submission_number)
+          // }
+          render: params => {
+            return this.getACRate(params.row.accepted_number, params.row.submission_number)
+          }
+        }
+      ],
+      problemList: [],
+      limit: 20,
+      total: 0,
+      loadings: {
+        table: true,
+        tag: true
+      },
+      routeName: '',
+      query: {
+        keyword: '',
+        difficulty: '',
+        tag: '',
+        page: 1
+      }
+    }
+  },
+  // computed: {
+  //   rows () {
+  //     return this.items.length
+  //   }
+  // },
+  methods: {
+    init (simulate = false) {
+      this.routeName = this.$route.name
+      const query = this.$route.query
+      this.query.difficulty = query.difficulty || ''
+      this.query.keyword = query.keyword || ''
+      this.query.tag = query.tag || ''
+      this.query.page = parseInt(query.page) || 1
+      if (this.query.page < 1) {
+        this.query.page = 1
+      }
+      if (!simulate) {
+        this.getTagList()
+      }
+      this.getProblemList()
+    },
+    pushRouter () {
+      this.$router.push({
+        name: 'problem-list',
+        query: utils.filterEmptyValue(this.query)
+      })
+    },
+    getProblemList () {
+      const offset = (this.query.page - 1) * this.limit
+      this.loadings.table = true
+      api.getProblemList(offset, this.limit, this.query).then(res => {
+        this.loadings.table = false
+        this.total = res.data.data.total
+        this.problemList = res.data.data.results
+        if (this.isAuthenticated) {
+          this.addStatusColumn(this.problemTableColumns, res.data.data.results)
+        }
+      }, res => {
+        this.loadings.table = false
+      })
+    },
+    getTagList () {
+      api.getProblemTagList().then(res => {
+        this.tagList = res.data.data
+        this.loadings.tag = false
+      }, res => {
+        this.loadings.tag = false
+      })
+    },
+    filterByTag (tagName) {
+      this.query.tag = tagName
+      this.query.page = 1
+      this.pushRouter()
+    },
+    filterByDifficulty (difficulty) {
+      this.query.difficulty = difficulty
+      this.query.page = 1
+      this.pushRouter()
+    },
+    filterByKeyword () {
+      this.query.page = 1
+      this.pushRouter()
+    },
+    handleTagsVisible (value) {
+      if (value) {
+        this.problemTableColumns.push(
+          {
+            title: this.$i18n.t('m.Tags'),
+            align: 'center',
+            render: (h, params) => {
+              const tags = []
+              params.row.tags.forEach(tag => {
+                tags.push(h('Tag', {}, tag))
+              })
+              return h('div', {
+                style: {
+                  margin: '8px 0'
+                }
+              }, tags)
+            }
+          })
+      } else {
+        this.problemTableColumns.splice(this.problemTableColumns.length - 1, 1)
+      }
+    },
+    pickone () {
+      api.pickone().then(res => {
+        this.$success('Good Luck')
+        this.$router.push({ name: 'problem-details', params: { problemID: res.data.data } })
+      })
     }
   },
   computed: {
-    rows () {
-      return this.items.length
+    ...mapGetters(['isAuthenticated'])
+  },
+  watch: {
+    '$route' (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.init(true)
+      }
+    },
+    'isAuthenticated' (newVal) {
+      if (newVal === true) {
+        this.init()
+      }
     }
   }
 }
@@ -173,7 +369,6 @@ export default {
       :current.sync="query.page"
       @on-change="pushRouter"
     />
-
     </Col>
 
     <Col :span="5">
@@ -254,7 +449,7 @@ export default {
         },
         {
           title: this.$i18n.t('m.Title'),
-          width: 400,
+          width: 200,
           render: (h, params) => {
             return h('Button', {
               props: {
@@ -279,11 +474,12 @@ export default {
           title: this.$i18n.t('m.Level'),
           render: (h, params) => {
             const t = params.row.difficulty
-            let color = 'green'
-            if (t === 'Level3') color = 'blue'
-            else if (t === 'Level4') color = 'blue'
+            let color = 'purple'
+            if (t === 'Level2') color = 'blue'
+            else if (t === 'Level3') color = 'green'
+            else if (t === 'Level4') color = 'yellowgreen'
             else if (t === 'Level5') color = 'yellow'
-            else if (t === 'Level6') color = 'yellow'
+            else if (t === 'Level6') color = 'orange'
             else if (t === 'Level7') color = 'red'
             return h('Tag', {
               props: {
