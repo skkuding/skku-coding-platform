@@ -27,7 +27,8 @@
             <b-icon icon="person" style="width: 32px; height: 32px"></b-icon>
           </template>
           <b-dropdown-item to="/user-home">My Account</b-dropdown-item>
-          <b-dropdown-item to="/setting/profile">Setting</b-dropdown-item>
+          <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
+          <b-dropdown-item v-else to="/setting/profile">Setting</b-dropdown-item>
           <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -63,6 +64,9 @@ export default {
   },
   methods: {
     ...mapActions(['getProfile', 'changeModalStatus']),
+    openWindow (route) {
+      window.open(route)
+    },
     handleBtnClick (mode) {
       this.changeModalStatus({
         visible: true,
