@@ -12,13 +12,11 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 import Header from '@oj/components/Header.vue'
-import Banner from '@oj/components/Banner.vue'
 
 export default {
   name: 'App',
   components: {
-    Header,
-    Banner
+    Header
   },
   data () {
     return {
