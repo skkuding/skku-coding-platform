@@ -7,7 +7,7 @@
         </svg>
       </b-navbar-brand>
 
-      <b-navbar-nav>
+      <b-navbar-nav v-if="$route.name.indexOf('contest') != -1">
         <b-nav-item to="#">Contests</b-nav-item>
         <b-nav-item>
           <b-icon icon="chevron-right"/>
@@ -16,7 +16,14 @@
         <b-nav-item>
           <b-icon icon="chevron-right"/>
         </b-nav-item>
-        <b-nav-item to="#" active>가파른 경사</b-nav-item>
+        <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+      </b-navbar-nav>
+
+      <b-navbar-nav v-else>
+        <b-nav-item>
+          <b-icon icon="chevron-right"/>
+        </b-nav-item>
+        <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
@@ -34,7 +41,7 @@
       </b-navbar-nav>
       <b-navbar-nav>
         <b-nav-item to="#" class="active-link" active>
-          가파른 경사
+          {{problem.title}}
         </b-nav-item>
       </b-navbar-nav>
 
@@ -69,32 +76,35 @@
     <b-row id="problem-container">
       <b-col id="problem-description" cols="5">
         <h2>Description</h2>
-        <p>
-          처음으로 인사캠을 방문한 율전이는 너무나 가파른 오르막길에 놀랐다. 이를 본 율전이는 인사캠의 경사가 얼마나 심한지 알기 위해 네 지점의 높이를 측정하기로 마음먹었다. 이때 율전이는 측정한 높이를 다음과 같이 네 가지 경우로 나누려고 한다. (단, 측정한 순서는 유지한다)
-          <br><br>1. 4개의 증가(strictly increasing)하는 높이를 읽은 경우(“Uphill”) (예: 3 4 7 9)
-          <br><br>2. 4개의 감소(strictly decreasing)하는 높이를 읽은 경우(“Downhill”) (예: 9 6 5 2)
-          <br><br>3. 4개의 일정한 높이를 읽은 경우(“Flat Land”) (예: 5 5 5 5)
-          <br><br>4. 위 경우 중 어느 것에도 속하지 않는 경우(“Unknown”)
-          <br><br>율전이가 측정한 높이가 주어졌을 때, 어떤 경우에 속하는지 출력하라.
-        </p>
+        <p v-html=problem.description></p>
         <h2>Input</h2>
-        <p>네 줄에 걸쳐 높이 h가 주어진다. (0 h 100)</p>
+        <p v-html=problem.input_description></p>
         <h2>Output</h2>
-        <p>만약 네 개의 높이가 증가(strictly increasing)하면 “Uphill”, 감소(strictly decreasing)하면 “Downhill”을 출력한다. 또한 높이가 일정하다면 “Flat Land”를 출력하고, 어느 경우에도 속하지 않으면 “Unknown”을 출력한다.</p>
-        <h2>
-          Sample Input 1
-          <b-icon icon="clipboard" class="copy-icon" scale="0.8"/>
-        </h2>
-        <p class="sample-io">
-          1<br>10<br>12<br>13<br>
-        </p>
-        <h2>
-          Sample Output 1
-          <b-icon icon="clipboard" class="copy-icon" scale="0.8"/>
-         </h2>
-        <p class="sample-io">
-          Uphill
-        </p>
+        <p v-html=problem.output_description></p>
+
+        <div v-for="(sample, index) of problem.samples" :key="index">
+          <h2>
+            Sample Input {{index + 1}}
+            <a v-clipboard:copy="sample.input">
+              <b-icon id="clipboard1" icon="clipboard" class="copy-icon" scale="0.8"/>
+            </a>
+            <b-tooltip target="clipboard1" placement="top" triggers="hover">
+              Copy
+            </b-tooltip>
+          </h2>
+          <pre class="sample-io">{{sample.input}}</pre>
+          <h2>
+            Sample Output {{index + 1}}
+          </h2>
+          <pre class="sample-io">{{sample.output}}</pre>
+        </div>
+
+        <div v-if="problem.hint">
+          <p class="title">{{$t('m.Hint')}}</p>
+          <Card dis-hover>
+            <div class="content" v-html=problem.hint></div>
+          </Card>
+        </div>
       </b-col>
       <b-col id="console" cols="7">
         <b-row id="editor">
@@ -106,10 +116,10 @@
           </b-row>
           <b-row class="io-content">
             <b-col class="io-content-cell right-border">
-              1<br>10<br>12<br>13
+              <pre></pre>
             </b-col>
             <b-col class="io-content-cell">
-             Uphill
+              <pre></pre>
             </b-col>
           </b-row>
         </b-row>
@@ -286,6 +296,7 @@ export default {
           result: 'Compile Error'
         }
       ],
+
       statusVisible: false,
       captchaRequired: false,
       graphVisible: false,
@@ -489,12 +500,6 @@ export default {
       } else {
         submitFunc(data, true)
       }
-    },
-    onCopy (event) {
-      this.$success('Code copied')
-    },
-    onCopyError (e) {
-      this.$error('Failed to copy code')
     }
   },
   computed: {
@@ -620,6 +625,7 @@ export default {
       padding: 12px;
       border-radius: 5px;
       background: #24272D;
+      color: white;
     }
   }
 

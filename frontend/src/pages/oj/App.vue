@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.name == 'problem-details'">
+  <div v-if="$route.name.indexOf('problem-details') != -1">
       <router-view/>
   </div>
     <div v-else>
