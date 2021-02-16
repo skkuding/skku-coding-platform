@@ -4,7 +4,8 @@ import xlsxwriter
 from django.http import HttpResponse
 from django.utils.timezone import now
 from django.core.cache import cache
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from problem.models import Problem
 from utils.api import APIView, validate_serializer
@@ -21,22 +22,23 @@ from ..serializers import OIContestRankSerializer, ACMContestRankSerializer
 
 
 class ContestAnnouncementListAPI(APIView):
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
                 name="contest_id",
-                description="Unique id of contest",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a contest",
                 required=True,
-                type=int,
+                type=openapi.TYPE_INTEGER,
             ),
-            OpenApiParameter(
+            openapi.Parameter(
                 name="max_id",
-                description="Announcements posted later than id",
-                type=int,
+                in_=openapi.IN_QUERY,
+                description="Get announcements whose IDs are greater than `max_id`",
+                type=openapi.TYPE_INTEGER,
             ),
         ],
-        request=None,
-        description="Get Contest Announcement List",
+        operation_description="Get contest announcement list",
     )
     @check_contest_permission(check_type="announcements")
     def get(self, request):
@@ -51,16 +53,17 @@ class ContestAnnouncementListAPI(APIView):
 
 
 class ContestAPI(APIView):
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
                 name="id",
-                description="Unique id of contest",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a contest",
                 required=True,
-                type=int,
+                type=openapi.TYPE_INTEGER,
             ),
         ],
-        description="More descriptive text",
+        opearation_description="Get single contest information",
     )
     def get(self, request):
         id = request.GET.get("id")
@@ -76,6 +79,44 @@ class ContestAPI(APIView):
 
 
 class ContestListAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="limit",
+                in_=openapi.IN_QUERY,
+                description="Number of contests to show",
+                type=openapi.TYPE_STRING,
+                default=10,
+            ),
+            openapi.Parameter(
+                name="offset",
+                in_=openapi.IN_QUERY,
+                description="ID of the first contest of list",
+                type=openapi.TYPE_STRING,
+                default=0,
+            ),
+            openapi.Parameter(
+                name="keyword",
+                in_=openapi.IN_QUERY,
+                description="Keyword to be included in contest title",
+                type=openapi.TYPE_STRING,
+            ),
+            openapi.Parameter(
+                name="rule_type",
+                in_=openapi.IN_QUERY,
+                description="Rule type ('ACM' or 'OI')",
+                type=openapi.TYPE_STRING,
+            ),
+            openapi.Parameter(
+                name="status",
+                in_=openapi.IN_QUERY,
+                description="Contest status (NOT_START(1), UNDERWAY(0), ENDED(-1))",
+                type=openapi.TYPE_INTEGER,
+            ),
+        ],
+        # responses=ContestSerializer(many=True),
+        operation_description="Get contest list from <`offset`> to <`offset`+`limit`>",
+    )
     def get(self, request):
         contests = Contest.objects.select_related("created_by").filter(visible=True)
         keyword = request.GET.get("keyword")
@@ -97,6 +138,10 @@ class ContestListAPI(APIView):
 
 
 class ContestPasswordVerifyAPI(APIView):
+    @swagger_auto_schema(
+        request_body=ContestPasswordVerifySerializer,
+        operation_description="Verify contest password",
+    )
     @validate_serializer(ContestPasswordVerifySerializer)
     @login_required
     def post(self, request):
@@ -118,6 +163,18 @@ class ContestPasswordVerifyAPI(APIView):
 
 
 class ContestAccessAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a contest",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+        ],
+        operation_description="Check access permission to a contest",
+    )
     @login_required
     def get(self, request):
         contest_id = request.GET.get("contest_id")
@@ -151,6 +208,29 @@ class ContestRankAPI(APIView):
             string = chr(65 + remainder) + string
         return string
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="contest_id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a contest",
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="download_csv",
+                in_=openapi.IN_QUERY,
+                description="Set `true` to export csv file",
+                type=openapi.TYPE_BOOLEAN,
+            ),
+            openapi.Parameter(
+                name="force_refresh",
+                in_=openapi.IN_QUERY,
+                description="Set value '1' to get most recent rank, else cached rank",
+                type=openapi.TYPE_STRING,
+            ),
+        ],
+        operation_description="Get rank data of a contest",
+    )
     @check_contest_permission(check_type="ranks")
     def get(self, request):
         download_csv = request.GET.get("download_csv")
