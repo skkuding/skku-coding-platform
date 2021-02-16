@@ -9,9 +9,9 @@
       </b-navbar-brand>
 
       <b-navbar-nav class="mx-auto">
-        <b-nav-item>Notice</b-nav-item>
-        <b-nav-item>Contests</b-nav-item>
-        <b-nav-item>Problems</b-nav-item>
+        <b-nav-item to="/">Notice</b-nav-item>
+        <b-nav-item to="/contest">Contests</b-nav-item>
+        <b-nav-item to="/problem">Problems</b-nav-item>
       </b-navbar-nav>
 
       <b-navbar-nav class="mr-5">
