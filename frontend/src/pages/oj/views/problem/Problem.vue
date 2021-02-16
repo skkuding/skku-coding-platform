@@ -63,11 +63,11 @@
           </b-button>
         </b-nav-item>
         <b-nav-item>
-          <b-dropdown id="language-dropdown" text="C++">
-            <b-dropdown-item>C++</b-dropdown-item>
-            <b-dropdown-item>C</b-dropdown-item>
-            <b-dropdown-item>Python</b-dropdown-item>
-            <b-dropdown-item>JavaScript</b-dropdown-item>
+          <b-dropdown split id="language-dropdown" :text="language">
+            <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
+              @click="()=>onChangeLang(lang)">
+              {{lang}}
+            </b-dropdown-item>
           </b-dropdown>
         </b-nav-item>
       </b-navbar-nav>
@@ -132,16 +132,16 @@
             <b-row class="sidebar-row bottom-border">
               <b-icon icon="x" scale="2.2" @click="hide"/>
             </b-row>
-            <b-row class="sidebar-row bottom-border">
+            <b-row class="sidebar-row bottom-border" v-if="$route.name.indexOf('contest') != -1">
               <h2>
                 <b-icon class="sidebar-icon" icon="hash" scale="1.3" shift-v="1"/>
                 Problem List
               </h2>
               <ul id="problem-list">
-                <li>A.가파른 경사</li>
-                <li>B.습격자 초라기</li>
-                <li>C.두번째 MST</li>
-                <li>D.채권관계</li>
+                <li v-for="(contestProblem, index) of contestProblems" :key="index"
+                  @click="()=>goContestProblem(contestProblem._id)">
+                  {{contestProblem.title}}
+                </li>
               </ul>
             </b-row>
             <b-row class="sidebar-row">
@@ -207,7 +207,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '../../../../store'
 import storage from '@/utils/storage'
 import { FormMixin } from '@oj/components/mixins'
@@ -220,83 +220,6 @@ export default {
   mixins: [FormMixin],
   data () {
     return {
-      clarifications: [
-        {
-          problem: 'D.채권관계',
-          clarifications: 'Lorem ipsum dolor sit amet, consetur adipiscing elit. Aliquam lacus sagittis volutpat tempor amet, nulla vitae.',
-          created_time: '2021-01-05 10:20:21',
-          modified_time: '2021-01-05 10:22:30'
-        }
-      ],
-      my_submissions: [
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-07 10:30:21',
-          language: 'C++',
-          user: 'ME',
-          code_size: '542 Bytes',
-          result: 'Accepted'
-        },
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-06 10:30:21',
-          language: 'C++',
-          user: 'ME',
-          code_size: '543 Bytes',
-          result: 'Wrong Answer'
-        },
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
-          language: 'C++',
-          user: 'ME',
-          code_size: '544 Bytes',
-          result: 'Time Limit Exceed'
-        }
-      ],
-      all_submissions: [
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
-          language: 'C++',
-          user: 'root',
-          code_size: '544 Bytes',
-          result: 'Accepted'
-        },
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
-          language: 'Python3',
-          user: 'yooljunee',
-          code_size: '543 Bytes',
-          result: 'Wrong Answer'
-        },
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
-          language: 'Java',
-          user: 'myngryoon',
-          code_size: '542 Bytes',
-          result: 'Time Limit Exceed'
-        },
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
-          language: 'C',
-          user: 'didojoa',
-          code_size: '541 Bytes',
-          result: 'Runtime Error'
-        },
-        {
-          problem: 'A.가파른 경사',
-          submission_time: '2021-01-05 10:30:21',
-          language: 'C++',
-          user: 'hatemincho',
-          code_size: '540 Bytes',
-          result: 'Compile Error'
-        }
-      ],
-
       statusVisible: false,
       captchaRequired: false,
       graphVisible: false,
@@ -344,6 +267,7 @@ export default {
   mounted () {
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
     this.init()
+    this.getContestProblems()
   },
   methods: {
     ...mapActions(['changeDomTitle']),
@@ -500,9 +424,35 @@ export default {
       } else {
         submitFunc(data, true)
       }
+    },
+    getContestProblems () {
+      this.$store.dispatch('getContestProblems').then(res => {
+        // if (this.isAuthenticated) {
+        //   if (this.contestRuleType === 'ACM') {
+        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        //   } else if (this.OIContestRealTimePermission) {
+        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        //   }
+        // }
+      })
+    },
+    goContestProblem (problemID) {
+      this.$router.push({
+        name: 'contest-problem-details',
+        params: {
+          contestID: this.$route.params.contestID,
+          problemID: problemID
+        }
+      })
     }
   },
   computed: {
+    // from ContestProblemList.vue
+    ...mapState({
+      contestProblems: state => state.contest.contestProblems
+    }),
+    ...mapGetters(['isAuthenticated', 'contestRuleType', 'OIContestRealTimePermission']),
+
     ...mapGetters(['problemSubmitDisabled', 'contestRuleType', 'OIContestRealTimePermission', 'contestStatus']),
     contest () {
       return this.$store.state.contest.contest
@@ -573,6 +523,10 @@ export default {
 
     height: 58px;
     border-bottom: 2px solid white;
+  }
+
+  #language-dropdown {
+    min-width: 115px;
   }
 
   /deep/ #language-dropdown button{
