@@ -6,6 +6,8 @@ from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from submission.models import Submission
 from utils.api import APIView, validate_serializer
@@ -15,9 +17,6 @@ from ..decorators import super_admin_required
 from ..models import AdminType, ProblemPermission, User, UserProfile
 from ..serializers import EditUserSerializer, UserAdminSerializer, GenerateUserSerializer
 from ..serializers import ImportUserSeralizer
-
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 
 class UserAdminAPI(APIView):
