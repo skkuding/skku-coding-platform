@@ -39,11 +39,49 @@ $modal-content-border-color:       white !default;
 $modal-content-border-radius:      12px !default;
 $modal-content-box-shadow-xs:      0px !default;
 $modal-content-box-shadow-sm-up:   0px !default;
-$modal-md:                        384px !default;
+$modal-md:                         384px !default;
+
+// Navbar
+$navbar-light-color:                #7C7A7B !default;
+$navbar-light-hover-color:          #8DC63F !default;
+$navbar-light-active-color:         #8DC63F !default;
+
+// Carousel
+$carousel-indicator-opacity:         1 !default;
+$carousel-indicator-active-opacity:  1 !default;
+$carousel-indicator-transition:      none !default;
+$carousel-indicator-spacer:        5px !default;
+
 
 // Include Bootstrap and BootstrapVue SCSS files
 @import '~bootstrap/scss/bootstrap.scss';
 @import '~bootstrap-vue/src/index.scss';
+
+.navbar {
+  font-family: Manrope;
+  font-size: 24px;
+  text-align: center;
+}
+
+.carousel-indicators {
+  li {
+    width: 18px;
+    height: 18px;
+    border-radius: 100%;
+    opacity: 1;
+    &:focus {
+      outline: none;
+    }
+  }
+  &:not(active) li {
+    background-color: transparent;
+    box-shadow: 0 0 0 2px white inset; 
+  }
+  .active {
+    background-color: white;
+    box-shadow: 0 0 0 0px white inset; 
+  }
+}
 
 .btn {
   color: white;
