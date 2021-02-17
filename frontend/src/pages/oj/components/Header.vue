@@ -1,30 +1,36 @@
 <template>
-  <div class="header">
-    <b-navbar>
-      <b-navbar-brand class="header__logo" to="/">
+  <div id="header">
+    <b-navbar sticky-top style="height: 100%;">
+      <b-navbar-brand to="/" class="ml-5" style="width: 0">
         <img
-          src="https://www.skku.edu/_res/skku//img/common/logo.png"
-          style="margin-left: 20px"
+          src="../../../assets/signature.png"
+          style="height: 50px; width: auto;"
         />
       </b-navbar-brand>
 
-      <b-navbar-nav class="header__menu" align="center">
-        <b-nav-item class="header__menu__item" to="/">Notice</b-nav-item>
-        <b-nav-item class="header__menu__item" to="/contest">Contests</b-nav-item>
-        <b-nav-item class="header__menu__item" to="/problem">Problems</b-nav-item>
+      <b-navbar-nav class="mx-auto" align="center">
+        <b-nav-item class="header--menu">
+          <router-link class="nav-link" active-class="active" to="/notice">Notice</router-link>
+        </b-nav-item>
+        <b-nav-item class="header--menu">
+          <router-link class="nav-link" active-class="active" to="/contest">Contests</router-link>
+        </b-nav-item>
+        <b-nav-item class="header--menu">
+          <router-link class="nav-link" active-class="active" to="/problem">Problems</router-link>
+        </b-nav-item>
       </b-navbar-nav>
 
-      <b-navbar-nav class="header__account" align="left">
+      <b-navbar-nav class="mr-5" style="width: 0">
         <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
           <template slot="button-content">
-            <b-icon icon="person" style="width: 32px; height: 32px"></b-icon>
+            <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
           </template>
           <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
           <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item-dropdown v-else no-caret right>
           <template slot="button-content">
-            <b-icon icon="person" style="width: 32px; height: 32px"></b-icon>
+            <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
           </template>
           <b-dropdown-item to="/user-home">My Account</b-dropdown-item>
           <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
@@ -92,7 +98,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.header {
+#header {
   position: fixed;
   top: 0;
   left: 0;
@@ -101,15 +107,13 @@ export default {
   z-index: 1000;
   background-color: #fff;
 }
-.header__menu {
-  width: 100%;
-}
-.header__menu__item {
-  width: 100px;
-  text-align: center;
-  :hover {
+.header--menu {
+  width: 170px;
+  &:hover {
     text-decoration: underline;
-    text-decoration-color: #8dc63f;
+  }
+  .active {
+    text-decoration: underline;
   }
 }
 </style>

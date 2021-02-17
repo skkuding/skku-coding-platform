@@ -1,17 +1,8 @@
 <template>
-  <Row
-    type="flex"
-    justify="space-around"
-  >
-    <Banner />
-    <Col :span="22">
-      <Announcements class="announcement" />
-    </Col>
-  </Row>
+  <Banner />
 </template>
 
 <script>
-import Announcements from './Announcements.vue'
 import Banner from '@oj/components/Banner.vue'
 import api from '@oj/api'
 import time from '@/utils/time'
@@ -20,8 +11,7 @@ import { CONTEST_STATUS } from '@/utils/constants'
 export default {
   name: 'Home',
   components: {
-    Banner,
-    Announcements
+    Banner
   },
   data () {
     return {
@@ -62,7 +52,6 @@ export default {
       }
     }
   }
-
   .announcement {
     margin-top: 20px;
   }

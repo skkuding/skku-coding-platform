@@ -1,9 +1,11 @@
 <template>
   <div>
-    <transition name="fadeInUp" mode="out-in">
-      <router-view></router-view>
-    </transition>
     <Header />
+    <div class="content-app">
+      <transition name="fadeInUp" mode="out-in">
+        <router-view></router-view>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -65,15 +67,13 @@ a {
 
 @media screen and (max-width: 1200px) {
   .content-app {
-    margin-top: 160px;
-    padding: 0 2%;
+    margin-top: 72px;
   }
 }
 
 @media screen and (min-width: 1200px) {
   .content-app {
-    margin-top: 80px;
-    padding: 0 2%;
+    margin-top: 72px;
   }
 }
 

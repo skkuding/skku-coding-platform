@@ -2,7 +2,6 @@
   <div class="banner">
     <b-carousel
       :interval="4000"
-      controls
       indicators
       img-width="2048"
       img-height="912"
@@ -38,8 +37,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.banner {
-  position: fixed;
-  top: 72px;
-}
 </style>
