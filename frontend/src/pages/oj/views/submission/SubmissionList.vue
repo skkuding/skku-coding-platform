@@ -123,7 +123,7 @@ export default {
             'Submission Time': time.utcToLocal(v.create_time),
             Language: v.language,
             User: v.username,
-            Result: this.$i18n.t('m.' + JUDGE_STATUS[v.result].name.replace(/ /g, '_'))
+            Result: JUDGE_STATUS[v.result].name
           })
         }
         this.loadingTable = false
