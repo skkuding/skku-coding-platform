@@ -7,7 +7,7 @@ import FAQ from './help/FAQ.vue'
 import NotFound from './general/404.vue'
 import Home from './general/Home.vue'
 import Announcements from './general/Announcements.vue'
-import Announcement from './notice/NoticeList.vue'
+import AnnouncementDetail from './announcement/AnnouncementDetail.vue'
 
 // Grouping Components in the Same Chunk
 const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
@@ -28,7 +28,7 @@ const EmailAuth = () => import(/* webpackChunkName: "emailAuth" */ '@oj/views/us
 export {
   Home, NotFound, Announcements,
   Logout, UserHome, About, FAQ,
-  ProblemList, AnnouncementList, Problem,
+  ProblemList, AnnouncementDetail, Problem,
   ACMRank, OIRank,
   SubmissionList, SubmissionDetails,
   ApplyResetPassword, ResetPassword, EmailAuth, Announcement

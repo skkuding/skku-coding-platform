@@ -54,6 +54,10 @@ $carousel-indicator-transition:      none !default;
 $carousel-indicator-spacer:        5px !default;
 
 
+$list-group-bg: rgba(0, 0, 0, 0);
+$list-group-hover-bg: #cccccc;
+$list-group-border-color: rgba(0, 0, 0, 0);
+
 // Include Bootstrap and BootstrapVue SCSS files
 @import '~bootstrap/scss/bootstrap.scss';
 @import '~bootstrap-vue/src/index.scss';

@@ -7,22 +7,31 @@
       <b-table
         hover
         :items="contests"
-        :fields="contestListColumns"
+        :fields="contestListFields"
         :per-page="perPage"
         :current-page="currentPage"
         head-variant="light"
         @row-clicked="goContest"
       >
+        <template #cell(start_time)="data">
+          {{ getTimeFormat(data.value, 'YYYY-M-D HH:mm') }}
+        </template>
+        <template #cell(duration)="data">
+          {{ getDuration(data.item.start_time, data.item.end_time) }}
+        </template>
+        <template #cell(status)="data">
+          {{ CONTEST_STATUS_REVERSE[data.value].name }}
+        </template>
       </b-table>
     </div>
     <div class="pagination">
-        <b-pagination
-          aria-controls="notice-list"
-          v-model="currentPage"
-          :total-rows="row"
-          :per-page="perPage"
-          limit="3"
-        ></b-pagination>
+      <b-pagination
+        aria-controls="notice-list"
+        v-model="currentPage"
+        :total-rows=100
+        :per-page="perPage"
+        limit="3"
+      ></b-pagination>
     </div>
   </div>
 </template>
@@ -59,18 +68,34 @@ export default {
       },
       total: 0,
       rows: '',
-      contests: [],
+      contests: [
+        {
+          status: '0',
+          contest_type: 'Password Protected',
+          title: 'This is Contest',
+          description: 'blah blah',
+          real_time_rank: true,
+          password: 'string',
+          rule_type: 'ACM',
+          start_time: '2021-02-17T01:00:13.621000+09:00',
+          end_time: '2021-02-17T04:22:13.621000+09:00',
+          create_time: '2021-02-17T01:00:59.006983+09:00',
+          last_update_time: '2021-02-17T01:00:59.007006+09:00',
+          visible: true,
+          allowed_ip_ranges: []
+        }
+      ],
       CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
+      // for password modal use
       cur_contest_id: '',
-      contestListColumns: [
+      contestListFields: [
         {
           label: 'Title',
           key: 'title'
         },
         {
           label: 'Start time',
-          key: 'start_time',
-          formatter: 'getFormat'
+          key: 'start_time'
         },
         {
           label: 'Duration',
@@ -111,16 +136,6 @@ export default {
         query: utils.filterEmptyValue(query)
       })
     },
-    // onRuleChange (rule) {
-    //   this.query.rule_type = rule
-    //   this.page = 1
-    //   this.changeRoute()
-    // },
-    // onStatusChange (status) {
-    //   this.query.status = status
-    //   this.page = 1
-    //   this.changeRoute()
-    // },
     goContest (item) {
       this.cur_contest_id = item.id
       if (item.contest_type !== CONTEST_TYPE.PUBLIC && !this.isAuthenticated) {
@@ -133,13 +148,6 @@ export default {
     getFormat (value) {
       return time.utcToLocal(value, 'YYYY-MM-DD HH:mm')
     }
-    // getDuration (startTime, endTime) {
-    //   return time.duration(startTime, endTime)
-    // },
-    // remainTime (startTime) {
-    //   const today = new Date()
-    //   return time.duration(today, startTime)
-    // }
   },
   computed: {
     ...mapState({
