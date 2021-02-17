@@ -116,14 +116,14 @@
         <FormItem label="Real Name">
           <Input v-model="formProfile.real_name" />
         </FormItem>
-        <FormItem label="Language">
+        <FormItem label="Default Programming Language">
           <Select v-model="formProfile.language">
             <Option
               v-for="lang in languages"
               :key="lang.value"
               :value="lang.value"
             >
-              {{ lang.label }}
+              {{ lang.value }}
             </Option>
           </Select>
         </FormItem>
@@ -159,7 +159,6 @@ import api from '@oj/api'
 import utils from '@/utils/utils'
 import { VueCropper } from 'vue-cropper'
 import { types } from '@/store'
-import { languages } from '@/i18n'
 
 export default {
   components: {
@@ -177,7 +176,14 @@ export default {
         size: 0.8,
         outputType: 'png'
       },
-      languages: languages,
+      languages: [
+        { value: 'C' },
+        { value: 'C++' },
+        { value: 'Golang' },
+        { value: 'Java' },
+        { value: 'Python2' },
+        { value: 'Python3' }
+      ],
       formProfile: {
         real_name: '',
         mood: '',
