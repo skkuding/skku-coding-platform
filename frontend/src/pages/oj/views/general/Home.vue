@@ -1,9 +1,13 @@
 <template>
-  <Banner />
+  <div>
+    <SL />
+    <Banner />
+  </div>
 </template>
 
 <script>
 import Banner from '@oj/components/Banner.vue'
+import SL from '@oj/views/submission/SubmissionList.vue'
 import api from '@oj/api'
 import time from '@/utils/time'
 import { CONTEST_STATUS } from '@/utils/constants'
@@ -11,7 +15,8 @@ import { CONTEST_STATUS } from '@/utils/constants'
 export default {
   name: 'Home',
   components: {
-    Banner
+    Banner, 
+    SL
   },
   data () {
     return {
