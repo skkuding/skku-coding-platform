@@ -41,7 +41,7 @@
     </b-navbar>
     <b-modal v-model="modalVisible">
       <div slot="header" class="modal-title">
-        {{ $t('m.Welcome_to') }} {{ website.website_name_shortcut }}
+        Welcome to {{ website.website_name_shortcut }}
       </div>
       <component
         :is="modalStatus.mode"
