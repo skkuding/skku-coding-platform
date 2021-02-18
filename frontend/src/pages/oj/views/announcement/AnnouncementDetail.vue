@@ -2,22 +2,22 @@
   <div>
     <div class="list-btn">
       <b-button
-        variant="outline-dark"
         to="announcement"
+        id="announcement-btn"
       >
         <b-icon icon="list" to="/announcement"/>목록
       </b-button>
     </div>
 
-    <hr class="line-first">
-    <div class="header">
+    <div class="annoucement-header">
       <div class="title">{{ announcement.title }}</div>
       <div class="date">{{ getTimeFormat(announcement.create_time) }}</div>
     </div>
-    <hr class="line-second">
 
-    <div class="markdown-body">
-      <p v-html="announcement.content"/>
+    <div class="announcement-content">
+      <div class="markdown-body">
+        <p v-html="announcement.content"/>
+      </div>
     </div>
 
     <b-list-group class="list-group-updown">
@@ -70,7 +70,6 @@ export default {
         } else {
           vm.prevAnnouncement = null
         }
-        console.log('HIHI')
         console.log(vm.announcement)
       })
     })
@@ -85,17 +84,44 @@ export default {
     }
   },
   methods: {
+    init () {
+      const announcementID = Number(this.$route.params.announcementID)
+      const offset = Math.max(0, announcementID - 2)
+      const limit = announcementID > 1 ? 3 : 2
+      api.getAnnouncementList(offset, limit).then(res => {
+        this.announcementID = announcementID
+        const results = res.data.data.results
+        if (announcementID > 1) {
+          this.nextAnnouncement = results[0]
+          this.announcement = results[1]
+        } else {
+          this.nextAnnouncement = null
+          this.announcement = results[0]
+        }
+        if (results.length === limit) {
+          this.prevAnnouncement = results[limit - 1]
+        } else {
+          this.prevAnnouncement = null
+        }
+        console.log(this.announcement)
+      })
+    },
     getTimeFormat (value) {
       return time.utcToLocal(value, 'YYYY-M-D')
     },
     goAnnouncement () {
       this.$router.push({ name: '/' })
     }
+  },
+  watch: {
+    '$route' () {
+      this.init()
+    }
   }
 }
 </script>
 
-<style>
+<style lang="scss">
   hr.line-first{
     width: 80%;
     height: 2px;
@@ -111,31 +137,47 @@ export default {
     border: none;
   }
   .list-btn{
-    margin: 100px 11% 12px;
+    margin: 100px 11% 0px;
     display: flex;
     justify-content: flex-end;
   }
+  #announcement-btn{
+    background: transparent;
+    color: #3e4853;
+    &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  }
+  .annoucement-header{
+    overflow: hidden;
+    background: #F9F9F9;
+    margin: 0px 11%;
+    border-top: 2px solid #7C7C7C;
+    border-bottom: 1px solid #B8B8B8;
+  }
   .title{
     float: left;
-    margin: 10px 11%;
+    margin: 10px 20px;
     font-size: 24px;
     font-weight: bold;
     color: #7C7C7C;
   }
   .date{
     float: right;
-    margin: 12px 11%;
+    margin: 12px 20px;
     font-size: 20px;
     text-align: right;
     font-weight: 400;
     color: #7C7C7C;
   }
-  .markdown-body{
-    margin: 64px 11%;
+  .announcement-content{
+    margin: 30px 11%;
     color: #696969;
   }
-  .header{
-    overflow: hidden;
+  .markdown-body{
+    float: left;
+    margin: 0px 20px;
   }
   .list-group-updown{
     margin: 128px 11% 24px;
