@@ -69,6 +69,12 @@
               {{lang}}
             </b-dropdown-item>
           </b-dropdown>
+          <b-dropdown split id="theme-dropdown" :text="language">
+            <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
+              @click="()=>onChangeTheme(theme)">
+              {{theme}}
+            </b-dropdown-item>
+          </b-dropdown>
         </b-nav-item>
       </b-navbar-nav>
     </b-navbar>
@@ -100,7 +106,7 @@
         </div>
 
         <div v-if="problem.hint">
-          <p class="title">{{$t('m.Hint')}}</p>
+          <p class="title">Hint</p>
           <Card dis-hover>
             <div class="content" v-html=problem.hint></div>
           </Card>
@@ -108,8 +114,86 @@
       </b-col>
       <b-col id="console" cols="7">
         <b-row id="editor">
+          <Card
+            id="submit-code"
+            :padding="20"
+            dis-hover
+          >
+            <CodeMirror
+              :value.sync="code"
+              :languages="problem.languages"
+              :language="language"
+              :theme="theme"
+              @resetCode="onResetToTemplate"
+              @changeTheme="onChangeTheme"
+              @changeLang="onChangeLang"
+            />
+            <Row
+              type="flex"
+              justify="space-between"
+            >
+              <Col :span="10">
+                <div
+                  v-if="statusVisible"
+                  class="status"
+                >
+                  <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
+                    <span>{{ $t('m.Status') }}</span>
+                    <Tag
+                      type="dot"
+                      :color="submissionStatus.color"
+                      @click.native="handleRoute('/status/'+submissionId)"
+                    >
+                      {{ $t('m.' + submissionStatus.text.replace(/ /g, "_")) }}
+                    </Tag>
+                  </template>
+                  <template v-else-if="this.contestID && !OIContestRealTimePermission">
+                    <Alert type="success" show-icon>
+                      {{ $t('m.Submitted_successfully') }}
+                    </Alert>
+                  </template>
+                </div>
+                <div v-else-if="problem.my_status === 0">
+                  <Alert type="success" show-icon>
+                    {{ $t('m.You_have_solved_the_problem') }}
+                  </Alert>
+                </div>
+                <div v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
+                  <Alert type="success" show-icon>
+                    {{ $t('m.You_have_submitted_a_solution') }}
+                  </Alert>
+                </div>
+                <div v-if="contestEnded">
+                  <Alert type="warning" show-icon>
+                    {{ $t('m.Contest_has_ended') }}
+                  </Alert>
+                </div>
+              </Col>
+
+              <Col :span="12">
+                <template v-if="captchaRequired">
+                  <div class="captcha-container">
+                    <Tooltip
+                      v-if="captchaRequired"
+                      content="Click to refresh"
+                      placement="top"
+                    >
+                      <img
+                        :src="captchaSrc"
+                        @click="getCaptchaSrc"
+                      >
+                    </Tooltip>
+                    <Input
+                      v-model="captchaCode"
+                      class="captcha-code"
+                    />
+                  </div>
+                </template>
+              </Col>
+            </Row>
+          </Card>
         </b-row>
-        <b-row id="io">
+        <!-- <b-row id="io">
           <b-row class="io-header">
             <b-col class="io-header-cell right-border">Input</b-col>
             <b-col class="io-header-cell">Output</b-col>
@@ -122,7 +206,7 @@
               <pre></pre>
             </b-col>
           </b-row>
-        </b-row>
+        </b-row> -->
       </b-col>
     </b-row>
     <b-sidebar id="sidebar" no-header backdrop>
@@ -209,6 +293,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '../../../../store'
+import CodeMirror from '@oj/components/CodeMirror.vue'
 import storage from '@/utils/storage'
 import { FormMixin } from '@oj/components/mixins'
 import { JUDGE_STATUS, CONTEST_STATUS, buildProblemCodeKey } from '@/utils/constants'
@@ -216,6 +301,7 @@ import api from '@oj/api'
 export default {
   name: 'Problem Details',
   components: {
+    CodeMirror
   },
   mixins: [FormMixin],
   data () {
@@ -232,6 +318,7 @@ export default {
       code: '',
       language: 'C++',
       theme: 'solarized',
+      theme_list: ['solarized', 'monokai', 'material'],
       submissionId: '',
       submitted: false,
       result: {
