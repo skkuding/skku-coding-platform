@@ -124,7 +124,11 @@ dmypy.json
 
 backend/data/config/*
 backend/data/log/*
-backend/data/public/*
+backend/data/public/avatar/*
+!backend/data/public/avatar/default.png
+backend/data/public/upload/*
+backend/data/public/website/*
+!backend/data/public/website/favicon.ico
 backend/data/ssl/*
 backend/data/test_case/*
 !**.gitkeep

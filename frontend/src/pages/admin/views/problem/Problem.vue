@@ -660,7 +660,10 @@ export default {
       }
 
       if (!this.testcase_file_upload) {
-        api.createTestCase([this.problem.testcases, this.problem.spj]).then(response => {
+        api.createTestCase({
+          testcase: this.problem.testcases,
+          spj: this.problem.spj
+        }).then(response => {
           const fileList = response.data.data.info
           for (const file of fileList) {
             file.score = (100 / fileList.length).toFixed(0)

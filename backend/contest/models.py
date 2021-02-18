@@ -46,9 +46,9 @@ class Contest(models.Model):
     # The permission to view some statistics of the problem, such as submission_number, accepted_number, etc.
     def problem_details_permission(self, user):
         return self.rule_type == ContestRuleType.ACM or \
-               self.status == ContestStatus.CONTEST_ENDED or \
-               user.is_authenticated and user.is_contest_admin(self) or \
-               self.real_time_rank
+            self.status == ContestStatus.CONTEST_ENDED or \
+            user.is_authenticated and user.is_contest_admin(self) or \
+            self.real_time_rank
 
     class Meta:
         db_table = "contest"

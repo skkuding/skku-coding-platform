@@ -35,7 +35,7 @@ VENDOR_APPS = [
     'rest_framework',
     'django_dramatiq',
     'django_dbconn_retry',
-    'drf_spectacular',
+    'drf_yasg',
 ]
 
 if production_env:
@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -140,48 +140,48 @@ STATICFILES_DIRS = [os.path.join(DATA_DIR, "public")]
 
 LOGGING_HANDLERS = ['console', 'sentry'] if production_env else ['console']
 LOGGING = {
-   'version': 1,
-   'disable_existing_loggers': False,
-   'formatters': {
-       'standard': {
-           'format': '[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s',
-           'datefmt': '%Y-%m-%d %H:%M:%S'
-       }
-   },
-   'handlers': {
-       'console': {
-           'level': 'DEBUG',
-           'class': 'logging.StreamHandler',
-           'formatter': 'standard'
-       },
-       'sentry': {
-           'level': 'ERROR',
-           'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-           'formatter': 'standard'
-       }
-   },
-   'loggers': {
-       'django.request': {
-           'handlers': LOGGING_HANDLERS,
-           'level': 'ERROR',
-           'propagate': True,
-       },
-       'django.db.backends': {
-           'handlers': LOGGING_HANDLERS,
-           'level': 'ERROR',
-           'propagate': True,
-       },
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        },
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'formatter': 'standard'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'ERROR',
+            'propagate': True,
+        },
         'dramatiq': {
             'handlers': LOGGING_HANDLERS,
             'level': 'DEBUG',
             'propagate': False,
         },
-       '': {
-           'handlers': LOGGING_HANDLERS,
-           'level': 'WARNING',
-           'propagate': True,
-       }
-   },
+        '': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'WARNING',
+            'propagate': True,
+        }
+    },
 }
 
 REST_FRAMEWORK = {
@@ -190,6 +190,11 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     )
+}
+
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': 'http://localhost/api/login',
+    'LOGOUT_URL': 'http://localhost/api/logout'
 }
 
 REDIS_URL = "redis://%s:%s" % (REDIS_CONF["host"], REDIS_CONF["port"])

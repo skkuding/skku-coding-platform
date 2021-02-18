@@ -6,6 +6,8 @@ from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from submission.models import Submission
 from utils.api import APIView, validate_serializer
@@ -18,6 +20,10 @@ from ..serializers import ImportUserSeralizer
 
 
 class UserAdminAPI(APIView):
+    @swagger_auto_schema(
+        request_body=(ImportUserSeralizer),
+        operation_description="Import User"
+    )
     @validate_serializer(ImportUserSeralizer)
     @super_admin_required
     def post(self, request):
@@ -43,6 +49,10 @@ class UserAdminAPI(APIView):
             #    DETAIL:  Key (username)=(root11) already exists.
             return self.error(str(e).split("\n")[1])
 
+    @swagger_auto_schema(
+        request_body=(EditUserSerializer),
+        operation_description="Edit user api"
+    )
     @validate_serializer(EditUserSerializer)
     @super_admin_required
     def put(self, request):
@@ -100,6 +110,21 @@ class UserAdminAPI(APIView):
         UserProfile.objects.filter(user=user).update(real_name=data["real_name"])
         return self.success(UserAdminSerializer(user).data)
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="unique user id",
+            ),
+            openapi.Parameter(
+                name="keyword", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="user keyword",
+            ),
+        ],
+        operation_description="Get User"
+    )
     @super_admin_required
     def get(self, request):
         """
@@ -122,6 +147,16 @@ class UserAdminAPI(APIView):
                                Q(email__icontains=keyword))
         return self.success(self.paginate_data(request, user, UserAdminSerializer))
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="unique user id",
+            ),
+        ],
+        operation_description="Delete User"
+    )
     @super_admin_required
     def delete(self, request):
         id = request.GET.get("id")
@@ -135,6 +170,17 @@ class UserAdminAPI(APIView):
 
 
 class GenerateUserAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="file_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="unique file_id",
+                required=True
+            ),
+        ],
+        operation_description="Get User Excel"
+    )
     @super_admin_required
     def get(self, request):
         """
@@ -156,6 +202,10 @@ class GenerateUserAPI(APIView):
         response["Content-Type"] = "application/xlsx"
         return response
 
+    @swagger_auto_schema(
+        request_body=(GenerateUserSerializer),
+        operation_description="Generate User"
+    )
     @validate_serializer(GenerateUserSerializer)
     @super_admin_required
     def post(self, request):

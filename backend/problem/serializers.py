@@ -72,6 +72,11 @@ class CreateOrEditProblemSerializer(serializers.Serializer):
     share_submission = serializers.BooleanField()
 
 
+class TestCaseTextSerializer(serializers.Serializer):
+    spj = serializers.CharField(max_length=12)
+    testcases = serializers.ListField(child=CreateSampleSerializer())
+
+
 class CreateProblemSerializer(CreateOrEditProblemSerializer):
     pass
 

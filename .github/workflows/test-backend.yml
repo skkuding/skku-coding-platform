@@ -4,7 +4,6 @@ name: Backend Tests
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   pull_request:
-    branches: master
     paths: "backend/**"
 
   # Allows you to run this workflow manually from the Actions tab
@@ -47,6 +46,5 @@ jobs:
         run: python3 -m coverage run --include="$PWD/*" manage.py test
       
       - name: Result of Django Test
-        if: failure()
         working-directory: ${{ env.working-directory }}
         run: python3 -m coverage report

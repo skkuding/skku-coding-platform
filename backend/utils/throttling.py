@@ -5,6 +5,7 @@ class TokenBucket:
     """
     Note: The operation of a single key is not thread-safe
     """
+
     def __init__(self, key, capacity, fill_rate, default_capacity, redis_conn):
         """
         :param capacity: maximum capacity

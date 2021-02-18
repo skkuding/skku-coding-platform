@@ -11,7 +11,10 @@ import pytz
 import requests
 from django.conf import settings
 from django.utils import timezone
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from requests.exceptions import RequestException
+from rest_framework.parsers import MultiPartParser, JSONParser
 
 from account.decorators import super_admin_required
 from account.models import User
@@ -31,6 +34,7 @@ from .serializers import (CreateEditWebsiteConfigSerializer,
 
 
 class SMTPAPI(APIView):
+    @swagger_auto_schema(operation_description="Get SMTP Config")
     @super_admin_required
     def get(self, request):
         smtp = SysOptions.smtp_config
@@ -39,12 +43,20 @@ class SMTPAPI(APIView):
         smtp.pop("password")
         return self.success(smtp)
 
+    @swagger_auto_schema(
+        request_body=CreateSMTPConfigSerializer,
+        operation_description="Create SMTP Config"
+    )
     @super_admin_required
     @validate_serializer(CreateSMTPConfigSerializer)
     def post(self, request):
         SysOptions.smtp_config = request.data
         return self.success()
 
+    @swagger_auto_schema(
+        request_body=EditSMTPConfigSerializer,
+        operation_description="Edit SMTP Config"
+    )
     @super_admin_required
     @validate_serializer(EditSMTPConfigSerializer)
     def put(self, request):
@@ -59,6 +71,10 @@ class SMTPAPI(APIView):
 
 
 class SMTPTestAPI(APIView):
+    @swagger_auto_schema(
+        request_body=TestSMTPConfigSerializer,
+        operation_description="Create Test SMTP Config"
+    )
     @super_admin_required
     @validate_serializer(TestSMTPConfigSerializer)
     def post(self, request):
@@ -88,12 +104,17 @@ class SMTPTestAPI(APIView):
 
 
 class WebsiteConfigAPI(APIView):
+    @swagger_auto_schema(operation_description="Get Website Config")
     def get(self, request):
         ret = {key: getattr(SysOptions, key) for key in
                ["website_base_url", "website_name", "website_name_shortcut",
                 "website_footer", "allow_register", "submission_list_show_all"]}
         return self.success(ret)
 
+    @swagger_auto_schema(
+        request_body=CreateEditWebsiteConfigSerializer,
+        operation_description="Create Website Config"
+    )
     @super_admin_required
     @validate_serializer(CreateEditWebsiteConfigSerializer)
     def post(self, request):
@@ -106,12 +127,23 @@ class WebsiteConfigAPI(APIView):
 
 
 class JudgeServerAPI(APIView):
+    parser_classes = [JSONParser, MultiPartParser]
+
+    @swagger_auto_schema(operation_description="Get JudgeServer Toekn & Status")
     @super_admin_required
     def get(self, request):
         servers = JudgeServer.objects.all().order_by("-last_heartbeat")
         return self.success({"token": SysOptions.judge_server_token,
                              "servers": JudgeServerSerializer(servers, many=True).data})
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="hostname", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, required=True
+            ),
+        ],
+        operation_description="Delete JudgeServer By Hostname"
+    )
     @super_admin_required
     def delete(self, request):
         hostname = request.GET.get("hostname")
@@ -119,6 +151,10 @@ class JudgeServerAPI(APIView):
             JudgeServer.objects.filter(hostname=hostname).delete()
         return self.success()
 
+    @swagger_auto_schema(
+        request_body=EditJudgeServerSerializer,
+        operation_description="Edit JudgeServer able"
+    )
     @validate_serializer(EditJudgeServerSerializer)
     @super_admin_required
     def put(self, request):
@@ -130,6 +166,10 @@ class JudgeServerAPI(APIView):
 
 
 class JudgeServerHeartbeatAPI(CSRFExemptAPIView):
+    @swagger_auto_schema(
+        request_body=JudgeServerHeartbeatSerializer,
+        operation_description="Create JudgeServer Status"
+    )
     @validate_serializer(JudgeServerHeartbeatSerializer)
     def post(self, request):
         data = request.data
@@ -164,11 +204,13 @@ class JudgeServerHeartbeatAPI(CSRFExemptAPIView):
 
 
 class LanguagesAPI(APIView):
+    @swagger_auto_schema(operation_description="Get Langugaes Config")
     def get(self, request):
         return self.success({"languages": SysOptions.languages, "spj_languages": SysOptions.spj_languages})
 
 
 class TestCasePruneAPI(APIView):
+    @swagger_auto_schema(operation_description="Return Orphan Testcase List")
     @super_admin_required
     def get(self, request):
         """
@@ -183,6 +225,16 @@ class TestCasePruneAPI(APIView):
                 ret_data.append({"id": d.name, "create_time": d.stat().st_mtime})
         return self.success(ret_data)
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                required=True,
+            ),
+        ],
+        operation_description="Delete Test Case"
+    )
     @super_admin_required
     def delete(self, request):
         test_case_id = request.GET.get("id")
@@ -209,6 +261,7 @@ class TestCasePruneAPI(APIView):
 
 
 class ReleaseNotesAPI(APIView):
+    @swagger_auto_schema(operation_description="Get ReleaseNotes")
     def get(self, request):
         try:
             resp = requests.get("https://raw.githubusercontent.com/skku-npc/skku-coding-platform/master/backend/docs/data.json?_=" + str(time.time()),
@@ -223,6 +276,7 @@ class ReleaseNotesAPI(APIView):
 
 
 class DashboardInfoAPI(APIView):
+    @swagger_auto_schema(operation_description="Get DashBoardInfo")
     def get(self, request):
         today = datetime.today()
         today_submission_count = Submission.objects.filter(

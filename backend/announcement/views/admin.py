@@ -1,3 +1,6 @@
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from account.decorators import super_admin_required
 from utils.api import APIView, validate_serializer
 
@@ -7,6 +10,10 @@ from announcement.serializers import (AnnouncementSerializer, CreateAnnouncement
 
 
 class AnnouncementAdminAPI(APIView):
+    @swagger_auto_schema(
+        request_body=CreateAnnouncementSerializer,
+        operation_description="Create Announcement"
+    )
     @validate_serializer(CreateAnnouncementSerializer)
     @super_admin_required
     def post(self, request):
@@ -20,6 +27,10 @@ class AnnouncementAdminAPI(APIView):
                                                    visible=data["visible"])
         return self.success(AnnouncementSerializer(announcement).data)
 
+    @swagger_auto_schema(
+        request_body=EditAnnouncementSerializer,
+        operation_description="Edit Announcement"
+    )
     @validate_serializer(EditAnnouncementSerializer)
     @super_admin_required
     def put(self, request):
@@ -38,6 +49,20 @@ class AnnouncementAdminAPI(APIView):
 
         return self.success(AnnouncementSerializer(announcement).data)
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+            openapi.Parameter(
+                name="visible", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN
+            )
+        ],
+        operation_description="Get Announcement"
+    )
     @super_admin_required
     def get(self, request):
         """
@@ -55,6 +80,17 @@ class AnnouncementAdminAPI(APIView):
             announcement = announcement.filter(visible=True)
         return self.success(self.paginate_data(request, announcement, AnnouncementSerializer))
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                required=True,
+                description="unique announcement id"
+            ),
+        ],
+        operation_description="Delete Announcement"
+    )
     @super_admin_required
     def delete(self, request):
         if request.GET.get("id"):
