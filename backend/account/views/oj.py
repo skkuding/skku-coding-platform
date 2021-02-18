@@ -293,9 +293,6 @@ class UserRegisterAPI(APIView):
 
         UserProfile.objects.create(user=user)
 
-        if not SysOptions.smtp_config:
-            return self.error("Email authorization failed.")
-
         render_data = {
             "username": user.username,
             "website_name": SysOptions.website_name,

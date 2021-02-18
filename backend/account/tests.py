@@ -214,9 +214,11 @@ class UserRegisterAPITest(CaptchaTest):
         response = self.client.post(self.register_url, data=self.data)
         self.assertTrue(response.data["error"] is not None)
 
-    def test_register_with_correct_info(self):
+    @mock.patch("account.views.oj.send_email_async.send")
+    def test_register_with_correct_info(self, mock):
         response = self.client.post(self.register_url, data=self.data)
-        self.assertDictEqual(response.data, {"error": "error", "data": "Email authorization failed."})
+        self.assertDictEqual(response.data, {"error": None, "data": "Succeeded"})
+        mock.assert_called()
 
     def test_username_already_exists(self):
         self.test_register_with_correct_info()
