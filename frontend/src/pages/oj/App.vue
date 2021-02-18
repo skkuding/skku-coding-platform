@@ -65,16 +65,8 @@ a {
   }
 }
 
-@media screen and (max-width: 1200px) {
-  .content-app {
-    margin-top: 72px;
-  }
-}
-
-@media screen and (min-width: 1200px) {
-  .content-app {
-    margin-top: 72px;
-  }
+.content-app {
+  margin-top: 72px;
 }
 
 .fadeInUp-enter-active {

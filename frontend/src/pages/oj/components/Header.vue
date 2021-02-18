@@ -1,5 +1,5 @@
 <template>
-  <div id="header">
+  <div class="header">
     <b-navbar sticky-top style="height: 100%;">
       <b-navbar-brand to="/" class="ml-5" style="width: 0">
         <img
@@ -9,13 +9,13 @@
       </b-navbar-brand>
 
       <b-navbar-nav class="mx-auto" align="center">
-        <b-nav-item class="header--menu">
+        <b-nav-item class="header__menu">
           <router-link class="nav-link" active-class="active" to="/notice">Notice</router-link>
         </b-nav-item>
-        <b-nav-item class="header--menu">
+        <b-nav-item class="header__menu">
           <router-link class="nav-link" active-class="active" to="/contest">Contests</router-link>
         </b-nav-item>
-        <b-nav-item class="header--menu">
+        <b-nav-item class="header__menu">
           <router-link class="nav-link" active-class="active" to="/problem">Problems</router-link>
         </b-nav-item>
       </b-navbar-nav>
@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-#header {
+.header {
   position: fixed;
   top: 0;
   left: 0;
@@ -107,7 +107,7 @@ export default {
   z-index: 1000;
   background-color: #fff;
 }
-.header--menu {
+.header__menu {
   width: 170px;
   &:hover {
     text-decoration: underline;
