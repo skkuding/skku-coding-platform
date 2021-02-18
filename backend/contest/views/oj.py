@@ -166,7 +166,7 @@ class ContestAccessAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                name="id",
+                name="contest_id",
                 in_=openapi.IN_QUERY,
                 description="Unique ID of a contest",
                 required=True,

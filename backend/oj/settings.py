@@ -36,7 +36,6 @@ VENDOR_APPS = [
     'django_dramatiq',
     'django_dbconn_retry',
     'drf_yasg',
-    'drf_spectacular',
 ]
 
 if production_env:

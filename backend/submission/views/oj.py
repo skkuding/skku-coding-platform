@@ -87,7 +87,7 @@ class SubmissionAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                name="id", in_=openapi.IN_QUERY, type=openapi.TYPE_STRING
+                name="id", in_=openapi.IN_QUERY, type=openapi.TYPE_INTEGER
             )
         ]
     )
@@ -135,25 +135,47 @@ class SubmissionListAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                name="limit", in_=openapi.IN_QUERY, required=True, type=openapi.TYPE_INTEGER
+                name="limit",
+                in_=openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
-                name="offset", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+                name="offset",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
-                name="problem_id", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
-                name="myself", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+                name="myself",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_STRING,
+                description="Set to '1' to get my submissions"
             ),
             openapi.Parameter(
-                name="result", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+                name="result",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
-                name="username", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+                name="username",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
-                name="page", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+                name="page",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
             )
         ]
     )
@@ -189,19 +211,35 @@ class ContestSubmissionListAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                name="limit", in_=openapi.IN_QUERY, required=True, type=openapi.TYPE_INTEGER
+                name="limit",
+                in_=openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
-                name="offset", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+                name="offset",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
-                name="contest_id", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+                name="contest_id",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
-                name="problem_id", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
-                name="myself", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+                name="myself",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_STRING,
+                description="Set to '1' to get my submissions"
             ),
             openapi.Parameter(
                 name="result", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER

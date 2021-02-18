@@ -12,7 +12,7 @@ from drf_yasg import openapi
 class ProblemTagAPI(APIView):
     @swagger_auto_schema(
         operation_description="Pick a set of problems that contain certain tag.",
-        query_serializer=TagSerializer
+        responses=TagSerializer
     )
     def get(self, request):
         tags = ProblemTag.objects.annotate(problem_count=Count("problem")).filter(problem_count__gt=0)
@@ -62,7 +62,6 @@ class ProblemAPI(APIView):
                 name="limit", in_=openapi.IN_QUERY,
                 type=openapi.TYPE_INTEGER,
                 description="Maximun number of problem list. Working when \'problem_id\' is not set.",
-                required=True
             ),
             openapi.Parameter(
                 name="offset", in_=openapi.IN_QUERY,
@@ -80,7 +79,7 @@ class ProblemAPI(APIView):
                 description="Keyword of problem\'s title you want to search with.",
             ),
             openapi.Parameter(
-                name="Difficulty", in_=openapi.IN_QUERY,
+                name="difficulty", in_=openapi.IN_QUERY,
                 type=openapi.TYPE_STRING,
                 description="Difficulty of problem you want to search with.",
             ),

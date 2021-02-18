@@ -10,7 +10,6 @@ django-dramatiq==0.9.1
 django-redis==4.12.1
 djangorestframework==3.12.2
 dramatiq==1.10.0
-drf-spectacular==0.13.1
 drf-yasg==1.20.0
 entrypoints==0.3
 Envelopes==0.4

@@ -24,7 +24,7 @@ from ..models import Problem, ProblemRuleType, ProblemTag
 from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
                            CreateProblemSerializer, EditProblemSerializer, EditContestProblemSerializer,
                            ProblemAdminSerializer, TestCaseUploadForm, ContestProblemMakePublicSerializer,
-                           AddContestProblemSerializer, ExportProblemSerializer,
+                           AddContestProblemSerializer, ExportProblemSerializer, TestCaseTextSerializer,
                            ExportProblemRequestSerialzier, UploadProblemForm, ImportProblemSerializer,
                            FPSProblemSerializer)
 from ..utils import TEMPLATE_BASE, build_problem_template
@@ -186,9 +186,14 @@ class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
 
 
 class TestCaseTextAPI(APIView):
+    @swagger_auto_schema(
+        request_body=TestCaseTextSerializer,
+        operation_description="Upload testcases. Returned \'id\' would be used when uploading problems(for \'testcase_id\')"
+    )
     def post(self, request):
-        testcases = request.data[0]
-        spj = request.data[1]
+        data = request.data
+        spj = data["spj"]
+        testcases = data["testcases"]
 
         test_case_id = rand_str()
         test_case_dir = os.path.join(settings.TEST_CASE_DIR, test_case_id)
