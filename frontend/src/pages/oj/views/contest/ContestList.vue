@@ -1,38 +1,27 @@
 <template>
-  <div>
-    <b-card
-      title="All Contest"
-      class="border-0"
-      bg-variant="transparent"
-    >
-      <div class="table">
-        <b-table
-          hover
-          :items="contests"
-          :fields="contestListColumns"
+  <div class="contest-list-card">
+    <h1 class="title">Contest</h1>
+    <div class="table">
+      <b-table
+        hover
+        :items="contests"
+        :fields="contestListColumns"
+        :per-page="perPage"
+        :current-page="currentPage"
+        head-variant="light"
+        @row-clicked="goContest"
+      >
+      </b-table>
+    </div>
+    <div class="pagination">
+        <b-pagination
+          aria-controls="notice-list"
+          v-model="currentPage"
+          :total-rows="row"
           :per-page="perPage"
-          :current-page="currentPage"
-          head-variant="light"
-          @row-clicked="goContest"
-        >
-          <!-- <template #cell(title)="data">
-            <a href="#">{{data.value}}</a>
-          </template> -->
-          <!-- <template #cell(status)>
-            {{countdown}}
-          </template> -->
-        </b-table>
-      </div>
-      <div class="pagination">
-          <b-pagination
-            aria-controls="notice-list"
-            v-model="currentPage"
-            :total-rows=100
-            :per-page="perPage"
-            limit="3"
-          ></b-pagination>
-      </div>
-    </b-card>
+          limit="3"
+        ></b-pagination>
+    </div>
   </div>
 </template>
 
@@ -183,7 +172,10 @@ export default {
     ...mapGetters(
       ['contestMenuDisabled', 'countdown', 'isContestAdmin',
         'OIContestRealTimePermission', 'passwordFormVisible']
-    )
+    ),
+    row () {
+      return this.contests.length
+    }
   },
   watch: {
     '$route' (newVal, oldVal) {
@@ -197,6 +189,18 @@ export default {
 </script>
 
 <style>
+  .contest-list-card{
+    margin: 0 auto;
+    width: 90%;
+    font-family: Manrope;
+  }
+  .title{
+    margin-top: 100px;
+  }
+  .contest-list-card .table{
+    width: 95%;
+    margin: 0 auto;
+  }
   .pagination{
     display: flex;
     justify-content: flex-end;
