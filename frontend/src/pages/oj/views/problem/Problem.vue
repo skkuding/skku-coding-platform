@@ -47,7 +47,7 @@
 
       <b-navbar-nav class="ml-auto">
         <b-nav-item>
-          <b-button>
+          <b-button v-b-tooltip.hover title="Click to reset your code" @click="onResetToTemplate">
             <b-icon icon="arrow-clockwise" scale="1.1" shift-v="-2"/>
           </b-button>
         </b-nav-item>
@@ -63,13 +63,15 @@
           </b-button>
         </b-nav-item>
         <b-nav-item>
-          <b-dropdown split id="language-dropdown" :text="language">
+          <b-dropdown split id="language-dropdown" :text="language" @change="onChangeLang">
             <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
               @click="()=>onChangeLang(lang)">
               {{lang}}
             </b-dropdown-item>
           </b-dropdown>
-          <b-dropdown split id="theme-dropdown" :text="language">
+        </b-nav-item>
+        <b-nav-item>
+          <b-dropdown split id="theme-dropdown" :text="theme" @change="onChangeTheme">
             <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
               @click="()=>onChangeTheme(theme)">
               {{theme}}
@@ -106,92 +108,67 @@
         </div>
 
         <div v-if="problem.hint">
-          <p class="title">Hint</p>
-          <Card dis-hover>
-            <div class="content" v-html=problem.hint></div>
-          </Card>
+          <h2>Hint</h2>
+          <p v-html=problem.hint></p>
         </div>
       </b-col>
       <b-col id="console" cols="7">
-        <b-row id="editor">
-          <Card
-            id="submit-code"
-            :padding="20"
-            dis-hover
-          >
-            <CodeMirror
-              :value.sync="code"
-              :languages="problem.languages"
-              :language="language"
-              :theme="theme"
-              @resetCode="onResetToTemplate"
-              @changeTheme="onChangeTheme"
-              @changeLang="onChangeLang"
-            />
-            <Row
-              type="flex"
-              justify="space-between"
+        <b-row
+          v-if="statusVisible"
+          class="status"
+        >
+          <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
+            <span>Status</span>
+            <Tag
+              type="dot"
+              :color="submissionStatus.color"
+              @click.native="handleRoute('/status/'+submissionId)"
             >
-              <Col :span="10">
-                <div
-                  v-if="statusVisible"
-                  class="status"
-                >
-                  <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
-                    <span>Status</span>
-                    <Tag
-                      type="dot"
-                      :color="submissionStatus.color"
-                      @click.native="handleRoute('/status/'+submissionId)"
-                    >
-                      {{ submissionStatus.text.replace(/ /g, "_") }}
-                    </Tag>
-                  </template>
-                  <template v-else-if="this.contestID && !OIContestRealTimePermission">
-                    <Alert type="success" show-icon>
-                      Submitted Succesfully
-                    </Alert>
-                  </template>
-                </div>
-                <div v-else-if="problem.my_status === 0">
-                  <Alert type="success" show-icon>
-                    You have solved the problem
-                  </Alert>
-                </div>
-                <div v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
-                  <Alert type="success" show-icon>
-                    You have submitted a solution
-                  </Alert>
-                </div>
-                <div v-if="contestEnded">
-                  <Alert type="warning" show-icon>
-                    Contest has ended
-                  </Alert>
-                </div>
-              </Col>
-
-              <Col :span="12">
-                <template v-if="captchaRequired">
-                  <div class="captcha-container">
-                    <Tooltip
-                      v-if="captchaRequired"
-                      content="Click to refresh"
-                      placement="top"
-                    >
-                      <img
-                        :src="captchaSrc"
-                        @click="getCaptchaSrc"
-                      >
-                    </Tooltip>
-                    <Input
-                      v-model="captchaCode"
-                      class="captcha-code"
-                    />
-                  </div>
-                </template>
-              </Col>
-            </Row>
-          </Card>
+              {{ submissionStatus.text }}
+            </Tag>
+          </template>
+          <template v-else-if="this.contestID && !OIContestRealTimePermission">
+            <b-alert variant="success">
+              Submitted Succesfully
+            </b-alert>
+          </template>
+        </b-row>
+        <b-row v-else-if="problem.my_status === 0">
+          <b-alert variant="success">
+            You have solved the problem
+          </b-alert>
+        </b-row>
+        <b-row v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
+          <b-alert variant="success">
+            You have submitted a solution
+          </b-alert>
+        </b-row>
+        <b-row v-if="contestEnded">
+          <b-alert variant="warning">
+            Contest has ended
+          </b-alert>
+        </b-row>
+        <template v-if="captchaRequired">
+          <b-row>
+            <b-col>
+              <img :src="captchaSrc" id="captcha-img">
+              <b-button @click="getCaptchaSrc">
+                Refresh
+              </b-button>
+              <b-form-input v-model="captchaCode" id="captcha-code"/>
+            </b-col>
+          </b-row>
+        </template>
+        <b-row id="editor">
+          <CodeMirror
+            :value.sync="code"
+            :languages="problem.languages"
+            :language="language"
+            :theme="theme"
+            @resetCode="onResetToTemplate"
+            @changeTheme="onChangeTheme"
+            @changeLang="onChangeLang"
+          />
         </b-row>
         <!-- <b-row id="io">
           <b-row class="io-header">
@@ -399,7 +376,9 @@ export default {
     handleRoute (route) {
       this.$router.push(route)
     },
+    // 언어 변경
     onChangeLang (newLang) {
+      console.log('onChangeLang ' + newLang)
       if (this.problem.template[newLang]) {
         if (this.code.trim() === '') {
           this.code = this.problem.template[newLang]
@@ -407,9 +386,12 @@ export default {
       }
       this.language = newLang
     },
+    // 테마 변경
     onChangeTheme (newTheme) {
+      console.log('onChangeTheme ' + newTheme)
       this.theme = newTheme
     },
+    // 리셋 버튼
     onResetToTemplate () {
       this.$Modal.confirm({
         content: this.$i18n.t('m.Are_you_sure_you_want_to_reset_your_code'),
@@ -668,6 +650,15 @@ export default {
       background: #24272D;
       color: white;
     }
+  }
+
+  #captcha-img {
+    height: 38px;
+  }
+
+  #captcha-code {
+    display: inline-block;
+    width: 150px;
   }
 
   #console {
