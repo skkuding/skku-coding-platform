@@ -7,7 +7,7 @@
         </svg>
       </b-navbar-brand>
 
-      <b-navbar-nav v-if="$route.name.indexOf('contest') != -1">
+      <b-navbar-nav v-if="$route.name && $route.name.indexOf('contest') != -1">
         <b-nav-item to="#">Contests</b-nav-item>
         <b-nav-item>
           <b-icon icon="chevron-right"/>
@@ -47,6 +47,17 @@
 
       <b-navbar-nav class="ml-auto">
         <b-nav-item>
+          <b-button v-b-tooltip.hover title="Upload file to editor" @click="onUploadFile">
+            <b-icon icon="upload"/>
+          </b-button>
+          <input
+            id="file-uploader"
+            type="file"
+            style="display: none"
+            @change="onUploadFileDone"
+          >
+        </b-nav-item>
+        <b-nav-item>
           <b-button v-b-tooltip.hover title="Click to reset your code" @click="onResetToTemplate">
             <b-icon icon="arrow-clockwise" scale="1.1" shift-v="-2"/>
           </b-button>
@@ -58,8 +69,12 @@
           </b-button>
         </b-nav-item>
         <b-nav-item>
-          <b-button variant="primary">
-            Submit
+          <b-button variant="primary"
+            :disabled="problemSubmitDisabled || submitted"
+            @click="submitCode"
+          >
+            <span v-if="submitting">Submitting...</span>
+            <span v-else>Submit</span>
           </b-button>
         </b-nav-item>
         <b-nav-item>
@@ -165,9 +180,7 @@
             :languages="problem.languages"
             :language="language"
             :theme="theme"
-            @resetCode="onResetToTemplate"
-            @changeTheme="onChangeTheme"
-            @changeLang="onChangeLang"
+            :bus="bus"
           />
         </b-row>
         <!-- <b-row id="io">
@@ -193,7 +206,7 @@
             <b-row class="sidebar-row bottom-border">
               <b-icon icon="x" scale="2.2" @click="hide"/>
             </b-row>
-            <b-row class="sidebar-row bottom-border" v-if="$route.name.indexOf('contest') != -1">
+            <b-row class="sidebar-row bottom-border" v-if="$route.name && $route.name.indexOf('contest') != -1">
               <h2>
                 <b-icon class="sidebar-icon" icon="hash" scale="1.3" shift-v="1"/>
                 Problem List
@@ -268,6 +281,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '../../../../store'
 import CodeMirror from '@oj/components/CodeMirror.vue'
@@ -313,7 +327,20 @@ export default {
         },
         tags: [],
         io_mode: { io_mode: 'Standard IO' }
-      }
+      },
+      // Siderbar content
+      my_submissions: [
+
+      ],
+      all_submissions: [
+
+      ],
+      clarifications: [
+
+      ],
+
+      // Event bus to CodeMirror
+      bus: new Vue()
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -376,22 +403,7 @@ export default {
     handleRoute (route) {
       this.$router.push(route)
     },
-    // 언어 변경
-    onChangeLang (newLang) {
-      console.log('onChangeLang ' + newLang)
-      if (this.problem.template[newLang]) {
-        if (this.code.trim() === '') {
-          this.code = this.problem.template[newLang]
-        }
-      }
-      this.language = newLang
-    },
-    // 테마 변경
-    onChangeTheme (newTheme) {
-      console.log('onChangeTheme ' + newTheme)
-      this.theme = newTheme
-    },
-    // 리셋 버튼
+    // when reset button clicked
     onResetToTemplate () {
       this.$Modal.confirm({
         content: this.$i18n.t('m.Are_you_sure_you_want_to_reset_your_code'),
@@ -404,6 +416,28 @@ export default {
           }
         }
       })
+    },
+    // when language dropdown changed
+    onChangeLang (newLang) {
+      this.bus.$emit('changeLang')
+      if (this.problem.template[newLang]) {
+        if (this.code.trim() === '') {
+          this.code = this.problem.template[newLang]
+        }
+      }
+      this.language = newLang
+    },
+    // when theme dropdown changed
+    onChangeTheme (newTheme) {
+      this.bus.$emit('changeTheme')
+      this.theme = newTheme
+    },
+    // when file uploaded
+    onUploadFile () {
+      this.bus.$emit('uploadFile')
+    },
+    onUploadFileDone () {
+      this.bus.$emit('uploadFileDone')
     },
     checkSubmissionStatus () {
       // 使用setTimeout避免一些问题
@@ -496,13 +530,13 @@ export default {
     },
     getContestProblems () {
       this.$store.dispatch('getContestProblems').then(res => {
-        // if (this.isAuthenticated) {
-        //   if (this.contestRuleType === 'ACM') {
-        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
-        //   } else if (this.OIContestRealTimePermission) {
-        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
-        //   }
-        // }
+        if (this.isAuthenticated) {
+          if (this.contestRuleType === 'ACM') {
+            this.addStatusColumn(this.ACMTableColumns, res.data.data)
+          } else if (this.OIContestRealTimePermission) {
+            this.addStatusColumn(this.ACMTableColumns, res.data.data)
+          }
+        }
       })
     },
     goContestProblem (problemID) {
