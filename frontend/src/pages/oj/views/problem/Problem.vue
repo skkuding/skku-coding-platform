@@ -204,7 +204,7 @@ import { FormMixin } from '@oj/components/mixins'
 import { JUDGE_STATUS, CONTEST_STATUS, buildProblemCodeKey } from '@/utils/constants'
 import api from '@oj/api'
 export default {
-  name: 'Problem',
+  name: 'Problem Details',
   components: {
   },
   mixins: [FormMixin],

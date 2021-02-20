@@ -35,3 +35,10 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+.banner {
+  position: relative;
+  // margin: 0 250px;
+}
+</style>

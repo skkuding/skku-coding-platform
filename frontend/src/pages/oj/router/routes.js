@@ -2,7 +2,8 @@
 import {
   About,
   ACMRank,
-  Announcements,
+  AnnouncementList,
+  Announcement,
   ApplyResetPassword,
   EmailAuth,
   FAQ,
@@ -33,6 +34,18 @@ export default [
     path: '/logout',
     meta: { title: 'Logout' },
     component: Logout
+  },
+  {
+    name: 'announcement-list',
+    path: '/announcement',
+    meta: { title: 'Announcement List' },
+    component: AnnouncementList
+  },
+  {
+    name: 'announcement-details',
+    path: '/announcement/:announcementID',
+    meta: { title: 'Announcement Details' },
+    component: Announcement
   },
   {
     name: 'apply-reset-password',
@@ -106,7 +119,7 @@ export default [
       {
         name: 'contest-announcement-list',
         path: 'announcements',
-        component: Announcements
+        component: AnnouncementList
       },
       {
         name: 'contest-rank',

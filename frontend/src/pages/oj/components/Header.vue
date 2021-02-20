@@ -97,11 +97,9 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
+<style scoped>
+#header {
+  position: relative;
   height: 72px;
   width: 100%;
   z-index: 1000;

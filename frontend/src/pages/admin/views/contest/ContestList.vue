@@ -23,51 +23,42 @@
             <p>Creator: {{ props.row.created_by.username }}</p>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="id"
-          width="80"
-          label="ID"
-        />
-        <el-table-column
-          prop="title"
-          label="Title"
-        />
-        <el-table-column
-          label="Rule Type"
-          width="130"
-        >
+        <el-table-column prop="id" width="80" label="ID" />
+        <el-table-column prop="title" label="Title" />
+        <el-table-column label="Rule Type" width="130">
           <template slot-scope="scope">
             <el-tag type="gray">
               {{ scope.row.rule_type }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          label="Contest Type"
-          width="180"
-        >
+        <el-table-column label="Contest Type" width="180">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.contest_type === 'Public' ? 'success' : 'primary'">
+            <el-tag
+              :type="
+                scope.row.contest_type === 'Public' ? 'success' : 'primary'
+              "
+            >
               {{ scope.row.contest_type }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          label="Status"
-          width="130"
-        >
+        <el-table-column label="Status" width="130">
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.status === '-1' ? 'danger' : scope.row.status === '0' ? 'success' : 'primary'"
+              :type="
+                scope.row.status === '-1'
+                  ? 'danger'
+                  : scope.row.status === '0'
+                  ? 'success'
+                  : 'primary'
+              "
             >
               {{ scope.row.status | contestStatus }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          width="100"
-          label="Visible"
-        >
+        <el-table-column width="100" label="Visible">
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.visible"
@@ -77,11 +68,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column
-          fixed="right"
-          width="250"
-          label="Operation"
-        >
+        <el-table-column fixed="right" width="250" label="Operation">
           <div slot-scope="scope">
             <icon-btn
               name="Edit"
@@ -125,14 +112,8 @@
         v-model="excludeAdmin"
         active-text="Exclude admin submissions"
       />
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          type="primary"
-          @click="downloadSubmissions"
-        >确 定</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="downloadSubmissions">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -164,7 +145,7 @@ export default {
     }
   },
   watch: {
-    'keyword' () {
+    keyword () {
       this.currentChange(1)
     }
   },
@@ -179,13 +160,18 @@ export default {
     },
     getContestList (page) {
       this.loading = true
-      api.getContestList((page - 1) * this.pageSize, this.pageSize, this.keyword).then(res => {
-        this.loading = false
-        this.total = res.data.data.total
-        this.contestList = res.data.data.results
-      }, res => {
-        this.loading = false
-      })
+      api
+        .getContestList((page - 1) * this.pageSize, this.pageSize, this.keyword)
+        .then(
+          (res) => {
+            this.loading = false
+            this.total = res.data.data.total
+            this.contestList = res.data.data.results
+          },
+          (res) => {
+            this.loading = false
+          }
+        )
     },
     openDownloadOptions (contestId) {
       this.downloadDialogVisible = true
@@ -200,10 +186,16 @@ export default {
       this.$router.push({ name: 'edit-contest', params: { contestId } })
     },
     goContestAnnouncement (contestId) {
-      this.$router.push({ name: 'contest-announcement', params: { contestId } })
+      this.$router.push({
+        name: 'contest-announcement',
+        params: { contestId }
+      })
     },
     goContestProblemList (contestId) {
-      this.$router.push({ name: 'contest-problem-list', params: { contestId } })
+      this.$router.push({
+        name: 'contest-problem-list',
+        params: { contestId }
+      })
     },
     handleVisibleSwitch (row) {
       api.editContest(row)
