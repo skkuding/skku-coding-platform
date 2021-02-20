@@ -3,7 +3,7 @@
     <div class="section-title logo-title font-bold">
       <h2>Setting</h2>
     </div>
-    <div style="display:flex; flex-direction:row; margin-bottom:12px" class="profileSetting">
+    <div style="display:flex; flex-direction:row; margin-bottom:12px;" class="profileSetting">
       <b-form>
         <h4 class="columnName font-bold">Preferred Language</h4>
           <b-row class="mb-4">
@@ -15,7 +15,6 @@
             </b-button>
           </b-row>
       </b-form>
-
       <b-form>
         <h4 class="columnName font-bold">Major</h4>
           <b-row class="mb-4">
@@ -28,7 +27,6 @@
           </b-row>
       </b-form>
     </div>
-
     <div style="display:flex; flex-direction:row;" class="accountSetting">
       <b-form>
         <h4 class="columnName font-bold">Change Password</h4>
@@ -48,8 +46,7 @@
           Change Password
         </b-button>
       </b-form>
-
-        <b-form>
+      <b-form>
         <h4 class="columnName font-bold">Change Email</h4>
         <b-form-group class="setting-label" label="Old Email" >
           <b-form-input class="setting-input" v-model="formEmail.old_email" disabled></b-form-input>
@@ -67,7 +64,6 @@
           Change Email
         </b-button>
       </b-form>
-
     </div>
   </div>
 </template>
@@ -89,11 +85,6 @@ export default {
       uploadModalVisible: false,
       preview: {},
       uploadImgSrc: '',
-      avatarOption: {
-        imgSrc: '',
-        size: 0.8,
-        outputType: 'png'
-      },
       formProfile: {
         language: '',
         major: null,
@@ -201,7 +192,7 @@ export default {
       api.changePassword(data).then(res => {
         this.loading.btnPassword = false
         this.visible.passwordAlert = true
-        this.$success('Update password successfully.\nPlease login with new password.', 2500)
+        this.$success('Updated password successfully.\nPlease login with new password.', 2500)
         setTimeout(() => {
           this.$bvModal.hide('setting')
           this.visible.passwordAlert = false
@@ -244,11 +235,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@font-face {
-  font-family: Manrope_bold;
-  src: url('../../../../../fonts/Manrope-Bold.ttf');
-}
-
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../../fonts/Manrope-Bold.ttf');
+  }
   .inline {
     display: inline-block;
   }

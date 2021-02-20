@@ -8,7 +8,7 @@
       <b-form
         ref="formResetPassword"
         :model="formResetPassword"
-        @on-enter="resetPassword"
+        @keydown.enter.native="resetPassword"
       >
       <b-container fluid="xl">
         <b-row class="mb-4">
@@ -16,7 +16,7 @@
             v-model="formResetPassword.password"
             type="password"
             placeholder="Password"
-            @on-enter="resetPassword"
+            @keydown.enter.native="resetPassword"
           >
           </b-form-input>
         </b-row>
@@ -25,7 +25,7 @@
             v-model="formResetPassword.passwordAgain"
             type="password"
             placeholder="Password Again"
-            @on-enter="resetPassword"
+            @keydown.enter.native="resetPassword"
           >
           </b-form-input>
         </b-row>
@@ -64,7 +64,7 @@ export default {
     return {
       btnLoading: false,
       captchaSrc: '',
-      resetSuccess: false,
+      resetSuccess: false
     }
   },
   mounted () {
@@ -100,10 +100,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@font-face {
-  font-family: Manrope_bold;
-  src: url('../../../../fonts/Manrope-Bold.ttf');
-}
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
   .container {
     width: 450px;
     margin: auto;

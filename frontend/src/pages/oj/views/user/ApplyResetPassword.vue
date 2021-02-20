@@ -4,7 +4,7 @@
         <h4>Password Recovery</h4>
       </div>
     <template v-if="!successApply">
-        <b-form ref="formResetPassword" :model="formResetPassword" :rules="ruleLogin">
+      <b-form ref="formResetPassword" :model="formResetPassword" :rules="ruleLogin">
         <b-container fluid="xl">
           <b-row class="mb-4">
             <b-form-input type="email" v-model="formResetPassword.email" placeholder="Your Email Address"/>
@@ -28,10 +28,11 @@
     </template>
     <template v-else>
       <p>Email for password recovery is now sent to your email.</p>
-      <p>Please Check your mailbox. If you haven't received the mail, <a href="http://pf.kakao.com/_UKraK/chat">contact us</a>. </p>
+      <p>Please Check your mailbox. If you haven't received the mail, <a href="http://pf.kakao.com/_UKraK/chat">contact us</a>.</p>
     </template>
   </div>
 </template>
+
 <script>
 import api from '@oj/api'
 import { FormMixin } from '@oj/components/mixins'
@@ -43,7 +44,7 @@ export default {
     return {
       captchaSrc: '',
       successApply: false,
-      btnLoading: false,
+      btnLoading: false
     }
   },
   mounted () {
@@ -87,10 +88,10 @@ export default {
 </script>
 
 <style scoped lang="less">
-@font-face {
-  font-family: Manrope_bold;
-  src: url('../../../../fonts/Manrope-Bold.ttf');
-}
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
   .container {
     width: 450px;
     margin: auto;

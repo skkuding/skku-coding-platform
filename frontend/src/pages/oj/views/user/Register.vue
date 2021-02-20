@@ -7,23 +7,23 @@
     <b-form ref="formRegister" :model="formRegister">
       <b-container fluid="xl">
         <b-row class="mb-4">
-          <b-form-input type="text" v-model="formRegister.username" placeholder="Student ID" @on-enter="handleRegister" pattern="[0-9]{10}"></b-form-input>
+          <b-form-input type="text" v-model="formRegister.username" placeholder="Student ID" @keydown.enter.native="handleRegister" pattern="[0-9]{10}"></b-form-input>
         </b-row>
         <b-row class="mb-4">
-          <b-form-input type = "email" v-model="formRegister.email" placeholder="Email Address" @on-enter="handleRegister"></b-form-input>
+          <b-form-input type = "email" v-model="formRegister.email" placeholder="Email Address" @keydown.enter.native="handleRegister"></b-form-input>
         </b-row>
         <b-row class="mb-4">
-            <b-form-select class="modal-select" v-model="formRegister.major" :options="majors" placeholder="Major" @on-enter="handleRegister"></b-form-select>
+            <b-form-select class="modal-select" v-model="formRegister.major" :options="majors" placeholder="Major" @keydown.enter.native="handleRegister"></b-form-select>
         </b-row>
         <b-row class="mb-4">
-          <b-form-input type="password" v-model="formRegister.password" placeholder="Password" @on-enter="handleRegister"></b-form-input>
+          <b-form-input type="password" v-model="formRegister.password" placeholder="Password" @keydown.enter.native="handleRegister"></b-form-input>
         </b-row>
         <b-row class="mb-4">
-          <b-form-input type="password" v-model="formRegister.passwordAgain" placeholder="Password Again"  @on-enter="handleRegister"></b-form-input>
+          <b-form-input type="password" v-model="formRegister.passwordAgain" placeholder="Password Again"  @keydown.enter.native="handleRegister"></b-form-input>
         </b-row>
         <div class="oj-captcha mb-4">
           <div class="oj-captcha-code">
-            <b-form-input v-model="formRegister.captcha" placeholder="Captcha" size="large" @on-enter="handleRegister"></b-form-input>
+            <b-form-input v-model="formRegister.captcha" placeholder="Captcha" size="large" @keydown.enter.native="handleRegister"></b-form-input>
           </div>
         <div class="oj-captcha-img">
           <img :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh" style="border-radius:8px !important;"/>
@@ -99,7 +99,7 @@ export default {
       delete formData.passwordAgain
       this.btnRegisterLoading = true
       api.register(formData).then(res => {
-        this.$success(this.$i18n.t('m.Thanks_for_registering'))
+        this.$success('Thanks for your registering, you can login now')
         this.switchMode('login')
         this.btnRegisterLoading = false
       }, _ => {
@@ -116,10 +116,10 @@ export default {
 </script>
 
 <style scoped lang="less">
-@font-face {
-  font-family: Manrope_bold;
-  src: url('../../../../fonts/Manrope-Bold.ttf');
-}
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
   .footer {
     overflow: auto;
     margin-top: 20px;
