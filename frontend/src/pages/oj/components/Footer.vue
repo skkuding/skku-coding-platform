@@ -1,19 +1,18 @@
 <template>
-  <div class="footer">
+  <footer id="footer">
     <div class="footer-info">
-      <div class="footer-detail first">
-        <!--각 문장 위치 조정 및 아이콘 필요-->
-        <div class="footer-item">
+      <ul class="footer-detail">
+        <li class="footer-item">
           <img :src="mail" />
           <p class="footer-text">
             <a href="example@skku.edu">example@skku.edu</a>
           </p>
-        </div>
-        <div class="footer-item">
+        </li>
+        <li class="footer-item">
           <img :src="phone" />
           <p class="footer-text">031-123-4567</p>
-        </div>
-        <div class="footer-item">
+        </li>
+        <li class="footer-item">
           <img :src="location" />
           <p class="footer-text">
             <a
@@ -21,42 +20,41 @@
             ></a>
             400609, Semiconductor,<br />Natural Sciences Campus
           </p>
-        </div>
-      </div>
-      <div class="footer-detail second">
-        <div class="footer-item">
+        </li>
+      </ul>
+      <ul class="footer-detail">
+        <li class="footer-item">
           <img :src="github" />
           <p class="footer-text">
             <a href="https://github.com/skku-npc/skku-coding-platform"
               >GitHub</a
             >
           </p>
-        </div>
-        <div class="footer-item">
-          <!--<span v-if="version">&nbsp; Version: {{ version }}</span>-->
+        </li>
+        <li class="footer-item">
           <img :src="kakao" />
           <p class="footer-text">
             <a href="http://pf.kakao.com/_UKraK/chat"></a>Kakao Channel
           </p>
-        </div>
-        <div class="footer-item">
+        </li>
+        <li class="footer-item">
           <img :src="link" />
           <p class="footer-text">
             <a href="https://npc.skku.edu"></a> Algorithm Club NPC
           </p>
-        </div>
-      </div>
+        </li>
+      </ul>
       <div class="footer-logo">
         <img :src="skku" />
       </div>
     </div>
-    <div class="copyright">
+    <div class="footer-bottom">
       <span> (c) 2011-2021 SKKU NPC Club </span>
     </div>
-  </div>
+  </footer>
 </template>
+
 <script>
-// import { mapActions, mapState } from 'vuex'
 export default {
   name: 'Footer',
   data () {
@@ -79,24 +77,11 @@ export default {
   mounted () {
     this.getWebsiteConfig()
   }
-  //   methods: {
-  //     ...mapActions(['getWebsiteConfig', 'changeDomTitle'])
-  //   },
-  //   computed: {
-  //     ...mapState(['website'])
-  //   },
-  //   watch: {
-  //     website () {
-  //       this.changeDomTitle()
-  //     },
-  //     $route () {
-  //       this.changeDomTitle()
-  //     }
-  //   }
 }
 </script>
+
 <style lang='less'>
-* {
+*, *:before, *:after {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -104,94 +89,68 @@ export default {
 a {
   text-decoration: none;
   background-color: transparent;
-  // link 설정 추가
   &:link {
     color: white;
   }
-  // 기존 active에 color 속성 추가
   &:active {
     color: white;
   }
   &:hover {
     outline-width: 0;
   }
-  // visited 설정 추가
   &:visited {
     color: white;
   }
 }
-/*media max-width : 1200px 에서 모바일 환경(769px)으로 변경*/
-@media screen and (max-width: 1200px) {
-  .content-app {
-    margin-top: 160px;
-    padding: 0;
+#footer {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  margin-top: 40px;
+  font-size: 18px;
+  background: #8dc63f;
+}
+.footer-info {
+  padding-bottom: 1vh;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.footer-detail {
+  padding-top: 30px;
+  width: 300px;
+  height: 20vh;
+  text-align: left;
+}
+.footer-logo {
+  width: 300px;
+  height: 70px;
+  img {
+    position:relative;
+    width:100%;
+    height:100%;
   }
 }
-@media screen and (min-width: 1200px) {
-  .content-app {
-    margin-top: 80px;
-    padding: 0; // 좌우 패딩 삭제(padding: 0 2%;)
-    width: 100%; // width 추가
-    height: 100%; // height 추가
-  }
-  //   .footer {
-  //     margin-top: 20px;
-  //     font-size: 18px; // font-size : small -> 18px
-  //     min-width: 300px;
-  //     position: fixed;
-  //     top: 0;
-  //     left: 0;
-  //     background: #8dc63f;
-  //   }
-  //   .fadeInUp-enter-active {
-  //     animation: fadeInUp 0.8s;
-  //   }
-  //   // 이하의 코드는 새롭게 추가된 내용
-  //   .footer-info {
-  //     height: 30vh;
-  //     padding-top: 1vh;
-  //     padding-bottom: 1vh;
-  //     color: white;
-  //     display: flex;
-  //     flex-direction: row;
-  //     justify-content: space-between;
-  //     align-items: center;
-  //     flex-wrap: wrap;
-  //   }
-  //   .footer-detail {
-  //     width: 300px;
-  //     height: 20vh;
-  //     text-align: left;
-  //     margin-left: 100px;
-  //   }
-  //   .footer-logo {
-  //     width: 300px;
-  //     height: 20vh;
-  //     margin-left: 100px;
-  //     margin-right: 50px;
-  //     display: flex;
-  //     flex-direction: column;
-  //     justify-content: flex-end;
-  //     align-items: right;
-  //   }
-  //   .footer-item {
-  //     width: 270px;
-  //     height: 3vh;
-  //     margin-bottom: 3vh;
-  //     display: flex;
-  //     flex-direction: row;
-  //   }
-  //   .footer-text {
-  //     margin-left: 20px;
-  //   }
-  //   // 로고 사이즈 비율 고정
-  //   img {
-  //     object-fit: contain;
-  //   }
-  //   .copyright {
-  //     background: white;
-  //     color: #8dc63f;
-  //     text-align: right;
-  //     padding-right: 10px;
-  //   }
+.footer-item {
+  width: 270px;
+  height: 3vh;
+  margin-bottom: 3vh;
+  display: flex;
+  flex-direction: row;
 }
+.footer-text {
+  margin-left: 20px;
+}
+img {
+  object-fit: contain;
+}
+.footer-bottom {
+  background: white;
+  color: #8dc63f;
+  text-align: right;
+  padding-right: 10px;
+}
+</style>

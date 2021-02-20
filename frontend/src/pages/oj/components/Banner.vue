@@ -39,7 +39,7 @@ export default {
 
 <style lang="less" scoped>
 .banner {
-  position: fixed;
-  top: 72px;
+  position: relative;
+  // margin: 0 250px;
 }
 </style>

@@ -67,9 +67,7 @@ export default {
 
 <style scoped>
 #header {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: relative;
   height: 72px;
   width: 100%;
   z-index: 1000;

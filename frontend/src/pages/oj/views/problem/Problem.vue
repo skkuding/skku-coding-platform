@@ -352,7 +352,7 @@ import { pie, largePie } from './chartData'
 const filtedStatus = ['-1', '-2', '0', '1', '2', '3', '4', '8']
 
 export default {
-  name: 'Problem',
+  name: 'Problem Details',
   components: {
     CodeMirror
   },
