@@ -376,7 +376,8 @@ export default {
         })
         problem.languages = problem.languages.sort()
         this.problem = problem
-        // 在beforeRouteEnter中修改了, 说明本地有code，无需加载template
+
+        // if code exists, do not load template
         if (this.code !== '') {
           return
         }
@@ -440,9 +441,10 @@ export default {
       this.bus.$emit('uploadFileDone')
     },
     checkSubmissionStatus () {
-      // 使用setTimeout避免一些问题
+      // Use setTimeout to avoid some problems
       if (this.refreshStatus) {
-        // 如果之前的提交状态检查还没有停止,则停止,否则将会失去timeout的引用造成无限请求
+        // If the previous submission status check has not stopped, stop
+        // otherwise the timeout reference will be lost and unlimited requests 
         clearTimeout(this.refreshStatus)
       }
       const checkStatus = () => {
@@ -485,7 +487,7 @@ export default {
         this.statusVisible = true
         api.submitCode(data).then(res => {
           this.submissionId = res.data.data && res.data.data.submission_id
-          // 定时检查状态
+          // Regularly check status
           this.submitting = false
           this.submissionExists = true
           if (!detailsVisible) {
@@ -512,7 +514,8 @@ export default {
             title: '',
             content: '<h3>' + this.$i18n.t('m.You_have_submission_in_this_problem_sure_to_cover_it') + '<h3>',
             onOk: () => {
-              // 暂时解决对话框与后面提示对话框冲突的问题(否则一闪而过）
+              // Temporarily solve the conflict between the dialog box
+              // and the prompt dialog box behind (otherwise it will flash by)
               setTimeout(() => {
                 submitFunc(data, false)
               }, 1000)
@@ -578,7 +581,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    // 防止切换组件后仍然不断请求
+    // Prevent constant requests after switching components
     clearInterval(this.refreshStatus)
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: true })
     storage.set(buildProblemCodeKey(this.problem._id, from.params.contestID), {
