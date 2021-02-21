@@ -60,4 +60,32 @@ export default {
 </script>
 
 <style lang="less">
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  background-color: transparent;
+  &:active, &:hover {
+    outline-width: 0;
+  }
+}
+@media screen and (max-width: 1200px) {
+  .content-app {
+    margin-top: 160px;
+    padding: 0 2%;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .content-app {
+    margin-top: 80px;
+    padding: 0 2%;
+  }
+}
+.fadeInUp-enter-active {
+  animation: fadeInUp .8s;
+}
 </style>

@@ -1,6 +1,8 @@
 <template>
-    <div class="notice-list-card">
-      <h1 class="title">Notice</h1>
+    <div class="notice-list-card font-bold">
+      <div class="top-bar mb-4">
+        <h2 class="title">Notice</h2>
+      </div>
       <div class="table">
         <b-table
           hover
@@ -9,6 +11,7 @@
           :per-page="perPage"
           :current-page="currentPage"
           head-variant="light"
+          @row-clicked="goAnnouncement"
         ></b-table>
         <div
           v-if="!announcements.length"
@@ -102,23 +105,26 @@ export default {
     goAnnouncement (announcement) {
       this.announcement = announcement
       this.listVisible = false
-    },
-    goBack () {
-      this.listVisible = true
-      this.announcement = ''
     }
   }
 }
 </script>
 
 <style>
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
   .notice-list-card{
     margin: 0 auto;
     width: 90%;
     font-family: Manrope;
   }
+  .top-bar {
+    margin-top: 156px;
+  }
   .title{
-    margin-top: 100px;
+    color: #7C7A7B;
   }
   .notice-list-card .table{
     width: 95%;
@@ -135,5 +141,8 @@ export default {
   }
   .notice-title-field{
     width: 75%;
+  }
+  .font-bold {
+    font-family: manrope_bold;
   }
 </style>

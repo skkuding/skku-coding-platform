@@ -104,6 +104,18 @@ export default {
   width: 100%;
   z-index: 1000;
   background-color: #fff;
+  border-bottom: 2px solid #E2E2E2;
+}
+.header__menu {
+  width: 100%;
+}
+.header__menu__item {
+  width: 100px;
+  text-align: center;
+  :hover {
+    text-decoration: underline;
+    text-decoration-color: #8dc63f;
+  }
 }
 .header__menu {
   width: 170px;
