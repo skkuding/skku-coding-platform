@@ -52,8 +52,7 @@ export default {
     theme: {
       type: String,
       default: 'solarized'
-    },
-    bus: Object
+    }
   },
   data () {
     return {
@@ -91,6 +90,9 @@ export default {
   watch: {
     'theme' (newVal, oldVal) {
       this.editor.setOption('theme', newVal)
+    },
+    'language' (newVal, oldVal) {
+      this.editor.setOption('mode', this.mode[newVal])
     }
   },
   mounted () {
@@ -103,20 +105,11 @@ export default {
       this.editor.setOption('mode', this.mode[this.language])
     })
     this.editor.focus()
-
-    this.bus.$on('changeLang', this.onChangeLang)
-    this.bus.$on('changeTheme', this.onChangeTheme)
   },
   methods: {
     onEditorCodeChange (newCode) {
       this.$emit('update:value', newCode)
     },
-    onChangeLang (newVal) {
-      this.editor.setOption('mode', this.mode[newVal])
-    },
-    onChangeTheme (newTheme) {
-      this.editor.setOption('theme', newTheme)
-    }
   }
 }
 </script>

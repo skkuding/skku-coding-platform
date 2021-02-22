@@ -169,7 +169,6 @@
             :languages="problem.languages"
             :language="language"
             :theme="theme"
-            :bus="bus"
           />
         </b-row>
         <!-- <b-row id="io">
@@ -270,7 +269,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '../../../../store'
 import CodeMirror from '@oj/components/CodeMirror.vue'
@@ -297,7 +295,7 @@ export default {
       submitting: false,
       code: '',
       language: 'C++',
-      theme: 'solarized',
+      theme: 'material',
       theme_list: ['solarized', 'monokai', 'material'],
       submissionId: '',
       submitted: false,
@@ -326,10 +324,7 @@ export default {
       ],
       clarifications: [
 
-      ],
-
-      // Event bus to CodeMirror
-      bus: new Vue()
+      ]
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -409,17 +404,13 @@ export default {
     },
     // when language dropdown changed
     onChangeLang (newLang) {
-      this.bus.$emit('changeLang')
-      if (this.problem.template[newLang]) {
-        if (this.code.trim() === '') {
-          this.code = this.problem.template[newLang]
-        }
+      if (this.problem.template[newLang] && this.code.trim() === '') {
+        this.code = this.problem.template[newLang]
       }
       this.language = newLang
     },
     // when theme dropdown changed
     onChangeTheme (newTheme) {
-      this.bus.$emit('changeTheme')
       this.theme = newTheme
     },
     checkSubmissionStatus () {
