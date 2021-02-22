@@ -106,8 +106,6 @@ export default {
 
     this.bus.$on('changeLang', this.onChangeLang)
     this.bus.$on('changeTheme', this.onChangeTheme)
-    this.bus.$on('uploadFile', this.onUploadFile)
-    this.bus.$on('uploadFileDone', this.onUploadFileDone)
   },
   methods: {
     onEditorCodeChange (newCode) {
@@ -118,20 +116,6 @@ export default {
     },
     onChangeTheme (newTheme) {
       this.editor.setOption('theme', newTheme)
-    },
-    onUploadFile () {
-      document.getElementById('file-uploader').click()
-    },
-    onUploadFileDone () {
-      const f = document.getElementById('file-uploader').files[0]
-      const fileReader = new window.FileReader()
-      const self = this
-      fileReader.onload = function (e) {
-        const text = e.target.result
-        self.editor.setValue(text)
-        document.getElementById('file-uploader').value = ''
-      }
-      fileReader.readAsText(f, 'UTF-8')
     }
   }
 }

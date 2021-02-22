@@ -47,17 +47,6 @@
 
       <b-navbar-nav class="ml-auto">
         <b-nav-item>
-          <b-button v-b-tooltip.hover title="Upload file to editor" @click="onUploadFile">
-            <b-icon icon="upload"/>
-          </b-button>
-          <input
-            id="file-uploader"
-            type="file"
-            style="display: none"
-            @change="onUploadFileDone"
-          >
-        </b-nav-item>
-        <b-nav-item>
           <b-button v-b-tooltip.hover title="Click to reset your code" @click="onResetToTemplate">
             <b-icon icon="arrow-clockwise" scale="1.1" shift-v="-2"/>
           </b-button>
@@ -433,18 +422,11 @@ export default {
       this.bus.$emit('changeTheme')
       this.theme = newTheme
     },
-    // when file uploaded
-    onUploadFile () {
-      this.bus.$emit('uploadFile')
-    },
-    onUploadFileDone () {
-      this.bus.$emit('uploadFileDone')
-    },
     checkSubmissionStatus () {
       // Use setTimeout to avoid some problems
       if (this.refreshStatus) {
         // If the previous submission status check has not stopped, stop
-        // otherwise the timeout reference will be lost and unlimited requests 
+        // otherwise the timeout reference will be lost and unlimited requests
         clearTimeout(this.refreshStatus)
       }
       const checkStatus = () => {
