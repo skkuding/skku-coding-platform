@@ -51,7 +51,7 @@ export default {
     },
     theme: {
       type: String,
-      default: 'solarized'
+      default: 'material'
     }
   },
   data () {
@@ -60,7 +60,7 @@ export default {
         // codemirror options
         tabSize: 4,
         mode: 'text/x-csrc',
-        theme: 'solarized',
+        theme: 'material',
         lineNumbers: true,
         line: true,
         // code folding
@@ -109,7 +109,7 @@ export default {
   methods: {
     onEditorCodeChange (newCode) {
       this.$emit('update:value', newCode)
-    },
+    }
   }
 }
 </script>

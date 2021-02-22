@@ -316,15 +316,9 @@ export default {
         io_mode: { io_mode: 'Standard IO' }
       },
       // Siderbar content
-      my_submissions: [
-
-      ],
-      all_submissions: [
-
-      ],
-      clarifications: [
-
-      ]
+      my_submissions: [],
+      all_submissions: [],
+      clarifications: []
     }
   },
   beforeRouteEnter (to, from, next) {
