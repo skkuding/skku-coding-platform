@@ -41,9 +41,7 @@ import hljs from 'highlight.js'
 import time from '@/utils/time'
 import { JUDGE_STATUS } from '@/utils/constants'
 import Highlight from 'vue-highlight-component'
-
 hljs.registerLanguage('cpp', require('highlight.js/lib/languages/cpp'))
-
 export default {
   components: {
     Highlight
@@ -141,7 +139,6 @@ export default {
 }
 </script>
 <style lang="scss">
-
 .modal-content{
   background-color: #24272d !important;
 }
