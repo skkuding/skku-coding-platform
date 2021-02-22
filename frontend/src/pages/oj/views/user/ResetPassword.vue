@@ -32,7 +32,7 @@
         <b-row class="mb-4">
             <div class="oj-captcha">
               <div class="oj-captcha-code">
-                <b-form-input class="captcha-input" v-model="formResetPassword.captcha" placeholder="Captcha"></b-form-input>
+                <b-form-input class="captcha-input" v-model="formResetPassword.captcha" placeholder="Captcha" @keydown.enter.native="resetPassword"></b-form-input>
               </div>
               <div class="oj-captcha-img">
                 <img class="captcha-img" :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
@@ -64,7 +64,13 @@ export default {
     return {
       btnLoading: false,
       captchaSrc: '',
-      resetSuccess: false
+      resetSuccess: false,
+      formResetPassword: {
+        captcha: '',
+        password: '',
+        passwordAgain: '',
+        token: ''
+      }
     }
   },
   mounted () {
@@ -84,6 +90,7 @@ export default {
         this.btnLoading = false
         this.resetSuccess = true
         this.$success('Update password successfully.\nPlease login with new password.')
+        this.hideModal()
         setTimeout(() => {
           this.$router.push({ name: 'logout' })
         }, 2000)
@@ -95,6 +102,9 @@ export default {
     },
     showModal () {
       this.$refs.modal.show()
+    },
+    hideModal () {
+      this.$refs.modal.hide()
     }
   }
 }

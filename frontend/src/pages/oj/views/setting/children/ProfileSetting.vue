@@ -239,49 +239,7 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../../fonts/Manrope-Bold.ttf');
   }
-  .inline {
-    display: inline-block;
-  }
 
-  .copper-img {
-    width: 400px;
-    height: 300px;
-  }
-
-  .flex-container {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-bottom: 10px;
-    .cropper-main {
-      flex: none;
-      .copper-img;
-    }
-    .cropper-btn {
-      flex: none;
-      vertical-align: top;
-    }
-    .cropper-preview {
-      flex: none;
-      /*margin: 10px;*/
-      margin-left: 20px;
-      box-shadow: 0 0 1px 0;
-      .copper-img;
-    }
-  }
-
-  .upload-modal {
-    .notice {
-      font-size: 16px;
-      display: inline-block;
-      vertical-align: top;
-      padding: 10px;
-      padding-right: 15px;
-    }
-    img {
-      box-shadow: 0 0 1px 0;
-      border-radius: 50%;
-    }
-  }
   .profileSetting {
     display:flex;
     justify-content: space-around;

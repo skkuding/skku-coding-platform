@@ -4,7 +4,7 @@
         <h4>Password Recovery</h4>
       </div>
     <template v-if="!successApply">
-      <b-form ref="formResetPassword" :model="formResetPassword" :rules="ruleLogin">
+      <b-form ref="formResetPassword" :model="formResetPassword">
         <b-container fluid="xl">
           <b-row class="mb-4">
             <b-form-input type="email" v-model="formResetPassword.email" placeholder="Your Email Address"/>
@@ -44,7 +44,11 @@ export default {
     return {
       captchaSrc: '',
       successApply: false,
-      btnLoading: false
+      btnLoading: false,
+      formResetPassword: {
+        email: '',
+        captcha: ''
+      }
     }
   },
   mounted () {
@@ -55,7 +59,6 @@ export default {
     sendEmail () {
       this.btnLoading = true
       api.applyResetPassword(this.formResetPassword).then(res => {
-        // 伪加载
         setTimeout(() => {
           this.btnLoading = false
           this.successApply = true

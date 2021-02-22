@@ -10,15 +10,15 @@
       </div>
     </div>
     <b-form @on-enter="handleLogin" ref="formLogin" :model="formLogin" class="font-bold">
-        <b-container fluid="xl">
-          <b-row class="mb-4">
-            <b-form-input v-model="formLogin.username" placeholder="Student ID" @keydown.enter.native="handleLogin" />
-          </b-row>
-          <b-row class="mb-4">
-            <b-form-input type="password" v-model="formLogin.password" placeholder="Password" @keydown.enter.native="handleLogin" />
-          </b-row>
-          <b-button class="sign-btn" @click="handleLogin" variant="outline">Sign In</b-button>
-        </b-container>
+      <b-container fluid="xl">
+        <b-row class="mb-4">
+          <b-form-input v-model="formLogin.username" placeholder="Student ID" @keydown.enter.native="handleLogin" />
+        </b-row>
+        <b-row class="mb-4">
+          <b-form-input type="password" v-model="formLogin.password" placeholder="Password" @keydown.enter.native="handleLogin" />
+        </b-row>
+        <b-button class="sign-btn" @click="handleLogin" variant="outline">Sign In</b-button>
+      </b-container>
       </b-form>
       <div class="modal-low mt-5 font-bold">
         <a v-if="website.allow_register" @click.stop="handleBtnClick('register')" style="float:left;">Register now</a>
@@ -36,11 +36,11 @@ export default {
   mixins: [FormMixin],
   data () {
     return {
-      tfaRequired: false,
       btnLoginLoading: false,
       formLogin: {
         username: '',
         password: '',
+        // 지금은 안쓰는 필드지만 혹시 몰라서 백엔드로 넘기는거만 남겨둠
         tfa_code: ''
       }
     }
@@ -56,9 +56,6 @@ export default {
     handleLogin () {
       this.btnLoginLoading = true
       const formData = Object.assign({}, this.formLogin)
-      if (!this.tfaRequired) {
-        delete formData.tfa_code
-      }
       api.login(formData).then(res => {
         this.btnLoginLoading = false
         this.changeModalStatus({ visible: false })
@@ -67,10 +64,6 @@ export default {
       }, _ => {
         this.btnLoginLoading = false
       })
-    },
-    goResetPassword () {
-      this.changeModalStatus({ visible: false })
-      this.$router.push({ name: 'apply-reset-password' })
     }
   },
   computed: {
@@ -91,18 +84,6 @@ export default {
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
-  }
-  .footer {
-    overflow: auto;
-    margin-top: 20px;
-    margin-bottom: -15px;
-    text-align: left;
-    .btn {
-      margin: 0 0 15px 0;
-      &:last-child {
-        margin: 0;
-      }
-    }
   }
   .logo-img {
     display:block;

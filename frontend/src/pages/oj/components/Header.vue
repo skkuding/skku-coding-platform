@@ -28,13 +28,14 @@
           <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
           <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
         </b-nav-item-dropdown>
+
         <b-nav-item-dropdown v-else no-caret right>
           <template slot="button-content">
             <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
           </template>
           <b-dropdown-item to="/user-home">My Account</b-dropdown-item>
           <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
-          <b-dropdown-item v-else to="/setting/profile">Setting</b-dropdown-item>
+          <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
           <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -118,20 +119,20 @@ export default {
   }
 }
 
-/deep/ .modal-md > .modal-dialog > .modal-content > .modal-header {
-  padding-bottom:0;
-  padding-top:4px;
+/deep/ .modal-md > .modal-dialog > .modal-content {
+  position: absolute;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+
+  & > .modal-header {
+    padding-bottom: 0;
+    padding-top: 4px;
+  }
+  & > .modal-body {
+    padding-top: 0;
+  }
 }
 
-/deep/ .modal-md > .modal-dialog > .modal-content > .modal-body {
-  padding-top:0;
-}
-/deep/ .modal-md > .modal-dialog > .modal-content {
-  position:absolute;
-  /* top:80px; */
-  top:auto;
-  left:auto;
-  right:auto;
-  bottom:auto;
-}
 </style>
