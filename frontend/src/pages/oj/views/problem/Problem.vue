@@ -122,7 +122,6 @@
           class="status"
         >
           <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
-            <span>Status</span>
             <Tag
               type="dot"
               :color="submissionStatus.color"

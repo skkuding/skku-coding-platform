@@ -136,13 +136,14 @@ export default {
         }
       })
     },
-    getMySubmissions () {
-      this.my_submissions = this.getSubmissions('my')
+    async getMySubmissions () {
+      this.my_submissions = await this.getSubmissions('my')
+      console.log(this.my_submissions)
     },
-    getAllSubmissions () {
-      this.all_submissions = this.getSubmissions('all')
+    async getAllSubmissions () {
+      this.all_submissions = await this.getSubmissions('all')
     },
-    getSubmissions (userType) {
+    async getSubmissions (userType) {
       const params = {
         myself: userType === 'my' ? '1' : '0',
         result: '',
@@ -154,21 +155,24 @@ export default {
       params.contest_id = this.contestID
       params.problem_id = this.problemID
       const func = this.contestID ? 'getContestSubmissionList' : 'getSubmissionList'
+      console.log(params)
 
       // offset, limit, params
-      api[func](0, 1000, params).then(res => {
-        const data = res.data.data
-        return data.results.map(v => {
-          return {
-            ID: v.id,
-            Problem: v.problem,
-            'Submission Time': time.utcToLocal(v.create_time),
-            Language: v.language,
-            User: v.username,
-            Result: JUDGE_STATUS[v.result].name
-          }
-        })
+      const result = await api[func](0, 1000, params)
+      const data = result.data.data
+      console.log(result)
+      const submissions = data.results.map(v => {
+        return {
+          ID: v.id,
+          Problem: v.problem,
+          'Submission Time': time.utcToLocal(v.create_time),
+          Language: v.language,
+          User: v.username,
+          Result: JUDGE_STATUS[v.result].name
+        }
       })
+      console.log(submissions)
+      return submissions
     },
     goContestProblem (problemID) {
       this.$router.push({
