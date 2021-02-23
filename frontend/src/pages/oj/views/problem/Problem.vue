@@ -47,18 +47,18 @@
 
       <b-navbar-nav class="ml-auto">
         <b-nav-item>
-          <b-button v-b-tooltip.hover title="Click to reset your code" @click="onResetToTemplate">
-            <b-icon icon="arrow-clockwise" scale="1.1" shift-v="-2"/>
+          <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
+            <b-icon icon="arrow-clockwise" scale="1.1"/>
           </b-button>
         </b-nav-item>
         <b-nav-item>
-          <b-button variant="success">
-            <b-icon icon="play" scale="1.4" shift-v="-1.5"/>
+          <b-button class="btn">
+            <b-icon icon="play" scale="1.4"/>
             Run
           </b-button>
         </b-nav-item>
         <b-nav-item>
-          <b-button variant="primary"
+          <b-button class="btn-submit"
             :disabled="problemSubmitDisabled || submitted"
             @click="submitCode"
           >
@@ -67,7 +67,7 @@
           </b-button>
         </b-nav-item>
         <b-nav-item>
-          <b-dropdown split id="language-dropdown" :text="language" @change="onChangeLang">
+          <b-dropdown split class="dropdown" :text="language" @change="onChangeLang">
             <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
               @click="()=>onChangeLang(lang)">
               {{lang}}
@@ -75,7 +75,7 @@
           </b-dropdown>
         </b-nav-item>
         <b-nav-item>
-          <b-dropdown split id="theme-dropdown" :text="theme" @change="onChangeTheme">
+          <b-dropdown split class="dropdown" :text="theme" @change="onChangeTheme">
             <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
               @click="()=>onChangeTheme(theme)">
               {{theme}}
@@ -497,17 +497,16 @@ export default {
     border-bottom: 2px solid white;
   }
 
-  #language-dropdown {
-    min-width: 115px;
+  .dropdown {
+    min-width: 125px;
   }
 
-  /deep/ #language-dropdown button{
+  /deep/ .dropdown button{
     background: #45576C;
   }
 
-  /deep/ #language-dropdown ul {
+  /deep/ .dropdown ul {
     background: #45576C;
-    left: -90px;
 
     li a {
       color: white;
