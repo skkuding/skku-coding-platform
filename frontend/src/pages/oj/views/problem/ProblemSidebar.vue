@@ -21,11 +21,11 @@
           <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
           Clarification
         </h2>
-        <h2 v-b-modal.my-submissions-modal>
+        <h2 v-b-modal.my-submissions-modal @click="getMySubmissions">
           <b-icon class="sidebar-icon" icon="person" scale="1.2"/>
           My Submissions
         </h2>
-        <h2 v-b-modal.all-submissions-modal>
+        <h2 v-b-modal.all-submissions-modal @click="getAllSubmissions">
           <b-icon class="sidebar-icon" icon="people" scale="1.2"/>
           All Submissions
         </h2>
@@ -71,12 +71,27 @@
           <b-table class="align-center" :items="all_submissions"></b-table>
         </div>
       </b-modal>
+
+      <b-modal id="submission-detail-modal" centered hide-backdrop hide-footer>
+        <template #modal-header="{ close }">
+          <div class="modal-title-close">
+            <h1>All Submissions</h1>
+            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
+          </div>
+        </template>
+        <div id="submission-detail-table">
+          <b-table class="align-center" :items="all_submissions"></b-table>
+        </div>
+      </b-modal>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import api from '@oj/api'
+import time from '@/utils/time'
+import { JUDGE_STATUS } from '@/utils/constants'
 
 export default {
   name: 'ProblemSidebar',
@@ -90,9 +105,20 @@ export default {
   },
   data () {
     return {
+      clarifications: [],
       my_submissions: [],
       all_submissions: [],
-      clarifications: []
+      submission_detail: {
+        id: '',
+        code: '',
+        language: ''
+      },
+
+      formFilter: {
+        myself: false,
+        result: '',
+        username: ''
+      }
     }
   },
   mounted () {
@@ -108,6 +134,40 @@ export default {
             this.addStatusColumn(this.ACMTableColumns, res.data.data)
           }
         }
+      })
+    },
+    getMySubmissions () {
+      this.my_submissions = this.getSubmissions('my')
+    },
+    getAllSubmissions () {
+      this.all_submissions = this.getSubmissions('all')
+    },
+    getSubmissions (userType) {
+      const params = {
+        myself: userType === 'my' ? '1' : '0',
+        result: '',
+        username: '',
+        page: 1,
+        contest_id: this.contestID,
+        problem_id: this.problemID
+      }
+      params.contest_id = this.contestID
+      params.problem_id = this.problemID
+      const func = this.contestID ? 'getContestSubmissionList' : 'getSubmissionList'
+
+      // offset, limit, params
+      api[func](0, 1000, params).then(res => {
+        const data = res.data.data
+        return data.results.map(v => {
+          return {
+            ID: v.id,
+            Problem: v.problem,
+            'Submission Time': time.utcToLocal(v.create_time),
+            Language: v.language,
+            User: v.username,
+            Result: JUDGE_STATUS[v.result].name
+          }
+        })
       })
     },
     goContestProblem (problemID) {
