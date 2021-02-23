@@ -109,6 +109,15 @@ export default {
           }
         }
       })
+    },
+    goContestProblem (problemID) {
+      this.$router.push({
+        name: 'contest-problem-details',
+        params: {
+          contestID: this.$route.params.contestID,
+          problemID: problemID
+        }
+      })
     }
   },
   computed: {
