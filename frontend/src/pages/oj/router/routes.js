@@ -166,18 +166,6 @@ export default [
         path: 'profile',
         meta: { requiresAuth: true, title: 'Profile Settings' },
         component: Setting.ProfileSetting
-      },
-      {
-        name: 'account-setting',
-        path: 'account',
-        meta: { requiresAuth: true, title: 'Account Settings' },
-        component: Setting.AccountSetting
-      },
-      {
-        name: 'security-setting',
-        path: 'security',
-        meta: { requiresAuth: true, title: 'Security Settings' },
-        component: Setting.SecuritySetting
       }
     ]
   },

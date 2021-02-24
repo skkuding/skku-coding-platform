@@ -37,7 +37,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>Clarifications</h1>
-            <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
           </div>
         </template>
         <div id="clarifications-table">
@@ -58,7 +58,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>My Submissions</h1>
-            <b-icon icon="x" scale="4" shift-v="5" shift-h="5" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
           </div>
         </template>
         <div id="my-submissions-table">
@@ -86,7 +86,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>All Submissions</h1>
-            <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
           </div>
         </template>
         <div id="all-submissions-table">
@@ -113,7 +113,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>Submission #{{submission_detail.id}}</h1>
-            <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
           </div>
         </template>
         <div>
