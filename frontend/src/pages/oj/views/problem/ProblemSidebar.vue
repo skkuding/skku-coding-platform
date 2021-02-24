@@ -58,7 +58,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>My Submissions</h1>
-            <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="5" shift-h="5" @click="close()"/>
           </div>
         </template>
         <div id="my-submissions-table">
@@ -108,13 +108,24 @@
         </div>
       </b-modal>
 
-      <b-modal id="submission-detail-modal" centered hide-backdrop hide-footer>
+      <b-modal id="submission-detail-modal" centered hide-backdrop hide-footer
+        v-model="submission_detail_modal_show">
         <template #modal-header="{ close }">
           <div class="modal-title-close">
-            <h1>All Submissions</h1>
+            <h1>Submission #{{submission_detail.id}}</h1>
             <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
           </div>
         </template>
+        <div>
+          <span>{{submission_detail.problem_title}}</span>
+          <span>{{submission_detail.submission_time}}</span>
+          <span>{{submission_detail.username}}</span>
+          <span>{{submission_detail.language}}</span>
+          <span>{{submission_detail.result}}</span>
+          <span>{{submission_detail.code_length}}</span>
+          <span>{{submission_detail.code}}</span>
+          <span></span>
+        </div>
         <div id="submission-detail-table">
           <b-table class="align-center"
             :items="my_submissions"
@@ -168,7 +179,9 @@ export default {
       submission_detail_table_rows: 5,
       clarifications_page: 1,
       my_submissions_page: 1,
-      all_submissions_page: 1
+      all_submissions_page: 1,
+
+      submission_detail_modal_show: false
     }
   },
   async mounted () {
@@ -195,7 +208,6 @@ export default {
     async getMySubmissions () {
       // Initialize problem id-title map
       this.my_submissions = await this.getSubmissions('my')
-      console.log(this.my_submissions)
     },
     async getAllSubmissions () {
       this.all_submissions = await this.getSubmissions('all')
@@ -212,12 +224,10 @@ export default {
       params.contest_id = this.contestID
       params.problem_id = this.problemID
       const func = this.contestID ? 'getContestSubmissionList' : 'getSubmissionList'
-      console.log(params)
 
       // offset, limit, params
       const result = await api[func](0, 1000, params)
       const data = result.data.data
-      console.log(result)
       const submissions = data.results.map(v => {
         return {
           ID: v.id,
@@ -228,7 +238,6 @@ export default {
           Result: JUDGE_STATUS[v.result].name
         }
       })
-      console.log(submissions)
       return submissions
     },
     goContestProblem (problemID) {
@@ -243,8 +252,24 @@ export default {
     resultTextColor (result) {
       return result === 'Accepted' ? '#8DC63F' : '#FF4F28'
     },
-    onMySubmissionClicked (item, index, event) {
-      const problem_id = item.ID;
+    async onMySubmissionClicked (item, index, event) {
+      await this.getSubmissionDetail(item.ID)
+      this.submission_detail_modal_show = true
+    },
+    async getSubmissionDetail (problemID) {
+      const res = await api.getSubmission(problemID)
+      const data = res.data.data
+
+      if (data.info && data.info.data) {
+        // score exist means the submission is OI problem submission
+        if (data.info.data[0].score !== undefined) {
+          // TODO : 테이블에 Score field 추가
+        }
+        if (this.isAdminRole) {
+          // TODO : 테이블에 Admin Column(Real time, Signal) 추가
+        }
+      }
+      this.submissionDetail = data
     }
   },
   computed: {
