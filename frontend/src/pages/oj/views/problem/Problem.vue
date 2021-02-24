@@ -27,9 +27,22 @@
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
-        <b-nav-item>
-          <b-icon icon="person" scale="1.5"/>
-        </b-nav-item>
+        <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
+          <template slot="button-content">
+            <b-icon icon="person" scale="1.5"/>
+          </template>
+          <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
+          <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
+        </b-nav-item-dropdown>
+        <b-nav-item-dropdown v-else no-caret right>
+          <template slot="button-content">
+            <b-icon icon="person" scale="1.5"/>
+          </template>
+          <b-dropdown-item to="/user-home">My Account</b-dropdown-item>
+          <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
+          <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
+          <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
+        </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>
 
@@ -46,6 +59,34 @@
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
+        <b-nav-item v-if="statusVisible">
+          <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
+            <Tag
+              type="dot"
+              :color="submissionStatus.color"
+              @click.native="handleRoute('/status/'+submissionId)"
+            >
+              {{ submissionStatus.text }}
+            </Tag>
+          </template>
+          <template v-else-if="this.contestID && !OIContestRealTimePermission">
+            <b-alert variant="success">Submitted Succesfully</b-alert>
+          </template>
+        </b-nav-item>
+        <b-nav-item v-else-if="problem.my_status === 0">
+          <b-alert variant="success">You have solved the problem</b-alert>
+        </b-nav-item>
+        <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
+          <b-alert variant="success">You have submitted a solution</b-alert>
+        </b-nav-item>
+        <b-nav-item v-if="contestEnded">
+          <b-alert variant="warning">Contest has ended</b-alert>
+        </b-nav-item>
+        <b-nav-item v-if="captchaRequired">
+          <img :src="captchaSrc" id="captcha-img">
+          <b-button @click="getCaptchaSrc">Refresh</b-button>
+          <b-form-input v-model="captchaCode" id="captcha-code"/>
+        </b-nav-item>
         <b-nav-item>
           <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
             <b-icon icon="arrow-clockwise" scale="1.1"/>
@@ -117,51 +158,6 @@
         </div>
       </b-col>
       <b-col id="console" cols="7">
-        <b-row
-          v-if="statusVisible"
-          class="status"
-        >
-          <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
-            <Tag
-              type="dot"
-              :color="submissionStatus.color"
-              @click.native="handleRoute('/status/'+submissionId)"
-            >
-              {{ submissionStatus.text }}
-            </Tag>
-          </template>
-          <template v-else-if="this.contestID && !OIContestRealTimePermission">
-            <b-alert variant="success">
-              Submitted Succesfully
-            </b-alert>
-          </template>
-        </b-row>
-        <b-row v-else-if="problem.my_status === 0">
-          <b-alert variant="success">
-            You have solved the problem
-          </b-alert>
-        </b-row>
-        <b-row v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
-          <b-alert variant="success">
-            You have submitted a solution
-          </b-alert>
-        </b-row>
-        <b-row v-if="contestEnded">
-          <b-alert variant="warning">
-            Contest has ended
-          </b-alert>
-        </b-row>
-        <template v-if="captchaRequired">
-          <b-row>
-            <b-col>
-              <img :src="captchaSrc" id="captcha-img">
-              <b-button @click="getCaptchaSrc">
-                Refresh
-              </b-button>
-              <b-form-input v-model="captchaCode" id="captcha-code"/>
-            </b-col>
-          </b-row>
-        </template>
         <b-row id="editor">
           <CodeMirror
             :value.sync="code"
@@ -297,6 +293,13 @@ export default {
     handleRoute (route) {
       this.$router.push(route)
     },
+    // User profile icon
+    handleBtnClick (mode) {
+      this.changeModalStatus({
+        visible: true,
+        mode: mode
+      })
+    },
     // when reset button clicked
     onResetToTemplate () {
       this.$Modal.confirm({
@@ -417,6 +420,9 @@ export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'contestRuleType', 'OIContestRealTimePermission']),
     ...mapGetters(['problemSubmitDisabled', 'contestRuleType', 'OIContestRealTimePermission', 'contestStatus']),
+    // for header user dropdown
+    ...mapGetters(['website', 'modalStatus', 'user', 'isAdminRole']),
+
     contest () {
       return this.$store.state.contest.contest
     },

@@ -19,7 +19,7 @@
       <b-row class="sidebar-row">
         <h2 v-b-modal.clarifications-modal>
           <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
-          Clarification
+          Clarifications
         </h2>
         <h2 v-b-modal.my-submissions-modal @click="getMySubmissions">
           <b-icon class="sidebar-icon" icon="person" scale="1.2"/>
@@ -29,46 +29,82 @@
           <b-icon class="sidebar-icon" icon="people" scale="1.2"/>
           All Submissions
         </h2>
-        <h2>
-          <b-icon class="sidebar-icon" icon="bar-chart-line" scale="1.2"/>
-          Standings
-        </h2>
       </b-row>
     </b-container>
 
     <div id="modal-wrapper">
-      <b-modal id="clarifications-modal" centered hide-backdrop hide-footer>
+      <b-modal id="clarifications-modal" class="modal" centered hide-backdrop hide-footer>
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>Clarifications</h1>
-            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
           </div>
         </template>
         <div id="clarifications-table">
-          <b-table :items="clarifications"></b-table>
+          <b-table
+            class="align-center"
+            :items="clarifications"
+            :per-page="table_rows"
+            :current-page="clarifications_page">
+          </b-table>
+          <b-pagination class="pagination"
+            v-model="clarifications_page"
+            :total-rows="clarifications_rows"
+            :per-page="table_rows"
+          ></b-pagination>
         </div>
       </b-modal>
-      <b-modal id="my-submissions-modal" centered hide-backdrop hide-footer>
+      <b-modal id="my-submissions-modal" class="modal" centered hide-backdrop hide-footer>
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>My Submissions</h1>
-            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
           </div>
         </template>
         <div id="my-submissions-table">
-          <b-table class="align-center" :items="my_submissions"></b-table>
+          <b-table
+            class="align-center"
+            :items="my_submissions"
+            :per-page="table_rows"
+            :current-page="my_submissions_page"
+            :fields="submission_table_fields"
+            @row-clicked="onMySubmissionClicked">
+            <!-- Custom rendering for result text color -->
+            <template #cell(result)="data">
+              <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
+            </template>
+          </b-table>
+          <b-pagination class="pagination"
+            v-model="my_submissions_page"
+            :total-rows="my_submissions_rows"
+            :per-page="table_rows"
+          ></b-pagination>
         </div>
       </b-modal>
 
-      <b-modal id="all-submissions-modal" centered hide-backdrop hide-footer>
+      <b-modal id="all-submissions-modal" class="modal" centered hide-backdrop hide-footer>
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>All Submissions</h1>
-            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
           </div>
         </template>
         <div id="all-submissions-table">
-          <b-table class="align-center" :items="all_submissions"></b-table>
+          <b-table
+            class="align-center"
+            :items="all_submissions"
+            :per-page="table_rows"
+            :current-page="all_submissions_page"
+            :fields="submission_table_fields">
+            <template #cell(result)="data">
+              <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
+            </template>
+          </b-table>
+          <b-pagination class="pagination"
+            v-model="all_submissions_page"
+            :total-rows="all_submissions_rows"
+            :per-page="table_rows"
+          ></b-pagination>
         </div>
       </b-modal>
 
@@ -76,11 +112,18 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>All Submissions</h1>
-            <b-icon icon="x" scale="3" shift-v="-3" @click="close()"/>
+            <b-icon icon="x" scale="4" shift-v="-5" shift-h="-5" @click="close()"/>
           </div>
         </template>
         <div id="submission-detail-table">
-          <b-table class="align-center" :items="all_submissions"></b-table>
+          <b-table class="align-center"
+            :items="my_submissions"
+            :per-page="submission_detail_table_rows"
+            :fields="submission_table_fields">
+            <template #cell(result)="data">
+              <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
+            </template>
+          </b-table>
         </div>
       </b-modal>
     </div>
@@ -98,11 +141,7 @@ export default {
   components: {
 
   },
-  props: {
-    hide: Function,
-    contestID: String,
-    problemID: String
-  },
+  props: ['hide', 'contestID', 'problemID'],
   data () {
     return {
       clarifications: [],
@@ -114,29 +153,47 @@ export default {
         language: ''
       },
 
+      // Map (key: problem id, value: problem title)
+      problem_titles: {},
+      submission_table_fields: ['Problem', 'Submission Time', 'Language', 'User', 'Result'],
+
       formFilter: {
         myself: false,
         result: '',
         username: ''
-      }
+      },
+
+      // Modal table pagination
+      table_rows: 8,
+      submission_detail_table_rows: 5,
+      clarifications_page: 1,
+      my_submissions_page: 1,
+      all_submissions_page: 1
     }
   },
-  mounted () {
-    this.getContestProblems()
+  async mounted () {
+    await this.getContestProblems()
+    this.initProblemTitles()
   },
   methods: {
-    getContestProblems () {
-      this.$store.dispatch('getContestProblems').then(res => {
-        if (this.isAuthenticated) {
-          if (this.contestRuleType === 'ACM') {
-            this.addStatusColumn(this.ACMTableColumns, res.data.data)
-          } else if (this.OIContestRealTimePermission) {
-            this.addStatusColumn(this.ACMTableColumns, res.data.data)
-          }
+    async getContestProblems () {
+      const res = await this.$store.dispatch('getContestProblems')
+
+      if (this.isAuthenticated) {
+        if (this.contestRuleType === 'ACM') {
+          this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        } else if (this.OIContestRealTimePermission) {
+          this.addStatusColumn(this.ACMTableColumns, res.data.data)
         }
-      })
+      }
+    },
+    initProblemTitles () {
+      for (let i = 0; i < this.contestProblems.length; i++) {
+        this.problem_titles[this.contestProblems[i]._id] = this.contestProblems[i].title
+      }
     },
     async getMySubmissions () {
+      // Initialize problem id-title map
       this.my_submissions = await this.getSubmissions('my')
       console.log(this.my_submissions)
     },
@@ -164,7 +221,7 @@ export default {
       const submissions = data.results.map(v => {
         return {
           ID: v.id,
-          Problem: v.problem,
+          Problem: this.problem_titles[v.problem],
           'Submission Time': time.utcToLocal(v.create_time),
           Language: v.language,
           User: v.username,
@@ -182,12 +239,28 @@ export default {
           problemID: problemID
         }
       })
+    },
+    resultTextColor (result) {
+      return result === 'Accepted' ? '#8DC63F' : '#FF4F28'
+    },
+    onMySubmissionClicked (item, index, event) {
+      const problem_id = item.ID;
     }
   },
   computed: {
     ...mapState({
       contestProblems: state => state.contest.contestProblems
-    })
+    }),
+    // Modal table pagination variable
+    clarifications_rows () {
+      return this.clarifications.length
+    },
+    my_submissions_rows () {
+      return this.my_submissions.length
+    },
+    all_submissions_rows () {
+      return this.all_submissions.length
+    }
   }
 }
 </script>
@@ -236,9 +309,11 @@ export default {
     min-width: 1200px;
 
     .modal-content {
+      color: white;
+      border: none;
       border-radius: 10px;
       background: #24272D;
-      color: white;
+      box-shadow: 0px 0px 15px #000000;
 
       .modal-header {
         border-bottom: none;
@@ -298,6 +373,16 @@ export default {
         }
       }
     }
+  }
+}
+
+/deep/ .pagination {
+  margin-left: 25px;
+
+  .page-link {
+    background: #24272D;
+    border-color: #3B4F56;
+    color: white;
   }
 }
 </style>
