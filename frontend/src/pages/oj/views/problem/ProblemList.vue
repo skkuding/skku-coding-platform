@@ -223,7 +223,7 @@ export default {
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
   .top-bar {
-    margin-top: 120px;
+    margin-top: 40px;
   }
   .title{
     margin-bottom:0;

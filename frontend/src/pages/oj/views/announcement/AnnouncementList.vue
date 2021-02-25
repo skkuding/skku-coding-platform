@@ -1,114 +1,75 @@
 <template>
-  <Panel
-    shadow
-    :padding="10"
-  >
-    <div slot="title">
-      {{ title }}
-    </div>
-    <div slot="extra">
-      <Button
-        v-if="listVisible"
-        type="info"
-        :loading="btnLoading"
-        @click="init"
-      >
-        {{ $t('m.Refresh') }}
-      </Button>
-      <Button
-        v-else
-        type="ghost"
-        icon="ios-undo"
-        @click="goBack"
-      >
-        {{ $t('m.Back') }}
-      </Button>
-    </div>
-    <transition-group
-      name="announcement-animate"
-      mode="in-out"
-    >
-      <div
-        v-if="!announcements.length"
-        key="no-announcement"
-        class="no-announcement"
-      >
-        <p>{{ $t('m.No_Announcements') }}</p>
+    <div class="notice-list-card font-bold">
+      <div class="top-bar mb-4">
+        <h2 class="title">Notice</h2>
       </div>
-      <template v-if="listVisible">
-        <ul
-          key="list"
-          class="announcements-container"
-        >
-          <li
-            v-for="announcement in announcements"
-            :key="announcement.title"
-          >
-            <div class="flex-container">
-              <div class="title">
-                <a
-                  class="entry"
-                  @click="goAnnouncement(announcement)"
-                >
-                  {{ announcement.title }}</a>
-              </div>
-              <div class="date">
-                {{ announcement.create_time | localtime }}
-              </div>
-              <div class="creator">
-                {{ $t('m.By') }} {{ announcement.created_by.username }}
-              </div>
-            </div>
-          </li>
-        </ul>
-        <Pagination
-          v-if="!isContest"
-          key="page"
-          :total="total"
-          :page-size="limit"
-          @on-change="getAnnouncementList"
-        />
-      </template>
-      <template v-else>
+      <div class="table">
+        <b-table
+          hover
+          :items="announcements"
+          :fields="noticeListColumns"
+          :per-page="perPage"
+          :current-page="currentPage"
+          head-variant="light"
+          @row-clicked="goAnnouncement"
+        ></b-table>
         <div
-          key="content"
-          v-katex
-          class="content-container markdown-body"
-          v-html="announcement.content"
-        />
-      </template>
-    </transition-group>
-  </Panel>
+          v-if="!announcements.length"
+          class="no-announcement"
+        >
+          <p>No Notice</p>
+        </div>
+      </div>
+      <div class="pagination">
+          <b-pagination
+            aria-controls="notice-list"
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            limit="3"
+          ></b-pagination>
+      </div>
+    </div>
 </template>
 
 <script>
 import api from '@oj/api'
-import Pagination from '@oj/components/Pagination'
+import time from '@/utils/time'
 export default {
-  name: 'Announcement Detail',
-  components: {
-    Pagination
-  },
+  name: 'Announcement',
   data () {
     return {
+      perPage: 10,
+      currentPage: 1,
       limit: 10,
       total: 10,
       btnLoading: false,
       announcements: [],
       announcement: '',
-      listVisible: true
+      listVisible: true,
+      noticeListColumns: [
+        {
+          key: 'title',
+          label: 'Title',
+          tdClass: 'notice-title-field',
+          thClass: 'notice-title-field'
+        },
+        {
+          label: 'Date',
+          key: 'create_time',
+          formatter: value => {
+            return time.utcToLocal(value, 'YYYY-M-D')
+          }
+        }
+      ]
     }
   },
   computed: {
-    title () {
-      if (this.listVisible) {
-        return this.isContest ? this.$i18n.t('m.Contest_Announcements') : this.$i18n.t('m.Announcements')
-      } else {
-        return this.announcement.title
-      }
-    },
     isContest () {
       return !!this.$route.params.contestID
+    },
+    rows () {
+      return this.announcements.length
     }
   },
   mounted () {
@@ -144,63 +105,44 @@ export default {
     goAnnouncement (announcement) {
       this.announcement = announcement
       this.listVisible = false
-    },
-    goBack () {
-      this.listVisible = true
-      this.announcement = ''
     }
   }
 }
 </script>
 
-<style scoped lang="less">
-  .announcements-container {
-    margin-top: -10px;
-    margin-bottom: 10px;
-    li {
-      padding-top: 15px;
-      list-style: none;
-      padding-bottom: 15px;
-      margin-left: 20px;
-      font-size: 16px;
-      border-bottom: 1px solid rgba(187, 187, 187, 0.5);
-      &:last-child {
-        border-bottom: none;
-      }
-      .flex-container {
-        .title {
-          flex: 1 1;
-          text-align: left;
-          padding-left: 10px;
-          a.entry {
-            color: #495060;
-            &:hover {
-              color: #2d8cf0;
-              border-bottom: 1px solid #2d8cf0;
-            }
-          }
-        }
-        .creator {
-          flex: none;
-          width: 200px;
-          text-align: center;
-        }
-        .date {
-          flex: none;
-          width: 200px;
-          text-align: center;
-        }
-      }
-    }
+<style>
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .content-container {
-    padding: 0 20px 20px 20px;
+  .notice-list-card{
+    margin: 0 auto;
+    width: 90%;
+    font-family: Manrope;
+  }
+  .top-bar {
+    margin-top: 0px;
+  }
+  .title{
+    color: #7C7A7B;
+  }
+  .notice-list-card .table{
+    width: 95%;
+    margin: 0 auto;
   }
   .no-announcement {
     text-align: center;
     font-size: 16px;
-  }changeLocale
-  .announcement-animate-enter-active {
-    animation: fadeIn 1s;
+    margin: 10px 0;
+  }
+  .pagination{
+    display: flex;
+    justify-content: flex-end;
+  }
+  .notice-title-field{
+    width: 75%;
+  }
+  .font-bold {
+    font-family: manrope_bold;
   }
 </style>

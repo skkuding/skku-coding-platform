@@ -12,7 +12,7 @@ import Announcement from './notice/NoticeList.vue'
 // Grouping Components in the Same Chunk
 const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
 
-const Announcement = () => import(/* webpackChunkName: "Announcement" */ '@oj/views/announcement/Announcement.vue')
+// const Announcement = () => import(/* webpackChunkName: "Announcement" */ '@oj/views/announcement/Announcement.vue')
 
 const SubmissionList = () => import(/* webpackChunkName: "submission" */ '@oj/views/submission/SubmissionList.vue')
 const SubmissionDetails = () => import(/* webpackChunkName: "submission" */ '@oj/views/submission/SubmissionDetails.vue')
@@ -28,7 +28,7 @@ const EmailAuth = () => import(/* webpackChunkName: "emailAuth" */ '@oj/views/us
 export {
   Home, NotFound, Announcements,
   Logout, UserHome, About, FAQ,
-  ProblemList, Problem,
+  ProblemList, AnnouncementList, Problem,
   ACMRank, OIRank,
   SubmissionList, SubmissionDetails,
   ApplyResetPassword, ResetPassword, EmailAuth, Announcement

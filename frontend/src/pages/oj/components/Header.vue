@@ -10,7 +10,7 @@
 
       <b-navbar-nav class="mx-auto" align="center">
         <b-nav-item class="header__menu">
-          <router-link class="nav-link" active-class="active" to="/notice">Notice</router-link>
+          <router-link class="nav-link" active-class="active" to="/announcement">Notice</router-link>
         </b-nav-item>
         <b-nav-item class="header__menu">
           <router-link class="nav-link" active-class="active" to="/contest">Contests</router-link>

@@ -16,8 +16,7 @@ import {
   ResetPassword,
   SubmissionDetails,
   SubmissionList,
-  UserHome,
-  Announcement
+  UserHome
 } from '../views'
 
 import * as Contest from '@oj/views/contest'

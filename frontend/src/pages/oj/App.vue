@@ -73,18 +73,7 @@ a {
     outline-width: 0;
   }
 }
-@media screen and (max-width: 1200px) {
-  .content-app {
-    margin-top: 160px;
-    padding: 0 2%;
-  }
-}
-@media screen and (min-width: 1200px) {
-  .content-app {
-    margin-top: 80px;
-    padding: 0 2%;
-  }
-}
+
 .fadeInUp-enter-active {
   animation: fadeInUp .8s;
 }

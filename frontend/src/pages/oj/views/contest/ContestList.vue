@@ -177,7 +177,7 @@ export default {
     font-family: Manrope;
   }
   .top-bar {
-    margin-top: 156px;
+    margin-top: 40px;
   }
   .title{
     color: #7C7A7B;

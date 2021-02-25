@@ -103,10 +103,9 @@ a {
   }
 }
 #footer {
-  height: 100%;
   width: 100%;
   position: relative;
-  margin-top: 40px;
+  margin-top: 200px;
   font-size: 18px;
   background: #8dc63f;
 }
