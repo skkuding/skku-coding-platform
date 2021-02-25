@@ -16,8 +16,7 @@ import {
   ResetPassword,
   SubmissionDetails,
   SubmissionList,
-  UserHome,
-  AnnouncementDetail
+  UserHome
 } from '../views'
 
 import * as Contest from '@oj/views/contest'
@@ -46,7 +45,7 @@ export default [
     name: 'announcement-details',
     path: '/announcement/:announcementID',
     meta: { title: 'Announcement Detail' },
-    component: AnnouncementDetail
+    component: Announcement
   },
   {
     name: 'apply-reset-password',
@@ -193,12 +192,6 @@ export default [
     name: 'faq',
     meta: { title: 'FAQ' },
     component: FAQ
-  },
-  {
-    path: '/announcement',
-    name: 'announcement',
-    meta: { title: 'Announcement' },
-    component: Announcement
   },
   {
     path: '*',
