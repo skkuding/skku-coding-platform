@@ -33,7 +33,6 @@
           <template slot="button-content">
             <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
           </template>
-          <b-dropdown-item to="/user-home">My Account</b-dropdown-item>
           <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
           <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
           <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
@@ -113,26 +112,26 @@ export default {
 .header__menu__item {
   width: 100px;
   text-align: center;
-  :hover {
+  &:hover {
     text-decoration: underline;
     text-decoration-color: #8dc63f;
   }
 }
 
+/deep/ .modal-md > .modal-dialog > .modal-content > .modal-header {
+  padding-bottom:0;
+  padding-top:4px;
+}
+/deep/ .modal-md > .modal-dialog > .modal-content > .modal-body {
+  padding-top:0;
+}
 /deep/ .modal-md > .modal-dialog > .modal-content {
-  position: absolute;
-  top: auto;
-  left: auto;
-  right: auto;
-  bottom: auto;
-
-  & > .modal-header {
-    padding-bottom: 0;
-    padding-top: 4px;
-  }
-  & > .modal-body {
-    padding-top: 0;
-  }
+  position:absolute;
+  top:auto;
+  left:auto;
+  right:auto;
+  bottom:auto;
+  min-width:800px;
 }
 
 </style>

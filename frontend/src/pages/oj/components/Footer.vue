@@ -80,7 +80,7 @@ export default {
 }
 </script>
 
-<style lang='less'>
+<style lang='less' scoped>
 *, *:before, *:after {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;

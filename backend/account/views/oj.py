@@ -108,7 +108,6 @@ class UserSettingAPI(APIView):
             else:
                 user = request.user
                 # The api returns your own information, you can return real_name
-                show_real_name = True
         except User.DoesNotExist:
             return self.error("User does not exist")
         return self.success(UserSerializer(user).data)
