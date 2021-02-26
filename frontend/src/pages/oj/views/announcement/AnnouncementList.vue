@@ -105,6 +105,7 @@ export default {
     goAnnouncement (announcement) {
       this.announcement = announcement
       this.listVisible = false
+      this.$router.push({ name: 'announcement-details', params: { announcementID: announcement.id } })
     }
   }
 }
