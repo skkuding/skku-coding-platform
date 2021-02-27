@@ -40,12 +40,8 @@ import api from '@oj/api'
 import hljs from 'highlight.js'
 import time from '@/utils/time'
 import { JUDGE_STATUS } from '@/utils/constants'
-import Highlight from 'vue-highlight-component'
 hljs.registerLanguage('cpp', require('highlight.js/lib/languages/cpp'))
 export default {
-  components: {
-    Highlight
-  },
   data () {
     return {
       my_sub: [],

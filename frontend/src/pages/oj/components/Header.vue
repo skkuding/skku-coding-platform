@@ -39,13 +39,13 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>
-    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-md">
+    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
       <component
         :is="modalStatus.mode"
         v-if="modalVisible"
       />
     </b-modal>
-    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-md">
+    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
       <profileSetting></profileSetting>
     </b-modal>
   </div>
@@ -97,7 +97,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang='less' scoped>
 #header {
   position: relative;
   height: 72px;
@@ -117,21 +117,21 @@ export default {
     text-decoration-color: #8dc63f;
   }
 }
-
-/deep/ .modal-md > .modal-dialog > .modal-content > .modal-header {
+/deep/ .modal-med > .modal-dialog > .modal-content > .modal-header {
   padding-bottom:0;
   padding-top:4px;
 }
-/deep/ .modal-md > .modal-dialog > .modal-content > .modal-body {
+/deep/ .modal-med > .modal-dialog > .modal-content > .modal-body {
   padding-top:0;
 }
-/deep/ .modal-md > .modal-dialog > .modal-content {
+/deep/ .modal-med > .modal-dialog > .modal-content  {
   position:absolute;
   top:auto;
   left:auto;
   right:auto;
   bottom:auto;
+}
+/deep/ .modal-big > .modal-dialog > .modal-content {
   min-width:800px;
 }
-
 </style>
