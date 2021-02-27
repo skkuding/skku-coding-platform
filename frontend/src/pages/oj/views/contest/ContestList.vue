@@ -28,7 +28,7 @@
       <b-pagination
         aria-controls="notice-list"
         v-model="currentPage"
-        :total-rows=100
+        :total-rows="contest.length"
         :per-page="perPage"
         limit="3"
       ></b-pagination>
@@ -68,23 +68,7 @@ export default {
       },
       total: 0,
       rows: '',
-      contests: [
-        {
-          status: '0',
-          contest_type: 'Password Protected',
-          title: 'This is Contest',
-          description: 'blah blah',
-          real_time_rank: true,
-          password: 'string',
-          rule_type: 'ACM',
-          start_time: '2021-02-17T01:00:13.621000+09:00',
-          end_time: '2021-02-17T04:22:13.621000+09:00',
-          create_time: '2021-02-17T01:00:59.006983+09:00',
-          last_update_time: '2021-02-17T01:00:59.007006+09:00',
-          visible: true,
-          allowed_ip_ranges: []
-        }
-      ],
+      contests: [],
       CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
       // for password modal use
       cur_contest_id: '',
