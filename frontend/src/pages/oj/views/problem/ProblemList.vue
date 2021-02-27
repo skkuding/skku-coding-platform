@@ -241,7 +241,9 @@ export default {
     width: 95%;
     margin: 0 auto;
   }
-  .pagination{
+  div.pagination{
+    margin-right: 5%;
+    margin-top: 20px;
     display: flex;
     justify-content: flex-end;
   }
