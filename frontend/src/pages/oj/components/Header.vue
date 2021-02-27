@@ -97,7 +97,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 #header {
   position: relative;
   height: 72px;
