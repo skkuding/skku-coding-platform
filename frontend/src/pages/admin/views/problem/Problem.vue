@@ -661,7 +661,7 @@ export default {
 
       if (!this.testcase_file_upload) {
         api.createTestCase({
-          testcase: this.problem.testcases,
+          testcases: this.problem.testcases,
           spj: this.problem.spj
         }).then(response => {
           const fileList = response.data.data.info
