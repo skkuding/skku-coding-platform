@@ -4,8 +4,8 @@
       <h2 class="title">Problem List</h2>
       <div class="problem-list-table">
         <div class="category-container">
-          <b-dropdown :text="selectedDifficulty" class="mr-4">
-            <b-dropdown-item @click="filterByDifficulty()">All</b-dropdown-item>
+          <b-dropdown :text="difficulty" class="mr-4">
+            <b-dropdown-item @click="filterByDifficulty('All')">All</b-dropdown-item>
             <b-dropdown-item @click="filterByDifficulty('Level1')">Level1</b-dropdown-item>
             <b-dropdown-item @click="filterByDifficulty('Level2')">Level2</b-dropdown-item>
             <b-dropdown-item @click="filterByDifficulty('Level3')">Level3</b-dropdown-item>
@@ -27,7 +27,7 @@
           <div class="col-4">
             <b-icon icon="search" class="search-icon"/>
             <b-input placeholder="keywords" class="search-input"
-              v-model="query.keyword" @input="filterByKeyword"/>
+              v-model="keyword" @input="filterByKeyword"/>
           </div>
         </div>
       </div>
@@ -40,7 +40,6 @@
         :per-page="perPage"
         :current-page="currentPage"
         head-variant="light"
-        :loading="loadings.table"
         @row-clicked="goProblem"
       >
         <template #cell(title)="data">
@@ -73,7 +72,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import api from '@oj/api'
-import utils from '@/utils/utils'
 import { ProblemMixin } from '@oj/components/mixins'
 
 export default {
@@ -81,25 +79,16 @@ export default {
   mixins: [ProblemMixin],
   data () {
     return {
-      selectedDifficulty: 'Difficulty',
       perPage: 10,
       currentPage: 1,
       checked: false,
-      listVisible: true,
       problemList: [],
-      limit: 20,
+      limit: 50,
       total: 0,
-      loadings: {
-        table: true,
-        tag: true
-      },
-      routeName: '',
-      query: {
-        keyword: '',
-        difficulty: '',
-        tag: '',
-        page: 1
-      },
+      keyword: '',
+      difficulty: 'All',
+      tag: '',
+      page: 1,
       problemTableColumns: [
         {
           label: '#',
@@ -138,62 +127,39 @@ export default {
     this.init()
   },
   methods: {
-    init (simulate = false) {
-      this.routeName = this.$route.name
-      const query = this.$route.query
-      this.query.difficulty = query.difficulty || ''
-      this.query.keyword = query.keyword || ''
-      this.query.tag = query.tag || ''
-      this.query.page = parseInt(query.page) || 1
-      if (this.query.page < 1) {
-        this.query.page = 1
-      }
-      if (!simulate) {
-        this.getTagList()
-      }
-      this.getProblemList()
+    async init () {
+      await this.getTagList()
+      await this.getProblemList()
     },
-    pushRouter () {
-      this.$router.push({
-        name: 'problem-list',
-        query: utils.filterEmptyValue(this.query)
-      })
+    async getTagList () {
+      const res = await api.getProblemTagList()
+      this.tagList = res.data.data
     },
-    getProblemList () {
-      const offset = (this.query.page - 1) * this.limit
-      this.loadings.table = true
-      api.getProblemList(offset, this.limit, this.query).then(res => {
-        this.loadings.table = false
-        this.total = res.data.data.total
-        this.problemList = res.data.data.results
-        if (this.isAuthenticated) {
-          this.addStatusColumn(this.problemTableColumns, res.data.data.results)
+    async getProblemList () {
+      const offset = (this.page - 1) * this.limit
+      const res = await api.getProblemList(offset, this.limit,
+        {
+          difficulty: this.difficulty === 'All' ? '' : this.difficulty,
+          keyword: this.keyword,
+          tag: this.tag,
+          page: this.page
         }
-      }, res => {
-        this.loadings.table = false
-      })
-    },
-    getTagList () {
-      api.getProblemTagList().then(res => {
-        this.tagList = res.data.data
-        this.loadings.tag = false
-      }, res => {
-        this.loadings.tag = false
-      })
-    },
-    filterByDifficulty (item) {
-      if (item === undefined) {
-        this.selectedDifficulty = 'All'
-      } else {
-        this.selectedDifficulty = item
+      )
+      console.log(res)
+      this.total = res.data.data.total
+      this.problemList = res.data.data.results
+      if (this.isAuthenticated) {
+        this.addStatusColumn(this.problemTableColumns, res.data.data.results)
       }
-      this.query.difficulty = item
-      this.query.page = 1
-      this.pushRouter()
     },
-    filterByKeyword () {
-      this.query.page = 1
-      this.pushRouter()
+    async filterByDifficulty (item) {
+      this.difficulty = item
+      this.page = 1
+      await this.getProblemList()
+    },
+    async filterByKeyword () {
+      this.page = 1
+      await this.getProblemList()
     },
     levelCircle (value) {
       return 'level' + value[5] + '-circle'
@@ -203,15 +169,8 @@ export default {
     }
   },
   watch: {
-    '$route' (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.init(true)
-      }
-    },
-    'isAuthenticated' (newVal) {
-      if (newVal === true) {
-        this.init()
-      }
+    async 'isAuthenticated' (newVal) {
+      await this.init()
     }
   }
 }
