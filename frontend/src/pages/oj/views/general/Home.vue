@@ -66,8 +66,36 @@ export default {
     return {
       announcements: [],
       contests: [],
-      announcement_fields: ['icon', 'title', 'create_time'],
-      contest_fields: ['icon', 'title', 'start_time']
+      announcement_fields: [
+        {
+          label: 'icon',
+          key: 'icon'
+        },
+        {
+          label: 'title',
+          key: 'title'
+        },
+        {
+          label: 'create_time',
+          key: 'create_time',
+          tdClass: 'date-field'
+        }
+      ],
+      contest_fields: [
+        {
+          label: 'icon',
+          key: 'icon'
+        },
+        {
+          label: 'title',
+          key: 'title'
+        },
+        {
+          label: 'start_time',
+          key: 'start_time',
+          tdClass: 'date-field'
+        }
+      ]
     }
   },
   mounted () {
@@ -89,7 +117,7 @@ export default {
       this.total = res.data.data.total
 
       const status = [CONTEST_STATUS.UNDERWAY, CONTEST_STATUS.NOT_START]
-      this.contests = contests.filter(contest => contest.status in status)
+      this.contests = contests.filter(contest => contest.status in status).reverse()
     },
     goAnnouncement (item) {
       if (item && item.id) {
@@ -174,6 +202,7 @@ export default {
     margin-left: 8px;
 
     p {
+      font-size: 23px;
       margin-left: 15px;
     }
   }
@@ -186,6 +215,10 @@ export default {
   th {
     display: none;
   }
+}
+
+/deep/ .table .date-field {
+  text-align:right;
 }
 
 @media screen and (max-width: 1016px) {

@@ -1,16 +1,15 @@
 <template>
-  <div v-if="$route.name && $route.name.indexOf('problem-details') != -1">
+  <div class="app-container" v-if="$route.name && $route.name.indexOf('problem-details') != -1">
       <router-view/>
   </div>
-    <div v-else>
-      <Header></Header>
-      <div class="content-app">
-        <transition name="fadeInUp" mode="out-in">
-          <router-view/>
-        </transition>
-      </div>
-      <Footer />
+  <div class="app-container" v-else>
+    <Header></Header>
+    <div class="content-app">
+      <transition name="fadeInUp" mode="out-in">
+        <router-view/>
+      </transition>
     </div>
+    <Footer />
   </div>
 </template>
 
@@ -64,6 +63,15 @@ export default {
 </script>
 
 <style lang="less">
+html, body {
+  min-height: 100%;
+}
+
+.app-container {
+  min-height: 100%;
+  margin-bottom: 200px;
+}
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
