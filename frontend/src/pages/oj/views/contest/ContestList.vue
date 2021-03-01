@@ -122,11 +122,15 @@ export default {
     },
     goContest (item) {
       this.cur_contest_id = item.id
-      if (item.contest_type !== CONTEST_TYPE.PUBLIC && !this.isAuthenticated) {
-        this.$error(this.$i18n.t('m.Please_login_first'))
+      if (!this.isAuthenticated) {
+        this.$error('Please login first!')
         this.$store.dispatch('changeModalStatus', { visible: true })
       } else {
-        this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
+        if (item.contest_type === CONTEST_TYPE.PRIVATE) {
+          this.$error('This contest is locked')
+        } else {
+          this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
+        }
       }
     },
     getTimeFormat (value) {
@@ -138,14 +142,11 @@ export default {
   },
   computed: {
     ...mapState({
-      // showMenu: state => state.contest.itemVisible.menu,
       contest: state => state.contest.contest
-      // contest_table: state => [state.contest.contest],
-      // now: state => state.contest.now
     }),
     ...mapGetters(
       ['contestMenuDisabled', 'countdown', 'isContestAdmin',
-        'OIContestRealTimePermission', 'passwordFormVisible']
+        'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated']
     ),
     row () {
       return this.contests.length
