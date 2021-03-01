@@ -3,7 +3,7 @@
     <b-navbar sticky-top style="height: 100%;">
       <b-navbar-brand to="/" class="ml-5" style="width: 0">
         <img
-          src="../../../assets/signature.png"
+          src="@/assets/signature.png"
           style="height: 50px; width: auto;"
         />
       </b-navbar-brand>

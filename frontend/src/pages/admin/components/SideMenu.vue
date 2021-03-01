@@ -6,7 +6,7 @@
   >
     <div class="logo">
       <img
-        src="../../../assets/logo.svg"
+        src="@/assets/logo.svg"
         alt="oj admin"
       >
     </div>
@@ -100,11 +100,9 @@ export default {
       margin: 20px 0;
       text-align: center;
       img {
-        background-color: #fff;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        width: 75px;
-        height: 75px;
+        width: 90px;
+        height: 90px;
+        filter: invert(68%) sepia(59%) saturate(458%) hue-rotate(42deg) brightness(94%) contrast(88%);
       }
     }
   }

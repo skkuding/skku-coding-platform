@@ -4,7 +4,7 @@ import routes from './routes'
 import storage from '@/utils/storage'
 import { STORAGE_KEY } from '@/utils/constants'
 import { sync } from 'vuex-router-sync'
-import store, { types } from '../../../store'
+import store, { types } from '@/store'
 
 Vue.use(VueRouter)
 

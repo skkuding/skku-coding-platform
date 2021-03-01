@@ -8,10 +8,10 @@
       @sliding-start="onSlideStart"
       @sliding-end="onSlideEnd"
     >
-      <b-carousel-slide :img-src="require('../../../assets/banner1.png')"></b-carousel-slide>
-      <b-carousel-slide :img-src="require('../../../assets/banner2.png')"></b-carousel-slide>
-      <b-carousel-slide :img-src="require('../../../assets/banner3.png')"></b-carousel-slide>
-      <b-carousel-slide :img-src="require('../../../assets/banner4.png')"></b-carousel-slide>
+      <b-carousel-slide :img-src="require('@/assets/banner1.png')"></b-carousel-slide>
+      <b-carousel-slide :img-src="require('@/assets/banner2.png')"></b-carousel-slide>
+      <b-carousel-slide :img-src="require('@/assets/banner3.png')"></b-carousel-slide>
+      <b-carousel-slide :img-src="require('@/assets/banner4.png')"></b-carousel-slide>
 
     </b-carousel>
   </div>
