@@ -40,4 +40,10 @@ export default {
 .banner {
   position: relative;
 }
+/deep/ .banner img {
+  height:412px;
+}
+.carousel-item {
+  height:512px;
+}
 </style>

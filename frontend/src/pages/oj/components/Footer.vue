@@ -120,7 +120,7 @@ a {
 }
 .footer-detail {
   padding-top: 30px;
-  width: 300px;
+  width: 150px;
   height: 20vh;
   text-align: left;
 }

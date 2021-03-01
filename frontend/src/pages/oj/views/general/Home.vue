@@ -152,9 +152,12 @@ export default {
   position: relative;
 }
 
+.card {
+  max-width:800px;
+}
 .post-card {
   height: 255px;
-  width: 700px;
+  width: 40%;
 }
 
 .post-card-header {
@@ -182,6 +185,13 @@ export default {
 
   th {
     display: none;
+  }
+}
+
+@media screen and (max-width: 1016px) {
+  .post-card {
+    width:80%;
+    margin-top: 40px;
   }
 }
 
