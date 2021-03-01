@@ -1,6 +1,6 @@
 <template>
   <div class="problem-list-card font-bold">
-    <div class="top-bar mb-4">
+    <div class="top-bar mb-4" style="margin-top:4px;">
       <h2 class="title">Problem List</h2>
       <div class="problem-list-table">
         <div class="category-container">
@@ -224,6 +224,7 @@ export default {
   }
   .top-bar {
     margin-top: 40px;
+    margin-left: 68px;
   }
   .title{
     margin-bottom:0;

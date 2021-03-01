@@ -122,13 +122,14 @@ export default {
     font-family: Manrope;
   }
   .top-bar {
-    margin-top: 0px;
+    margin-top: 40px;
+    margin-left: 68px;
   }
   .title{
     color: #7C7A7B;
   }
   .notice-list-card .table{
-    width: 95%;
+    width: 95% !important;
     margin: 0 auto;
   }
   .no-announcement {
@@ -137,6 +138,8 @@ export default {
     margin: 10px 0;
   }
   .pagination{
+    margin-right: 5%;
+    margin-top: 20px;
     display: flex;
     justify-content: flex-end;
   }

@@ -174,6 +174,7 @@ export default {
   }
   .top-bar {
     margin-top: 40px;
+    margin-left: 68px;
   }
   .title{
     color: #7C7A7B;
@@ -187,5 +188,8 @@ export default {
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
+  }
+  .font-bold {
+    font-family: manrope_bold;
   }
 </style>
