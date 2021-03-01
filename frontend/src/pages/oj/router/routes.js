@@ -96,6 +96,12 @@ export default [
     component: Contest.ContestList
   },
   {
+    name: 'contest-problem-details',
+    path: '/contest/:contestID/problem/:problemID/',
+    component: Problem,
+    meta: { title: 'Contest Problem Details' }
+  },
+  {
     name: 'contest-details',
     path: '/contest/:contestID/',
     component: Contest.ContestDetails,
@@ -110,11 +116,6 @@ export default [
         name: 'contest-problem-list',
         path: 'problems',
         component: Contest.ContestProblemList
-      },
-      {
-        name: 'contest-problem-details',
-        path: 'problem/:problemID/',
-        component: Problem
       },
       {
         name: 'contest-announcement-list',

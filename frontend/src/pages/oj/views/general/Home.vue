@@ -18,8 +18,8 @@
           <template #cell(icon)>
             <b-icon icon="chevron-right"/>
           </template>
-          <template #cell(create_time)>
-            {{ getTimeFormat(value, 'MMM D, YYYY') }}
+          <template #cell(create_time)="data">
+            {{ getTimeFormat(data.value, 'MMM D, YYYY') }}
           </template>
         </b-table>
       </b-card>
@@ -39,8 +39,8 @@
           <template #cell(icon)="data">
             <b-icon :icon="data.item.status === '0' ? 'three-dots' : 'calendar2'"/>
           </template>
-          <template #cell(start_time)>
-            {{ getTimeFormat(value, "MMM D, YYYY") }}
+          <template #cell(start_time)="data">
+            {{ getTimeFormat(data.value, "MMM D, YYYY") }}
           </template>
         </b-table>
       </b-card>
