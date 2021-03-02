@@ -105,9 +105,10 @@ a {
 #footer {
   width: 100%;
   position: absolute;
-  bottom: -320px;
+  bottom: 0;
   font-size: 18px;
   background: #8dc63f;
+  margin-top: 250px;
 }
 .footer-info {
   padding-bottom: 1vh;

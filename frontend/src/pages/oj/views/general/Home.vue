@@ -202,7 +202,7 @@ export default {
     margin-left: 8px;
 
     p {
-      font-size: 23px;
+      font-size: 21px;
       margin-left: 15px;
     }
   }
@@ -210,10 +210,17 @@ export default {
 
 /deep/ .table tr {
   outline: none;
-  font-size: 18px;
+  font-size: 16px;
 
   th {
     display: none;
+  }
+
+  td {
+    max-width: 60%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 }
 

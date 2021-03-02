@@ -64,12 +64,12 @@ export default {
 
 <style lang="less">
 html, body {
-  min-height: 100%;
+  min-height: 100% !important;
+  height: 100%;
 }
 
 .app-container {
   min-height: 100%;
-  margin-bottom: 200px;
 }
 
 * {
