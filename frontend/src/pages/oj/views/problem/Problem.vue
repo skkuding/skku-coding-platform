@@ -245,50 +245,48 @@ export default {
       theme_list: ['solarized', 'monokai', 'material']
     }
   },
-  mounted () {
+  async mounted () {
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
-    this.init()
+    await this.init()
   },
   methods: {
     ...mapActions(['changeDomTitle']),
-    init () {
+    async init () {
       this.$Loading.start()
       this.contestID = this.$route.params.contestID
       this.problemID = this.$route.params.problemID
-      const func = this.$route.name === 'problem-details' ? 'getProblem' : 'getContestProblem'
-      api[func](this.problemID, this.contestID).then(res => {
-        this.$Loading.finish()
-        const problem = res.data.data
-        this.changeDomTitle({ title: problem.title })
-        api.submissionExists(problem.id).then(res => {
-          this.submissionExists = res.data.data
-        })
-        problem.languages = problem.languages.sort()
-        this.problem = problem
 
-        // if code exists, do not load template
-        if (this.code !== '') {
-          return
-        }
-        // try to load problem template
-        const userId = this.$route.query.username
+      const res = this.$route.name === 'problem-details'
+        ? await api.getProblem(this.problemID)
+        : await api.getContestProblem(this.problemID, this.contestID)
+
+      this.$Loading.finish()
+      const problem = res.data.data
+      this.changeDomTitle({ title: problem.title })
+
+      const res2 = await api.submissionExists(problem.id)
+      this.submissionExists = res2.data.data
+
+      problem.languages = problem.languages.sort()
+      this.problem = problem
+
+      if (this.code === '') {
+        const userId = this.user.username
         let preferredLanguage = problem.languages[0]
-        api.getUserInfo(userId).then(res => {
-          const lang = res.data.data.language
-          if (lang !== null) {
-            if (problem.languages.includes(lang)) {
-              preferredLanguage = lang
-            }
+        const res3 = await api.getUserInfo(userId)
+
+        const lang = res3.data.data.language
+        if (lang !== null) {
+          if (problem.languages.includes(lang)) {
+            preferredLanguage = lang
           }
-          this.language = preferredLanguage
-          const template = this.problem.template
-          if (template && template[this.language]) {
-            this.code = template[this.language]
-          }
-        })
-      }, () => {
-        this.$Loading.error()
-      })
+        }
+        this.language = preferredLanguage
+        const template = this.problem.template
+        if (template && template[this.language]) {
+          this.code = template[this.language]
+        }
+      }
     },
     handleRoute (route) {
       this.$router.push(route)
