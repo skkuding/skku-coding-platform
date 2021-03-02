@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" v-if="$route.name && $route.name.indexOf('problem-details') != -1">
+  <div v-if="$route.name && $route.name.indexOf('problem-details') != -1">
       <router-view/>
   </div>
   <div class="app-container" v-else>
@@ -64,11 +64,17 @@ export default {
 
 <style lang="less">
 html, body {
-  min-height: 100% !important;
+  min-height: 100%;
   height: 100%;
 }
 
+.problem-container {
+  min-height: 100%;
+}
+
 .app-container {
+  padding-bottom: 150px;
+  position: relative;
   min-height: 100%;
 }
 

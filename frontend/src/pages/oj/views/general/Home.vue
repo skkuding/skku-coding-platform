@@ -184,8 +184,9 @@ export default {
   max-width:800px;
 }
 .post-card {
+  margin-top: 30px;
   height: 255px;
-  width: 40%;
+  width: 45%;
 }
 
 .post-card-header {

@@ -72,7 +72,6 @@ a {
   width: 100%;
   position: absolute;
   bottom: 0;
-  margin-top: 250px;
   background: #FFFFFF;
   color:#aaaaaa;
 }
