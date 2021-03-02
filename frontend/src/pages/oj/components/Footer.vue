@@ -1,55 +1,15 @@
 <template>
   <footer id="footer">
     <div class="footer-info">
-      <ul class="footer-detail">
-        <li class="footer-item">
-          <img :src="mail" />
-          <p class="footer-text">
-            <a href="example@skku.edu">example@skku.edu</a>
-          </p>
-        </li>
-        <li class="footer-item">
-          <img :src="phone" />
-          <p class="footer-text">031-123-4567</p>
-        </li>
-        <li class="footer-item">
-          <img :src="location" />
-          <p class="footer-text">
-            <a
-              href="https://www.skku.edu/skku/about/campusInfo/campusMap.do?campusCd=2&srSearchValue=#"
-            ></a>
-            400609, Semiconductor,<br />Natural Sciences Campus
-          </p>
-        </li>
-      </ul>
-      <ul class="footer-detail">
-        <li class="footer-item">
-          <img :src="github" />
-          <p class="footer-text">
-            <a href="https://github.com/skku-npc/skku-coding-platform"
-              >GitHub</a
-            >
-          </p>
-        </li>
-        <li class="footer-item">
-          <img :src="kakao" />
-          <p class="footer-text">
-            <a href="http://pf.kakao.com/_UKraK/chat"></a>Kakao Channel
-          </p>
-        </li>
-        <li class="footer-item">
-          <img :src="link" />
-          <p class="footer-text">
-            <a href="https://npc.skku.edu"></a> Algorithm Club NPC
-          </p>
-        </li>
-      </ul>
-      <div class="footer-logo">
-        <img :src="skku" />
+      <div class="icons">
+        <a v-clipboard:copy="email" @click="copy"><img :src="mail" /></a>
+        <a href="https://github.com/skku-npc/skku-coding-platform"><img :src="github" /></a>
+        <a href="http://pf.kakao.com/_UKraK/chat"><img :src="kakao" /></a>
+        <a href="https://npc.skku.edu"><img :src="link" /></a>
       </div>
-    </div>
-    <div class="footer-bottom">
-      <span> (c) 2011-2021 SKKU NPC Club </span>
+      <div class="footer-bottom">
+        <span> © 2011-2021 SKKU NPC Club </span>
+      </div>
     </div>
   </footer>
 </template>
@@ -60,6 +20,7 @@ export default {
   data () {
     return {
       version: process.env.VERSION,
+      email: 'example@skku.edu',
       phone: require('@/assets/icons/phone.svg'),
       kakao: require('@/assets/icons/kakao.svg'),
       link: require('@/assets/icons/link.svg'),
@@ -76,6 +37,11 @@ export default {
   },
   mounted () {
     this.getWebsiteConfig()
+  },
+  methods: {
+    copy () {
+      this.$success('Email is copied')
+    }
   }
 }
 </script>
@@ -106,51 +72,30 @@ a {
   width: 100%;
   position: absolute;
   bottom: 0;
-  font-size: 18px;
-  background: #8dc63f;
   margin-top: 250px;
+  background: #FFFFFF;
+  color:#aaaaaa;
 }
 .footer-info {
   padding-bottom: 1vh;
-  color: white;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  flex-wrap: wrap;
-}
-.footer-detail {
-  padding-top: 30px;
-  width: 150px;
-  height: 20vh;
-  text-align: left;
-}
-.footer-logo {
-  width: 300px;
-  height: 70px;
-  img {
-    position:relative;
-    width:100%;
-    height:100%;
-  }
-}
-.footer-item {
-  width: 270px;
-  height: 3vh;
-  margin-bottom: 3vh;
-  display: flex;
-  flex-direction: row;
-}
-.footer-text {
-  margin-left: 20px;
-}
-img {
-  object-fit: contain;
 }
 .footer-bottom {
-  background: white;
-  color: #8dc63f;
-  text-align: right;
-  padding-right: 10px;
+  font-size:16px;
+}
+.icons {
+  margin-top:16px;
+  margin-bottom:16px;
+  > a{
+    margin: 16px 16px 16px 16px;
+  }
+}
+img {
+  width:20px;
+  height:20px;
+  filter: invert(36%) sepia(3%) saturate(0%) hue-rotate(153deg) brightness(94%) contrast(88%);
 }
 </style>
