@@ -46,6 +46,10 @@
           {{data.value}}
           <b-icon icon="check2-circle" style="color: #8DC63F;" font-scale="1.2" v-if="data.item.my_status===0"></b-icon>
         </template>
+        <template #cell(difficulty)="data">
+          <div class="circle mr-2"/>
+          {{data.value}}
+        </template>
         <template #cell(AC_Rate)="data">
           {{ getACRate(data.item.accepted_number, data.item.submission_number) }}
         </template>
@@ -79,7 +83,7 @@ export default {
   mixins: [ProblemMixin],
   data () {
     return {
-      perPage: 10,
+      perPage: 20,
       currentPage: 1,
       checked: false,
       problemList: [],
@@ -162,7 +166,7 @@ export default {
       await this.getProblemList()
     },
     levelCircle (value) {
-      return 'level' + value[5] + '-circle'
+      return 'level' + value[5]
     },
     goProblem (item) {
       this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
@@ -226,44 +230,6 @@ export default {
   .problem-title-field{
     width: 25%;
   }
-
-  /deep/ .table {
-    & .level1-circle::before {
-      content: '●';
-      color: #CC99C9;
-      margin-right: 10px;
-    }
-    & .level2-circle::before{
-      content: '●';
-      color: #9EC1CF;
-      margin-right: 10px;
-    }
-    & .level3-circle::before{
-      content: '●';
-      color: #A1F2C2;
-      margin-right: 10px;
-    }
-    & .level4-circle::before{
-      content: '●';
-      color: #B8FF81;
-      margin-right: 10px;
-    }
-    & .level5-circle::before{
-      content: '●';
-      color: #F3EC53;
-      margin-right: 10px;
-    }
-    & .level6-circle::before{
-      content: '●';
-      color: #FEB144;
-      margin-right: 10px;
-    }
-    & .level7-circle::before{
-      content: '●';
-      color: #FF6663;
-      margin-right: 10px;
-    }
-  }
   .dropdown-item{
     font-family: Manrope;
   }
@@ -286,5 +252,36 @@ export default {
   }
   .tags {
     color:#767676;
+  }
+  .circle {
+    position: relative;
+    top: 1px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  /deep/ .table {
+    & .level1 .circle{
+      background: #CC99C9;
+    }
+    & .level2 .circle{
+      background: #9EC1CF;
+    }
+    & .level3 .circle{
+      background: #A1F2C2;
+    }
+    & .level4 .circle{
+      background: #B8FF81;
+    }
+    & .level5 .circle{
+      background: #F3EC53;
+    }
+    & .level6 .circle{
+      background: #FEB144;
+    }
+    & .level7 .circle{
+      background: #FF6663;
+    }
   }
 </style>

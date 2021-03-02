@@ -190,3 +190,14 @@ $list-group-border-color: rgba(0, 0, 0, 0);
   height: 70px;
   vertical-align: middle !important;
 }
+
+.table {
+  & .thead-light th {
+    background-color: #fdfdfd;
+    border-top: 1px solid #fafcfd;
+    border-bottom: 1px solid #fafcfd;
+  }
+  & tr {
+    outline: none;
+  }
+}
