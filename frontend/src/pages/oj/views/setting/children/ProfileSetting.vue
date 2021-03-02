@@ -10,8 +10,8 @@
           <b-form-select class="setting-select" v-model="formProfile.language" :options="languages" :selected="formProfile.language"></b-form-select>
           </b-row>
           <b-row class="mb-4">
-            <b-button class="setting-btn" variant="success" @click="updateProfile" :loading="loadingSaveBtn">
-              Change Language
+            <b-button class="setting-btn" variant="success" @click="updateLanguage">
+              <b-spinner v-if="loading.btnLanguage" small></b-spinner> Change Language
             </b-button>
           </b-row>
       </b-form>
@@ -21,8 +21,8 @@
           <b-form-select class="setting-select" v-model="formProfile.major" :options="majors" :selected="formProfile.major"></b-form-select>
           </b-row>
           <b-row>
-            <b-button class="setting-btn" variant="success" @click="updateMajor" :loading="loadingSaveBtn">
-              Change Major
+            <b-button class="setting-btn" variant="success" @click="updateMajor">
+              <b-spinner v-if="loading.btnMajor" small></b-spinner> Change Major
             </b-button>
           </b-row>
       </b-form>
@@ -43,7 +43,7 @@
           <b-form-input class="setting-input" type="password" v-model="formPassword.again_password" required></b-form-input>
         </b-form-group>
         <b-button class="setting-btn" variant="success" @click="changePassword">
-          Change Password
+          <b-spinner v-if="loading.btnPassword" small></b-spinner> Change Password
         </b-button>
       </b-form>
       <b-form>
@@ -61,7 +61,7 @@
           <b-form-input type="text" v-model="formEmail.tfa_code"></b-form-input>
         </b-form-group>
         <b-button class="setting-btn" variant="success" @click="changeEmail">
-          Change Email
+          <b-spinner v-if="loading.btnEmail" small></b-spinner> Change Email
         </b-button>
       </b-form>
     </div>
@@ -78,7 +78,9 @@ export default {
     return {
       loading: {
         btnPassword: false,
-        btnEmail: false
+        btnEmail: false,
+        btnLanguage: false,
+        btnMajor: false
       },
       loadingSaveBtn: false,
       loadingUploadBtn: false,
@@ -157,33 +159,39 @@ export default {
     })
   },
   methods: {
-    updateProfile () {
-      this.loadingSaveBtn = true
+    updateLanguage () {
+      this.loading.btnLanguage = true
       const updateData = utils.filterEmptyValue(Object.assign({}, this.formProfile))
       api.updateProfile(updateData).then(res => {
         this.$success('Success')
         this.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
-        this.loadingSaveBtn = false
+        this.loading.btnLanguage = false
       }, _ => {
-        this.loadingSaveBtn = false
+        this.loading.btnLanguage = false
       })
     },
     updateMajor () {
+      this.loading.btnMajor = true
       const major = {
         major: this.formProfile.major
       }
       api.updateUser(major).then(res => {
         this.$success('Success')
+        this.loading.btnMajor = false
+      }, _ => {
+        this.loading.btnMajor = false
       })
     },
     changePassword () {
       this.loading.btnPassword = true
       const data = Object.assign({}, this.formPassword)
       if (data.again_password !== data.new_password) {
+        this.loading.btnPassword = false
         return this.$error('New password does not match')
       }
       if (data.old_password === data.new_password) {
-        return this.$error('The new password doesn\'t change')
+        this.loading.btnPassword = false
+        return this.$error('New password doesn\'t change')
       }
       delete data.again_password
       if (!this.visible.tfaRequired) {
@@ -193,9 +201,9 @@ export default {
         this.loading.btnPassword = false
         this.visible.passwordAlert = true
         this.$success('Updated password successfully.\nPlease login with new password.', 2500)
+        this.visible.passwordAlert = false
         setTimeout(() => {
           this.$bvModal.hide('setting')
-          this.visible.passwordAlert = false
           this.$router.push({ name: 'logout' })
         }, 2500)
       }, res => {
@@ -214,11 +222,13 @@ export default {
       api.changeEmail(data).then(res => {
         this.loading.btnEmail = false
         this.visible.emailAlert = true
-        this.$success('Change email successfully')
+        this.$success('Email changed successfully')
+        this.formEmail.old_email = this.formEmail.new_email
       }, res => {
         if (res.data.data === 'tfa_required') {
           this.visible.tfaRequired = true
         }
+        this.loading.btnEmail = false
       })
     }
   },

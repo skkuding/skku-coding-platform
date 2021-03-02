@@ -41,12 +41,8 @@
           </b-row>
         </b-container>
       </b-form>
-      <b-button
-        class="sign-btn"
-        variant="primary"
-        @click="resetPassword"
-        style="margin-left:32px;">
-        Reset Password
+      <b-button class="sign-btn" variant="primary" @click="resetPassword" style="margin-left:32px;">
+        <b-spinner v-if="btnLoading" small></b-spinner> Reset Password
       </b-button>
     </template>
   </div>

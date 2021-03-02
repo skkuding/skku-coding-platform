@@ -16,6 +16,7 @@ export default {
       this.$router.replace({
         path: '/'
       })
+      this.$success('Email authentication succeeded. Now you can sign in!', 2500)
     })
   }
 }

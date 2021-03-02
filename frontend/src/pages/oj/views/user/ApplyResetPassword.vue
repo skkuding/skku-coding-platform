@@ -19,7 +19,9 @@
               </div>
             </div>
           </b-row>
-          <b-button @click="sendEmail" variant="success" class="sign-btn mb-4">Send Password Reset Email</b-button>
+          <b-button @click="sendEmail" variant="success" class="sign-btn mb-4">
+            <b-spinner v-if="btnResetLoading" small></b-spinner> Send Password Reset Email
+          </b-button>
         </b-container>
       </b-form>
       <div class="modal-low">
@@ -44,7 +46,7 @@ export default {
     return {
       captchaSrc: '',
       successApply: false,
-      btnLoading: false,
+      btnResetLoading: false,
       formResetPassword: {
         email: '',
         captcha: ''
@@ -57,14 +59,14 @@ export default {
   methods: {
     ...mapActions(['changeModalStatus']),
     sendEmail () {
-      this.btnLoading = true
+      this.btnResetLoading = true
       api.applyResetPassword(this.formResetPassword).then(res => {
         setTimeout(() => {
-          this.btnLoading = false
+          this.btnResetLoading = false
           this.successApply = true
         }, 2000)
       }, _ => {
-        this.btnLoading = false
+        this.btnResetLoading = false
         this.formResetPassword.captcha = ''
         this.getCaptchaSrc()
       })

@@ -17,7 +17,9 @@
         <b-row class="mb-4">
           <b-form-input type="password" v-model="formLogin.password" placeholder="Password" @keydown.enter.native="handleLogin" />
         </b-row>
-        <b-button class="sign-btn" @click="handleLogin" variant="outline">Sign In</b-button>
+        <b-button data-loading-text="a" class="sign-btn" @click="handleLogin" variant="outline">
+          <b-spinner v-if="btnLoginLoading" small></b-spinner> Sign In
+        </b-button>
       </b-container>
       </b-form>
       <div class="modal-low mt-5 font-bold">
@@ -40,7 +42,6 @@ export default {
       formLogin: {
         username: '',
         password: '',
-        // 지금은 안쓰는 필드지만 혹시 몰라서 백엔드로 넘기는거만 남겨둠
         tfa_code: ''
       }
     }

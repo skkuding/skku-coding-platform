@@ -31,11 +31,8 @@
         </div>
       </b-container>
     </b-form>
-    <b-button
-      variant="primary"
-      @click="handleRegister"
-      class="sign-btn">
-      Register
+    <b-button variant="primary" @click="handleRegister" class="sign-btn">
+       <b-spinner v-if="btnRegisterLoading" small></b-spinner> Register
     </b-button>
     <div class="modal-low mt-3 font-bold" style="text-align:center;">
       <a @click="switchMode('login')">
@@ -99,7 +96,7 @@ export default {
       delete formData.passwordAgain
       this.btnRegisterLoading = true
       api.register(formData).then(res => {
-        this.$success('Thanks for your registering, you can login now')
+        this.$success('You can login after email authentication. Please check your mailbox.', 2500)
         this.switchMode('login')
         this.btnRegisterLoading = false
       }, _ => {
