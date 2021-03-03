@@ -52,6 +52,10 @@ export default {
     theme: {
       type: String,
       default: 'material'
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -69,7 +73,8 @@ export default {
         // selected text auto highlighting
         styleSelectedText: true,
         lineWrapping: true,
-        highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true }
+        highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true },
+        readOnly: this.readOnly
       },
       mode: {
         'C++': 'text/x-csrc'

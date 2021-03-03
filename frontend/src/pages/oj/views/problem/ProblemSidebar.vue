@@ -135,9 +135,14 @@
             :fields="submission_info_table_fields">
           </b-table>
         </div>
-        <div id="submssion-source-code">
+        <div id="submission-source-code">
           <h3>Source Code</h3>
-          <p></p>
+          <p>({{submission_detail.bytes}} Bytes)</p>
+          <CodeMirror
+            readOnly
+            :value="submission_detail.code"
+            :language="submission_detail.language"
+            theme="material"/>
         </div>
         <div id="submission-detail-table">
           <b-table class="align-center"
@@ -159,11 +164,12 @@ import { mapState } from 'vuex'
 import api from '@oj/api'
 import time from '@/utils/time'
 import { JUDGE_STATUS } from '@/utils/constants'
+import CodeMirror from '@oj/components/CodeMirror.vue'
 
 export default {
   name: 'ProblemSidebar',
   components: {
-
+    CodeMirror
   },
   props: ['hide', 'contestID', 'problemID'],
   data () {
@@ -171,11 +177,7 @@ export default {
       clarifications: [],
       my_submissions: [],
       all_submissions: [],
-      submission_detail: {
-        id: '',
-        code: '',
-        language: ''
-      },
+      submission_detail: {},
 
       // Map (key: problem id, value: problem title)
       problem_titles: {},
@@ -312,7 +314,8 @@ export default {
       data = {
         ...data,
         ...data.statistic_info,
-        result: JUDGE_STATUS[data.result].name
+        result: JUDGE_STATUS[data.result].name,
+        bytes: new Blob([data.code]).size
       }
 
       if (data.info && data.info.data) {
@@ -463,17 +466,31 @@ export default {
 
           tr th:first-child,
           tr td:first-child {
-            padding-left: 40px;
+            padding-left: 50px;
           }
 
           tr th:last-child,
           tr td:last-child {
-            padding-right: 40px;
+            padding-right: 50px;
+          }
+        }
+
+        #submission-source-code {
+          padding: 20px 50px;
+          color: white;
+
+          h3 {
+            font-size: 30px;
+            display: inline;
+          }
+          p {
+            font-size: 25px;
           }
         }
 
         #submission-detail-table {
           table {
+            font-size: 13px;
             color: white;
             border-collapse: collapse;
 
