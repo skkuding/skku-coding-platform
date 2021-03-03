@@ -37,7 +37,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>Clarifications</h1>
-            <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
+            <b-icon icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
         <div id="clarifications-table">
@@ -65,7 +65,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>My Submissions</h1>
-            <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
+            <b-icon icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
         <div id="my-submissions-table">
@@ -96,7 +96,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>All Submissions</h1>
-            <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
+            <b-icon icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
         <div id="all-submissions-table">
@@ -126,7 +126,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>Submission #{{submission_detail.id}}</h1>
-            <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
+            <b-icon icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
         <div id="submission-info-table">
@@ -415,6 +415,10 @@ export default {
             margin-top: 10px;
             margin-left: 10px;
             font-size: 35px;
+          }
+
+          .close-icon {
+            font-size: 60px;
           }
         }
       }
