@@ -6,7 +6,8 @@
   >
     <div class="logo">
       <img
-        src="@/assets/logo.svg"
+        src="@/assets/logos/logo.png"
+        style="height=35px; width=auto;"
         alt="oj admin"
       >
     </div>
@@ -99,11 +100,6 @@ export default {
     .logo {
       margin: 20px 0;
       text-align: center;
-      img {
-        width: 90px;
-        height: 90px;
-        filter: invert(68%) sepia(59%) saturate(458%) hue-rotate(42deg) brightness(94%) contrast(88%);
-      }
     }
   }
 </style>

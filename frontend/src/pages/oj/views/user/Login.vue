@@ -2,7 +2,7 @@
   <div>
     <div class="logo">
       <div class="logo-img">
-        <img src="@/assets/logo.svg" alt=""/>
+        <img src="@/assets/logos/logo.svg" alt=""/>
       </div>
       <div class="logo-title font-bold">
         <h4>SKKU</h4>

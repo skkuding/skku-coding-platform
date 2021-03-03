@@ -21,13 +21,10 @@ export default {
     return {
       version: process.env.VERSION,
       email: 'example@skku.edu',
-      phone: require('@/assets/icons/phone.svg'),
       kakao: require('@/assets/icons/kakao.svg'),
       link: require('@/assets/icons/link.svg'),
       github: require('@/assets/icons/github.svg'),
-      mail: require('@/assets/icons/mail.svg'),
-      location: require('@/assets/icons/location.svg'),
-      skku: require('@/assets/logos/skku.svg')
+      mail: require('@/assets/icons/mail.svg')
     }
   },
   created () {

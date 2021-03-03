@@ -92,7 +92,4 @@ a {
   }
 }
 
-.fadeInUp-enter-active {
-  animation: fadeInUp .8s;
-}
 </style>
