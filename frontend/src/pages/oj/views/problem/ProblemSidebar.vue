@@ -129,21 +129,21 @@
             <b-icon icon="x" scale="4" shift-v="-15" shift-h="-10" @click="close()"/>
           </div>
         </template>
-        <div>
-          <span>{{submission_detail.problem_title}}</span>
-          <span>{{submission_detail.submission_time}}</span>
-          <span>{{submission_detail.username}}</span>
-          <span>{{submission_detail.language}}</span>
-          <span>{{submission_detail.result}}</span>
-          <span>{{submission_detail.code_length}}</span>
-          <span>{{submission_detail.code}}</span>
-          <span></span>
+        <div id="submission-info-table">
+          <b-table borderless class="align-center"
+            :items="[submission_detail]"
+            :fields="submission_info_table_fields">
+          </b-table>
+        </div>
+        <div id="submssion-source-code">
+          <h3>Source Code</h3>
+          <p></p>
         </div>
         <div id="submission-detail-table">
           <b-table class="align-center"
             :items="my_submissions"
             :per-page="submission_detail_table_rows"
-            :fields="submission_table_fields">
+            :fields="submission_detail_table_fields">
             <template #cell(result)="data">
               <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
             </template>
@@ -182,17 +182,11 @@ export default {
       clarifications_table_fields: [
         'Title',
         'Clarifications',
-        {
-          label: 'Created Time',
-          key: 'created_time'
-        }
+        { label: 'Created Time', key: 'created_time' }
       ],
       submission_table_fields: [
         'Problem',
-        {
-          label: 'Submission Time',
-          key: 'submission_time'
-        },
+        { label: 'Submission Time', key: 'submission_time' },
         'Language',
         'User',
         'Result'
@@ -204,9 +198,22 @@ export default {
         username: ''
       },
 
-      // Modal table pagination
       table_rows: 8,
+
+      submission_info_table_fields: [
+        { label: 'Problem', key: 'problem' },
+        { label: 'Submission Time', key: 'create_time' },
+        { label: 'User', key: 'username' },
+        { label: 'Language', key: 'language' },
+        { label: 'Result', key: 'result' }
+      ],
       submission_detail_table_rows: 5,
+      submission_detail_table_fields: [
+        { label: '#', key: 'id' },
+        { label: 'Result', key: 'result' },
+        { label: 'Exec time', key: 'time_cost' },
+        { label: 'Memory', key: 'memory_cost' }
+      ],
       clarifications_page: 1,
       my_submissions_page: 1,
       all_submissions_page: 1,
@@ -299,9 +306,14 @@ export default {
       await this.getSubmissionDetail(item.ID)
       this.submission_detail_modal_show = true
     },
-    async getSubmissionDetail (problemID) {
-      const res = await api.getSubmission(problemID)
-      const data = res.data.data
+    async getSubmissionDetail (submissionID) {
+      const res = await api.getSubmission(submissionID)
+      let data = res.data.data
+      data = {
+        ...data,
+        ...data.statistic_info,
+        result: JUDGE_STATUS[data.result].name
+      }
 
       if (data.info && data.info.data) {
         // score exist means the submission is OI problem submission
@@ -312,7 +324,7 @@ export default {
           // TODO : 테이블에 Admin Column(Real time, Signal) 추가
         }
       }
-      this.submissionDetail = data
+      this.submission_detail = data
     },
     getTimeFormat (value) {
       return time.utcToLocal(value, 'YYYY-MM-DD HH:mm')
@@ -439,6 +451,48 @@ export default {
               min-width: 100px;
               padding: 15px 25px;
               border-top: 1px solid #3B4F56;
+            }
+          }
+        }
+
+        #submission-info-table {
+          table {
+            color: white;
+            font-size: 15px;
+          }
+
+          tr th:first-child,
+          tr td:first-child {
+            padding-left: 40px;
+          }
+
+          tr th:last-child,
+          tr td:last-child {
+            padding-right: 40px;
+          }
+        }
+
+        #submission-detail-table {
+          table {
+            color: white;
+            border-collapse: collapse;
+
+            th {
+              border: none;
+            }
+
+            td {
+              border-color: #3B4F56;
+            }
+
+            tr th:first-child,
+            tr td:first-child {
+              padding-left: 70px;
+            }
+
+            tr th:last-child,
+            tr td:last-child {
+              padding-right: 70px;
             }
           }
         }

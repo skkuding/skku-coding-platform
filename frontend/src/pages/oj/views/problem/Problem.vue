@@ -201,7 +201,7 @@ import api from '@oj/api'
 import ProblemSidebar from './ProblemSidebar.vue'
 
 export default {
-  name: 'Problem Details',
+  name: 'ProblemDetails',
   components: {
     CodeMirror,
     ProblemSidebar
