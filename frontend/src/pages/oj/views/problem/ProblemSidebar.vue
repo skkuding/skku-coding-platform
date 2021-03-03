@@ -17,7 +17,7 @@
         </ul>
       </b-row>
       <b-row class="sidebar-row">
-        <h2 v-b-modal.clarifications-modal>
+        <h2 v-b-modal.clarifications-modal @click="getContestAnnouncementList">
           <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
           Clarifications
         </h2>
@@ -45,7 +45,14 @@
             class="align-center"
             :items="clarifications"
             :per-page="table_rows"
-            :current-page="clarifications_page">
+            :current-page="clarifications_page"
+            :fields="clarifications_table_fields">
+            <template #cell(Clarifications)="data">
+              <p v-html="data.value"/>
+            </template>
+            <template #cell(created_time)="data">
+              {{ getTimeFormat(data.value) }}
+            </template>
           </b-table>
           <b-pagination class="pagination"
             v-model="clarifications_page"
@@ -73,6 +80,9 @@
             <template #cell(result)="data">
               <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
             </template>
+            <template #cell(submission_time)="data">
+              {{ getTimeFormat(data.value) }}
+            </template>
           </b-table>
           <b-pagination class="pagination"
             v-model="my_submissions_page"
@@ -98,6 +108,9 @@
             :fields="submission_table_fields">
             <template #cell(result)="data">
               <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
+            </template>
+            <template #cell(submission_time)="data">
+              {{ getTimeFormat(data.value) }}
             </template>
           </b-table>
           <b-pagination class="pagination"
@@ -166,7 +179,24 @@ export default {
 
       // Map (key: problem id, value: problem title)
       problem_titles: {},
-      submission_table_fields: ['Problem', 'Submission Time', 'Language', 'User', 'Result'],
+      clarifications_table_fields: [
+        'Title',
+        'Clarifications',
+        {
+          label: 'Created Time',
+          key: 'created_time'
+        }
+      ],
+      submission_table_fields: [
+        'Problem',
+        {
+          label: 'Submission Time',
+          key: 'submission_time'
+        },
+        'Language',
+        'User',
+        'Result'
+      ],
 
       formFilter: {
         myself: false,
@@ -185,7 +215,7 @@ export default {
     }
   },
   async mounted () {
-    if (this.contestID) {
+    if (this.$route.params.contestID) {
       await this.getContestProblems()
     }
     this.initProblemTitles()
@@ -206,6 +236,17 @@ export default {
       for (let i = 0; i < this.contestProblems.length; i++) {
         this.problem_titles[this.contestProblems[i]._id] = this.contestProblems[i].title
       }
+    },
+    async getContestAnnouncementList () {
+      const result = await api.getContestAnnouncementList(this.contestID)
+      const data = result.data.data
+      this.clarifications = data.map(v => {
+        return {
+          Title: v.title,
+          Clarifications: v.content,
+          created_time: v.create_time
+        }
+      })
     },
     async getMySubmissions () {
       // Initialize problem id-title map
@@ -234,7 +275,7 @@ export default {
         return {
           ID: v.id,
           Problem: this.problem_titles[v.problem],
-          'Submission Time': time.utcToLocal(v.create_time),
+          submission_time: v.create_time,
           Language: v.language,
           User: v.username,
           Result: JUDGE_STATUS[v.result].name
@@ -272,6 +313,9 @@ export default {
         }
       }
       this.submissionDetail = data
+    },
+    getTimeFormat (value) {
+      return time.utcToLocal(value, 'YYYY-MM-DD HH:mm')
     }
   },
   computed: {

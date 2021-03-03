@@ -14,7 +14,7 @@
         @row-clicked="goContest"
       >
         <template #cell(start_time)="data">
-          {{ getTimeFormat(data.value, 'YYYY-M-D HH:mm') }}
+          {{ getTimeFormat(data.value) }}
         </template>
         <template #cell(duration)="data">
           {{ getDuration(data.item.start_time, data.item.end_time) }}
