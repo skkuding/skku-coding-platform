@@ -185,7 +185,9 @@ export default {
     }
   },
   async mounted () {
-    await this.getContestProblems()
+    if (this.contestID) {
+      await this.getContestProblems()
+    }
     this.initProblemTitles()
   },
   methods: {
