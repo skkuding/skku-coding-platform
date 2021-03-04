@@ -49,11 +49,11 @@
     <b-navbar id="inner-header" type="dark">
       <b-navbar-nav>
         <b-nav-item class="menu-icon" active>
-          <b-icon icon="list" scale="1.8" shift-v="-3" v-b-toggle.sidebar/>
+          <b-icon icon="list" scale="1.4" v-b-toggle.sidebar/>
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav>
-        <b-nav-item to="#" class="active-link" active>
+        <b-nav-item to="#" class="active-link problem-title" active>
           {{problem.title}}
         </b-nav-item>
       </b-navbar-nav>
@@ -504,6 +504,7 @@ export default {
 
     height: 58px;
     border-bottom: 2px solid white;
+    font-size: 18px;
   }
 
   .dropdown {
@@ -624,5 +625,4 @@ export default {
     }
   }
 }
-
 </style>

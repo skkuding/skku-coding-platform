@@ -17,7 +17,7 @@
         </ul>
       </b-row>
       <b-row class="sidebar-row">
-        <h2 v-b-modal.clarifications-modal @click="getContestAnnouncementList">
+        <h2 v-if="contestID" v-b-modal.clarifications-modal @click="getContestAnnouncementList">
           <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
           Clarifications
         </h2>
@@ -187,7 +187,6 @@ export default {
         { label: 'Created Time', key: 'created_time' }
       ],
       submission_table_fields: [
-        'Problem',
         { label: 'Submission Time', key: 'submission_time' },
         'Language',
         'User',
@@ -203,7 +202,6 @@ export default {
       table_rows: 8,
 
       submission_info_table_fields: [
-        { label: 'Problem', key: 'problem' },
         { label: 'Submission Time', key: 'create_time' },
         { label: 'User', key: 'username' },
         { label: 'Language', key: 'language' },
@@ -226,6 +224,8 @@ export default {
   async mounted () {
     if (this.$route.params.contestID) {
       await this.getContestProblems()
+      this.submission_table_fields.unshift('Problem')
+      this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
     }
     this.initProblemTitles()
   },
@@ -281,14 +281,17 @@ export default {
       const result = await api[func](0, 1000, params)
       const data = result.data.data
       const submissions = data.results.map(v => {
-        return {
+        var info = {
           ID: v.id,
-          Problem: this.problem_titles[v.problem],
           submission_time: v.create_time,
           Language: v.language,
           User: v.username,
           Result: JUDGE_STATUS[v.result].name
         }
+        if (this.contestID) {
+          info.Problem = this.problem_titles[v.problem]
+        }
+        return info
       })
       return submissions
     },
@@ -311,6 +314,9 @@ export default {
     async getSubmissionDetail (submissionID) {
       const res = await api.getSubmission(submissionID)
       let data = res.data.data
+      if (!this.contestID) {
+        delete data.problem
+      }
       data = {
         ...data,
         ...data.statistic_info,
