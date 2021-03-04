@@ -12,7 +12,7 @@
         <b-nav-item>
           <b-icon icon="chevron-right"/>
         </b-nav-item>
-        <b-nav-item to="#">SKKU 코딩 플랫폼 모의 대회</b-nav-item>
+        <b-nav-item to="#">{{problem.contest_name}}</b-nav-item>
         <b-nav-item>
           <b-icon icon="chevron-right"/>
         </b-nav-item>
