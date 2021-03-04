@@ -139,9 +139,8 @@
           <h3>Source Code</h3>
           <p>({{submission_detail.bytes}} Bytes)</p>
           <CodeMirror
-            v-if="submission_detail_modal_show"
             readOnly
-            :value.sync="submission_detail.code"
+            :value="submission_detail.code"
             :language="submission_detail.language"
             theme="material"/>
         </div>
@@ -315,6 +314,8 @@ export default {
       data = {
         ...data,
         ...data.statistic_info,
+        id: data.id.substring(0, 6),
+        create_time: time.utcToLocal(data.create_time, 'YYYY-MM-DD HH:mm'),
         result: JUDGE_STATUS[data.result].name,
         bytes: new Blob([data.code]).size
       }
@@ -482,6 +483,7 @@ export default {
 
         #submission-source-code {
           padding: 20px 50px;
+          padding-bottom: 40px;
           color: white;
 
           h3 {
