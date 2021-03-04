@@ -139,8 +139,9 @@
           <h3>Source Code</h3>
           <p>({{submission_detail.bytes}} Bytes)</p>
           <CodeMirror
+            v-if="submission_detail_modal_show"
             readOnly
-            :value="submission_detail.code"
+            :value.sync="submission_detail.code"
             :language="submission_detail.language"
             theme="material"/>
         </div>
@@ -490,6 +491,15 @@ export default {
           p {
             font-size: 25px;
           }
+        }
+
+        // occasional code indent css fix
+        /deep/ #submission-source-code .CodeMirror-sizer {
+          margin-left: 38px !important;
+        }
+
+        /deep/ #submission-source-code .CodeMirror-gutter-wrapper {
+          left: -38px !important;
         }
 
         #submission-detail-table {

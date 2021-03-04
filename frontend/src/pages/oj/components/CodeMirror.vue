@@ -39,12 +39,6 @@ export default {
       type: String,
       default: ''
     },
-    languages: {
-      type: Array,
-      default: () => {
-        return ['C', 'C++', 'Java', 'Python2']
-      }
-    },
     language: {
       type: String,
       default: 'C++'
@@ -76,9 +70,7 @@ export default {
         highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true },
         readOnly: this.readOnly
       },
-      mode: {
-        'C++': 'text/x-csrc'
-      },
+      mode: {},
       themes: [
         { label: 'Monokai', value: 'monokai' },
         { label: 'm.Solarized_Light', value: 'solarized' },

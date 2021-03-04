@@ -161,7 +161,6 @@
         <b-row id="editor">
           <CodeMirror
             :value.sync="code"
-            :languages="problem.languages"
             :language="language"
             :theme="theme"
           />
