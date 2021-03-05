@@ -44,6 +44,15 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>
+    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
+      <component
+        :is="modalStatus.mode"
+        v-if="modalVisible"
+      />
+    </b-modal>
+    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
+      <profileSetting></profileSetting>
+    </b-modal>
 
     <b-navbar id="inner-header" type="dark">
       <b-navbar-nav>
@@ -194,12 +203,18 @@ import { JUDGE_STATUS, CONTEST_STATUS, buildProblemCodeKey } from '@/utils/const
 import api from '@oj/api'
 import ProblemSidebar from './ProblemSidebar.vue'
 import moment from 'moment'
+import register from '@oj/views/user/Register'
+import login from '@oj/views/user/Login'
+import profileSetting from '@oj/views/setting/children/ProfileSetting'
 
 export default {
   name: 'ProblemDetails',
   components: {
     CodeMirror,
-    ProblemSidebar
+    ProblemSidebar,
+    login,
+    register,
+    profileSetting
   },
   mixins: [FormMixin],
   data () {
@@ -259,7 +274,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['changeDomTitle']),
+    ...mapActions(['changeDomTitle', 'changeModalStatus']),
     async init () {
       this.$Loading.start()
       this.contestID = this.$route.params.contestID
@@ -310,6 +325,9 @@ export default {
     },
     handleRoute (route) {
       this.$router.push(route)
+    },
+    openWindow (route) {
+      window.open(route)
     },
     // User profile icon
     handleBtnClick (mode) {
@@ -458,6 +476,14 @@ export default {
         return { name: 'contest-submission-list', query: { problemID: this.problemID } }
       } else {
         return { name: 'submission-list', query: { problemID: this.problemID } }
+      }
+    },
+    modalVisible: {
+      get () {
+        return this.modalStatus.visible
+      },
+      set (value) {
+        this.changeModalStatus({ visible: value })
       }
     }
   },
