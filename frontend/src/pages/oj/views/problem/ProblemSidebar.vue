@@ -140,6 +140,7 @@
           <p>({{submission_detail.bytes}} Bytes)</p>
           <CodeMirror
             readOnly
+            :key="codemirror_key"
             :value="submission_detail.code"
             :language="submission_detail.language"
             theme="material"/>
@@ -218,7 +219,10 @@ export default {
       my_submissions_page: 1,
       all_submissions_page: 1,
 
-      submission_detail_modal_show: false
+      submission_detail_modal_show: false,
+
+      // for re-rendering when codemirror content is ready
+      codemirror_key: 1
     }
   },
   async mounted () {
@@ -310,6 +314,8 @@ export default {
     async onMySubmissionClicked (item, index, event) {
       await this.getSubmissionDetail(item.ID)
       this.submission_detail_modal_show = true
+      await this.$nextTick()
+      this.codemirror_key += 1
     },
     async getSubmissionDetail (submissionID) {
       const res = await api.getSubmission(submissionID)
