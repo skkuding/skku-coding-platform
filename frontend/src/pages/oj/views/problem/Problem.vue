@@ -38,7 +38,6 @@
           <template slot="button-content">
             <b-icon icon="person" scale="1.5"/>
           </template>
-          <b-dropdown-item to="/user-home">My Account</b-dropdown-item>
           <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
           <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
           <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
@@ -70,17 +69,14 @@
             </Tag>
           </template>
           <template v-else-if="this.contestID && !OIContestRealTimePermission">
-            <b-alert variant="success">Submitted Succesfully</b-alert>
+            <Tag type="dot" color="green">Submitted Succesfully</Tag>
           </template>
         </b-nav-item>
         <b-nav-item v-else-if="problem.my_status === 0">
-          <b-alert variant="success">You have solved the problem</b-alert>
+          <Tag type="dot" color="green">You have solved the problem</Tag>
         </b-nav-item>
         <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
-          <b-alert variant="success">You have submitted a solution</b-alert>
-        </b-nav-item>
-        <b-nav-item v-if="contestEnded">
-          <b-alert variant="warning">Contest has ended</b-alert>
+          <Tag type="dot" color="green">You have submitted a solution</Tag>
         </b-nav-item>
         <b-nav-item v-if="captchaRequired">
           <img :src="captchaSrc" id="captcha-img">
@@ -100,11 +96,10 @@
         </b-nav-item>
         <b-nav-item>
           <b-button class="btn-submit"
-            :disabled="problemSubmitDisabled || submitted"
+            :disabled="(contestID && problemSubmitDisabled) || submitted"
             @click="submitCode"
           >
-            <span v-if="submitting">Submitting...</span>
-            <span v-else>Submit</span>
+            <span>Submit</span>
           </b-button>
         </b-nav-item>
         <b-nav-item>
@@ -198,6 +193,7 @@ import { FormMixin } from '@oj/components/mixins'
 import { JUDGE_STATUS, CONTEST_STATUS, buildProblemCodeKey } from '@/utils/constants'
 import api from '@oj/api'
 import ProblemSidebar from './ProblemSidebar.vue'
+import moment from 'moment'
 
 export default {
   name: 'ProblemDetails',
@@ -247,6 +243,20 @@ export default {
   async mounted () {
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
     await this.init()
+    if (this.$route.params.contestID) {
+      this.route_name = this.$route.name
+      this.getContestProblems()
+      this.$store.dispatch('getContest').then(res => {
+        this.changeDomTitle({ title: res.data.data.title })
+        const data = res.data.data
+        const endTime = moment(data.end_time)
+        if (endTime.isAfter(moment(data.now))) {
+          this.timer = setInterval(() => {
+            this.$store.commit(types.NOW_ADD_1S)
+          }, 1000)
+        }
+      })
+    }
   },
   methods: {
     ...mapActions(['changeDomTitle']),
@@ -286,6 +296,17 @@ export default {
           this.code = template[this.language]
         }
       }
+    },
+    getContestProblems () {
+      this.$store.dispatch('getContestProblems').then(res => {
+        if (this.isAuthenticated) {
+          if (this.contestRuleType === 'ACM') {
+            this.addStatusColumn(this.ACMTableColumns, res.data.data)
+          } else if (this.OIContestRealTimePermission) {
+            this.addStatusColumn(this.ACMTableColumns, res.data.data)
+          }
+        }
+      })
     },
     handleRoute (route) {
       this.$router.push(route)
@@ -454,6 +475,15 @@ export default {
   watch: {
     '$route' () {
       this.init()
+    },
+    contestEnded: () => {
+      this.$error('Contest has ended :<')
+    }
+  },
+  beforeDestroy () {
+    if (this.contestID) {
+      clearInterval(this.timer)
+      this.$store.commit(types.CLEAR_CONTEST)
     }
   }
 }
