@@ -289,8 +289,6 @@ class ProblemAPI(ProblemBase):
     def post(self, request):
         data = request.data
         _id = data["_id"]
-        if not _id:
-            return self.error("Display ID is required")
         if Problem.objects.filter(_id=_id, contest_id__isnull=True).exists():
             return self.error("Display ID already exists")
 
@@ -302,6 +300,10 @@ class ProblemAPI(ProblemBase):
         tags = data.pop("tags")
         data["created_by"] = request.user
         problem = Problem.objects.create(**data)
+
+        if not _id:
+            problem._id = problem.id
+            problem.save()
 
         for item in tags:
             try:
@@ -447,8 +449,6 @@ class ContestProblemAPI(ProblemBase):
             return self.error("Invalid rule type")
 
         _id = data["_id"]
-        if not _id:
-            return self.error("Display ID is required")
 
         if Problem.objects.filter(_id=_id, contest=contest).exists():
             return self.error("Duplicate Display id")
@@ -462,6 +462,10 @@ class ContestProblemAPI(ProblemBase):
         tags = data.pop("tags")
         data["created_by"] = request.user
         problem = Problem.objects.create(**data)
+
+        if not _id:
+            problem._id = problem.id
+            problem.save()
 
         for item in tags:
             try:
