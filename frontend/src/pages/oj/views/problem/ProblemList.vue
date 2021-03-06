@@ -67,7 +67,6 @@
     </div>
     <div class="pagination">
       <b-pagination
-        aria-controls="notice-list"
         v-model="currentPage"
         :total-rows="rows"
         :per-page="perPage"

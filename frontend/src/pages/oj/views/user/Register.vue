@@ -60,23 +60,13 @@ export default {
         password: '',
         passwordAgain: '',
         email: '',
-        major: null,
+        major: 'Major(원전공)',
         captcha: ''
       },
       majors: [
-        { value: null, text: 'Major' },
-        { value: 'CS', text: 'Computer Science' },
-        { value: 'CSE', text: 'Computer Science and Engineering' },
-        { value: 'Eng', text: 'Engineering' },
-        { value: 'Nat.Sci', text: 'Natural Science' },
-        { value: 'SOC', text: 'School of Convergence' },
-        { value: 'BE', text: 'Biomedical Engineering' },
-        { value: 'EE', text: 'Electronic and Electrical' },
-        { value: 'SSE', text: 'Semiconductor Systems Engineering' },
-        { value: 'SS', text: 'Sport Science' },
-        { value: 'Phar.', text: 'Pharmacy' },
-        { value: 'Medi.', text: 'Medicine' },
-        { value: 'Others', text: 'Others' }
+        { value: 'Major(원전공)', text: 'Major(원전공)' },
+        { value: 'Double Major(복수전공)', text: 'Double Major(복수전공)' },
+        { value: 'Non-CS Major(비전공)', text: 'Non-CS Major(비전공)' }
       ]
     }
   },

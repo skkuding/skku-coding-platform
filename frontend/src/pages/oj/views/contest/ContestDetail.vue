@@ -29,7 +29,6 @@
     </div>
     <div class="pagination">
       <b-pagination
-        aria-controls="notice-list"
         v-model="currentPage"
         :total-rows="contestProblems.length"
         :per-page="perPage"
