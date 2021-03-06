@@ -133,6 +133,9 @@
           <b-table borderless class="align-center"
             :items="[submission_detail]"
             :fields="submission_info_table_fields">
+            <template #cell(result)="data">
+              <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
+            </template>
           </b-table>
         </div>
         <div id="submission-source-code">
@@ -147,11 +150,11 @@
         </div>
         <div id="submission-detail-table">
           <b-table class="align-center"
-            :items="my_submissions"
+            :items="submission_detail.testcases"
             :per-page="submission_detail_table_rows"
             :fields="submission_detail_table_fields">
             <template #cell(result)="data">
-              <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
+              <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
             </template>
           </b-table>
         </div>
@@ -210,10 +213,10 @@ export default {
       ],
       submission_detail_table_rows: 5,
       submission_detail_table_fields: [
-        { label: '#', key: 'id' },
+        { label: '#', key: 'title' },
         { label: 'Result', key: 'result' },
-        { label: 'Exec time', key: 'time_cost' },
-        { label: 'Memory', key: 'memory_cost' }
+        { label: 'Exec time', key: 'exec_time' },
+        { label: 'Memory', key: 'memory' }
       ],
       clarifications_page: 1,
       my_submissions_page: 1,
@@ -311,7 +314,7 @@ export default {
     resultTextColor (result) {
       return result === 'Accepted' ? '#8DC63F' : '#FF4F28'
     },
-    async onMySubmissionClicked (item, index, event) {
+    async onMySubmissionClicked (item) {
       await this.getSubmissionDetail(item.ID)
       this.submission_detail_modal_show = true
       await this.$nextTick()
@@ -329,7 +332,17 @@ export default {
         id: data.id.substring(0, 6),
         create_time: time.utcToLocal(data.create_time, 'YYYY-MM-DD HH:mm'),
         result: JUDGE_STATUS[data.result].name,
-        bytes: new Blob([data.code]).size
+        bytes: new Blob([data.code]).size,
+        testcases: data.info.data.map(
+          tc => {
+            return {
+              title: tc.test_case,
+              result: JUDGE_STATUS[tc.result].name,
+              exec_time: tc.real_time,
+              memory: tc.memory
+            }
+          }
+        )
       }
 
       if (data.info && data.info.data) {

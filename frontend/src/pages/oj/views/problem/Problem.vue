@@ -72,7 +72,7 @@
             <Tag
               type="dot"
               :color="submissionStatus.color"
-              @click.native="handleRoute('/status/'+submissionId)"
+              @click.native="()=>{$refs.sidebar.onMySubmissionClicked({ID:submissionId})}"
             >
               {{ submissionStatus.text }}
             </Tag>
@@ -187,7 +187,7 @@
     </b-row>
     <b-sidebar id="sidebar" no-header backdrop>
       <template #default="{ hide }">
-        <ProblemSidebar :hide="hide" :contestID="contestID" :problemID="problemID"/>
+        <ProblemSidebar ref="sidebar" :hide="hide" :contestID="contestID" :problemID="problemID"/>
       </template>
     </b-sidebar>
   </div>
