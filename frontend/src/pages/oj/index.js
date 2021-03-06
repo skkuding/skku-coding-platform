@@ -64,10 +64,9 @@ Vue.component(VerticalMenu.name, VerticalMenu)
 Vue.component(VerticalMenuItem.name, VerticalMenuItem)
 Vue.component(Panel.name, Panel)
 
-// Vue.config.devtools = process.env.NODE_ENV !== 'production'
-Vue.config.devtools = true
-
+Vue.config.devtools = process.env.NODE_ENV !== 'production'
 // 注册全局消息提示
+
 Vue.prototype.$Message.config({
   duration: 2
 })
