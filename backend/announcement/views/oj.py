@@ -16,6 +16,7 @@ class AnnouncementAPI(APIView):
         announcements = Announcement.objects.filter(visible=True)
         return self.success(self.paginate_data(request, announcements, AnnouncementSerializer))
 
+
 class AnnouncementDetailAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[

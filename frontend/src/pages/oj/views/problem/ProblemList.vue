@@ -173,9 +173,6 @@ export default {
     },
     goProblem (item) {
       this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
-    },
-    difficultyColor (value) {
-      return DIFFICULTY_COLOR[value]
     }
   },
   watch: {

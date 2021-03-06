@@ -17,6 +17,7 @@ class ShareSubmissionSerializer(serializers.Serializer):
 
 
 class SubmissionModelSerializer(serializers.ModelSerializer):
+    problem_name = serializers.CharField(source="problem.title")
 
     class Meta:
         model = Submission

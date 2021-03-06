@@ -100,7 +100,6 @@ class UserSettingAPI(APIView):
         user = request.user
         if not user.is_authenticated:
             return self.success()
-        show_real_name = False
         username = request.GET.get("username")
         try:
             if username:
