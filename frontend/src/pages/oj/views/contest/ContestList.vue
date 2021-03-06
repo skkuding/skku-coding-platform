@@ -20,7 +20,12 @@
           {{ getDuration(data.item.start_time, data.item.end_time) }}
         </template>
         <template #cell(status)="data">
-          {{ CONTEST_STATUS_REVERSE[data.value].name }}
+          <b-icon
+            icon="circle-fill"
+            class="mr-2"
+            :style="'color:' + contestStatus(data.value).color"
+          />
+          {{ contestStatus(data.value).name }}
         </template>
       </b-table>
     </div>
@@ -138,6 +143,13 @@ export default {
     },
     getDuration (startTime, endTime) {
       return time.duration(startTime, endTime)
+    },
+    contestStatus (value) {
+      console.log(value)
+      return {
+        name: CONTEST_STATUS_REVERSE[value].name,
+        color: CONTEST_STATUS_REVERSE[value].color
+      }
     }
   },
   computed: {

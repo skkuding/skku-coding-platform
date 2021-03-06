@@ -70,6 +70,16 @@ export const JUDGE_STATUS = {
   }
 }
 
+export const DIFFICULTY_COLOR = {
+  Level1: '#CC99C9',
+  Level2: '#9EC1CF',
+  Level3: '#A1F2C2',
+  Level4: '#B8FF81',
+  Level5: '#F3EC53',
+  Level6: '#FEB144',
+  Level7: '#FF6663'
+}
+
 export const CONTEST_STATUS = {
   NOT_START: '1',
   UNDERWAY: '0',
@@ -79,16 +89,17 @@ export const CONTEST_STATUS = {
 export const CONTEST_STATUS_REVERSE = {
   1: {
     name: 'Not Started',
-    color: 'yellow'
+    color: '#5398D9'
   },
   0: {
     name: 'Underway',
-    color: 'green'
+    color: '#F1BA48'
   },
   '-1': {
     name: 'Ended',
-    color: 'red'
+    color: '#D75B66'
   }
+  // #D75B66 #23345C #F1BA48 #BD8A44
 }
 
 export const RULE_TYPE = {

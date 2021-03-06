@@ -1,34 +1,42 @@
 <template>
-    <div>
-      <b-card title="SKKU Coding Platform 2차 모의대회" class="border-0" bg-variant="transparent">
-        <div class="status mb-2">
-          <b-badge pill variant="primary">Ongoing</b-badge>
+  <div class="contest-list-card font-bold">
+    <div class="top-bar mb-4">
+      <h2 class="title"> {{ contest.title }} </h2>
+      <div class="problem-list-table">
+        <div class="status-container">
+          <b-icon
+            icon="circle-fill"
+            shift-h="-2"
+            shift-v="-3"
+            class="mx-1"
+            :style="'color:' + contestStatus.color"
+          />
+          {{ contestStatus.name }}
         </div>
-        <div class="table">
-          <b-table
-            hover
-            :fields="ACMTableColumns"
-            :items="ContestProblemList"
-            :per-page="perPage"
-            :current-page="currentPage"
-            head-variant="light"
-          >
-            <template #cell(index)="data">
-              {{ data.index + 1 }}
-            </template>
-          </b-table>
-        </div>
-        <div class="pagination">
-            <b-pagination
-              aria-controls="notice-list"
-              v-model="currentPage"
-              :total-rows=100
-              :per-page="perPage"
-              limit="3"
-            ></b-pagination>
-        </div>
-      </b-card>
+      </div>
     </div>
+    <div class="table">
+      <b-table
+        hover
+        :items="contestProblems"
+        :fields="contestProblemListFields"
+        :per-page="perPage"
+        :current-page="currentPage"
+        head-variant="light"
+        @row-clicked="goContestProblem"
+      >
+      </b-table>
+    </div>
+    <div class="pagination">
+      <b-pagination
+        aria-controls="notice-list"
+        v-model="currentPage"
+        :total-rows="contestProblems.length"
+        :per-page="perPage"
+        limit="3"
+      ></b-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -44,15 +52,27 @@ export default {
   mixins: [ProblemMixin],
   data () {
     return {
-      ACMTableColumns: [
+      // ACMTableColumns: [
+      //   {
+      //     label: '#',
+      //     key: 'id',
+      //     sortType: 'asc',
+      //     width: 150
+      //   },
+      //   {
+      //     label: this.$i18n.t('m.Title'),
+      //     key: 'title'
+      //   }
+      // ],
+      contest: {},
+      contestProblems: [],
+      contestProblemListFields: [
         {
           label: '#',
-          key: 'id',
-          sortType: 'asc',
-          width: 150
+          key: '_id'
         },
         {
-          label: this.$i18n.t('m.Title'),
+          label: 'Title',
           key: 'title'
         }
       ]
@@ -65,6 +85,7 @@ export default {
     this.$store.dispatch('getContest').then(res => {
       this.changeDomTitle({ title: res.data.data.title })
       const data = res.data.data
+      this.contest = data
       const endTime = moment(data.end_time)
       if (endTime.isAfter(moment(data.now))) {
         this.timer = setInterval(() => {
@@ -76,13 +97,15 @@ export default {
   methods: {
     getContestProblems () {
       this.$store.dispatch('getContestProblems').then(res => {
-        if (this.isAuthenticated) {
-          if (this.contestRuleType === 'ACM') {
-            this.addStatusColumn(this.ACMTableColumns, res.data.data)
-          } else if (this.OIContestRealTimePermission) {
-            this.addStatusColumn(this.ACMTableColumns, res.data.data)
-          }
-        }
+        const data = res.data.data
+        this.contestProblems = data
+        // if (this.isAuthenticated) {
+        //   if (this.contestRuleType === 'ACM') {
+        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        //   } else if (this.OIContestRealTimePermission) {
+        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        //   }
+        // }
       })
     },
     goContestProblem (row) {
@@ -133,6 +156,12 @@ export default {
     },
     showAdminHelper () {
       return this.isContestAdmin && this.contestRuleType === 'ACM'
+    },
+    contestStatus () {
+      return {
+        name: CONTEST_STATUS_REVERSE[this.contest.status].name,
+        color: CONTEST_STATUS_REVERSE[this.contest.status].color
+      }
     }
   },
   watch: {
@@ -149,13 +178,52 @@ export default {
 }
 </script>
 
-<style>
-  .pagination{
+<style lang="less" scoped>
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
+  .top-bar {
+    margin-top: 40px;
+    margin-left: 68px;
+    width: 90%;
+    display: flex;
+  }
+  .title {
+    color: #7C7A7B;
+    display:inline;
+    position:relative;
+    // top:36px;
+  }
+  .contest-list-card {
+    margin: 0 auto;
+    width: 90%;
+    font-family: Manrope;
+  }
+  .contest-list-card .problem-list-table {
+    margin: 0 0 0 auto;
+  }
+  .table{
+    width: 95% !important;
+    margin: 0 auto;
+  }
+  div.pagination{
+    margin-right: 5%;
+    margin-top: 20px;
     display: flex;
     justify-content: flex-end;
   }
-  .status{
+  .status-container {
+    position: relative;
+    top: 10px;
+    margin-right: 60px;
+    padding: 5px 8px 4px;
     display: flex;
-    justify-content: flex-end;
+    border: 2px solid #bdbdbd;
+    border-radius: 6px;
+    color: #828282;
+  }
+  .font-bold {
+    font-family: manrope_bold;
   }
 </style>

@@ -47,8 +47,12 @@
           <b-icon icon="check2-circle" style="color: #8DC63F;" font-scale="1.2" v-if="data.item.my_status===0"></b-icon>
         </template>
         <template #cell(difficulty)="data">
-          <div class="circle mr-2"/>
-          {{data.value}}
+          <b-icon
+            icon="circle-fill"
+            class="mr-2"
+            :style="'color:' + difficultyColor(data.value)"
+          />
+          {{ data.value }}
         </template>
         <template #cell(AC_Rate)="data">
           {{ getACRate(data.item.accepted_number, data.item.submission_number) }}
@@ -77,6 +81,7 @@
 import { mapGetters } from 'vuex'
 import api from '@oj/api'
 import { ProblemMixin } from '@oj/components/mixins'
+import { DIFFICULTY_COLOR } from '@/utils/constants'
 
 export default {
   name: 'problemList',
@@ -149,7 +154,6 @@ export default {
           page: this.page
         }
       )
-      console.log(res)
       this.total = res.data.data.total
       this.problemList = res.data.data.results
       if (this.isAuthenticated) {
@@ -165,11 +169,14 @@ export default {
       this.page = 1
       await this.getProblemList()
     },
-    levelCircle (value) {
-      return 'level' + value[5]
+    async difficultyColor (value) {
+      return DIFFICULTY_COLOR[value]
     },
     goProblem (item) {
       this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
+    },
+    difficultyColor (value) {
+      return DIFFICULTY_COLOR[value]
     }
   },
   watch: {
@@ -252,36 +259,5 @@ export default {
   }
   .tags {
     color:#767676;
-  }
-  .circle {
-    position: relative;
-    top: 1px;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-  /deep/ .table {
-    & .level1 .circle{
-      background: #CC99C9;
-    }
-    & .level2 .circle{
-      background: #9EC1CF;
-    }
-    & .level3 .circle{
-      background: #A1F2C2;
-    }
-    & .level4 .circle{
-      background: #B8FF81;
-    }
-    & .level5 .circle{
-      background: #F3EC53;
-    }
-    & .level6 .circle{
-      background: #FEB144;
-    }
-    & .level7 .circle{
-      background: #FF6663;
-    }
   }
 </style>
