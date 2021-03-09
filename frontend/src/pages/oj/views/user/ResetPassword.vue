@@ -1,52 +1,54 @@
 <template>
-  <b-modal ref="modal" centered hide-footer modal-class="modal-md">
-  <div class="font-bold">
-    <div class="logo-title font-bold">
-        <h4>Password Reset</h4>
-    </div>
-    <template v-if="!resetSuccess">
-      <b-form
-        ref="formResetPassword"
-        :model="formResetPassword"
-        @keydown.enter.native="resetPassword"
-      >
-      <b-container fluid="xl">
-        <b-row class="mb-4">
-          <b-form-input
-            v-model="formResetPassword.password"
-            type="password"
-            placeholder="Password"
-            @keydown.enter.native="resetPassword"
-          >
-          </b-form-input>
-        </b-row>
-        <b-row class="mb-4">
-          <b-form-input
-            v-model="formResetPassword.passwordAgain"
-            type="password"
-            placeholder="Password Again"
-            @keydown.enter.native="resetPassword"
-          >
-          </b-form-input>
-        </b-row>
-        <b-row class="mb-4">
-            <div class="oj-captcha">
-              <div class="oj-captcha-code">
-                <b-form-input class="captcha-input" v-model="formResetPassword.captcha" placeholder="Captcha" @keydown.enter.native="resetPassword"></b-form-input>
-              </div>
-              <div class="oj-captcha-img">
-                <img class="captcha-img" :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
-              </div>
-            </div>
+  <div>
+    <b-modal ref="modal" centered hide-footer modal-class="modal-md">
+    <template>
+      <div class="font-bold">
+      <div class="logo-title font-bold">
+          <h4>Password Reset</h4>
+      </div>
+        <b-form
+          ref="formResetPassword"
+          :model="formResetPassword"
+          @keydown.enter.native="resetPassword"
+        >
+        <b-container fluid="xl">
+          <b-row class="mb-4">
+            <b-form-input
+              v-model="formResetPassword.password"
+              type="password"
+              placeholder="Password"
+              @keydown.enter.native="resetPassword"
+            >
+            </b-form-input>
           </b-row>
-        </b-container>
-      </b-form>
-      <b-button class="sign-btn" variant="primary" @click="resetPassword" style="margin-left:32px;">
-        <b-spinner v-if="btnLoading" small></b-spinner> Reset Password
-      </b-button>
+          <b-row class="mb-4">
+            <b-form-input
+              v-model="formResetPassword.passwordAgain"
+              type="password"
+              placeholder="Password Again"
+              @keydown.enter.native="resetPassword"
+            >
+            </b-form-input>
+          </b-row>
+          <b-row class="mb-4">
+              <div class="oj-captcha">
+                <div class="oj-captcha-code">
+                  <b-form-input class="captcha-input" v-model="formResetPassword.captcha" placeholder="Captcha" @keydown.enter.native="resetPassword"></b-form-input>
+                </div>
+                <div class="oj-captcha-img">
+                  <img class="captcha-img" :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
+                </div>
+              </div>
+            </b-row>
+          </b-container>
+        </b-form>
+        <b-button class="sign-btn" variant="primary" @click="resetPassword" style="margin-left:32px;">
+          <b-spinner v-if="btnLoading" small></b-spinner> Reset Password
+        </b-button>
+      </div>
     </template>
+    </b-modal>
   </div>
-  </b-modal>
 </template>
 
 <script>
@@ -79,17 +81,16 @@ export default {
       this.btnLoading = true
       const data = Object.assign({}, this.formResetPassword)
       if (data.password !== data.passwordAgain) {
+        this.btnLoading = false
+        this.formResetPassword.captcha = ''
+        this.getCaptchaSrc()
         return this.$error('Password does not match')
       }
       delete data.passwordAgain
       api.resetPassword(data).then(res => {
-        this.btnLoading = false
         this.resetSuccess = true
         this.$success('Update password successfully.\nPlease login with new password.')
-        this.hideModal()
-        setTimeout(() => {
-          this.$router.push({ name: 'logout' })
-        }, 2000)
+        this.$router.push({ name: 'logout' })
       }, _ => {
         this.btnLoading = false
         this.formResetPassword.captcha = ''
