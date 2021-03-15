@@ -168,7 +168,7 @@ export default {
       this.page = 1
       await this.getProblemList()
     },
-    async difficultyColor (value) {
+    difficultyColor (value) {
       return DIFFICULTY_COLOR[value]
     },
     goProblem (item) {
