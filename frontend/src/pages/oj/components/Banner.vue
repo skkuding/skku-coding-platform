@@ -3,8 +3,6 @@
     <b-carousel
       :interval="4000"
       indicators
-      img-width="2048"
-      img-height="912"
       @sliding-start="onSlideStart"
       @sliding-end="onSlideEnd"
     >
@@ -39,13 +37,5 @@ export default {
 <style lang="less" scoped>
 .banner {
   position: relative;
-}
-.carousel-item {
-  height:512px;
-}
-@media screen and (max-width:1136px) {
-  .carousel-item {
-    height:412px;
-}
 }
 </style>
