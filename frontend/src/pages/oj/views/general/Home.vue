@@ -6,7 +6,7 @@
         <div class="post-card-header">
           <div class="post-card-title">
             <b-icon icon="exclamation-circle"/>
-            <p>Announcement</p>
+            <p>Notice</p>
           </div>
           <b-icon icon="list" shift-v="-4" @click="goAnnouncement()"/>
         </div>
