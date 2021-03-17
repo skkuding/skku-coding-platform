@@ -13,7 +13,7 @@
       <div class="announcement__title">{{ announcement.title }}</div>
       <div class="announcement__date">{{ getTimeFormat(announcement.create_time) }}</div>
     </div>
-    <div class="announcement__content">
+    <div class="announcement__content" v-katex>
       <p v-html="announcement.content"/>
     </div>
     <b-list-group class="announcement__pagination">

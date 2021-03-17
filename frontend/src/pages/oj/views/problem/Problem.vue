@@ -132,12 +132,14 @@
 
     <b-row id="problem-container">
       <b-col id="problem-description" cols="5">
-        <h2>Description</h2>
-        <p v-html=problem.description></p>
-        <h2>Input</h2>
-        <p v-html=problem.input_description></p>
-        <h2>Output</h2>
-        <p v-html=problem.output_description></p>
+        <div v-katex>
+          <h2>Description</h2>
+          <p v-html=problem.description></p>
+          <h2>Input</h2>
+          <p v-html=problem.input_description></p>
+          <h2>Output</h2>
+          <p v-html=problem.output_description></p>
+        </div>
 
         <div v-for="(sample, index) of problem.samples" :key="index">
           <h2>
@@ -156,7 +158,7 @@
           <pre class="sample-io">{{sample.output}}</pre>
         </div>
 
-        <div v-if="problem.hint">
+        <div v-if="problem.hint" v-katex>
           <h2>Hint</h2>
           <p v-html=problem.hint></p>
         </div>

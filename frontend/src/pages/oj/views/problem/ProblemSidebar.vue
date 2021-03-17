@@ -48,7 +48,9 @@
             :current-page="clarifications_page"
             :fields="clarifications_table_fields">
             <template #cell(Clarifications)="data">
-              <p v-html="data.value"/>
+              <div v-katex>
+                <p v-html="data.value"/>
+              </div>
             </template>
             <template #cell(created_time)="data">
               {{ getTimeFormat(data.value) }}
