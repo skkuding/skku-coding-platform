@@ -144,7 +144,6 @@ export default {
       return time.duration(startTime, endTime)
     },
     contestStatus (value) {
-      console.log(value)
       return {
         name: CONTEST_STATUS_REVERSE[value].name,
         color: CONTEST_STATUS_REVERSE[value].color
