@@ -210,3 +210,6 @@ vendor.dll*.js
 
 # DB backup
 *.sql
+
+# vue-cli-plugin-dll
+frontend/public/

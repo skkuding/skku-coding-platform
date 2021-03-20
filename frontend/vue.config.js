@@ -29,5 +29,11 @@ module.exports = {
         '@admin': path.join(__dirname, 'src/pages/admin')
       }
     }
+  },
+  pluginOptions: {
+    dll: {
+      entry: ['vue', 'vue-router'],
+      cacheFilePath: path.resolve(__dirname, './public')
+    }
   }
 }
