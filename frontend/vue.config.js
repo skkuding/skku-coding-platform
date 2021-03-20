@@ -29,5 +29,18 @@ module.exports = {
         '@admin': path.join(__dirname, 'src/pages/admin')
       }
     }
+  },
+  pluginOptions: {
+    dll: {
+      entry: [
+        'vue',
+        'vuex',
+        'vue-router',
+        'bootstrap-vue',
+        'element-ui',
+        'iview',
+      ],
+      cacheFilePath: path.resolve(__dirname, './public')
+    }
   }
 }
