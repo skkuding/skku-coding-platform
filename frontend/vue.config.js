@@ -32,7 +32,14 @@ module.exports = {
   },
   pluginOptions: {
     dll: {
-      entry: ['vue', 'vue-router'],
+      entry: [
+        'vue',
+        'vuex',
+        'vue-router',
+        'bootstrap-vue',
+        'element-ui',
+        'iview',
+      ],
       cacheFilePath: path.resolve(__dirname, './public')
     }
   }
