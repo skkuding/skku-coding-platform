@@ -1,19 +1,203 @@
-$enable-shadows: true;
-$enable-gradients: true;
-$grid-breakpoints: (
-  xs: 0,
-  sm: 456px,
-  md: 789px,
-  lg: 999px,
-  xl: 1234px
-);
-$bv-enable-table-stacked: false;
+@font-face {
+  font-family: Manrope;
+  src: url('../fonts/Manrope-SemiBold.ttf');
+  font-weight: regular;
+}
+
+// Button
+$btn-font-size: 16px;
+$btn-border-radius: 8px;
+$btn-font-family: Manrope;
+
+// Input
+$input-border-color: none;
+$input-font-family: Manrope;
+
+// Dropdown
+$dropdown-header-color: rgba(0, 0, 0, 0);
+$dropdown-link-color: #7C7A7B;
+$dropdown-link-hover-color: #8DC63F;
+$dropdown-link-hover-bg: rgba(255,255,255, 0);
+$dropdown-border-radius:20px;
+$dropdown-border-color:rgba(255,255,255, 0);
+
+// Pagination
+$pagination-color: #bcbcbc;
+$pagination-bg: #ffffff;
+$pagination-active-color: #ffffff;
+$pagination-active-bg: #bcbcbc;
+$pagination-hover-color: #bdbdbd;
+$pagination-border-radius: 8px;
+$pagination-disabled-color: #bdbdbd;
+
+// Table
+$table-hover-bg : rgba(7, 43, 96, 0.3);
+
+// Modal
+$modal-header-border-color:        white !default;
+$modal-footer-border-color:        white !default;
+$modal-content-border-color:       white !default;
+$modal-content-border-radius:      12px !default;
+$modal-content-box-shadow-xs:      0px !default;
+$modal-content-box-shadow-sm-up:   0px !default;
+$modal-md:                         384px !default;
+
+// Navbar
+$navbar-light-color:                #7C7A7B !default;
+$navbar-light-hover-color:          #8DC63F !default;
+$navbar-light-active-color:         #8DC63F !default;
+
+// Carousel
+$carousel-indicator-opacity:         1 !default;
+$carousel-indicator-active-opacity:  1 !default;
+$carousel-indicator-transition:      none !default;
+$carousel-indicator-spacer:        5px !default;
+
+
+$list-group-bg: rgba(0, 0, 0, 0);
+$list-group-hover-bg: #cccccc;
+$list-group-border-color: rgba(0, 0, 0, 0);
 
 // Include Bootstrap and BootstrapVue SCSS files
 @import '~bootstrap/scss/bootstrap.scss';
 @import '~bootstrap-vue/src/index.scss';
 
-// General style overrides and custom classes
-body {
-  margin: 0;
+.navbar {
+  font-family: Manrope;
+  font-size: 24px;
+  text-align: center;
+}
+
+.carousel-indicators {
+  li {
+    &:focus {
+      outline: none;
+    }
+  }
+  &:not(active) li {
+    background-color: transparent;
+    box-shadow: 0 0 0 2px white inset; 
+  }
+  .active {
+    background-color: white;
+    box-shadow: 0 0 0 2px white inset; 
+  }
+}
+
+.btn {
+  color: white;
+  background-color: #8DC63F;
+  border: none;
+  &:hover {
+    color: white;
+    background-color: #68912f;
+  }
+  &:active {
+    color: white;
+    background-color: #46641c;
+  }
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.btn-reset {
+  color: white;
+  background-color: #75879C;
+  border: none;
+  &:hover {
+    background-color: #5b6979;
+  }
+  &:active {
+    background-color: #3e4853;
+  }
+  &:active {
+    background-color: #2f630e;
+  }
+}
+
+.btn-stop {
+  color: white;
+  background-color: #FF6A3A;
+  border: none;
+  &:hover {
+    background-color: #c9542e;
+  }
+  &:active {
+    background-color: #8d3d23;
+  }
+}
+
+.btn-submit {
+  color: white;
+  background-color: #2279FD;
+  border: none;
+  &:hover {
+    background-color: #1d60c5;
+  }
+  &:active {
+    background-color: #144288;
+  }
+}
+
+.dropdown-menu{
+  box-shadow:0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.form-control {
+  border: none;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  width : 80%;
+  margin: auto;
+}
+
+.form-control:focus, .form-control:active {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.75);
+  outline: none;
+}
+
+.card {
+  margin: auto;
+  max-width: 500px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  font-family: Manrope;
+  font-size: 12px;
+  text-align: left;
+  color: #4F4F4F;
+}
+
+.card-title {
+  font-size: 18px;
+}
+
+.thead {
+  background-color: #F9F9F9;
+}
+
+.th {
+  font-family: 'Manrope', sans-serif;
+  font-size: 24px;
+  color: #7C7A7B
+}
+
+.td {
+  font-family: 'Manrope', sans-serif;
+  font-size: 20px;
+  color: #7C7A7B;
+  height: 70px;
+  vertical-align: middle !important;
+}
+
+.table {
+  & .thead-light th {
+    background-color: #fdfdfd;
+    border-top: 1px solid #fafcfd;
+    border-bottom: 1px solid #fafcfd;
+  }
+  & tr {
+    outline: none;
+  }
 }

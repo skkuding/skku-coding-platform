@@ -6,7 +6,8 @@
   >
     <div class="logo">
       <img
-        src="../../../assets/logo.svg"
+        src="@/assets/logos/logo.png"
+        style="height=35px; width=auto;"
         alt="oj admin"
       >
     </div>
@@ -99,13 +100,6 @@ export default {
     .logo {
       margin: 20px 0;
       text-align: center;
-      img {
-        background-color: #fff;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        width: 75px;
-        height: 75px;
-      }
     }
   }
 </style>

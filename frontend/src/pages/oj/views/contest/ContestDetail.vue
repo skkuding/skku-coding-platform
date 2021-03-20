@@ -1,117 +1,39 @@
 <template>
-  <div class="flex-container">
-    <div id="contest-main">
-      <!--children-->
-      <transition name="fadeInUp">
-        <router-view />
-      </transition>
-      <!--children end-->
-      <div
-        v-if="route_name === 'contest-details'"
-        class="flex-container"
-      >
-        <template>
-          <div id="contest-desc">
-            <Panel
-              :padding="20"
-              shadow
-            >
-              <div slot="title">
-                {{ contest.title }}
-              </div>
-              <div slot="extra">
-                <Tag
-                  type="dot"
-                  :color="countdownColor"
-                >
-                  <span id="countdown">{{ countdown }}</span>
-                </Tag>
-              </div>
-              <div
-                class="markdown-body"
-                v-html="contest.description"
-              />
-              <div
-                v-if="passwordFormVisible"
-                class="contest-password"
-              >
-                <Input
-                  v-model="contestPassword"
-                  type="password"
-                  placeholder="contest password"
-                  class="contest-password-input"
-                  @on-enter="checkPassword"
-                />
-                <Button
-                  type="info"
-                  @click="checkPassword"
-                >
-                  Enter
-                </Button>
-              </div>
-            </Panel>
-            <Table
-              :columns="columns"
-              :data="contest_table"
-              disabled-hover
-              style="margin-bottom: 40px;"
-            />
-          </div>
-        </template>
+  <div class="contest-list-card font-bold">
+    <div class="top-bar mb-4">
+      <h2 class="title"> {{ contest.title }} </h2>
+      <div class="problem-list-table">
+        <div class="status-container">
+          <b-icon
+            icon="circle-fill"
+            shift-h="-2"
+            shift-v="-3"
+            class="mx-1"
+            :style="'color:' + contestStatus.color"
+          />
+          {{ contestStatus.name }}
+        </div>
       </div>
     </div>
-    <div
-      v-show="showMenu"
-      id="contest-menu"
-    >
-      <VerticalMenu @on-click="handleRoute">
-        <VerticalMenu-item :route="{name: 'contest-details', params: {contestID: contestID}}">
-          <Icon type="home" />
-          {{ $t('m.Overview') }}
-        </VerticalMenu-item>
-
-        <VerticalMenu-item
-          :disabled="contestMenuDisabled"
-          :route="{name: 'contest-announcement-list', params: {contestID: contestID}}"
-        >
-          <Icon type="chatbubble-working" />
-          {{ $t('m.Announcements') }}
-        </VerticalMenu-item>
-
-        <VerticalMenu-item
-          :disabled="contestMenuDisabled"
-          :route="{name: 'contest-problem-list', params: {contestID: contestID}}"
-        >
-          <Icon type="ios-photos" />
-          {{ $t('m.Problems') }}
-        </VerticalMenu-item>
-
-        <VerticalMenu-item
-          v-if="OIContestRealTimePermission"
-          :disabled="contestMenuDisabled"
-          :route="{name: 'contest-submission-list'}"
-        >
-          <Icon type="navicon-round" />
-          {{ $t('m.Submissions') }}
-        </VerticalMenu-item>
-
-        <VerticalMenu-item
-          v-if="OIContestRealTimePermission"
-          :disabled="contestMenuDisabled"
-          :route="{name: 'contest-rank', params: {contestID: contestID}}"
-        >
-          <Icon type="stats-bars" />
-          {{ $t('m.Rankings') }}
-        </VerticalMenu-item>
-
-        <VerticalMenu-item
-          v-if="showAdminHelper"
-          :route="{name: 'acm-helper', params: {contestID: contestID}}"
-        >
-          <Icon type="ios-paw" />
-          {{ $t('m.Admin_Helper') }}
-        </VerticalMenu-item>
-      </VerticalMenu>
+    <div class="table">
+      <b-table
+        hover
+        :items="contestProblems"
+        :fields="contestProblemListFields"
+        :per-page="perPage"
+        :current-page="currentPage"
+        head-variant="light"
+        @row-clicked="goContestProblem"
+      >
+      </b-table>
+    </div>
+    <div class="pagination">
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="contestProblems.length"
+        :per-page="perPage"
+        limit="3"
+      ></b-pagination>
     </div>
   </div>
 </template>
@@ -121,49 +43,36 @@ import moment from 'moment'
 import api from '@oj/api'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '@/store'
-import { CONTEST_STATUS_REVERSE, CONTEST_STATUS } from '@/utils/constants'
-import time from '@/utils/time'
-
+import { CONTEST_STATUS_REVERSE } from '@/utils/constants'
+import { ProblemMixin } from '@oj/components/mixins'
+// import time from '@/utils/time'
 export default {
-  name: 'ContestDetail',
-  components: {},
+  name: 'ContestProblemList',
+  mixins: [ProblemMixin],
   data () {
     return {
-      CONTEST_STATUS: CONTEST_STATUS,
-      route_name: '',
-      btnLoading: false,
-      contestID: '',
-      contestPassword: '',
-      columns: [
+      // ACMTableColumns: [
+      //   {
+      //     label: '#',
+      //     key: 'id',
+      //     sortType: 'asc',
+      //     width: 150
+      //   },
+      //   {
+      //     label: this.$i18n.t('m.Title'),
+      //     key: 'title'
+      //   }
+      // ],
+      contest: {},
+      contestProblems: [],
+      contestProblemListFields: [
         {
-          title: this.$i18n.t('m.StartAt'),
-          render: (h, params) => {
-            return h('span', time.utcToLocal(params.row.start_time))
-          }
+          label: '#',
+          key: '_id'
         },
         {
-          title: this.$i18n.t('m.EndAt'),
-          render: (h, params) => {
-            return h('span', time.utcToLocal(params.row.end_time))
-          }
-        },
-        {
-          title: this.$i18n.t('m.ContestType'),
-          render: (h, params) => {
-            return h('span', this.$i18n.t('m.' + params.row.contest_type.replace(' ', '_')))
-          }
-        },
-        {
-          title: this.$i18n.t('m.Rule'),
-          render: (h, params) => {
-            return h('span', this.$i18n.t('m.' + params.row.rule_type))
-          }
-        },
-        {
-          title: this.$i18n.t('m.Creator'),
-          render: (h, data) => {
-            return h('span', data.row.created_by.username)
-          }
+          label: 'Title',
+          key: 'title'
         }
       ]
     }
@@ -171,9 +80,11 @@ export default {
   mounted () {
     this.contestID = this.$route.params.contestID
     this.route_name = this.$route.name
+    this.getContestProblems()
     this.$store.dispatch('getContest').then(res => {
       this.changeDomTitle({ title: res.data.data.title })
       const data = res.data.data
+      this.contest = data
       const endTime = moment(data.end_time)
       if (endTime.isAfter(moment(data.now))) {
         this.timer = setInterval(() => {
@@ -183,6 +94,28 @@ export default {
     })
   },
   methods: {
+    getContestProblems () {
+      this.$store.dispatch('getContestProblems').then(res => {
+        const data = res.data.data
+        this.contestProblems = data
+        // if (this.isAuthenticated) {
+        //   if (this.contestRuleType === 'ACM') {
+        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        //   } else if (this.OIContestRealTimePermission) {
+        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        //   }
+        // }
+      })
+    },
+    goContestProblem (row) {
+      this.$router.push({
+        name: 'contest-problem-details',
+        params: {
+          contestID: this.$route.params.contestID,
+          problemID: row._id
+        }
+      })
+    },
     ...mapActions(['changeDomTitle']),
     handleRoute (route) {
       this.$router.push(route)
@@ -207,11 +140,12 @@ export default {
       showMenu: state => state.contest.itemVisible.menu,
       contest: state => state.contest.contest,
       contest_table: state => [state.contest.contest],
+      problems: state => state.contest.contestProblems,
       now: state => state.contest.now
     }),
     ...mapGetters(
       ['contestMenuDisabled', 'contestRuleType', 'contestStatus', 'countdown', 'isContestAdmin',
-        'OIContestRealTimePermission', 'passwordFormVisible']
+        'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated', 'contestRuleType', 'OIContestRealTimePermission']
     ),
     countdownColor () {
       if (this.contestStatus) {
@@ -221,6 +155,12 @@ export default {
     },
     showAdminHelper () {
       return this.isContestAdmin && this.contestRuleType === 'ACM'
+    },
+    contestStatus () {
+      return {
+        name: CONTEST_STATUS_REVERSE[this.contest.status].name,
+        color: CONTEST_STATUS_REVERSE[this.contest.status].color
+      }
     }
   },
   watch: {
@@ -237,35 +177,52 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-  pre {
-    display: inline-block;
+<style lang="less" scoped>
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-
-  #countdown {
-    font-size: 16px;
+  .top-bar {
+    margin-top: 40px;
+    margin-left: 68px;
+    width: 90%;
+    display: flex;
   }
-
-  .flex-container {
-    #contest-main {
-      flex: 1 1;
-      width: 0;
-      #contest-desc {
-        flex: auto;
-      }
-    }
-    #contest-menu {
-      flex: none;
-      width: 210px;
-      margin-left: 20px;
-    }
-    .contest-password {
-      margin-top: 20px;
-      margin-bottom: -10px;
-      &-input {
-        width: 200px;
-        margin-right: 10px;
-      }
-    }
+  .title {
+    color: #7C7A7B;
+    display:inline;
+    position:relative;
+    // top:36px;
+  }
+  .contest-list-card {
+    margin: 0 auto;
+    width: 90%;
+    font-family: Manrope;
+  }
+  .contest-list-card .problem-list-table {
+    margin: 0 0 0 auto;
+  }
+  .table{
+    width: 95% !important;
+    margin: 0 auto;
+  }
+  div.pagination{
+    margin-right: 5%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .status-container {
+    position: relative;
+    top: 10px;
+    margin-right: 60px;
+    padding: 5px 8px 4px;
+    display: flex;
+    border: 2px solid #bdbdbd;
+    border-radius: 6px;
+    color: #828282;
+  }
+  .font-bold {
+    font-family: manrope_bold;
   }
 </style>

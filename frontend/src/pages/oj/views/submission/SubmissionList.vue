@@ -1,225 +1,73 @@
 <template>
-  <div class="flex-container">
-    <div id="main">
-      <Panel shadow>
-        <div slot="title">
-          {{ title }}
-        </div>
-        <div slot="extra">
-          <ul class="filter">
-            <li>
-              <Dropdown @on-click="handleResultChange">
-                <span>{{ status }}
-                  <Icon type="arrow-down-b" />
-                </span>
-                <Dropdown-menu slot="list">
-                  <Dropdown-item name="">
-                    {{ $t('m.All') }}
-                  </Dropdown-item>
-                  <Dropdown-item
-                    v-for="status in Object.keys(JUDGE_STATUS)"
-                    :key="status"
-                    :name="status"
-                  >
-                    {{ $t('m.' + JUDGE_STATUS[status].name.replace(/ /g, "_")) }}
-                  </Dropdown-item>
-                </Dropdown-menu>
-              </Dropdown>
-            </li>
-
-            <li>
-              <i-switch
-                v-model="formFilter.myself"
-                size="large"
-                @on-change="handleQueryChange"
-              >
-                <span slot="open">{{ $t('m.Mine') }}</span>
-                <span slot="close">{{ $t('m.All') }}</span>
-              </i-switch>
-            </li>
-            <li>
-              <Input
-                v-model="formFilter.username"
-                :placeholder="$t('m.Search_Author')"
-                @on-enter="handleQueryChange"
-              />
-            </li>
-
-            <li>
-              <Button
-                type="info"
-                icon="refresh"
-                @click="getSubmissions"
-              >
-                {{ $t('m.Refresh') }}
-              </Button>
-            </li>
-          </ul>
-        </div>
-        <Table
-          stripe
-          :disabled-hover="true"
-          :columns="columns"
-          :data="submissions"
-          :loading="loadingTable"
-        />
-        <Pagination
-          :total="total"
-          :page-size="limit"
-          :current.sync="page"
-          @on-change="changeRoute"
-        />
-      </Panel>
-    </div>
+  <div>
+    <b-button @click="show_my=true; formFilter.myself=true; getSubmissions()" variant="primary">My Submission</b-button>
+    <b-button @click="show_all=true; formFilter.myself=false; getSubmissions()" variant="primary">All Submission</b-button>
+    <b-modal
+      modal-class="my-submission"
+      size="xl"
+      v-model="show_my"
+      title="My Submissions"
+      hide-footer="true"
+    >
+    <b-table class="my-submission-table"
+      @row-clicked="rowClicked"
+      :items="my_sub" />
+    </b-modal>
+    <b-modal
+      modal-class="all-submission"
+      size="xl"
+      v-model="show_all"
+      title="All Submissions"
+      hide-footer="true"
+    >
+    <b-table class="all-submission-table" :items="all_sub" />
+    </b-modal>
+    <b-modal
+      modal-class="submission-detail"
+      size="lg"
+      v-model="show_detail"
+      title="Submissions Detail"
+      hide-footer="true"
+    >
+      <Highlight :language="language">{{ code }}</Highlight>
+      <b-table class="submission-table" :items="sub_detail"></b-table>
+    </b-modal>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import api from '@oj/api'
-import { JUDGE_STATUS, USER_TYPE } from '@/utils/constants'
-import utils from '@/utils/utils'
+import hljs from 'highlight.js'
 import time from '@/utils/time'
-import Pagination from '@/pages/oj/components/Pagination'
-
+import { JUDGE_STATUS } from '@/utils/constants'
+hljs.registerLanguage('cpp', require('highlight.js/lib/languages/cpp'))
 export default {
-  name: 'SubmissionList',
-  components: {
-    Pagination
-  },
   data () {
     return {
-      formFilter: {
-        myself: false,
-        result: '',
-        username: ''
-      },
-      columns: [
-        {
-          title: this.$i18n.t('m.When'),
-          align: 'center',
-          render: (h, params) => {
-            return h('span', time.utcToLocal(params.row.create_time))
-          }
-        },
-        {
-          title: this.$i18n.t('m.ID'),
-          align: 'center',
-          render: (h, params) => {
-            if (params.row.show_link) {
-              return h('span', {
-                style: {
-                  color: '#57a3f3',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push('/status/' + params.row.id)
-                  }
-                }
-              }, params.row.id.slice(0, 12))
-            } else {
-              return h('span', params.row.id.slice(0, 12))
-            }
-          }
-        },
-        {
-          title: this.$i18n.t('m.Status'),
-          align: 'center',
-          render: (h, params) => {
-            return h('Tag', {
-              props: {
-                color: JUDGE_STATUS[params.row.result].color
-              }
-            }, this.$i18n.t('m.' + JUDGE_STATUS[params.row.result].name.replace(/ /g, '_')))
-          }
-        },
-        {
-          title: this.$i18n.t('m.Problem'),
-          align: 'center',
-          render: (h, params) => {
-            return h('span',
-              {
-                style: {
-                  color: '#57a3f3',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    if (this.contestID) {
-                      this.$router.push(
-                        {
-                          name: 'contest-problem-details',
-                          params: { problemID: params.row.problem, contestID: this.contestID }
-                        })
-                    } else {
-                      this.$router.push({ name: 'problem-details', params: { problemID: params.row.problem } })
-                    }
-                  }
-                }
-              },
-              params.row.problem)
-          }
-        },
-        {
-          title: this.$i18n.t('m.Time'),
-          align: 'center',
-          render: (h, params) => {
-            return h('span', utils.submissionTimeFormat(params.row.statistic_info.time_cost))
-          }
-        },
-        {
-          title: this.$i18n.t('m.Memory'),
-          align: 'center',
-          render: (h, params) => {
-            return h('span', utils.submissionMemoryFormat(params.row.statistic_info.memory_cost))
-          }
-        },
-        {
-          title: this.$i18n.t('m.Language'),
-          align: 'center',
-          key: 'language'
-        },
-        {
-          title: this.$i18n.t('m.Author'),
-          align: 'center',
-          render: (h, params) => {
-            return h('a', {
-              style: {
-                display: 'inline-block',
-                'max-width': '150px'
-              },
-              on: {
-                click: () => {
-                  this.$router.push(
-                    {
-                      name: 'user-home',
-                      query: { username: params.row.username }
-                    })
-                }
-              }
-            }, params.row.username)
-          }
-        }
-      ],
+      my_sub: [],
+      all_sub: [],
+      show_my: false,
+      show_all: false,
+      show_detail: false,
       loadingTable: false,
-      submissions: [],
       total: 30,
       limit: 12,
       page: 1,
       contestID: '',
       problemID: '',
       routeName: '',
-      JUDGE_STATUS: '',
-      rejudge_column: false
+      rejudge_column: false,
+      formFilter: {
+        myself: false,
+        result: '',
+        username: ''
+      },
+      code: '',
+      language: ''
     }
   },
   mounted () {
     this.init()
-    this.JUDGE_STATUS = Object.assign({}, JUDGE_STATUS)
-    // 去除submitting的状态 和 两个
-    delete this.JUDGE_STATUS['9']
-    delete this.JUDGE_STATUS['2']
   },
   methods: {
     init () {
@@ -235,6 +83,14 @@ export default {
       }
       this.routeName = this.$route.name
       this.getSubmissions()
+    },
+    rowClicked (record) {
+      this.show_detail = true
+      api.getSubmission(record.ID).then(res => {
+        const data = res.data.data
+        this.code = data.code
+        this.language = data.language
+      })
     },
     buildQuery () {
       return {
@@ -253,128 +109,79 @@ export default {
       this.loadingTable = true
       api[func](offset, this.limit, params).then(res => {
         const data = res.data.data
+        const refined = []
         for (const v of data.results) {
-          v.loading = false
+          refined.push({
+            ID: v.id,
+            Problem: v.problem,
+            'Submission Time': time.utcToLocal(v.create_time),
+            Language: v.language,
+            User: v.username,
+            Result: JUDGE_STATUS[v.result].name
+          })
         }
-        this.adjustRejudgeColumn()
         this.loadingTable = false
-        this.submissions = data.results
+        if (this.formFilter.myself === true) {
+          this.my_sub = refined
+        } else {
+          this.all_sub = refined
+        }
         this.total = data.total
       }).catch(() => {
         this.loadingTable = false
       })
-    },
-    // 改变route， 通过监听route变化请求数据，这样可以产生route history， 用户返回时就会保存之前的状态
-    changeRoute () {
-      const query = utils.filterEmptyValue(this.buildQuery())
-      query.contestID = this.contestID
-      query.problemID = this.problemID
-      const routeName = query.contestID ? 'contest-submission-list' : 'submission-list'
-      this.$router.push({
-        name: routeName,
-        query: utils.filterEmptyValue(query)
-      })
-    },
-    goRoute (route) {
-      this.$router.push(route)
-    },
-    adjustRejudgeColumn () {
-      if (!this.rejudgeColumnVisible || this.rejudge_column) {
-        return
-      }
-      const judgeColumn = {
-        title: this.$i18n.t('m.Option'),
-        fixed: 'right',
-        align: 'center',
-        width: 90,
-        render: (h, params) => {
-          return h('Button', {
-            props: {
-              type: 'primary',
-              size: 'small',
-              loading: params.row.loading
-            },
-            on: {
-              click: () => {
-                this.handleRejudge(params.row.id, params.index)
-              }
-            }
-          }, this.$i18n.t('m.Rejudge'))
-        }
-      }
-      this.columns.push(judgeColumn)
-      this.rejudge_column = true
-    },
-    handleResultChange (status) {
-      this.page = 1
-      this.formFilter.result = status
-      this.changeRoute()
-    },
-    handleQueryChange () {
-      this.page = 1
-      this.changeRoute()
-    },
-    handleRejudge (id, index) {
-      this.submissions[index].loading = true
-      api.submissionRejudge(id).then(res => {
-        this.submissions[index].loading = false
-        this.$success('Succeeded')
-        this.getSubmissions()
-      }, () => {
-        this.submissions[index].loading = false
-      })
-    }
-  },
-  computed: {
-    ...mapGetters(['isAuthenticated', 'user']),
-    title () {
-      if (!this.contestID) {
-        return this.$i18n.t('m.Status')
-      } else if (this.problemID) {
-        return this.$i18n.t('m.Problem_Submissions')
-      } else {
-        return this.$i18n.t('m.Submissions')
-      }
-    },
-    status () {
-      return this.formFilter.result === '' ? this.$i18n.t('m.Status') : this.$i18n.t('m.' + JUDGE_STATUS[this.formFilter.result].name.replace(/ /g, '_'))
-    },
-    rejudgeColumnVisible () {
-      return !this.contestID && this.user.admin_type === USER_TYPE.SUPER_ADMIN
-    }
-  },
-  watch: {
-    '$route' (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.init()
-      }
-    },
-    'rejudgeColumnVisible' () {
-      this.adjustRejudgeColumn()
-    },
-    'isAuthenticated' () {
-      this.init()
     }
   }
 }
 </script>
-
-<style scoped lang="less">
-  .ivu-btn-text {
-    color: #57a3f3;
-  }
-
-  .flex-container {
-    #main {
-      flex: auto;
-      margin-right: 18px;
-      .filter {
-        margin-right: -10px;
-      }
-    }
-    #contest-menu {
-      flex: none;
-      width: 210px;
-    }
-  }
+<style lang="scss">
+.modal-content{
+  background-color: #24272d !important;
+}
+.modal-body{
+  padding: 0 !important;
+}
+.modal-header{
+  border-bottom: 0 !important;
+  padding-left: 30px !important;
+}
+.modal-title{
+  font-family: 'Manrope', sans-serif;
+  font-weight: bolder;
+  font-size: 35px;
+  color: #d2d2d2;
+}
+.table{
+  margin: 0;
+  color:#d2d2d2;
+}
+button.close{
+  color: white;
+  font-size: 50px;
+  font-weight: lighter;
+}
+th {
+  font-family: 'Manrope', sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: #d2d2d2;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  vertical-align: middle !important;
+  text-align: center !important;
+}
+td {
+  font-family: 'Manrope', sans-serif;
+  font-weight: lighter;
+  font-size: 20px;
+  color: #d2d2d2;
+  border-top-color: #3b4f56 !important;
+  height: 70px;
+  vertical-align: middle !important;
+  text-align: center !important;
+}
+.hljs{
+  background: #24272d !important;
+}
 </style>
+<style src="highlight.js/styles/night-owl.css"></style>

@@ -3,7 +3,7 @@ import store from '@/store'
 import axios from 'axios'
 
 Vue.prototype.$http = axios
-axios.defaults.baseURL = '/api'
+axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost/api'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -20,6 +20,13 @@ export default {
     }
     return ajax('announcement', 'get', {
       params
+    })
+  },
+  getAnnouncementDetail (id) {
+    return ajax('announcement_detail', 'get', {
+      params: {
+        id
+      }
     })
   },
   login (data) {
@@ -57,6 +64,18 @@ export default {
   updateProfile (profile) {
     return ajax('profile', 'put', {
       data: profile
+    })
+  },
+  updateUser (info) {
+    return ajax('user', 'put', {
+      data: info
+    })
+  },
+  getUser (username = undefined) {
+    return ajax('user', 'get', {
+      params: {
+        username
+      }
     })
   },
   freshDisplayID (userID) {

@@ -1,136 +1,44 @@
 <template>
-  <div>
-    <Form
-      ref="formRegister"
-      :model="formRegister"
-      :rules="ruleRegister"
-    >
-      <FormItem prop="username">
-        <Input
-          v-model="formRegister.username"
-          type="text"
-          :placeholder="$t('m.RegisterUsername')"
-          size="large"
-          @on-enter="handleRegister"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-person-outline"
-        />
-        </Input>
-      </FormItem>
-      <FormItem prop="email">
-        <Input
-          v-model="formRegister.email"
-          :placeholder="$t('m.Email_Address')"
-          size="large"
-          @on-enter="handleRegister"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-email-outline"
-        />
-        </Input>
-      </FormItem>
-      <FormItem prop="major">
-        <Select
-          v-model="formRegister.major"
-          :placeholder="$t('m.RegisterMajor')"
-          size="large"
-          class="adjust"
-          @on-enter="handleRegister"
-        >
-          <Icon
-            slot="prepend"
-            type="ios-book-outline"
-          />
-          <Option
-            v-for="item in majors"
-            :key="item"
-            :value="item"
-          >
-            {{ item }}
-          </Option>
-        </Select>
-      </FormItem>
-      <FormItem prop="password">
-        <Input
-          v-model="formRegister.password"
-          type="password"
-          :placeholder="$t('m.RegisterPassword')"
-          size="large"
-          @on-enter="handleRegister"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-locked-outline"
-        />
-        </Input>
-      </FormItem>
-      <FormItem prop="passwordAgain">
-        <Input
-          v-model="formRegister.passwordAgain"
-          type="password"
-          :placeholder="$t('m.Password_Again')"
-          size="large"
-          @on-enter="handleRegister"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-locked-outline"
-        />
-        </Input>
-      </FormItem>
-      <FormItem
-        prop="captcha"
-        style="margin-bottom:10px"
-      >
-        <div class="oj-captcha">
+  <div class="font-bold">
+    <div class="logo-title font-bold">
+      <h4>Welcome to</h4>
+      <h4>SKKU Coding Platform</h4>
+    </div>
+    <b-form ref="formRegister" :model="formRegister">
+      <b-container fluid="xl">
+        <b-row class="mb-4">
+          <b-form-input type="text" v-model="formRegister.username" placeholder="Student ID" @keydown.enter.native="handleRegister" pattern="[0-9]{10}"></b-form-input>
+        </b-row>
+        <b-row class="mb-4">
+          <b-form-input type="email" v-model="formRegister.email" placeholder="Email Address" @keydown.enter.native="handleRegister"></b-form-input>
+        </b-row>
+        <b-row class="mb-4">
+            <b-form-select class="modal-select" v-model="formRegister.major" :options="majors" placeholder="Major" @keydown.enter.native="handleRegister"></b-form-select>
+        </b-row>
+        <b-row class="mb-4">
+          <b-form-input type="password" v-model="formRegister.password" placeholder="Password" @keydown.enter.native="handleRegister"></b-form-input>
+        </b-row>
+        <b-row class="mb-4">
+          <b-form-input type="password" v-model="formRegister.passwordAgain" placeholder="Password Again" @keydown.enter.native="handleRegister"></b-form-input>
+        </b-row>
+        <div class="oj-captcha mb-4">
           <div class="oj-captcha-code">
-            <Input
-              v-model="formRegister.captcha"
-              :placeholder="$t('m.Captcha')"
-              size="large"
-              @on-enter="handleRegister"
-            >
-            <Icon
-              slot="prepend"
-              type="ios-lightbulb-outline"
-            />
-            </Input>
+            <b-form-input v-model="formRegister.captcha" placeholder="Captcha" size="large" @keydown.enter.native="handleRegister"></b-form-input>
           </div>
           <div class="oj-captcha-img">
-            <Tooltip
-              content="Click to refresh"
-              placement="top"
-            >
-              <img
-                :src="captchaSrc"
-                @click="getCaptchaSrc"
-              >
-            </Tooltip>
+            <img :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh" style="border-radius:8px !important;"/>
           </div>
         </div>
-      </FormItem>
-    </Form>
-    <div class="footer">
-      <Button
-        type="primary"
-        class="btn"
-        long
-        :loading="btnRegisterLoading"
-        @click="handleRegister"
-      >
-        {{ $t('m.UserRegister') }}
-      </Button>
-      <Button
-        type="ghost"
-        class="btn"
-        long
-        @click="switchMode('login')"
-      >
-        {{ $t('m.Already_Registed') }}
-      </Button>
+      </b-container>
+    </b-form>
+    <b-button variant="primary" @click="handleRegister" class="sign-btn">
+       <b-spinner v-if="btnRegisterLoading" small></b-spinner> Register
+    </b-button>
+    <div class="modal-low mt-3 font-bold" style="text-align:center;">
+      <a @click="switchMode('login')">
+        <p style="margin-bottom:0">Already have account?</p>
+        <p>Sign In</p>
+      </a>
     </div>
   </div>
 </template>
@@ -139,47 +47,12 @@
 import { mapGetters, mapActions } from 'vuex'
 import api from '@oj/api'
 import { FormMixin } from '@oj/components/mixins'
-
 export default {
   mixins: [FormMixin],
+  mounted () {
+    this.getCaptchaSrc()
+  },
   data () {
-    const CheckUsernameNotExist = (rule, value, callback) => {
-      api.checkUsernameOrEmail(value, undefined).then(res => {
-        if (res.data.data.username === 1) {
-          callback(new Error(this.$i18n.t('m.The_username_already_exists')))
-        } else if (res.data.data.username === 2) {
-          callback(new Error(this.$i18n.t('m.The_username_is_not_student_ID')))
-        } else {
-          callback()
-        }
-      }, _ => callback())
-    }
-    const CheckEmailNotExist = (rule, value, callback) => {
-      api.checkUsernameOrEmail(undefined, value).then(res => {
-        if (res.data.data.email === 1) {
-          callback(new Error(this.$i18n.t('m.The_email_already_exists')))
-        } else if (res.data.data.email === 2) {
-          callback(new Error(this.$i18n.t('m.The_email_domain_not_match')))
-        } else {
-          callback()
-        }
-      }, _ => callback())
-    }
-    const CheckPassword = (rule, value, callback) => {
-      if (this.formRegister.password !== '') {
-        // 对第二个密码框再次验证
-        this.$refs.formRegister.validateField('passwordAgain')
-      }
-      callback()
-    }
-
-    const CheckAgainPassword = (rule, value, callback) => {
-      if (value !== this.formRegister.password) {
-        callback(new Error(this.$i18n.t('m.password_does_not_match')))
-      }
-      callback()
-    }
-
     return {
       btnRegisterLoading: false,
       formRegister: {
@@ -187,36 +60,15 @@ export default {
         password: '',
         passwordAgain: '',
         email: '',
-        major: '',
+        major: 'Major(원전공)',
         captcha: ''
       },
-      ruleRegister: {
-        username: [
-          { required: true, trigger: 'blur' },
-          { validator: CheckUsernameNotExist, trigger: 'blur' }
-        ],
-        email: [
-          { required: true, type: 'email', trigger: 'blur' },
-          { validator: CheckEmailNotExist, trigger: 'blur' }
-        ],
-        major: [
-          { required: true, trigger: 'blur' }
-        ],
-        password: [
-          { required: true, trigger: 'blur', min: 6, max: 20 },
-          { validator: CheckPassword, trigger: 'blur' }
-        ],
-        passwordAgain: [
-          { required: true, validator: CheckAgainPassword, trigger: 'change' }
-        ],
-        captcha: [
-          { required: true, trigger: 'blur', min: 1, max: 10 }
-        ]
-      }
+      majors: [
+        { value: 'Major(원전공)', text: 'Major(원전공)' },
+        { value: 'Double Major(복수전공)', text: 'Double Major(복수전공)' },
+        { value: 'Non-CS Major(비전공)', text: 'Non-CS Major(비전공)' }
+      ]
     }
-  },
-  mounted () {
-    this.getCaptchaSrc()
   },
   methods: {
     ...mapActions(['changeModalStatus', 'getProfile']),
@@ -227,50 +79,34 @@ export default {
       })
     },
     handleRegister () {
-      this.validateForm('formRegister').then(valid => {
-        const formData = Object.assign({}, this.formRegister)
-        delete formData.passwordAgain
-        this.btnRegisterLoading = true
-        api.register(formData).then(res => {
-          this.$success(this.$i18n.t('m.Thanks_for_registering'))
-          this.switchMode('login')
-          this.btnRegisterLoading = false
-        }, _ => {
-          this.getCaptchaSrc()
-          this.formRegister.captcha = ''
-          this.btnRegisterLoading = false
-        })
-      })
-    }
-  },
-  props: {
-    majors: {
-      type: Array,
-      default: () => {
-        return [
-          'Computer Science and Engineering (소프트웨어학과)',
-          'Computer Science (컴퓨터공학과)',
-          'Engineering (공학계열)',
-          'Natural Science (자연과학계열)',
-          'School of Convergence (글로벌융합학부)',
-          'Biomedical Engineering (글로벌바이오메디컬공학과)',
-          'Electronic and Electrical Engineering (전자전기공학부)',
-          'Semiconductor Systems Engineering (반도체시스템공학과)',
-          'Sport Science (스포츠과학과)',
-          'Pharmacy (약학과)',
-          'Medicine (의예과/의학과)'
-        ]
+      const formData = Object.assign({}, this.formRegister)
+      if (formData.password !== formData.passwordAgain) {
+        return this.$error('Password does not match')
       }
+      delete formData.passwordAgain
+      this.btnRegisterLoading = true
+      api.register(formData).then(res => {
+        this.$success('You can login after email authentication. Please check your mailbox.', 2500)
+        this.switchMode('login')
+        this.btnRegisterLoading = false
+      }, _ => {
+        this.getCaptchaSrc()
+        this.formRegister.captcha = ''
+        this.btnRegisterLoading = false
+      })
     }
   },
   computed: {
     ...mapGetters(['website', 'modalStatus'])
-
   }
 }
 </script>
 
 <style scoped lang="less">
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
   .footer {
     overflow: auto;
     margin-top: 20px;
@@ -282,5 +118,38 @@ export default {
         margin: 0;
       }
     }
+  }
+  .logo-title {
+    margin:8px 0 28px 0;
+    color: #8DC63F;
+    text-align:center;
+  }
+  .sign-btn {
+    width:284px;
+    margin-left:32px;
+  }
+  .modal-low {
+    color:#808080;
+    font-size:14px;
+  }
+  .font-bold {
+    font-family: manrope_bold;
+  }
+  .dropdown button {
+    color:black !important;
+    background-color:white !important;
+    border-radius:8px;
+  }
+  .modal-select {
+    width:280px;
+    border-radius:8px;
+    border:none;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
+    margin-left:36px;
+    color:#828282;
+  }
+  .oj-captcha-img {
+    margin-right:20px !important;
+    border-radius:4px;
   }
 </style>

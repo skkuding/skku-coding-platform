@@ -6,7 +6,7 @@ import logging
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.views import APIView as view
+from django.views.generic import View
 from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 
 logger = logging.getLogger("")
@@ -37,7 +37,7 @@ class JSONResponse(object):
         return resp
 
 
-class APIView(view):
+class APIView(View):
     """
     The parent class of Django view, and the usage of django-rest-framework is basically the same
       - request.data to get parsed json or urlencoded data, dict type
@@ -170,7 +170,7 @@ def validate_serializer(serializer):
             request = args[1]
             s = serializer(data=request.data)
             if s.is_valid():
-                request._full_data = s.data
+                request.data = s.data
                 request.serializer = s
                 return view_method(*args, **kwargs)
             else:

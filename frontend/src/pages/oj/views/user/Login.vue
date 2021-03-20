@@ -1,72 +1,31 @@
 <template>
   <div>
-    <Form
-      ref="formLogin"
-      :model="formLogin"
-      :rules="ruleLogin"
-    >
-      <FormItem prop="username">
-        <Input
-          v-model="formLogin.username"
-          type="text"
-          :placeholder="$t('m.LoginUsername')"
-          size="large"
-          @on-enter="handleLogin"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-person-outline"
-        />
-        </Input>
-      </FormItem>
-      <FormItem prop="password">
-        <Input
-          v-model="formLogin.password"
-          type="password"
-          :placeholder="$t('m.LoginPassword')"
-          size="large"
-          @on-enter="handleLogin"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-locked-outline"
-        />
-        </Input>
-      </FormItem>
-      <FormItem
-        v-if="tfaRequired"
-        prop="tfa_code"
-      >
-        <Input
-          v-model="formLogin.tfa_code"
-          :placeholder="$t('m.TFA_Code')"
-        >
-        <Icon
-          slot="prepend"
-          type="ios-lightbulb-outline"
-        />
-        </Input>
-      </FormItem>
-    </Form>
-    <div class="footer">
-      <Button
-        type="primary"
-        class="btn"
-        long
-        :loading="btnLoginLoading"
-        @click="handleLogin"
-      >
-        {{ $t('m.UserLogin') }}
-      </Button>
-      <a
-        v-if="website.allow_register"
-        @click.stop="handleBtnClick('register')"
-      >{{ $t('m.No_Account') }}</a>
-      <a
-        style="float: right"
-        @click.stop="goResetPassword"
-      >{{ $t('m.Forget_Password') }}</a>
+    <div class="logo">
+      <div class="logo-img">
+        <img src="@/assets/logos/logo.svg" alt=""/>
+      </div>
+      <div class="logo-title font-bold">
+        <h4>SKKU</h4>
+        <h4>Coding Platform</h4>
+      </div>
     </div>
+    <b-form @on-enter="handleLogin" ref="formLogin" :model="formLogin" class="font-bold">
+      <b-container fluid="xl">
+        <b-row class="mb-4">
+          <b-form-input v-model="formLogin.username" placeholder="Student ID" @keydown.enter.native="handleLogin" />
+        </b-row>
+        <b-row class="mb-4">
+          <b-form-input type="password" v-model="formLogin.password" placeholder="Password" @keydown.enter.native="handleLogin" />
+        </b-row>
+        <b-button data-loading-text="a" class="sign-btn" @click="handleLogin" variant="outline">
+          <b-spinner v-if="btnLoginLoading" small></b-spinner> Sign In
+        </b-button>
+      </b-container>
+      </b-form>
+      <div class="modal-low mt-5 font-bold">
+        <a v-if="website.allow_register" @click.stop="handleBtnClick('register')" style="float:left;">Register now</a>
+        <a @click.stop="handleBtnClick('ApplyResetPassword')" style="float: right;">Forgot Password</a>
+      </div>
   </div>
 </template>
 
@@ -78,31 +37,12 @@ import { FormMixin } from '@oj/components/mixins'
 export default {
   mixins: [FormMixin],
   data () {
-    const CheckRequiredTFA = (rule, value, callback) => {
-      if (value !== '') {
-        api.tfaRequiredCheck(value).then(res => {
-          this.tfaRequired = res.data.data.result
-        })
-      }
-      callback()
-    }
-
     return {
-      tfaRequired: false,
       btnLoginLoading: false,
       formLogin: {
         username: '',
         password: '',
         tfa_code: ''
-      },
-      ruleLogin: {
-        username: [
-          { required: true, trigger: 'blur' },
-          { validator: CheckRequiredTFA, trigger: 'blur' }
-        ],
-        password: [
-          { required: true, trigger: 'change', min: 6, max: 20 }
-        ]
       }
     }
   },
@@ -115,25 +55,16 @@ export default {
       })
     },
     handleLogin () {
-      this.validateForm('formLogin').then(valid => {
-        this.btnLoginLoading = true
-        const formData = Object.assign({}, this.formLogin)
-        if (!this.tfaRequired) {
-          delete formData.tfa_code
-        }
-        api.login(formData).then(res => {
-          this.btnLoginLoading = false
-          this.changeModalStatus({ visible: false })
-          this.getProfile()
-          this.$success(this.$i18n.t('m.Welcome_back'))
-        }, _ => {
-          this.btnLoginLoading = false
-        })
+      this.btnLoginLoading = true
+      const formData = Object.assign({}, this.formLogin)
+      api.login(formData).then(res => {
+        this.btnLoginLoading = false
+        this.changeModalStatus({ visible: false })
+        this.getProfile()
+        this.$success('Welcome back!')
+      }, _ => {
+        this.btnLoginLoading = false
       })
-    },
-    goResetPassword () {
-      this.changeModalStatus({ visible: false })
-      this.$router.push({ name: 'apply-reset-password' })
     }
   },
   computed: {
@@ -151,16 +82,56 @@ export default {
 </script>
 
 <style scoped lang="less">
-  .footer {
-    overflow: auto;
-    margin-top: 20px;
-    margin-bottom: -15px;
-    text-align: left;
-    .btn {
-      margin: 0 0 15px 0;
-      &:last-child {
-        margin: 0;
-      }
-    }
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
+  .logo-img {
+    display:block;
+    width:116px;
+    height:136px;
+    margin-left:auto;
+    margin-right:auto;
+    filter:invert(68%) sepia(59%) saturate(458%) hue-rotate(42deg) brightness(94%) contrast(88%);
+  }
+ .logo-title {
+    margin:8px 0 28px 0;
+    color: #8DC63F;
+    text-align:center;
+  }
+  .sign-btn {
+    width:284px;
+    margin-left:18px;
+  }
+  .modal-low {
+    color:#808080;
+    font-size:14px;
+  }
+  .font-bold {
+    font-family: manrope_bold;
+  }
+  .logo-img {
+    display:block;
+    width:116px;
+    height:136px;
+    margin-left:auto;
+    margin-right:auto;
+    filter:invert(68%) sepia(59%) saturate(458%) hue-rotate(42deg) brightness(94%) contrast(88%);
+  }
+ .logo-title {
+    margin:8px 0 28px 0;
+    color: #8DC63F;
+    text-align:center;
+  }
+  .sign-btn {
+    width:284px;
+    margin-left:18px;
+  }
+  .modal-low {
+    color:#808080;
+    font-size:14px;
+  }
+  .font-bold {
+    font-family: manrope_bold;
   }
 </style>

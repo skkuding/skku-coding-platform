@@ -1,204 +1,134 @@
 <template>
-  <div class="setting-main">
-    <div class="section-title">
-      {{ $t('m.Avatar_Setting') }}
+  <div class="setting-main font-bold">
+    <div class="section-title logo-title font-bold">
+      <h2>Setting</h2>
     </div>
-    <template v-if="!avatarOption.imgSrc">
-      <Upload
-        type="drag"
-        class="mini-container"
-        accept=".jpg,.jpeg,.png,.bmp,.gif"
-        action=""
-        :before-upload="handleSelectFile"
-      >
-        <div style="padding: 30px 0">
-          <Icon
-            type="ios-cloud-upload"
-            size="52"
-            style="color: #3399ff"
-          />
-          <p>Drop here, or click to select manually</p>
-        </div>
-      </Upload>
-    </template>
-
-    <template v-else>
-      <div class="flex-container">
-        <div class="cropper-main inline">
-          <vueCropper
-            ref="cropper"
-            auto-crop
-            fixed
-            :auto-crop-width="200"
-            :auto-crop-height="200"
-            :img="avatarOption.imgSrc"
-            :output-size="avatarOption.size"
-            :output-type="avatarOption.outputType"
-            :info="true"
-            @realTime="realTime"
-          />
-        </div>
-        <ButtonGroup
-          vertical
-          class="cropper-btn"
-        >
-          <Button @click="rotate('left')">
-            <Icon
-              type="arrow-return-left"
-              size="20"
-            />
-          </Button>
-          <Button @click="rotate('right')">
-            <Icon
-              type="arrow-return-right"
-              size="20"
-            />
-          </Button>
-          <Button @click="reselect">
-            <Icon
-              type="refresh"
-              size="20"
-            />
-          </Button>
-          <Button @click="finishCrop">
-            <Icon
-              type="checkmark-round"
-              size="20"
-            />
-          </Button>
-        </ButtonGroup>
-        <div
-          class="cropper-preview"
-          :style="previewStyle"
-        >
-          <div :style=" preview.div">
-            <img
-              :src="avatarOption.imgSrc"
-              :style="preview.img"
-            >
-          </div>
-        </div>
-      </div>
-    </template>
-    <Modal
-      v-model="uploadModalVisible"
-      title="Upload the avatar"
-    >
-      <div class="upload-modal">
-        <p class="notice">
-          Your avatar will be set to:
-        </p>
-        <img :src="uploadImgSrc">
-      </div>
-      <div slot="footer">
-        <Button
-          :loading="loadingUploadBtn"
-          @click="uploadAvatar"
-        >
-          upload
-        </Button>
-      </div>
-    </Modal>
-
-    <div class="section-title">
-      {{ $t('m.Profile_Setting') }}
+    <div style="display:flex; flex-direction:row; margin-bottom:12px;" class="profileSetting">
+      <b-form>
+        <h4 class="columnName font-bold">Preferred Language</h4>
+          <b-row class="mb-4">
+          <b-form-select class="setting-select" v-model="formProfile.language" :options="languages" :selected="formProfile.language"></b-form-select>
+          </b-row>
+          <b-row class="mb-4">
+            <b-button class="setting-btn" variant="success" @click="updateLanguage">
+              <b-spinner v-if="loading.btnLanguage" small></b-spinner> Change Language
+            </b-button>
+          </b-row>
+      </b-form>
+      <b-form>
+        <h4 class="columnName font-bold">Major</h4>
+          <b-row class="mb-4">
+          <b-form-select class="setting-select" v-model="formProfile.major" :options="majors" :selected="formProfile.major"></b-form-select>
+          </b-row>
+          <b-row>
+            <b-button class="setting-btn" variant="success" @click="updateMajor">
+              <b-spinner v-if="loading.btnMajor" small></b-spinner> Change Major
+            </b-button>
+          </b-row>
+      </b-form>
     </div>
-    <Form
-      ref="formProfile"
-      :model="formProfile"
-    >
-      <Row
-        type="flex"
-        :gutter="30"
-        justify="space-around"
-      >
-        <Col :span="11">
-        <FormItem label="Real Name">
-          <Input v-model="formProfile.real_name" />
-        </FormItem>
-        <FormItem label="Default Programming Language">
-          <Select v-model="formProfile.language">
-            <Option
-              v-for="lang in languages"
-              :key="lang.value"
-              :value="lang.value"
-            >
-              {{ lang.value }}
-            </Option>
-          </Select>
-        </FormItem>
-        <Form-item>
-          <Button
-            type="primary"
-            :loading="loadingSaveBtn"
-            @click="updateProfile"
-          >
-            Save All
-          </Button>
-        </Form-item>
-        </Col>
-
-        <Col :span="11">
-        <Form-item label="Mood">
-          <Input v-model="formProfile.mood" />
-        </Form-item>
-        <Form-item label="Blog">
-          <Input v-model="formProfile.blog" />
-        </Form-item>
-        <Form-item label="Github">
-          <Input v-model="formProfile.github" />
-        </Form-item>
-        </Col>
-      </Row>
-    </Form>
+    <div style="display:flex; flex-direction:row;" class="accountSetting">
+      <b-form>
+        <h4 class="columnName font-bold">Change Password</h4>
+        <b-form-group class="setting-label" label= "Current Password" prop="old_password">
+          <b-form-input class="setting-input" type="password" v-model="formPassword.old_password" required></b-form-input>
+        </b-form-group>
+        <b-form-group class="setting-label" label="New Password" prop="new_password">
+          <b-form-input class="setting-input" type="password" v-model="formPassword.new_password" required></b-form-input>
+        </b-form-group>
+        <b-form-group class="setting-label" label="Confirm New Password" prop="again_password">
+          <b-form-input class="setting-input" type="password" v-model="formPassword.again_password" required></b-form-input>
+        </b-form-group>
+        <b-form-group v-if="visible.tfaRequired" label="Two Factor Auth" prop="tfa_coded">
+          <b-form-input class="setting-input" type="password" v-model="formPassword.again_password" required></b-form-input>
+        </b-form-group>
+        <b-button class="setting-btn" variant="success" @click="changePassword">
+          <b-spinner v-if="loading.btnPassword" small></b-spinner> Change Password
+        </b-button>
+      </b-form>
+      <b-form>
+        <h4 class="columnName font-bold">Change Email</h4>
+        <b-form-group class="setting-label" label="Old Email" >
+          <b-form-input class="setting-input" v-model="formEmail.old_email" disabled></b-form-input>
+        </b-form-group>
+        <b-form-group class="setting-label" label="New Email" prop="new_email">
+          <b-form-input class="setting-input" type="email" v-model="formEmail.new_email"></b-form-input>
+        </b-form-group>
+        <b-form-group class="setting-label" label="Current Password" prop="password">
+          <b-form-input class="setting-input" type="password" v-model="formEmail.password"></b-form-input>
+        </b-form-group>
+        <b-form-group v-if="visible.tfaRequired" label="Two Factor Auth" prop="tfa_coded">
+          <b-form-input type="text" v-model="formEmail.tfa_code"></b-form-input>
+        </b-form-group>
+        <b-button class="setting-btn" variant="success" @click="changeEmail">
+          <b-spinner v-if="loading.btnEmail" small></b-spinner> Change Email
+        </b-button>
+      </b-form>
+    </div>
   </div>
 </template>
 
 <script>
 import api from '@oj/api'
 import utils from '@/utils/utils'
-import { VueCropper } from 'vue-cropper'
 import { types } from '@/store'
 
 export default {
-  components: {
-    VueCropper
-  },
   data () {
     return {
+      loading: {
+        btnPassword: false,
+        btnEmail: false,
+        btnLanguage: false,
+        btnMajor: false
+      },
       loadingSaveBtn: false,
       loadingUploadBtn: false,
       uploadModalVisible: false,
       preview: {},
       uploadImgSrc: '',
-      avatarOption: {
-        imgSrc: '',
-        size: 0.8,
-        outputType: 'png'
+      formProfile: {
+        language: '',
+        major: null,
+        semester: null
       },
       languages: [
-        { value: 'C' },
-        { value: 'C++' },
-        { value: 'Golang' },
-        { value: 'Java' },
-        { value: 'Python2' },
-        { value: 'Python3' }
+        { value: null, text: 'Preferred Language' },
+        { value: 'C', text: 'C' },
+        { value: 'C++', text: 'C++' },
+        { value: 'Golang', text: 'Golang' },
+        { value: 'Java', text: 'JAVA' },
+        { value: 'Python2', text: 'Python2' },
+        { value: 'Python3', text: 'Python3' }
       ],
-      formProfile: {
-        real_name: '',
-        mood: '',
-        blog: '',
-        github: '',
-        language: ''
-      }
-    }
-  },
-  computed: {
-    previewStyle () {
-      return {
-        width: this.preview.w + 'px',
-        height: this.preview.h + 'px',
-        overflow: 'hidden'
+      majors: [
+        { value: 'Major(원전공)', text: 'Major(원전공)' },
+        { value: 'Double Major(복수전공)', text: 'Double Major(복수전공)' },
+        { value: 'Non-CS Major(비전공)', text: 'Non-CS Major(비전공)' }
+      ],
+      semesters: [
+        { value: null, text: 'Semesters' },
+        { value: 1, text: '1~2' },
+        { value: 2, text: '3~4' },
+        { value: 3, text: '5~6' },
+        { value: 4, text: '7+' }
+      ],
+      formPassword: {
+        tfa_code: '',
+        old_password: '',
+        new_password: '',
+        again_password: ''
+      },
+      visible: {
+        passwordAlert: false,
+        emailAlert: false,
+        tfaRequired: false
+      },
+      formEmail: {
+        tfa_code: '',
+        password: '',
+        old_email: '',
+        new_email: ''
       }
     }
   },
@@ -209,144 +139,145 @@ export default {
         this.formProfile[element] = profile[element]
       }
     })
+    const user = this.$store.getters.user
+    api.getUser(user.username).then(res => {
+      this.formProfile.major = res.data.data.major
+      this.formEmail.old_email = res.data.data.email
+    })
+    api.getUserInfo(user.username).then(res => {
+      this.formProfile.language = res.data.data.language
+    })
   },
   methods: {
-    checkFileType (file) {
-      if (!/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(file.name)) {
-        this.$Notice.warning({
-          title: 'File type not support',
-          desc: 'The format of ' + file.name + ' is incorrect ，please choose image only.'
-        })
-        return false
-      }
-      return true
-    },
-    checkFileSize (file) {
-      // max size is 2MB
-      if (file.size > 2 * 1024 * 1024) {
-        this.$Notice.warning({
-          title: 'Exceed max size limit',
-          desc: 'File ' + file.name + ' is too big, you can upload a image up to 2MB in size'
-        })
-        return false
-      }
-      return true
-    },
-    handleSelectFile (file) {
-      const isOk = this.checkFileType(file) && this.checkFileSize(file)
-      if (!isOk) {
-        return false
-      }
-      const reader = new window.FileReader()
-      reader.onload = (e) => {
-        this.avatarOption.imgSrc = e.target.result
-      }
-      reader.readAsDataURL(file)
-      return false
-    },
-    realTime (data) {
-      this.preview = data
-    },
-    rotate (direction) {
-      if (direction === 'left') {
-        this.$refs.cropper.rotateLeft()
-      } else {
-        this.$refs.cropper.rotateRight()
-      }
-    },
-    reselect () {
-      this.$Modal.confirm({
-        content: 'Are you sure to disgard the changes?',
-        onOk: () => {
-          this.avatarOption.imgSrc = ''
-        }
-      })
-    },
-    finishCrop () {
-      this.$refs.cropper.getCropData(data => {
-        this.uploadImgSrc = data
-        this.uploadModalVisible = true
-      })
-    },
-    uploadAvatar () {
-      this.$refs.cropper.getCropBlob(blob => {
-        const form = new window.FormData()
-        const file = new window.File([blob], 'avatar.' + this.avatarOption.outputType)
-        form.append('image', file)
-        this.loadingUploadBtn = true
-        this.$http({
-          method: 'post',
-          url: 'upload_avatar',
-          data: form,
-          headers: { 'content-type': 'multipart/form-data' }
-        }).then(res => {
-          this.loadingUploadBtn = false
-          this.$success('Successfully set new avatar')
-          this.uploadModalVisible = false
-          this.avatarOption.imgSrc = ''
-          this.$store.dispatch('getProfile')
-        }, () => {
-          this.loadingUploadBtn = false
-        })
-      })
-    },
-    updateProfile () {
-      this.loadingSaveBtn = true
+    updateLanguage () {
+      this.loading.btnLanguage = true
       const updateData = utils.filterEmptyValue(Object.assign({}, this.formProfile))
       api.updateProfile(updateData).then(res => {
         this.$success('Success')
         this.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
-        this.loadingSaveBtn = false
+        this.loading.btnLanguage = false
       }, _ => {
-        this.loadingSaveBtn = false
+        this.loading.btnLanguage = false
       })
+    },
+    updateMajor () {
+      this.loading.btnMajor = true
+      const major = {
+        major: this.formProfile.major
+      }
+      api.updateUser(major).then(res => {
+        this.$success('Success')
+        this.loading.btnMajor = false
+      }, _ => {
+        this.loading.btnMajor = false
+      })
+    },
+    changePassword () {
+      this.loading.btnPassword = true
+      const data = Object.assign({}, this.formPassword)
+      if (data.again_password !== data.new_password) {
+        this.loading.btnPassword = false
+        return this.$error('New password does not match')
+      }
+      if (data.old_password === data.new_password) {
+        this.loading.btnPassword = false
+        return this.$error('New password doesn\'t change')
+      }
+      delete data.again_password
+      if (!this.visible.tfaRequired) {
+        delete data.tfa_code
+      }
+      api.changePassword(data).then(res => {
+        this.loading.btnPassword = false
+        this.visible.passwordAlert = true
+        this.$success('Updated password successfully.\nPlease login with new password.', 2500)
+        this.visible.passwordAlert = false
+        setTimeout(() => {
+          this.$bvModal.hide('setting')
+          this.$router.push({ name: 'logout' })
+        }, 2500)
+      }, res => {
+        if (res.data.data === 'tfa_required') {
+          this.visible.tfaRequired = true
+        }
+        this.loading.btnPassword = false
+      })
+    },
+    changeEmail () {
+      this.loading.btnEmail = true
+      const data = Object.assign({}, this.formEmail)
+      if (!this.visible.tfaRequired) {
+        delete data.tfa_code
+      }
+      api.changeEmail(data).then(res => {
+        this.loading.btnEmail = false
+        this.visible.emailAlert = true
+        this.$success('Email changed successfully')
+        this.formEmail.old_email = this.formEmail.new_email
+      }, res => {
+        if (res.data.data === 'tfa_required') {
+          this.visible.tfaRequired = true
+        }
+        this.loading.btnEmail = false
+      })
+    }
+  },
+  computed: {
+    previewStyle () {
+      return {
+        width: this.preview.w + 'px',
+        height: this.preview.h + 'px',
+        overflow: 'hidden'
+      }
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-  .inline {
-    display: inline-block;
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../../fonts/Manrope-Bold.ttf');
   }
-
-  .copper-img {
-    width: 400px;
-    height: 300px;
+  .profileSetting {
+    display:flex;
+    justify-content: space-around;
+    margin-bottom:80px;
   }
-
-  .flex-container {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-bottom: 10px;
-    .cropper-main {
-      flex: none;
-      .copper-img;
-    }
-    .cropper-btn {
-      flex: none;
-      vertical-align: top;
-    }
-    .cropper-preview {
-      flex: none;
-      /*margin: 10px;*/
-      margin-left: 20px;
-      box-shadow: 0 0 1px 0;
-      .copper-img;
-    }
+  .accountSetting {
+    display:flex;
+    justify-content: space-around;
   }
-
-  .upload-modal {
-    .notice {
-      font-size: 16px;
-      display: inline-block;
-      vertical-align: top;
-      padding: 10px;
-      padding-right: 15px;
-    }
-    img {
-      box-shadow: 0 0 1px 0;
-      border-radius: 50%;
-    }
+  .columnName {
+    text-align:center;
+    margin-bottom:32px;
+    color:#808080;
+  }
+  .logo-title {
+    margin:8px 0 16px 0;
+    color: #8DC63F;
+    text-align:center;
+  }
+  .font-bold {
+    font-family: manrope_bold;
+  }
+  .setting-label {
+    color:#808080;
+  }
+  .setting-input {
+    width:326px;
+  }
+  .setting-select {
+    border-radius: 8px;
+    width:326px;
+    border:none;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
+    color:#828282;
+  }
+  .setting-btn {
+    width:284px;
+    display:block;
+    margin-left:auto !important;
+    margin-right:auto !important;
   }
 </style>

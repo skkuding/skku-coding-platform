@@ -105,7 +105,6 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
-import time from '@/utils/time'
 import api from '@oj/api'
 
 export default {
@@ -127,8 +126,6 @@ export default {
         this.changeDomTitle({ title: res.data.data.user.username })
         this.profile = res.data.data
         this.getSolvedProblems()
-        const registerTime = time.utcToLocal(this.profile.user.create_time, 'YYYY-MM-D')
-        console.log('The guy registered at ' + registerTime + '.')
       })
     },
     getSolvedProblems () {

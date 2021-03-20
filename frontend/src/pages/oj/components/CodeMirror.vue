@@ -1,83 +1,11 @@
 <template>
-  <div style="margin: 0px 0px 15px 0px">
-    <Row
-      type="flex"
-      justify="space-between"
-      class="header"
-    >
-      <Col :span="12">
-      <div>
-        <span>{{ $t('m.Language') }}:</span>
-        <Select
-          :value="language"
-          class="adjust"
-          @on-change="onLangChange"
-        >
-          <Option
-            v-for="item in languages"
-            :key="item"
-            :value="item"
-          >
-            {{ item }}
-          </Option>
-        </Select>
-
-        <Tooltip
-          :content="this.$i18n.t('m.Reset_to_default_code_definition')"
-          placement="top"
-          style="margin-left: 10px"
-        >
-          <Button
-            icon="refresh"
-            @click="onResetClick"
-          />
-        </Tooltip>
-
-        <Tooltip
-          :content="this.$i18n.t('m.Upload_file')"
-          placement="top"
-          style="margin-left: 10px"
-        >
-          <Button
-            icon="upload"
-            @click="onUploadFile"
-          />
-        </Tooltip>
-
-        <input
-          id="file-uploader"
-          type="file"
-          style="display: none"
-          @change="onUploadFileDone"
-        >
-      </div>
-      </Col>
-      <Col :span="12">
-      <div class="fl-right">
-        <span>{{ $t('m.Theme') }}:</span>
-        <Select
-          :value="theme"
-          class="adjust"
-          @on-change="onThemeChange"
-        >
-          <Option
-            v-for="item in themes"
-            :key="item.label"
-            :value="item.value"
-          >
-            {{ item.label }}
-          </Option>
-        </Select>
-      </div>
-      </Col>
-    </Row>
-    <codemirror
-      ref="myEditor"
-      :value="value"
-      :options="options"
-      @change="onEditorCodeChange"
-    />
-  </div>
+  <codemirror
+    id="codemirror"
+    ref="myEditor"
+    :value="value"
+    :options="options"
+    @change="onEditorCodeChange"
+  />
 </template>
 <script>
 import utils from '@/utils/utils'
@@ -111,19 +39,17 @@ export default {
       type: String,
       default: ''
     },
-    languages: {
-      type: Array,
-      default: () => {
-        return ['C', 'C++', 'Java', 'Python2']
-      }
-    },
     language: {
       type: String,
       default: 'C++'
     },
     theme: {
       type: String,
-      default: 'solarized'
+      default: 'material'
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -132,24 +58,23 @@ export default {
         // codemirror options
         tabSize: 4,
         mode: 'text/x-csrc',
-        theme: 'solarized',
+        theme: 'material',
         lineNumbers: true,
         line: true,
-        // 代码折叠
+        // code folding
         foldGutter: true,
         gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        // 选中文本自动高亮，及高亮方式
+        // selected text auto highlighting
         styleSelectedText: true,
         lineWrapping: true,
-        highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true }
+        highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true },
+        readOnly: this.readOnly
       },
-      mode: {
-        'C++': 'text/x-csrc'
-      },
+      mode: {},
       themes: [
-        { label: this.$i18n.t('m.Monokai'), value: 'monokai' },
-        { label: this.$i18n.t('m.Solarized_Light'), value: 'solarized' },
-        { label: this.$i18n.t('m.Material'), value: 'material' }
+        { label: 'Monokai', value: 'monokai' },
+        { label: 'm.Solarized_Light', value: 'solarized' },
+        { label: 'm.Material', value: 'material' }
       ]
     }
   },
@@ -162,6 +87,9 @@ export default {
   watch: {
     'theme' (newVal, oldVal) {
       this.editor.setOption('theme', newVal)
+    },
+    'language' (newVal, oldVal) {
+      this.editor.setOption('mode', this.mode[newVal])
     }
   },
   mounted () {
@@ -178,55 +106,24 @@ export default {
   methods: {
     onEditorCodeChange (newCode) {
       this.$emit('update:value', newCode)
-    },
-    onLangChange (newVal) {
-      this.editor.setOption('mode', this.mode[newVal])
-      this.$emit('changeLang', newVal)
-    },
-    onThemeChange (newTheme) {
-      this.editor.setOption('theme', newTheme)
-      this.$emit('changeTheme', newTheme)
-    },
-    onResetClick () {
-      this.$emit('resetCode')
-    },
-    onUploadFile () {
-      document.getElementById('file-uploader').click()
-    },
-    onUploadFileDone () {
-      const f = document.getElementById('file-uploader').files[0]
-      const fileReader = new window.FileReader()
-      const self = this
-      fileReader.onload = function (e) {
-        const text = e.target.result
-        self.editor.setValue(text)
-        document.getElementById('file-uploader').value = ''
-      }
-      fileReader.readAsText(f, 'UTF-8')
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-  .header {
-    margin: 5px 5px 15px 5px;
-    .adjust {
-      width: 150px;
-      margin-left: 10px;
-    }
-    .fl-right {
-      float: right;
-    }
+  #codemirror {
+    width: 100%;
+    height: 100%;
   }
 </style>
 
 <style>
   .CodeMirror {
-    height: auto !important;
+    height: 100% !important;
   }
   .CodeMirror-scroll {
     min-height: 300px;
-    max-height: 1000px;
+    max-height: 100%;
   }
 </style>

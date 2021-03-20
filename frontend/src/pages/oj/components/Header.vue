@@ -1,86 +1,137 @@
 <template>
-  <div id="header">
-    <b-navbar>
-      <b-navbar-brand class="header__logo">
+  <div class="header">
+    <b-navbar sticky-top style="height: 100%;">
+      <b-navbar-brand to="/" class="ml-5" style="width: 0">
         <img
-          src="https://www.skku.edu/_res/skku//img/common/logo.png"
-          style="margin-left: 20px"
+          src="@/assets/logos/signature.png"
+          style="height: 50px; width: auto;"
         />
       </b-navbar-brand>
 
-      <b-navbar-nav class="header__items" align="center">
-        <b-nav-item>Notice</b-nav-item>
-        <b-nav-item>Contests</b-nav-item>
-        <b-nav-item>Problems</b-nav-item>
+      <b-navbar-nav class="mx-auto" align="center">
+        <b-nav-item class="header__menu">
+          <router-link class="nav-link" active-class="active" to="/announcement">Notice</router-link>
+        </b-nav-item>
+        <b-nav-item class="header__menu">
+          <router-link class="nav-link" active-class="active" to="/contest">Contests</router-link>
+        </b-nav-item>
+        <b-nav-item class="header__menu">
+          <router-link class="nav-link" active-class="active" to="/problem">Problems</router-link>
+        </b-nav-item>
       </b-navbar-nav>
 
-      <b-navbar-nav class="header__account" align="right">
-        <b-icon icon="person" style="width: 32px; height: 32px"></b-icon>
+      <b-navbar-nav class="mr-5" style="width: 0">
+        <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
+          <template slot="button-content">
+            <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
+          </template>
+          <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
+          <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
+        </b-nav-item-dropdown>
+
+        <b-nav-item-dropdown v-else no-caret right>
+          <template slot="button-content">
+            <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
+          </template>
+          <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
+          <b-dropdown-item v-b-modal.setting>Setting</b-dropdown-item>
+          <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
+        </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>
+    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
+      <component
+        :is="modalStatus.mode"
+        v-if="modalVisible"
+      />
+    </b-modal>
+    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
+      <profileSetting></profileSetting>
+    </b-modal>
   </div>
 </template>
 
 <script>
-//   import { mapGetters, mapActions } from 'vuex'
-// import login from '@oj/views/user/Login'
-// import register from '@oj/views/user/Register'
-//   export default {
-// components: {
-//   login,
-//   register
-// },
-// mounted () {
-//   this.getProfile()
-// },
-// methods: {
-//   ...mapActions(['getProfile', 'changeModalStatus']),
-//   handleRoute (route) {
-//     if (route && route.indexOf('admin') < 0) {
-//       this.$router.push(route)
-//     } else {
-//       window.open('/admin/')
-//     }
-//   },
-//   handleBtnClick (mode) {
-//     if (mode === 'register') {
-//       this.$alert('아이디(Username)는 자신의 학번으로 설정해주세요')
-//     }
-//     this.changeModalStatus({
-//       visible: true,
-//       mode: mode
-//     })
-//   }
-// },
-// computed: {
-//   ...mapGetters(['website', 'modalStatus', 'user', 'isAuthenticated', 'isAdminRole']),
-//   // Follow routing changes
-//   activeMenu () {
-//     return '/' + this.$route.path.split('/')[1]
-//   },
-//   modalVisible: {
-//     get () {
-//       return this.modalStatus.visible
-//     },
-//     set (value) {
-//       this.changeModalStatus({visible: value})
-//     }
-//   }
-// }
-//   }
+import { mapGetters, mapActions } from 'vuex'
+import register from '@oj/views/user/Register'
+import login from '@oj/views/user/Login'
+import profileSetting from '@oj/views/setting/children/ProfileSetting'
+import ApplyResetPassword from '@oj/views/user/ApplyResetPassword'
+
+export default {
+  components: {
+    login,
+    register,
+    profileSetting,
+    ApplyResetPassword
+  },
+  mounted () {
+    this.getProfile()
+  },
+  methods: {
+    ...mapActions(['getProfile', 'changeModalStatus']),
+    openWindow (route) {
+      window.open(route)
+    },
+    handleBtnClick (mode) {
+      this.changeModalStatus({
+        visible: true,
+        mode: mode
+      })
+    }
+  },
+  computed: {
+    ...mapGetters(['website', 'modalStatus', 'user', 'isAuthenticated', 'isAdminRole']),
+    activeMenu () {
+      return '/' + this.$route.path.split('/')[1]
+    },
+    modalVisible: {
+      get () {
+        return this.modalStatus.visible
+      },
+      set (value) {
+        this.changeModalStatus({ visible: value })
+      }
+    }
+  }
+}
 </script>
 
-<style lang="less" scoped>
-  #header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 72px;
-    width: 100%;
-    z-index: 1000;
-    background-color: #fff;
+<style lang='less' scoped>
+#header {
+  position: relative;
+  height: 72px;
+  width: 100%;
+  z-index: 1000;
+  background-color: #fff;
+  border-bottom: 2px solid #E2E2E2;
+}
+.header__menu {
+  width: 100%;
+}
+.header__menu__item {
+  width: 100px;
+  text-align: center;
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: #8dc63f;
   }
-  .header__items {
-    width: 100%;
-  }
+}
+/deep/ .modal-med > .modal-dialog > .modal-content > .modal-header {
+  padding-bottom:0;
+  padding-top:4px;
+}
+/deep/ .modal-med > .modal-dialog > .modal-content > .modal-body {
+  padding-top:0;
+}
+/deep/ .modal-med > .modal-dialog > .modal-content  {
+  position:absolute;
+  top:auto;
+  left:auto;
+  right:auto;
+  bottom:auto;
+}
+/deep/ .modal-big > .modal-dialog > .modal-content {
+  min-width:800px;
+}
 </style>

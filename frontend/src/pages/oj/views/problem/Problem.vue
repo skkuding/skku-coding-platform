@@ -1,374 +1,224 @@
 <template>
-  <div class="flex-container">
-    <div id="problem-main">
-      <!--problem main-->
-      <Panel
-        :padding="40"
-        shadow
-      >
-        <div slot="title">
-          {{ problem.title }}
+  <div id="container">
+    <b-navbar id="main-header" type="dark">
+      <b-navbar-brand to="/">
+        <div class="logo-img">
+          <img src="@/assets/logos/logo.svg" alt=""/>
         </div>
-        <div
-          id="problem-content"
-          v-katex
-          class="markdown-body"
-        >
-          <p class="title">
-            {{ $t('m.Description') }}
-          </p>
-          <p
-            class="content"
-            v-html="problem.description"
-          />
-          <!-- {{$t('m.music')}} -->
-          <p class="title">
-            {{ $t('m.Input') }} <span v-if="problem.io_mode.io_mode=='File IO'">({{ $t('m.FromFile') }}: {{ problem.io_mode.input }})</span>
-          </p>
-          <p
-            class="content"
-            v-html="problem.input_description"
-          />
+      </b-navbar-brand>
 
-          <p class="title">
-            {{ $t('m.Output') }} <span v-if="problem.io_mode.io_mode=='File IO'">({{ $t('m.ToFile') }}: {{ problem.io_mode.output }})</span>
-          </p>
-          <p
-            class="content"
-            v-html="problem.output_description"
-          />
+      <b-navbar-nav v-if="$route.name && $route.name.indexOf('contest') != -1">
+        <b-nav-item to="#">Contests</b-nav-item>
+        <b-nav-item>
+          <b-icon icon="chevron-right"/>
+        </b-nav-item>
+        <b-nav-item to="#">{{problem.contest_name}}</b-nav-item>
+        <b-nav-item>
+          <b-icon icon="chevron-right"/>
+        </b-nav-item>
+        <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+      </b-navbar-nav>
 
-          <div
-            v-for="(sample, index) of problem.samples"
-            :key="index"
-          >
-            <div class="flex-container sample">
-              <div class="sample-input">
-                <p class="title">
-                  {{ $t('m.Sample_Input') }} {{ index + 1 }}
-                  <a
-                    v-clipboard:copy="sample.input"
-                    v-clipboard:success="onCopy"
-                    v-clipboard:error="onCopyError"
-                    class="copy"
-                  >
-                    <Icon type="clipboard" />
-                  </a>
-                </p>
-                <pre>{{ sample.input }}</pre>
-              </div>
-              <div class="sample-output">
-                <p class="title">
-                  {{ $t('m.Sample_Output') }} {{ index + 1 }}
-                </p>
-                <pre>{{ sample.output }}</pre>
-              </div>
-            </div>
-          </div>
+      <b-navbar-nav v-else>
+        <b-nav-item>
+          <b-icon icon="chevron-right"/>
+        </b-nav-item>
+        <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+      </b-navbar-nav>
 
-          <div v-if="problem.hint">
-            <p class="title">
-              {{ $t('m.Hint') }}
-            </p>
-            <Card dis-hover>
-              <div
-                class="content"
-                v-html="problem.hint"
-              />
-            </Card>
-          </div>
-
-          <div v-if="problem.source">
-            <p class="title">
-              {{ $t('m.Source') }}
-            </p>
-            <p class="content">
-              {{ problem.source }}
-            </p>
-          </div>
-        </div>
-      </Panel>
-      <!--problem main end-->
-      <Card
-        id="submit-code"
-        :padding="20"
-        dis-hover
-      >
-        <CodeMirror
-          :value.sync="code"
-          :languages="problem.languages"
-          :language="language"
-          :theme="theme"
-          @resetCode="onResetToTemplate"
-          @changeTheme="onChangeTheme"
-          @changeLang="onChangeLang"
-        />
-        <Row
-          type="flex"
-          justify="space-between"
-        >
-          <Col :span="10">
-          <div
-            v-if="statusVisible"
-            class="status"
-          >
-            <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
-              <span>{{ $t('m.Status') }}</span>
-              <Tag
-                v-if="submissionStatus.text === 'Compile Error'"
-                type="dot"
-                :color="submissionStatus.color"
-                @click.native="handleRoute('/status/'+submissionId)"
-              >
-                {{ $t('m.' + submissionStatus.text.replace(/ /g, "_")) }}
-              </Tag>
-              <Tag
-                v-else
-                type="dot"
-                :color="submissionStatus.color"
-              >
-                {{ $t('m.' + submissionStatus.text.replace(/ /g, "_")) }}
-              </Tag>
-            </template>
-            <template v-else-if="this.contestID && !OIContestRealTimePermission">
-              <Alert
-                type="success"
-                show-icon
-              >
-                {{ $t('m.Submitted_successfully') }}
-              </Alert>
-            </template>
-          </div>
-          <div v-else-if="problem.my_status === 0">
-            <Alert
-              type="success"
-              show-icon
-            >
-              {{ $t('m.You_have_solved_the_problem') }}
-            </Alert>
-          </div>
-          <div v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
-            <Alert
-              type="success"
-              show-icon
-            >
-              {{ $t('m.You_have_submitted_a_solution') }}
-            </Alert>
-          </div>
-          <div v-if="contestEnded">
-            <Alert
-              type="warning"
-              show-icon
-            >
-              {{ $t('m.Contest_has_ended') }}
-            </Alert>
-          </div>
-          </Col>
-
-          <Col :span="12">
-          <template v-if="captchaRequired">
-            <div class="captcha-container">
-              <Tooltip
-                v-if="captchaRequired"
-                content="Click to refresh"
-                placement="top"
-              >
-                <img
-                  :src="captchaSrc"
-                  @click="getCaptchaSrc"
-                >
-              </Tooltip>
-              <Input
-                v-model="captchaCode"
-                class="captcha-code"
-              />
-            </div>
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
+          <template slot="button-content">
+            <b-icon icon="person" scale="1.5"/>
           </template>
-          <Button
-            type="warning"
-            icon="edit"
-            :loading="submitting"
-            :disabled="problemSubmitDisabled || submitted"
-            class="fl-right"
+          <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
+          <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
+        </b-nav-item-dropdown>
+        <b-nav-item-dropdown v-else no-caret right>
+          <template slot="button-content">
+            <b-icon icon="person" scale="1.5"/>
+          </template>
+          <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
+          <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
+          <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    </b-navbar>
+    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
+      <component
+        :is="modalStatus.mode"
+        v-if="modalVisible"
+      />
+    </b-modal>
+    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
+      <profileSetting></profileSetting>
+    </b-modal>
+
+    <b-navbar id="inner-header" type="dark">
+      <b-navbar-nav>
+        <b-nav-item class="menu-icon" active>
+          <b-icon icon="list" scale="1.4" v-b-toggle.sidebar/>
+        </b-nav-item>
+      </b-navbar-nav>
+      <b-navbar-nav>
+        <b-nav-item to="#" class="active-link problem-title" active>
+          {{problem.title}}
+        </b-nav-item>
+      </b-navbar-nav>
+
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item v-if="statusVisible">
+          <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
+            <Tag
+              type="dot"
+              :color="submissionStatus.color"
+              @click.native="()=>{$refs.sidebar.onMySubmissionClicked({ID:submissionId})}"
+            >
+              {{ submissionStatus.text }}
+            </Tag>
+          </template>
+          <template v-else-if="this.contestID && !OIContestRealTimePermission">
+            <Tag type="dot" color="green">Submitted Succesfully</Tag>
+          </template>
+        </b-nav-item>
+        <b-nav-item v-else-if="problem.my_status === 0">
+          <Tag type="dot" color="green">You have solved the problem</Tag>
+        </b-nav-item>
+        <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
+          <Tag type="dot" color="green">You have submitted a solution</Tag>
+        </b-nav-item>
+        <b-nav-item v-if="captchaRequired">
+          <img :src="captchaSrc" id="captcha-img">
+          <b-button @click="getCaptchaSrc">Refresh</b-button>
+          <b-form-input v-model="captchaCode" id="captcha-code"/>
+        </b-nav-item>
+        <b-nav-item>
+          <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
+            <b-icon icon="arrow-clockwise" scale="1.1"/>
+          </b-button>
+        </b-nav-item>
+        <b-nav-item>
+          <b-button class="btn">
+            <b-icon icon="play" scale="1.4"/>
+            Run
+          </b-button>
+        </b-nav-item>
+        <b-nav-item>
+          <b-button class="btn-submit"
+            :disabled="(contestID && problemSubmitDisabled) || submitted"
             @click="submitCode"
           >
-            <span v-if="submitting">{{ $t('m.Submitting') }}</span>
-            <span v-else>{{ $t('m.Submit') }}</span>
-          </Button>
-          </Col>
-        </Row>
-      </Card>
-    </div>
+            <span>Submit</span>
+          </b-button>
+        </b-nav-item>
+        <b-nav-item>
+          <b-dropdown split class="dropdown" :text="language" @change="onChangeLang">
+            <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
+              @click="()=>onChangeLang(lang)">
+              {{lang}}
+            </b-dropdown-item>
+          </b-dropdown>
+        </b-nav-item>
+        <b-nav-item>
+          <b-dropdown split class="dropdown" :text="theme" @change="onChangeTheme">
+            <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
+              @click="()=>onChangeTheme(theme)">
+              {{theme}}
+            </b-dropdown-item>
+          </b-dropdown>
+        </b-nav-item>
+      </b-navbar-nav>
+    </b-navbar>
 
-    <div id="right-column">
-      <VerticalMenu @on-click="handleRoute">
-        <template v-if="this.contestID">
-          <VerticalMenu-item :route="{name: 'contest-problem-list', params: {contestID: contestID}}">
-            <Icon type="ios-photos" />
-            {{ $t('m.Problems') }}
-          </VerticalMenu-item>
-
-          <VerticalMenu-item :route="{name: 'contest-announcement-list', params: {contestID: contestID}}">
-            <Icon type="chatbubble-working" />
-            {{ $t('m.Announcements') }}
-          </VerticalMenu-item>
-        </template>
-
-        <VerticalMenu-item
-          v-if="!this.contestID || OIContestRealTimePermission"
-          :route="submissionRoute"
-        >
-          <Icon type="navicon-round" />
-          {{ $t('m.Submissions') }}
-        </VerticalMenu-item>
-
-        <template v-if="this.contestID">
-          <VerticalMenu-item
-            v-if="!this.contestID || OIContestRealTimePermission"
-            :route="{name: 'contest-rank', params: {contestID: contestID}}"
-          >
-            <Icon type="stats-bars" />
-            {{ $t('m.Rankings') }}
-          </VerticalMenu-item>
-          <VerticalMenu-item :route="{name: 'contest-details', params: {contestID: contestID}}">
-            <Icon type="home" />
-            {{ $t('m.View_Contest') }}
-          </VerticalMenu-item>
-        </template>
-      </VerticalMenu>
-
-      <Card id="info">
-        <div
-          slot="title"
-          class="header"
-        >
-          <Icon type="information-circled" />
-          <span class="card-title">{{ $t('m.Information') }}</span>
+    <b-row id="problem-container">
+      <b-col id="problem-description" cols="5">
+        <div v-katex>
+          <h2>Description</h2>
+          <p v-html=problem.description></p>
+          <h2>Input</h2>
+          <p v-html=problem.input_description></p>
+          <h2>Output</h2>
+          <p v-html=problem.output_description></p>
         </div>
-        <ul>
-          <li>
-            <p>ID</p>
-            <p>{{ problem._id }}</p>
-          </li>
-          <li>
-            <p>{{ $t('m.Time_Limit') }}</p>
-            <p>{{ problem.time_limit }}MS</p>
-          </li>
-          <li>
-            <p>{{ $t('m.Memory_Limit') }}</p>
-            <p>{{ problem.memory_limit }}MB</p>
-          </li>
-          <li /><li>
-            <p>{{ $t('m.IOMode') }}</p>
-            <p>{{ problem.io_mode.io_mode }}</p>
-          </li>
-          <li>
-            <p>{{ $t('m.Created') }}</p>
-            <p>{{ problem.created_by.username }}</p>
-          </li>
-          <li v-if="problem.difficulty">
-            <p>{{ $t('m.Level') }}</p>
-            <p>{{ $t('m.' + problem.difficulty) }}</p>
-          </li>
-          <li v-if="problem.total_score">
-            <p>{{ $t('m.Score') }}</p>
-            <p>{{ problem.total_score }}</p>
-          </li>
-          <li>
-            <p>{{ $t('m.Tags') }}</p>
-            <p>
-              <Poptip
-                trigger="hover"
-                placement="left-end"
-              >
-                <a>{{ $t('m.Show') }}</a>
-                <div slot="content">
-                  <Tag
-                    v-for="tag in problem.tags"
-                    :key="tag"
-                  >
-                    {{ tag }}
-                  </Tag>
-                </div>
-              </Poptip>
-            </p>
-          </li>
-        </ul>
-      </Card>
 
-      <Card
-        v-if="!this.contestID || OIContestRealTimePermission"
-        id="pieChart"
-        :padding="0"
-      >
-        <div slot="title">
-          <Icon type="ios-analytics" />
-          <span class="card-title">{{ $t('m.Statistic') }}</span>
-          <Button
-            id="detail"
-            type="ghost"
-            size="small"
-            @click="graphVisible = !graphVisible"
-          >
-            Details
-          </Button>
+        <div v-for="(sample, index) of problem.samples" :key="index">
+          <h2>
+            Sample Input {{index + 1}}
+            <a v-clipboard:copy="sample.input">
+              <b-icon id="clipboard1" icon="clipboard" class="copy-icon" scale="0.8"/>
+            </a>
+            <b-tooltip target="clipboard1" placement="top" triggers="hover">
+              Copy
+            </b-tooltip>
+          </h2>
+          <pre class="sample-io">{{sample.input}}</pre>
+          <h2>
+            Sample Output {{index + 1}}
+          </h2>
+          <pre class="sample-io">{{sample.output}}</pre>
         </div>
-        <div class="echarts">
-          <ECharts :options="pie" />
-        </div>
-      </Card>
-    </div>
 
-    <Modal v-model="graphVisible">
-      <div id="pieChart-detail">
-        <ECharts
-          :options="largePie"
-          :init-options="largePieInitOpts"
-        />
-      </div>
-      <div slot="footer">
-        <Button
-          type="ghost"
-          @click="graphVisible=false"
-        >
-          {{ $t('m.Close') }}
-        </Button>
-      </div>
-    </Modal>
+        <div v-if="problem.hint" v-katex>
+          <h2>Hint</h2>
+          <p v-html=problem.hint></p>
+        </div>
+      </b-col>
+      <b-col id="console" cols="7">
+        <b-row id="editor">
+          <CodeMirror
+            :value.sync="code"
+            :language="language"
+            :theme="theme"
+          />
+        </b-row>
+        <!-- <b-row id="io">
+          <b-row class="io-header">
+            <b-col class="io-header-cell right-border">Input</b-col>
+            <b-col class="io-header-cell">Output</b-col>
+          </b-row>
+          <b-row class="io-content">
+            <b-col class="io-content-cell right-border">
+              <pre></pre>
+            </b-col>
+            <b-col class="io-content-cell">
+              <pre></pre>
+            </b-col>
+          </b-row>
+        </b-row> -->
+      </b-col>
+    </b-row>
+    <b-sidebar id="sidebar" no-header backdrop>
+      <template #default="{ hide }">
+        <ProblemSidebar ref="sidebar" :hide="hide" :contestID="contestID" :problemID="problemID"/>
+      </template>
+    </b-sidebar>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { types } from '../../../../store'
+import { types } from '@/store'
 import CodeMirror from '@oj/components/CodeMirror.vue'
 import storage from '@/utils/storage'
 import { FormMixin } from '@oj/components/mixins'
 import { JUDGE_STATUS, CONTEST_STATUS, buildProblemCodeKey } from '@/utils/constants'
 import api from '@oj/api'
-import { pie, largePie } from './chartData'
-
-// 只显示这些状态的图形占用
-const filtedStatus = ['-1', '-2', '0', '1', '2', '3', '4', '8']
+import ProblemSidebar from './ProblemSidebar.vue'
+import moment from 'moment'
+import register from '@oj/views/user/Register'
+import login from '@oj/views/user/Login'
+import profileSetting from '@oj/views/setting/children/ProfileSetting'
 
 export default {
-  name: 'Problem',
+  name: 'ProblemDetails',
   components: {
-    CodeMirror
+    CodeMirror,
+    ProblemSidebar,
+    login,
+    register,
+    profileSetting
   },
   mixins: [FormMixin],
-  beforeRouteEnter (to, from, next) {
-    const problemCode = storage.get(buildProblemCodeKey(to.params.problemID, to.params.contestID))
-    if (problemCode) {
-      next(vm => {
-        vm.language = problemCode.language
-        vm.code = problemCode.code // get the left code.
-        vm.theme = problemCode.theme
-      })
-    } else {
-      next()
-    }
-  },
   data () {
     return {
       statusVisible: false,
@@ -380,9 +230,7 @@ export default {
       contestID: '',
       problemID: '',
       submitting: false,
-      code: '',
-      language: 'C++',
-      theme: 'solarized',
+
       submissionId: '',
       submitted: false,
       result: {
@@ -401,111 +249,96 @@ export default {
         tags: [],
         io_mode: { io_mode: 'Standard IO' }
       },
-      pie: pie,
-      largePie: largePie,
-      // echarts 无法获取隐藏dom的大小，需手动指定
-      largePieInitOpts: {
-        width: '500',
-        height: '480'
-      }
+
+      // CodeMirror
+      code: '',
+      language: 'C++',
+      theme: 'material',
+      theme_list: ['solarized', 'monokai', 'material']
     }
   },
-  mounted () {
+  async mounted () {
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
-    this.init()
+    await this.init()
+    if (this.$route.params.contestID) {
+      this.route_name = this.$route.name
+      this.getContestProblems()
+      this.$store.dispatch('getContest').then(res => {
+        this.changeDomTitle({ title: res.data.data.title })
+        const data = res.data.data
+        const endTime = moment(data.end_time)
+        if (endTime.isAfter(moment(data.now))) {
+          this.timer = setInterval(() => {
+            this.$store.commit(types.NOW_ADD_1S)
+          }, 1000)
+        }
+      })
+    }
   },
   methods: {
-    ...mapActions(['changeDomTitle']),
-    init () {
+    ...mapActions(['changeDomTitle', 'changeModalStatus']),
+    async init () {
       this.$Loading.start()
       this.contestID = this.$route.params.contestID
       this.problemID = this.$route.params.problemID
-      const func = this.$route.name === 'problem-details' ? 'getProblem' : 'getContestProblem'
-      api[func](this.problemID, this.contestID).then(res => {
-        this.$Loading.finish()
-        const problem = res.data.data
-        this.changeDomTitle({ title: problem.title })
-        api.submissionExists(problem.id).then(res => {
-          this.submissionExists = res.data.data
-        })
-        problem.languages = problem.languages.sort()
-        this.problem = problem
-        this.changePie(problem)
 
-        // 在beforeRouteEnter中修改了, 说明本地有code，无需加载template
-        if (this.code !== '') {
-          return
-        }
-        // try to load problem template
-        const userId = this.$route.query.username
+      const res = this.$route.name === 'problem-details'
+        ? await api.getProblem(this.problemID)
+        : await api.getContestProblem(this.problemID, this.contestID)
+
+      this.$Loading.finish()
+      const problem = res.data.data
+      this.changeDomTitle({ title: problem.title })
+
+      const res2 = await api.submissionExists(problem.id)
+      this.submissionExists = res2.data.data
+
+      problem.languages = problem.languages.sort()
+      this.problem = problem
+
+      if (this.code === '') {
+        const userId = this.user.username
         let preferredLanguage = problem.languages[0]
-        api.getUserInfo(userId).then(res => {
-          const lang = res.data.data.language
-          if (lang !== null) {
-            if (problem.languages.includes(lang)) {
-              preferredLanguage = lang
-            }
+        const res3 = await api.getUserInfo(userId)
+
+        const lang = res3.data.data.language
+        if (lang !== null) {
+          if (problem.languages.includes(lang)) {
+            preferredLanguage = lang
           }
-          this.language = preferredLanguage
-          const template = this.problem.template
-          if (template && template[this.language]) {
-            this.code = template[this.language]
-          }
-        })
-      }, () => {
-        this.$Loading.error()
-      })
-    },
-    changePie (problemData) {
-      // 只显示特定的一些状态
-      for (const k in problemData.statistic_info) {
-        if (filtedStatus.indexOf(k) === -1) {
-          delete problemData.statistic_info[k]
+        }
+        this.language = preferredLanguage
+        const template = this.problem.template
+        if (template && template[this.language]) {
+          this.code = template[this.language]
         }
       }
-      const acNum = problemData.accepted_number
-      const data = [
-        { name: 'WA', value: problemData.submission_number - acNum },
-        { name: 'AC', value: acNum }
-      ]
-      this.pie.series[0].data = data
-      // 只把大图的AC selected下，这里需要做一下deepcopy
-      const data2 = JSON.parse(JSON.stringify(data))
-      data2[1].selected = true
-      this.largePie.series[1].data = data2
-
-      // 根据结果设置legend,没有提交过的legend不显示
-      const legend = Object.keys(problemData.statistic_info).map(ele => JUDGE_STATUS[ele].short)
-      if (legend.length === 0) {
-        legend.push('AC', 'WA')
-      }
-      this.largePie.legend.data = legend
-
-      // 把ac的数据提取出来放在最后
-      const acCount = problemData.statistic_info['0']
-      delete problemData.statistic_info['0']
-
-      const largePieData = []
-      Object.keys(problemData.statistic_info).forEach(ele => {
-        largePieData.push({ name: JUDGE_STATUS[ele].short, value: problemData.statistic_info[ele] })
+    },
+    getContestProblems () {
+      this.$store.dispatch('getContestProblems').then(res => {
+        if (this.isAuthenticated) {
+          if (this.contestRuleType === 'ACM') {
+            this.addStatusColumn(this.ACMTableColumns, res.data.data)
+          } else if (this.OIContestRealTimePermission) {
+            this.addStatusColumn(this.ACMTableColumns, res.data.data)
+          }
+        }
       })
-      largePieData.push({ name: 'AC', value: acCount })
-      this.largePie.series[0].data = largePieData
     },
     handleRoute (route) {
       this.$router.push(route)
     },
-    onChangeLang (newLang) {
-      if (this.problem.template[newLang]) {
-        if (this.code.trim() === '') {
-          this.code = this.problem.template[newLang]
-        }
-      }
-      this.language = newLang
+    openWindow (route) {
+      window.open(route)
     },
-    onChangeTheme (newTheme) {
-      this.theme = newTheme
+    // User profile icon
+    handleBtnClick (mode) {
+      this.changeModalStatus({
+        visible: true,
+        mode: mode
+      })
     },
+    // when reset button clicked
     onResetToTemplate () {
       this.$Modal.confirm({
         content: this.$i18n.t('m.Are_you_sure_you_want_to_reset_your_code'),
@@ -519,10 +352,22 @@ export default {
         }
       })
     },
+    // when language dropdown changed
+    onChangeLang (newLang) {
+      if (this.problem.template[newLang] && this.code.trim() === '') {
+        this.code = this.problem.template[newLang]
+      }
+      this.language = newLang
+    },
+    // when theme dropdown changed
+    onChangeTheme (newTheme) {
+      this.theme = newTheme
+    },
     checkSubmissionStatus () {
-      // 使用setTimeout避免一些问题
+      // Use setTimeout to avoid some problems
       if (this.refreshStatus) {
-        // 如果之前的提交状态检查还没有停止,则停止,否则将会失去timeout的引用造成无限请求
+        // If the previous submission status check has not stopped, stop
+        // otherwise the timeout reference will be lost and unlimited requests
         clearTimeout(this.refreshStatus)
       }
       const checkStatus = () => {
@@ -565,7 +410,7 @@ export default {
         this.statusVisible = true
         api.submitCode(data).then(res => {
           this.submissionId = res.data.data && res.data.data.submission_id
-          // 定时检查状态
+          // Regularly check status
           this.submitting = false
           this.submissionExists = true
           if (!detailsVisible) {
@@ -586,14 +431,14 @@ export default {
           this.statusVisible = false
         })
       }
-
       if (this.contestRuleType === 'OI' && !this.OIContestRealTimePermission) {
         if (this.submissionExists) {
           this.$Modal.confirm({
             title: '',
             content: '<h3>' + this.$i18n.t('m.You_have_submission_in_this_problem_sure_to_cover_it') + '<h3>',
             onOk: () => {
-              // 暂时解决对话框与后面提示对话框冲突的问题(否则一闪而过）
+              // Temporarily solve the conflict between the dialog box
+              // and the prompt dialog box behind (otherwise it will flash by)
               setTimeout(() => {
                 submitFunc(data, false)
               }, 1000)
@@ -608,16 +453,14 @@ export default {
       } else {
         submitFunc(data, true)
       }
-    },
-    onCopy (event) {
-      this.$success('Code copied')
-    },
-    onCopyError (e) {
-      this.$error('Failed to copy code')
     }
   },
   computed: {
+    ...mapGetters(['isAuthenticated', 'contestRuleType', 'OIContestRealTimePermission']),
     ...mapGetters(['problemSubmitDisabled', 'contestRuleType', 'OIContestRealTimePermission', 'contestStatus']),
+    // for header user dropdown
+    ...mapGetters(['website', 'modalStatus', 'user', 'isAdminRole']),
+
     contest () {
       return this.$store.state.contest.contest
     },
@@ -636,12 +479,19 @@ export default {
       } else {
         return { name: 'submission-list', query: { problemID: this.problemID } }
       }
+    },
+    modalVisible: {
+      get () {
+        return this.modalStatus.visible
+      },
+      set (value) {
+        this.changeModalStatus({ visible: value })
+      }
     }
   },
   beforeRouteLeave (to, from, next) {
-    // 防止切换组件后仍然不断请求
+    // Prevent constant requests after switching components
     clearInterval(this.refreshStatus)
-
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: true })
     storage.set(buildProblemCodeKey(this.problem._id, from.params.contestID), {
       code: this.code,
@@ -653,121 +503,184 @@ export default {
   watch: {
     '$route' () {
       this.init()
+    },
+    contestEnded: () => {
+      this.$error('Contest has ended :<')
+    }
+  },
+  beforeDestroy () {
+    if (this.contestID) {
+      clearInterval(this.timer)
+      this.$store.commit(types.CLEAR_CONTEST)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-  .card-title {
-    margin-left: 8px;
+@font-face {
+  font-family: 'Manrope';
+  src: url("../../../../fonts/Manrope-Bold.ttf");
+}
+* {
+  font-family: 'Manrope', sans-serif;
+}
+
+#container {
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+}
+
+#main-header {
+  background: #0B232F;
+}
+
+.logo-img {
+  display:block;
+  width:31px;
+  height:36px;
+  filter: invert(100%) sepia(92%) saturate(0%) hue-rotate(62deg) brightness(110%) contrast(101%);
+}
+
+#inner-header {
+  height: 58px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 15px;
+  background: #173747;
+  border-bottom: 1px solid #3B4F56;
+
+  .menu-icon {
+    margin-right: 10px;
   }
 
-  .flex-container {
-    #problem-main {
-      flex: auto;
-      margin-right: 18px;
+  .active-link {
+    a {
+      margin-top: 9px;
     }
-    #right-column {
-      flex: none;
-      width: 220px;
-    }
+
+    height: 58px;
+    border-bottom: 2px solid white;
+    font-size: 18px;
   }
 
-  #problem-content {
-    margin-top: -50px;
-    .title {
+  .dropdown {
+    min-width: 125px;
+  }
+
+  /deep/ .dropdown button{
+    background: #45576C;
+  }
+
+  /deep/ .dropdown ul {
+    background: #45576C;
+
+    li a {
+      color: white;
+    }
+
+    li a:hover {
+      background: #2F3B49;
+    }
+  }
+}
+
+#problem-container {
+  padding: 0;
+  margin: 0;
+  flex: 1 1 auto;
+
+  #problem-description {
+    background: #173747;
+    border-right: 1px solid #3B4F56;
+    padding-left: 20px;
+    color: white;
+
+    h2 {
       font-size: 20px;
-      font-weight: 400;
-      margin: 25px 0 8px 0;
-      color: #3091f2;
-      .copy {
-        padding-left: 8px;
-      }
+      margin-top: 25px;
+      margin-bottom: 15px;
     }
-    p.content {
-      margin-left: 25px;
-      margin-right: 20px;
-      font-size: 15px
-    }
-    .sample {
-      align-items: stretch;
-      &-input, &-output {
-        width: 50%;
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-        margin-right: 5%;
-      }
-      pre {
-        flex: 1 1 auto;
-        align-self: stretch;
-        border-style: solid;
-        background: transparent;
-      }
-    }
-  }
 
-  #submit-code {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    .status {
-      float: left;
-      span {
-        margin-right: 10px;
-        margin-left: 10px;
-      }
+    p {
+      font-size: 15px;
+      margin-bottom: 40px;
     }
-    .captcha-container {
-      display: inline-block;
-      .captcha-code {
-        width: auto;
-        margin-top: -20px;
-        margin-left: 20px;
-      }
-    }
-  }
 
-  #info {
-    margin-bottom: 20px;
-    margin-top: 20px;
-    ul {
-      list-style-type: none;
-      li {
-        border-bottom: 1px dotted #e9eaec;
-        margin-bottom: 10px;
-        p {
-          display: inline-block;
-        }
-        p:first-child {
-          width: 90px;
-        }
-        p:last-child {
-          float: right;
-        }
-      }
-    }
-  }
-
-  .fl-right {
-    float: right;
-  }
-
-  #pieChart {
-    .echarts {
-      height: 250px;
-      width: 210px;
-    }
-    #detail {
+    .copy-icon {
       position: absolute;
-      right: 10px;
-      top: 10px;
+      right: 17px;
+    }
+
+    .sample-io {
+      min-height: 90px;
+      padding: 12px;
+      border-radius: 5px;
+      background: #24272D;
+      color: white;
     }
   }
 
-  #pieChart-detail {
-    margin-top: 20px;
-    width: 500px;
-    height: 480px;
+  #captcha-img {
+    height: 38px;
   }
+
+  #captcha-code {
+    display: inline-block;
+    width: 150px;
+  }
+
+  #console {
+    display: flex;
+    padding: 0;
+    flex-flow: column;
+    background: #24272D;
+
+    #editor {
+      margin: 0;
+      padding: 0;
+      flex: 1 1 auto;
+    }
+
+    #io {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 40%;
+      flex: 0 1 500px;
+      border-top: 1px solid #3B4F56;
+      display: flex;
+      flex-flow: column;
+
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .right-border {
+        border-right: 1px solid #3B4F56;
+      }
+
+      .io-header {
+        flex: 0 1 auto;
+        color: #829BB5;
+        border-bottom: 1px solid #3B4F56;
+
+        .io-header-cell {
+          padding: 3px 15px;
+        }
+      }
+
+      .io-content {
+        flex: 1 1 auto;
+        color: white;
+
+        .io-content-cell {
+          padding: 10px 15px;
+        }
+      }
+    }
+  }
+}
 </style>

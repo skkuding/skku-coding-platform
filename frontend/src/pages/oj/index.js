@@ -65,13 +65,83 @@ Vue.component(VerticalMenuItem.name, VerticalMenuItem)
 Vue.component(Panel.name, Panel)
 
 Vue.config.devtools = process.env.NODE_ENV !== 'production'
-
 // 注册全局消息提示
+
 Vue.prototype.$Message.config({
   duration: 2
 })
-Vue.prototype.$error = (s) => Vue.prototype.$Message.error(s)
-Vue.prototype.$info = (s) => Vue.prototype.$Message.info(s)
-Vue.prototype.$success = (s) => Vue.prototype.$Message.success(s)
+
+Vue.prototype.$info = (s, time = 1500) => {
+  const len = s.length
+  if (len <= 15) {
+    Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 1500,
+      width: '225px',
+      type: 'info',
+      showConfirmButton: false
+    })
+  } else {
+    Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 1500,
+      width: '350px',
+      type: 'info',
+      showConfirmButton: false
+    })
+  }
+}
+Vue.prototype.$error = (s, time = 1500) => {
+  const len = s.length
+  if (len <= 15) {
+    Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 1500,
+      width: '225px',
+      type: 'error',
+      showConfirmButton: false
+    })
+  } else {
+    Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 1500,
+      width: '350px',
+      type: 'error',
+      showConfirmButton: false
+    })
+  }
+}
+Vue.prototype.$success = (s, time = 1500) => {
+  const len = s.length
+  if (len <= 15) {
+    Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: time,
+      width: '225px',
+      type: 'success',
+      showConfirmButton: false
+    })
+  } else {
+    Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: time,
+      width: '350px',
+      type: 'success',
+      showConfirmButton: false
+    })
+  }
+}
 
 new Vue(Vue.util.extend({ router, store, i18n }, App)).$mount('#app')

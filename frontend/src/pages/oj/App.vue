@@ -1,33 +1,29 @@
 <template>
-  <div>
-    <NavBar />
+  <div v-if="$route.name && $route.name.indexOf('problem-details') != -1">
+      <router-view/>
+  </div>
+  <div class="app-container" v-else>
+    <Header></Header>
     <div class="content-app">
-      <transition
-        name="fadeInUp"
-        mode="out-in"
-      >
-        <router-view />
+      <transition name="fadeInUp" mode="out-in">
+        <router-view/>
       </transition>
-      <div class="footer">
-        <p v-html="website.website_footer" />
-        <p>
-          <span v-if="version">&nbsp; Version: {{ version }}</span>
-        </p>
-        <p> Test </p>
-      </div>
     </div>
-    <BackTop />
+    <Footer />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
-import NavBar from '@oj/components/NavBar.vue'
+import Header from '@oj/components/Header.vue'
+import Footer from '@oj/components/Footer.vue'
+import api from '@oj/api'
 
 export default {
-  name: 'App',
+  name: 'app',
   components: {
-    NavBar
+    Header,
+    Footer
   },
   data () {
     return {
@@ -37,23 +33,29 @@ export default {
   created () {
     try {
       document.body.removeChild(document.getElementById('app-loader'))
-    } catch (e) {
-    }
+    } catch (e) {}
   },
   mounted () {
     this.getWebsiteConfig()
   },
   methods: {
-    ...mapActions(['getWebsiteConfig', 'changeDomTitle'])
+    ...mapActions(['getWebsiteConfig', 'changeDomTitle']),
+    getContestList (page = 1) {
+      const offset = (page - 1) * this.limit
+      api.getContestList(offset, this.limit, this.query).then((res) => {
+        this.contests = res.data.data.results
+        this.total = res.data.data.total
+      })
+    }
   },
   computed: {
     ...mapState(['website'])
   },
   watch: {
-    'website' () {
+    website () {
       this.changeDomTitle()
     },
-    '$route' () {
+    $route () {
       this.changeDomTitle()
     }
   }
@@ -61,44 +63,33 @@ export default {
 </script>
 
 <style lang="less">
-
-  * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-
-  a {
-    text-decoration: none;
-    background-color: transparent;
-    &:active, &:hover {
-      outline-width: 0;
-    }
-  }
-
-  @media screen and (max-width: 1200px) {
-  .content-app {
-    margin-top: 160px;
-    padding: 0 2%;
-  }
+html, body {
+  min-height: 100%;
+  height: 100%;
 }
 
-@media screen and (min-width: 1200px) {
-  .content-app {
-    margin-top: 80px;
-    padding: 0 2%;
-  }
+.problem-container {
+  min-height: 100%;
 }
 
-  .footer {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    text-align: center;
-    font-size: small;
-  }
+.app-container {
+  padding-bottom: 150px;
+  position: relative;
+  min-height: 100%;
+}
 
-  .fadeInUp-enter-active {
-    animation: fadeInUp .8s;
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  background-color: transparent;
+  &:active, &:hover {
+    outline-width: 0;
   }
+}
 
 </style>

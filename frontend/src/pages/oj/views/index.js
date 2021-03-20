@@ -1,13 +1,16 @@
 import ProblemList from './problem/ProblemList.vue'
+import AnnouncementList from './announcement/AnnouncementList.vue'
+import Announcement from './announcement/Announcement.vue'
 import Logout from './user/Logout.vue'
 import UserHome from './user/UserHome.vue'
 import About from './help/About.vue'
 import FAQ from './help/FAQ.vue'
 import NotFound from './general/404.vue'
 import Home from './general/Home.vue'
-import Announcements from './general/Announcements.vue'
 
 // Grouping Components in the Same Chunk
+const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
+
 const SubmissionList = () => import(/* webpackChunkName: "submission" */ '@oj/views/submission/SubmissionList.vue')
 const SubmissionDetails = () => import(/* webpackChunkName: "submission" */ '@oj/views/submission/SubmissionDetails.vue')
 
@@ -16,14 +19,13 @@ const OIRank = () => import(/* webpackChunkName: "userRank" */ '@oj/views/rank/O
 
 const ApplyResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views/user/ApplyResetPassword.vue')
 const ResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views/user/ResetPassword.vue')
-const EmailAuth = () => import(/* webpackChunkName: "password" */ '@oj/views/user/EmailAuth.vue')
 
-const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
+const EmailAuth = () => import(/* webpackChunkName: "emailAuth" */ '@oj/views/user/EmailAuth.vue')
 
 export {
-  Home, NotFound, Announcements,
+  Home, NotFound,
   Logout, UserHome, About, FAQ,
-  ProblemList, Problem,
+  ProblemList, Announcement, AnnouncementList, Problem,
   ACMRank, OIRank,
   SubmissionList, SubmissionDetails,
   ApplyResetPassword, ResetPassword, EmailAuth

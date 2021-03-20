@@ -2,7 +2,8 @@
 import {
   About,
   ACMRank,
-  Announcements,
+  AnnouncementList,
+  Announcement,
   ApplyResetPassword,
   EmailAuth,
   FAQ,
@@ -33,6 +34,18 @@ export default [
     path: '/logout',
     meta: { title: 'Logout' },
     component: Logout
+  },
+  {
+    name: 'announcement-list',
+    path: '/announcement',
+    meta: { title: 'Announcement List' },
+    component: AnnouncementList
+  },
+  {
+    name: 'announcement-details',
+    path: '/announcement/:announcementID',
+    meta: { title: 'Announcement Detail' },
+    component: Announcement
   },
   {
     name: 'apply-reset-password',
@@ -83,6 +96,12 @@ export default [
     component: Contest.ContestList
   },
   {
+    name: 'contest-problem-details',
+    path: '/contest/:contestID/problem/:problemID/',
+    component: Problem,
+    meta: { title: 'Contest Problem Details' }
+  },
+  {
     name: 'contest-details',
     path: '/contest/:contestID/',
     component: Contest.ContestDetails,
@@ -99,14 +118,9 @@ export default [
         component: Contest.ContestProblemList
       },
       {
-        name: 'contest-problem-details',
-        path: 'problem/:problemID/',
-        component: Problem
-      },
-      {
         name: 'contest-announcement-list',
         path: 'announcements',
-        component: Announcements
+        component: AnnouncementList
       },
       {
         name: 'contest-rank',
@@ -153,18 +167,6 @@ export default [
         path: 'profile',
         meta: { requiresAuth: true, title: 'Profile Settings' },
         component: Setting.ProfileSetting
-      },
-      {
-        name: 'account-setting',
-        path: 'account',
-        meta: { requiresAuth: true, title: 'Account Settings' },
-        component: Setting.AccountSetting
-      },
-      {
-        name: 'security-setting',
-        path: 'security',
-        meta: { requiresAuth: true, title: 'Security Settings' },
-        component: Setting.SecuritySetting
       }
     ]
   },
