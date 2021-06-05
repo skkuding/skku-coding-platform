@@ -35,7 +35,6 @@ VENDOR_APPS = [
     'rest_framework',
     'django_dramatiq',
     'django_dbconn_retry',
-    'drf_yasg',
 ]
 
 if production_env:
@@ -186,15 +185,9 @@ LOGGING = {
 
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     )
-}
-
-SWAGGER_SETTINGS = {
-    'LOGIN_URL': 'http://localhost/api/login',
-    'LOGOUT_URL': 'http://localhost/api/logout'
 }
 
 REDIS_URL = "redis://%s:%s" % (REDIS_CONF["host"], REDIS_CONF["port"])
