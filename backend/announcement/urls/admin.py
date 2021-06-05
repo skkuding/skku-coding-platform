@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
 from ..views.admin import AnnouncementAdminAPI
 
 urlpatterns = [
-    url(r"^announcement/?$", AnnouncementAdminAPI.as_view(), name="announcement_admin_api"),
+    path("announcement/", AnnouncementAdminAPI.as_view(), name="announcement_admin_api"),
 ]
