@@ -213,3 +213,6 @@ vendor.dll*.js
 
 # vue-cli-plugin-dll
 frontend/public/
+
+# cloud9
+.c9
