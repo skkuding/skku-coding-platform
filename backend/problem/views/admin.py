@@ -8,11 +8,11 @@ from django.conf import settings
 from django.db.models import Q
 from django.http import StreamingHttpResponse
 
-from account.decorators import problem_permission_required, ensure_created_by
 from contest.models import Contest, ContestStatus
 from judge.dispatcher import SPJCompiler
 from submission.models import Submission
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer, APIError
+from utils.decorators import problem_permission_required, ensure_created_by
 from utils.shortcuts import rand_str, natural_sort_key
 from ..models import Problem, ProblemRuleType, ProblemTag
 from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,

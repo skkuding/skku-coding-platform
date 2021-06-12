@@ -16,7 +16,7 @@ from options.options import SysOptions
 from utils.api import APIView, validate_serializer
 from utils.captcha import Captcha
 from utils.shortcuts import rand_str
-from ..decorators import login_required
+from utils.decorators import login_required
 from ..models import User, UserProfile
 from ..serializers import (ApplyResetPasswordSerializer, DeleteAccountSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,

@@ -1,8 +1,8 @@
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from account.decorators import super_admin_required
 from utils.api import APIView, validate_serializer
+from utils.decorators import super_admin_required
 
 from announcement.models import Announcement
 from announcement.serializers import (AnnouncementSerializer, CreateAnnouncementSerializer,
