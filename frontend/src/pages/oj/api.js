@@ -34,15 +34,6 @@ export default {
       data
     })
   },
-  checkUsernameOrEmail (username, email) {
-    return ajax('check_username_or_email', 'post', {
-      data: {
-        username,
-        email
-      }
-    })
-  },
-  // 注册
   register (data) {
     return ajax('register', 'post', {
       data
@@ -78,34 +69,8 @@ export default {
       }
     })
   },
-  freshDisplayID (userID) {
-    return ajax('profile/fresh_display_id', 'get', {
-      params: {
-        user_id: userID
-      }
-    })
-  },
-  twoFactorAuth (method, data) {
-    return ajax('two_factor_auth', method, {
-      data
-    })
-  },
-  tfaRequiredCheck (username) {
-    return ajax('tfa_required', 'post', {
-      data: {
-        username
-      }
-    })
-  },
   getSessions () {
     return ajax('sessions', 'get')
-  },
-  deleteSession (sessionKey) {
-    return ajax('sessions', 'delete', {
-      params: {
-        session_key: sessionKey
-      }
-    })
   },
   applyResetPassword (data) {
     return ajax('apply_reset_password', 'post', {
@@ -152,9 +117,6 @@ export default {
     return ajax('problem', 'get', {
       params: params
     })
-  },
-  pickone () {
-    return ajax('pickone', 'get')
   },
   getProblem (problemID) {
     return ajax('problem', 'get', {
@@ -256,40 +218,8 @@ export default {
       }
     })
   },
-  submissionRejudge (id) {
-    return ajax('admin/submission/rejudge', 'get', {
-      params: {
-        id
-      }
-    })
-  },
   updateSubmission (data) {
     return ajax('submission', 'put', {
-      data
-    })
-  },
-  getUserRank (offset, limit, rule = 'acm') {
-    const params = {
-      offset,
-      limit,
-      rule
-    }
-    return ajax('user_rank', 'get', {
-      params
-    })
-  },
-  getContestRank (params) {
-    return ajax('contest_rank', 'get', {
-      params
-    })
-  },
-  getACMACInfo (params) {
-    return ajax('admin/contest/acm_helper', 'get', {
-      params
-    })
-  },
-  updateACInfoCheckedStatus (data) {
-    return ajax('admin/contest/acm_helper', 'put', {
       data
     })
   }
