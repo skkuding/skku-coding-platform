@@ -1,7 +1,7 @@
-from account.decorators import super_admin_required
 from judge.tasks import judge_task
 # from judge.dispatcher import JudgeDispatcher
 from utils.api import APIView
+from utils.decorators import super_admin_required
 from ..models import Submission
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi

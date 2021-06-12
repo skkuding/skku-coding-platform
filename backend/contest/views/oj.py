@@ -10,9 +10,9 @@ from drf_yasg import openapi
 from problem.models import Problem
 from utils.api import APIView, validate_serializer
 from utils.constants import CacheKey, CONTEST_PASSWORD_SESSION_KEY
+from utils.decorators import login_required, check_contest_permission, check_contest_password
 from utils.shortcuts import datetime2str, check_is_id
 from account.models import AdminType
-from account.decorators import login_required, check_contest_permission, check_contest_password
 
 from utils.constants import ContestRuleType, ContestStatus
 from ..models import ContestAnnouncement, Contest, OIContestRank, ACMContestRank

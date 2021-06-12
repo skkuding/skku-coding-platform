@@ -3,7 +3,6 @@ import ipaddress
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from account.decorators import login_required, check_contest_permission
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
 from options.options import SysOptions
@@ -12,6 +11,7 @@ from problem.models import Problem, ProblemRuleType
 from utils.api import APIView, validate_serializer
 from utils.cache import cache
 from utils.captcha import Captcha
+from utils.decorators import login_required, check_contest_permission
 from utils.throttling import TokenBucket
 from ..models import Submission
 from ..serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,

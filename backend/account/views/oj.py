@@ -20,8 +20,8 @@ from utils.constants import ContestRuleType
 from options.options import SysOptions
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.captcha import Captcha
+from utils.decorators import login_required
 from utils.shortcuts import rand_str, img2base64, datetime2str
-from ..decorators import login_required
 from ..models import User, UserProfile, AdminType
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,

@@ -10,7 +10,6 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import StreamingHttpResponse, FileResponse
 
-from account.decorators import problem_permission_required, ensure_created_by
 from contest.models import Contest, ContestStatus
 from fps.parser import FPSHelper, FPSParser
 from judge.dispatcher import SPJCompiler
@@ -18,6 +17,7 @@ from options.options import SysOptions
 from submission.models import Submission, JudgeStatus
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer, APIError
 from utils.constants import Difficulty
+from utils.decorators import problem_permission_required, ensure_created_by
 from utils.shortcuts import rand_str, natural_sort_key
 from utils.tasks import delete_files
 from ..models import Problem, ProblemRuleType, ProblemTag

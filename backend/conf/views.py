@@ -16,7 +16,6 @@ from drf_yasg import openapi
 from requests.exceptions import RequestException
 from rest_framework.parsers import MultiPartParser, JSONParser
 
-from account.decorators import super_admin_required
 from account.models import User
 from contest.models import Contest
 from judge.dispatcher import process_pending_task
@@ -24,6 +23,7 @@ from options.options import SysOptions
 from problem.models import Problem
 from submission.models import Submission
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer
+from utils.decorators import super_admin_required
 from utils.shortcuts import send_email, get_env
 from utils.xss_filter import XSSHtml
 from .models import JudgeServer

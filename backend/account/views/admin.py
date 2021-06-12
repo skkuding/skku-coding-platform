@@ -11,9 +11,9 @@ from drf_yasg import openapi
 
 from submission.models import Submission
 from utils.api import APIView, validate_serializer
+from utils.decorators import super_admin_required
 from utils.shortcuts import rand_str
 
-from ..decorators import super_admin_required
 from ..models import AdminType, ProblemPermission, User, UserProfile
 from ..serializers import EditUserSerializer, UserAdminSerializer, GenerateUserSerializer
 from ..serializers import ImportUserSeralizer
@@ -42,12 +42,13 @@ class UserAdminAPI(APIView):
             with transaction.atomic():
                 ret = User.objects.bulk_create(user_list)
                 UserProfile.objects.bulk_create([UserProfile(user=user) for user in ret])
-            return self.success()
         except IntegrityError as e:
             # Extract detail from exception message
             #    duplicate key value violates unique constraint "user_username_key"
             #    DETAIL:  Key (username)=(root11) already exists.
             return self.error(str(e).split("\n")[1])
+
+        return self.success()
 
     @swagger_auto_schema(
         request_body=(EditUserSerializer),
@@ -130,6 +131,8 @@ class UserAdminAPI(APIView):
         """
         User list api / Get user by id
         """
+        # python 3.8
+        # if user_id := request.GET.get("id"):
         user_id = request.GET.get("id")
         if user_id:
             try:
@@ -140,12 +143,15 @@ class UserAdminAPI(APIView):
 
         user = User.objects.all().order_by("-create_time")
 
+        # python 3.8
+        # if keyword := request.GET.get("keyword", None)
         keyword = request.GET.get("keyword", None)
         if keyword:
             user = user.filter(Q(username__icontains=keyword) |
                                Q(userprofile__real_name__icontains=keyword) |
                                Q(email__icontains=keyword))
         return self.success(self.paginate_data(request, user, UserAdminSerializer))
+        # TODO: DRF Pagination(PageNumberPagination)
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -237,7 +243,6 @@ class GenerateUserAPI(APIView):
 
         try:
             with transaction.atomic():
-
                 ret = User.objects.bulk_create(user_list)
                 UserProfile.objects.bulk_create([UserProfile(user=user) for user in ret])
                 for item in user_list:
