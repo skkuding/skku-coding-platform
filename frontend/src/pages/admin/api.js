@@ -290,6 +290,11 @@ export default {
   getSessions () {
     return ajax('sessions', 'get')
   },
+  exportProblems (data) {
+    return ajax('export_problem', 'post', {
+      data
+    })
+  },
   createTestCase (data) {
     return ajax('admin/testcase_text', 'post', {
       data

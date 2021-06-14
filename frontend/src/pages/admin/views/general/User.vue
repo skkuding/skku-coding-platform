@@ -282,7 +282,7 @@
         </el-form-item>
       </el-form>
     </Panel>
-    <!--대화 상자-->
+    <!--对话框-->
     <el-dialog
       :title="$t('m.User_Info')"
       :visible.sync="showUserDialog"
@@ -363,6 +363,16 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item :label="$t('m.Two_Factor_Auth')">
+              <el-switch
+                v-model="user.two_factor_auth"
+                :disabled="!user.real_tfa"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="Open Api">
               <el-switch
                 v-model="user.open_api"
@@ -400,25 +410,25 @@ export default {
   name: 'User',
   data () {
     return {
-      // 한 페이지에 표시되는 사용자 수
+      // 一页显示的用户数
       pageSize: 10,
-      // 총 사용자 수
+      // 用户总数
       total: 0,
-      // 사용자 목록
+      // 用户列表
       userList: [],
       uploadUsers: [],
       uploadUsersPage: [],
       uploadUsersCurrentPage: 1,
       uploadUsersPageSize: 15,
-      // 키워드 검색
+      // 搜索关键字
       keyword: '',
-      // 사용자 대화 상자 표시 여부
+      // 是否显示用户对话框
       showUserDialog: false,
-      // 현재 사용자 model
+      // 当前用户model
       user: {},
       loadingTable: false,
       loadingGenerate: false,
-      // 현재 페이지 번호
+      // 当前页码
       currentPage: 0,
       selectedUsers: [],
       formGenerateUser: {
@@ -458,30 +468,31 @@ export default {
     this.getUserList(1)
   },
   methods: {
-    // 페이지 번호 콜백 전환
+    // 切换页码回调
     currentChange (page) {
       this.currentPage = page
       this.getUserList(page)
     },
-    // 사용자 정보 수정을 위해 제출
+    // 提交修改用户的信息
     saveUser () {
       api.editUser(this.user).then(res => {
-        // 업데이트 목록
+        // 更新列表
         this.getUserList(this.currentPage)
       }).then(() => {
         this.showUserDialog = false
       }).catch(() => {
       })
     },
-    // 사용자 대화 상자 열기
+    // 打开用户对话框
     openUserDialog (id) {
       this.showUserDialog = true
       api.getUser(id).then(res => {
         this.user = res.data.data
         this.user.password = ''
+        this.user.real_tfa = this.user.two_factor_auth
       })
     },
-    // 사용자 목록 가져 오기
+    // 获取用户列表
     getUserList (page) {
       this.loadingTable = true
       api.getUserList((page - 1) * this.pageSize, this.pageSize, this.keyword).then(res => {
