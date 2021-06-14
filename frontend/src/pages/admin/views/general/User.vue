@@ -363,16 +363,6 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="$t('m.Two_Factor_Auth')">
-              <el-switch
-                v-model="user.two_factor_auth"
-                :disabled="!user.real_tfa"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item label="Open Api">
               <el-switch
                 v-model="user.open_api"
@@ -410,25 +400,25 @@ export default {
   name: 'User',
   data () {
     return {
-      // 一页显示的用户数
+      // 한 페이지에 표시되는 사용자 수
       pageSize: 10,
-      // 用户总数
+      // 총 사용자 수
       total: 0,
-      // 用户列表
+      // 사용자 목록
       userList: [],
       uploadUsers: [],
       uploadUsersPage: [],
       uploadUsersCurrentPage: 1,
       uploadUsersPageSize: 15,
-      // 搜索关键字
+      // 키워드 검색
       keyword: '',
-      // 是否显示用户对话框
+      // 사용자 대화 상자 표시 여부
       showUserDialog: false,
-      // 当前用户model
+      // 현재 사용자 model
       user: {},
       loadingTable: false,
       loadingGenerate: false,
-      // 当前页码
+      // 현재 페이지 번호
       currentPage: 0,
       selectedUsers: [],
       formGenerateUser: {
@@ -468,22 +458,22 @@ export default {
     this.getUserList(1)
   },
   methods: {
-    // 切换页码回调
+    // 페이지 번호 콜백 전환
     currentChange (page) {
       this.currentPage = page
       this.getUserList(page)
     },
-    // 提交修改用户的信息
+    // 사용자 정보 수정을 위해 제출
     saveUser () {
       api.editUser(this.user).then(res => {
-        // 更新列表
+        // 업데이트 목록
         this.getUserList(this.currentPage)
       }).then(() => {
         this.showUserDialog = false
       }).catch(() => {
       })
     },
-    // 打开用户对话框
+    // 사용자 대화 상자 열기
     openUserDialog (id) {
       this.showUserDialog = true
       api.getUser(id).then(res => {
@@ -492,7 +482,7 @@ export default {
         this.user.real_tfa = this.user.two_factor_auth
       })
     },
-    // 获取用户列表
+    // 사용자 목록 가져 오기
     getUserList (page) {
       this.loadingTable = true
       api.getUserList((page - 1) * this.pageSize, this.pageSize, this.keyword).then(res => {
