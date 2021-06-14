@@ -181,7 +181,7 @@
                 </el-tooltip>
               </el-radio-group>
               <el-button type="primary" size="small" icon="el-icon-fa-random" @click="compileSPJ"
-                         :loading="loadingCompile">
+                        :loading="loadingCompile">
                 {{$t('m.Compile')}}
               </el-button>
             </template>
@@ -190,13 +190,13 @@
         </el-form-item>
         <el-row :gutter="20">
             <!-- <el-col :span="4">
-                 <el-form-item :label="$t('m.Type')">
-                 <el-radio-group v-model="problem.rule_type" :disabled="disableRuleType">
-                 <el-radio label="ACM">ACM</el-radio>
-                 <el-radio label="OI">OI</el-radio>
-                 </el-radio-group>
-                 </el-form-item>
-                 </el-col> -->
+                <el-form-item :label="$t('m.Type')">
+                <el-radio-group v-model="problem.rule_type" :disabled="disableRuleType">
+                <el-radio label="ACM">ACM</el-radio>
+                <el-radio label="OI">OI</el-radio>
+                </el-radio-group>
+                </el-form-item>
+                </el-col> -->
 
           <el-col :span="6">
             <el-form-item :label="$t('m.IOMode')">
@@ -224,7 +224,7 @@
           <el-form-item :label="Testcase_Upload_mode" :error="error.testcase">
             <el-col :span="6">
               <el-checkbox v-model="testcase_file_upload"
-                           @click.native.prevent="switchTestcase()">Upload with file</el-checkbox>
+                          @click.native.prevent="switchTestcase()">Upload with file</el-checkbox>
             </el-col>
           </el-form-item>
           <el-col :span="6" v-if="testcase_file_upload">
