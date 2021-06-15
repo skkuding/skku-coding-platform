@@ -1,22 +1,17 @@
 // all routes here.
 import {
-  About,
-  ACMRank,
   AnnouncementList,
   Announcement,
   ApplyResetPassword,
   EmailAuth,
-  FAQ,
   Home,
   Logout,
   NotFound,
-  OIRank,
   Problem,
   ProblemList,
   ResetPassword,
   SubmissionDetails,
-  SubmissionList,
-  UserHome
+  SubmissionList
 } from '../views'
 
 import * as Contest from '@oj/views/contest'
@@ -113,44 +108,11 @@ export default [
         component: SubmissionList
       },
       {
-        name: 'contest-problem-list',
-        path: 'problems',
-        component: Contest.ContestProblemList
-      },
-      {
         name: 'contest-announcement-list',
         path: 'announcements',
         component: AnnouncementList
-      },
-      {
-        name: 'contest-rank',
-        path: 'rank',
-        component: Contest.ContestRank
-      },
-      {
-        name: 'acm-helper',
-        path: 'helper',
-        component: Contest.ACMContestHelper
       }
     ]
-  },
-  {
-    name: 'acm-rank',
-    path: '/acm-rank',
-    meta: { title: 'ACM Rankings' },
-    component: ACMRank
-  },
-  {
-    name: 'oi-rank',
-    path: '/oi-rank',
-    meta: { title: 'OI Rankings' },
-    component: OIRank
-  },
-  {
-    name: 'user-home',
-    path: '/user-home',
-    component: UserHome,
-    meta: { requiresAuth: true, title: 'User Home' }
   },
   {
     path: '/setting',
@@ -169,18 +131,6 @@ export default [
         component: Setting.ProfileSetting
       }
     ]
-  },
-  {
-    path: '/about',
-    name: 'about',
-    meta: { title: 'About' },
-    component: About
-  },
-  {
-    path: '/faq',
-    name: 'faq',
-    meta: { title: 'FAQ' },
-    component: FAQ
   },
   {
     path: '*',

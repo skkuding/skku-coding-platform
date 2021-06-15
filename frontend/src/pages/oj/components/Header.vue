@@ -82,9 +82,6 @@ export default {
   },
   computed: {
     ...mapGetters(['website', 'modalStatus', 'user', 'isAuthenticated', 'isAdminRole']),
-    activeMenu () {
-      return '/' + this.$route.path.split('/')[1]
-    },
     modalVisible: {
       get () {
         return this.modalStatus.visible

@@ -147,15 +147,6 @@ export default {
       ['contestMenuDisabled', 'contestRuleType', 'contestStatus', 'countdown', 'isContestAdmin',
         'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated', 'contestRuleType', 'OIContestRealTimePermission']
     ),
-    countdownColor () {
-      if (this.contestStatus) {
-        return CONTEST_STATUS_REVERSE[this.contestStatus].color
-      }
-      return 'black'
-    },
-    showAdminHelper () {
-      return this.isContestAdmin && this.contestRuleType === 'ACM'
-    },
     contestStatus () {
       return {
         name: CONTEST_STATUS_REVERSE[this.contest.status].name,
