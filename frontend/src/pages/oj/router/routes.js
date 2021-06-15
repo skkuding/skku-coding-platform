@@ -99,14 +99,38 @@ export default [
   {
     name: 'contest-details',
     path: '/contest/:contestID/',
-    component: ContestDetail,
-    meta: { title: 'Contest Details' }
+    component: Contest.ContestDetails,
+    meta: { title: 'Contest Details' },
+    children: [
+      {
+        name: 'contest-submission-list',
+        path: 'submissions',
+        component: SubmissionList
+      },
+      {
+        name: 'contest-announcement-list',
+        path: 'announcements',
+        component: AnnouncementList
+      }
+    ]
   },
   {
-    name: 'profile-setting',
     path: '/setting',
-    meta: { requiresAuth: true, title: 'Profile Settings' },
-    component: ProfileSetting
+    component: Setting.Settings,
+    children: [
+      {
+        name: 'default-setting',
+        path: '',
+        meta: { requiresAuth: true, title: 'Default Settings' },
+        component: Setting.ProfileSetting
+      },
+      {
+        name: 'profile-setting',
+        path: 'profile',
+        meta: { requiresAuth: true, title: 'Profile Settings' },
+        component: Setting.ProfileSetting
+      }
+    ]
   },
   {
     path: '*',
