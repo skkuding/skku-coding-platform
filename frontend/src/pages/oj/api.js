@@ -34,6 +34,14 @@ export default {
       data
     })
   },
+  checkUsernameOrEmail (username, email) {
+    return ajax('check_username_or_email', 'post', {
+      data: {
+        username,
+        email
+      }
+    })
+  },
   register (data) {
     return ajax('register', 'post', {
       data
