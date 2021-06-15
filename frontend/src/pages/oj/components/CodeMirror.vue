@@ -117,13 +117,3 @@ export default {
     height: 100%;
   }
 </style>
-
-<style>
-  .CodeMirror {
-    height: 100% !important;
-  }
-  .CodeMirror-scroll {
-    min-height: 300px;
-    max-height: 100%;
-  }
-</style>

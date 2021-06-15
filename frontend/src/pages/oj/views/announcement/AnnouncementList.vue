@@ -142,9 +142,7 @@ export default {
     display: flex;
     justify-content: flex-end;
   }
-  .notice-title-field{
-    width: 75%;
-  }
+
   .font-bold {
     font-family: manrope_bold;
   }

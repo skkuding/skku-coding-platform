@@ -228,8 +228,8 @@ export default {
 /**
  * @param url
  * @param method get|post|put|delete...
- * @param params like queryString. if a url is index?a=1&b=2, params = {a: '1', b: '2'}
- * @param data post data, use for method put|post
+ * @param options params: like queryString. if a url is index?a=1&b=2, params = {a: '1', b: '2'}
+ * data: post data, use for method put|post
  * @returns {Promise}
  */
 function ajax (url, method, options) {
