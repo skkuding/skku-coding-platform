@@ -9,7 +9,7 @@
         <b-icon icon="list" to="/announcement"/> List
       </router-link>
     </div>
-    <div class="announcement_header">
+    <div class="announcement__header">
       <div class="announcement__title">{{ announcement.title }}</div>
       <div class="announcement__date">{{ getTimeFormat(announcement.create_time) }}</div>
     </div>
@@ -96,7 +96,7 @@ export default {
       background: #B8B8B8;
     }
   }
-  .announcement_header{
+  .announcement__header{
     overflow: hidden;
     background: #F9F9F9;
     border-top: 2px solid #7C7C7C;
