@@ -117,7 +117,7 @@ export default [
   {
     name: 'profile-setting',
     path: '/setting',
-    meta: { title: 'Profile Settings' },
+    meta: { requiresAuth: true, title: 'Profile Settings' },
     component: ProfileSetting
   },
   {
