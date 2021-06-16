@@ -2,6 +2,8 @@
 import {
   AnnouncementList,
   Announcement,
+  ContestDetail,
+  ContestList,
   ApplyResetPassword,
   EmailAuth,
   Home,
@@ -14,8 +16,6 @@ import {
   SubmissionDetails,
   SubmissionList
 } from '../views'
-
-import * as Contest from '@oj/views/contest'
 
 export default [
   {
@@ -88,7 +88,7 @@ export default [
     name: 'contest-list',
     path: '/contest',
     meta: { title: 'Contest List' },
-    component: Contest.ContestList
+    component: ContestList
   },
   {
     name: 'contest-problem-details',
@@ -99,20 +99,8 @@ export default [
   {
     name: 'contest-details',
     path: '/contest/:contestID/',
-    component: Contest.ContestDetails,
-    meta: { title: 'Contest Details' },
-    children: [
-      {
-        name: 'contest-submission-list',
-        path: 'submissions',
-        component: SubmissionList
-      },
-      {
-        name: 'contest-announcement-list',
-        path: 'announcements',
-        component: AnnouncementList
-      }
-    ]
+    component: ContestDetail,
+    meta: { title: 'Contest Details' }
   },
   {
     name: 'profile-setting',
