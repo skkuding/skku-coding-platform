@@ -16,17 +16,13 @@ const ResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views
 
 const EmailAuth = () => import(/* webpackChunkName: "emailAuth" */ '@oj/views/user/EmailAuth.vue')
 
-const ProfileSetting = () => import(/* webpackChunckName: "setting" */ '@oj/views/user/ProfileSetting.vue')
-
-const ContestList = () => import(/* webpackChunkName: "contest" */ '@oj/views/contest/ContestList.vue')
-const ContestDetail = () => import(/* webpackChunkName: "contest" */ '@oj/views/contest/ContestDetail.vue')
+const ProfileSetting = () => import('@oj/views/user/ProfileSetting.vue')
 
 export {
   Home, NotFound,
   Logout, ProblemList, Announcement, AnnouncementList, Problem,
   SubmissionList, SubmissionDetails,
-  ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting,
-  ContestList, ContestDetail
+  ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting
 }
 /* 구성 요소 내보내기는 두 가지 범주로 나뉩니다.
  *   하나는 일반적으로 직접 내보내기에 사용되며
