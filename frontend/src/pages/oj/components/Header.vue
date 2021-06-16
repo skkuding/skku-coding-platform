@@ -55,7 +55,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
-import profileSetting from '@oj/views/setting/children/ProfileSetting'
+import profileSetting from '@oj/views/user/ProfileSetting'
 import ApplyResetPassword from '@oj/views/user/ApplyResetPassword'
 
 export default {

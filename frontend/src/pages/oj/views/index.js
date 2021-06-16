@@ -16,13 +16,17 @@ const ResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views
 
 const EmailAuth = () => import(/* webpackChunkName: "emailAuth" */ '@oj/views/user/EmailAuth.vue')
 
+const ProfileSetting = () => import('@oj/views/user/ProfileSetting.vue')
+
 export {
   Home, NotFound,
   Logout, ProblemList, Announcement, AnnouncementList, Problem,
   SubmissionList, SubmissionDetails,
-  ApplyResetPassword, ResetPassword, EmailAuth
+  ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting
 }
-/* 组件导出分为两类, 一类常用的直接导出，另一类诸如Login, Logout等用懒加载,懒加载不在此处导出
- *   在对应的route内加载
- *   见https://router.vuejs.org/en/advanced/lazy-loading.html
+/* 구성 요소 내보내기는 두 가지 범주로 나뉩니다.
+ *   하나는 일반적으로 직접 내보내기에 사용되며
+ *   다른 하나는 로그인, 로그 아웃 등과 같은 lazy-loading이며
+ *   여기서 lazy-loading은 내보내지지 않습니다.
+ *   https://router.vuejs.org/en/advanced/lazy-loading.html
  */
