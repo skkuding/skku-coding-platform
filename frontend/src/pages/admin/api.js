@@ -299,6 +299,13 @@ export default {
     return ajax('admin/testcase_text', 'post', {
       data
     })
+  },
+  getTestCase (id) {
+    return ajax('admin/testcase_text', 'get', {
+      params: {
+        id
+      }
+    })
   }
 }
 
