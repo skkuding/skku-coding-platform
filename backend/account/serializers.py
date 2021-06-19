@@ -1,6 +1,6 @@
 from django import forms
 
-from utils.api import serializers, UsernameSerializer
+from utils.api import serializers
 
 from .models import AdminType, ProblemPermission, User, UserProfile
 
@@ -141,11 +141,3 @@ class ImageUploadForm(forms.Form):
 
 class FileUploadForm(forms.Form):
     file = forms.FileField()
-
-
-class RankInfoSerializer(serializers.ModelSerializer):
-    user = UsernameSerializer()
-
-    class Meta:
-        model = UserProfile
-        fields = "__all__"

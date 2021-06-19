@@ -148,15 +148,3 @@ class ContestAnnouncementListAPITest(APITestCase):
         contest_id = self.create_contest_announcements()
         response = self.client.get(self.url, data={"contest_id": contest_id})
         self.assertSuccess(response)
-
-
-class ContestRankAPITest(APITestCase):
-    def setUp(self):
-        user = self.create_admin()
-        self.acm_contest = Contest.objects.create(created_by=user, **DEFAULT_CONTEST_DATA)
-        self.create_user("test", "test123")
-        self.url = self.reverse("contest_rank_api")
-
-    def get_contest_rank(self):
-        resp = self.client.get(self.url + "?contest_id=" + self.acm_contest.id)
-        self.assertSuccess(resp)

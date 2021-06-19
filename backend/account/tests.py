@@ -13,7 +13,6 @@ from utils.shortcuts import rand_str
 from options.options import SysOptions
 
 from .models import AdminType, ProblemPermission, User
-from utils.constants import ContestRuleType
 
 
 class PermissionDecoratorTest(APITestCase):
@@ -251,14 +250,6 @@ class SessionManagementAPITest(APITestCase):
         data = resp.data["data"]
         self.assertEqual(len(data), 1)
 
-    # def test_delete_session_key(self):
-    #     resp = self.client.delete(self.url + "?session_key=" + self.session_key)
-    #     self.assertSuccess(resp)
-
-    def test_delete_session_with_invalid_key(self):
-        resp = self.client.delete(self.url + "?session_key=aaaaaaaaaa")
-        self.assertDictEqual(resp.data, {"error": "error", "data": "Invalid session_key"})
-
 
 class UserProfileAPITest(APITestCase):
     def setUp(self):
@@ -463,56 +454,6 @@ class UserChangePasswordAPITest(APITestCase):
         self.data["tfa_code"] = self._get_tfa_code()
         resp = self.client.post(self.url, data=self.data)
         self.assertSuccess(resp)
-
-
-class UserRankAPITest(APITestCase):
-    def setUp(self):
-        self.url = self.reverse("user_rank_api")
-        self.create_user("2011999999", "test123", login=False)
-        self.create_user("2012999999", "test123", login=False)
-        test1 = User.objects.get(username="2011999999")
-        profile1 = test1.userprofile
-        profile1.submission_number = 10
-        profile1.accepted_number = 10
-        profile1.total_score = 240
-        profile1.save()
-
-        test2 = User.objects.get(username="2012999999")
-        profile2 = test2.userprofile
-        profile2.submission_number = 15
-        profile2.accepted_number = 10
-        profile2.total_score = 700
-        profile2.save()
-
-    def test_get_acm_rank(self):
-        resp = self.client.get(self.url, data={"rule": ContestRuleType.ACM})
-        self.assertSuccess(resp)
-        data = resp.data["data"]["results"]
-        self.assertEqual(data[0]["user"]["username"], "2011999999")
-        self.assertEqual(data[1]["user"]["username"], "2012999999")
-
-    def test_get_oi_rank(self):
-        resp = self.client.get(self.url, data={"rule": ContestRuleType.OI})
-        self.assertSuccess(resp)
-        data = resp.data["data"]["results"]
-        self.assertEqual(data[0]["user"]["username"], "2012999999")
-        self.assertEqual(data[1]["user"]["username"], "2011999999")
-
-    def test_admin_role_filted(self):
-        self.create_admin("admin", "admin123")
-        admin = User.objects.get(username="admin")
-        profile1 = admin.userprofile
-        profile1.submission_number = 20
-        profile1.accepted_number = 5
-        profile1.total_score = 300
-        profile1.save()
-        resp = self.client.get(self.url, data={"rule": ContestRuleType.ACM})
-        self.assertSuccess(resp)
-        self.assertEqual(len(resp.data["data"]), 2)
-
-        resp = self.client.get(self.url, data={"rule": ContestRuleType.OI})
-        self.assertSuccess(resp)
-        self.assertEqual(len(resp.data["data"]), 2)
 
 
 class ProfileProblemDisplayIDRefreshAPITest(APITestCase):
