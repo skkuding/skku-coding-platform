@@ -185,7 +185,7 @@ class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
         return self.success({"id": test_case_id, "info": info, "spj": spj})
 
 
-class TestCaseTextAPI(APIView):
+class TestCaseTextAPI(CSRFExemptAPIView, TestCaseZipProcessor):
     @swagger_auto_schema(
         request_body=TestCaseTextSerializer,
         operation_description="Upload testcases. Returned \'id\' would be used when uploading problems(for \'testcase_id\')"
@@ -237,6 +237,44 @@ class TestCaseTextAPI(APIView):
             os.chmod(os.path.join(test_case_dir, item), 0o640)
 
         return self.success({"id": test_case_id, "info": info, "spj": spj})
+
+    def get(self, request):
+        problem_id = request.GET.get("id")
+        if not problem_id:
+            return self.error("Parameter error, problem_id is required")
+        try:
+            problem = Problem.objects.get(id=problem_id)
+        except Problem.DoesNotExist:
+            return self.error("Problem does not exists")
+
+        if problem.contest:
+            ensure_created_by(problem.contest, request.user)
+        else:
+            ensure_created_by(problem, request.user)
+
+        test_case_dir = os.path.join(settings.TEST_CASE_DIR, problem.test_case_id)
+        if not os.path.isdir(test_case_dir):
+            return self.error("Test case does not exists")
+
+        name_list = self.filter_name_list(os.listdir(test_case_dir), problem.spj)
+        testcases = {"testcases": [], "spj": problem.spj}
+
+        if not problem.spj:
+            for i in range(0, len(name_list), 2):
+                testcase = {}
+                with open(os.path.join(test_case_dir, name_list[i]), "r") as f:
+                    testcase["input"] = f.read()
+                with open(os.path.join(test_case_dir, name_list[i + 1]), "r") as f:
+                    testcase["output"] = f.read()
+                testcases["testcases"].append(testcase)
+        else:
+            for i in range(len(name_list)):
+                testcase = {}
+                with open(os.path.join(test_case_dir, name_list[i]), "r") as f:
+                    testcase["input"] = f.read()
+                testcases["testcases"].append(testcase)
+
+        return self.success(TestCaseTextSerializer(testcases).data)
 
 
 class CompileSPJAPI(APIView):

@@ -424,8 +424,15 @@ export default {
             data.spj_code = ''
           }
           data.spj_language = data.spj_language || 'C'
+          data.testcases = []
           this.problem = data
           this.testCaseUploaded = true
+          api.getTestCase(this.$route.params.problemId).then(testcaseRes => {
+            const testcaseData = testcaseRes.data.data
+            this.problem.testcases = this.problem.testcases.concat(testcaseData.testcases)
+            if (testcaseData.spj === 'True') this.problem.spj = true
+            else this.problem.spj = false
+          })
         })
       } else {
         this.title = this.$i18n.t('m.Add_Problem')
