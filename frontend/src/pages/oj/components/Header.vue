@@ -55,7 +55,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
-import profileSetting from '@oj/views/setting/children/ProfileSetting'
+import profileSetting from '@oj/views/user/ProfileSetting'
 import ApplyResetPassword from '@oj/views/user/ApplyResetPassword'
 
 export default {
@@ -82,9 +82,6 @@ export default {
   },
   computed: {
     ...mapGetters(['website', 'modalStatus', 'user', 'isAuthenticated', 'isAdminRole']),
-    activeMenu () {
-      return '/' + this.$route.path.split('/')[1]
-    },
     modalVisible: {
       get () {
         return this.modalStatus.visible

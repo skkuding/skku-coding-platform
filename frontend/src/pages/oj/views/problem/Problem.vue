@@ -207,7 +207,7 @@ import ProblemSidebar from './ProblemSidebar.vue'
 import moment from 'moment'
 import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
-import profileSetting from '@oj/views/setting/children/ProfileSetting'
+import profileSetting from '@oj/views/user/ProfileSetting'
 
 export default {
   name: 'ProblemDetails',

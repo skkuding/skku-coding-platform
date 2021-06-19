@@ -288,9 +288,6 @@ export default {
     downloadTestCase (problemID) {
       const url = '/admin/test_case?problem_id=' + problemID
       utils.downloadFile(url)
-    },
-    getPublicProblem () {
-      api.getProblemList()
     }
   }
 }
