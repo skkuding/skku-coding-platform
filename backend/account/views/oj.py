@@ -16,17 +16,16 @@ from otpauth import OtpAuth
 from rest_framework.parsers import MultiPartParser
 
 from problem.models import Problem
-from utils.constants import ContestRuleType
 from options.options import SysOptions
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.captcha import Captcha
 from utils.shortcuts import rand_str, img2base64, datetime2str
 from ..decorators import login_required
-from ..models import User, UserProfile, AdminType
+from ..models import User, UserProfile
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
-                           RankInfoSerializer, UserChangeEmailSerializer, SSOSerializer)
+                           UserChangeEmailSerializer, SSOSerializer)
 from ..serializers import (TwoFactorAuthCodeSerializer, UserProfileSerializer,
                            EditUserProfileSerializer, ImageUploadForm, EditUserSettingSerializer, UserSerializer)
 from ..tasks import send_email_async
@@ -501,56 +500,6 @@ class SessionManagementAPI(APIView):
         if modified:
             request.user.save()
         return self.success(result)
-
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                name="session_key",
-                in_=openapi.IN_QUERY,
-                description="Session Key",
-                type=openapi.TYPE_STRING,
-                required=True,
-            ),
-        ],
-        operation_description="Delete session key"
-    )
-    @login_required
-    def delete(self, request):
-        session_key = request.GET.get("session_key")
-        if not session_key:
-            return self.error("Parameter Error")
-        request.session.delete(session_key)
-        if session_key in request.user.session_keys:
-            request.user.session_keys.remove(session_key)
-            request.user.save()
-            return self.success("Succeeded")
-        else:
-            return self.error("Invalid session_key")
-
-
-class UserRankAPI(APIView):
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                name="rule",
-                in_=openapi.IN_QUERY,
-                description="Rule type of a contest ('ACM' or 'OI')",
-                type=openapi.TYPE_STRING,
-            ),
-        ],
-        operation_description="Get User Rank according to Rule Type"
-    )
-    def get(self, request):
-        rule_type = request.GET.get("rule")
-        if rule_type not in ContestRuleType.choices():
-            rule_type = ContestRuleType.ACM
-        profiles = UserProfile.objects.filter(user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False) \
-            .select_related("user")
-        if rule_type == ContestRuleType.ACM:
-            profiles = profiles.filter(submission_number__gt=0).order_by("-accepted_number", "submission_number")
-        else:
-            profiles = profiles.filter(total_score__gt=0).order_by("-total_score")
-        return self.success(self.paginate_data(request, profiles, RankInfoSerializer))
 
 
 class ProfileProblemDisplayIDRefreshAPI(APIView):

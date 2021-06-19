@@ -1,7 +1,6 @@
 from utils.api import UsernameSerializer, serializers
 
 from .models import Contest, ContestAnnouncement, ContestRuleType
-from .models import ACMContestRank, OIContestRank
 
 
 class CreateConetestSeriaizer(serializers.Serializer):
@@ -69,36 +68,6 @@ class EditContestAnnouncementSerializer(serializers.Serializer):
 class ContestPasswordVerifySerializer(serializers.Serializer):
     contest_id = serializers.IntegerField()
     password = serializers.CharField(max_length=30, required=True)
-
-
-class ACMContestRankSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-
-    class Meta:
-        model = ACMContestRank
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        self.is_contest_admin = kwargs.pop("is_contest_admin", False)
-        super().__init__(*args, **kwargs)
-
-    def get_user(self, obj):
-        return UsernameSerializer(obj.user, need_real_name=self.is_contest_admin).data
-
-
-class OIContestRankSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-
-    class Meta:
-        model = OIContestRank
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        self.is_contest_admin = kwargs.pop("is_contest_admin", False)
-        super().__init__(*args, **kwargs)
-
-    def get_user(self, obj):
-        return UsernameSerializer(obj.user, need_real_name=self.is_contest_admin).data
 
 
 class ACMContesHelperSerializer(serializers.Serializer):
