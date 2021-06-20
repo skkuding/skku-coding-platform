@@ -1,10 +1,15 @@
 <template>
-  <el-button type="primary">
+  <b-button class="btn-save" variant="primary">
     {{ $t('m.Save') }}
-  </el-button>
+  </b-button>
 </template>
 <script>
 export default {
   name: 'Save'
 }
 </script>
+<style lang="less" scoped>
+  .btn-save {
+    margin: 0px 5px;
+  }
+</style>
