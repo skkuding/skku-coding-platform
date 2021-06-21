@@ -236,6 +236,27 @@ class UserRegisterAPITest(CaptchaTest):
         response = self.client.post(self.register_url, data=self.data)
         self.assertDictEqual(response.data, {"error": "error", "data": "Email already exists"})
 
+class SessionManagementAPITest(APITestCase):
+    def setUp(self):
+        self.create_user("2020222000", "test123")
+        self.url = self.reverse("session_management_api")
+        # launch a request to provide session data
+        login_url = self.reverse("user_login_api")
+        self.client.post(login_url, data={"username": "test", "password": "test123"})
+
+    def test_get_sessions(self):
+        resp = self.client.get(self.url)
+        self.assertSuccess(resp)
+        data = resp.data["data"]
+        self.assertEqual(len(data), 1)
+
+    # def test_delete_session_key(self):
+    #     resp = self.client.delete(self.url + "?session_key=" + self.session_key)
+    #     self.assertSuccess(resp)
+
+    def test_delete_session_with_invalid_key(self):
+        resp = self.client.delete(self.url + "?session_key=aaaaaaaaaa")
+        self.assertDictEqual(resp.data, {"error": "error", "data": "Invalid session_key"})
 
 class UserProfileAPITest(APITestCase):
     def setUp(self):
