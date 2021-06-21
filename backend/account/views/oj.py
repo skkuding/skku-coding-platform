@@ -3,7 +3,6 @@ import re
 from datetime import timedelta
 from importlib import import_module
 
-import qrcode
 from django.conf import settings
 from django.contrib import auth
 from django.template.loader import render_to_string
@@ -15,12 +14,11 @@ from drf_yasg import openapi
 from otpauth import OtpAuth
 from rest_framework.parsers import MultiPartParser
 
-from problem.models import Problem
 from utils.constants import ContestRuleType
 from options.options import SysOptions
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.captcha import Captcha
-from utils.shortcuts import rand_str, img2base64, datetime2str
+from utils.shortcuts import rand_str, datetime2str
 from ..decorators import login_required
 from ..models import User, UserProfile, AdminType
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
