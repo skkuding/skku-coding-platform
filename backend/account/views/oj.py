@@ -1,7 +1,6 @@
 import os
 import re
 from datetime import timedelta
-from importlib import import_module
 
 from django.conf import settings
 from django.contrib import auth
@@ -18,7 +17,7 @@ from utils.constants import ContestRuleType
 from options.options import SysOptions
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.captcha import Captcha
-from utils.shortcuts import rand_str, datetime2str
+from utils.shortcuts import rand_str
 from ..decorators import login_required
 from ..models import User, UserProfile
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
