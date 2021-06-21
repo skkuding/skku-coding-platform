@@ -1,51 +1,31 @@
 <template>
   <div>
-    <el-input
+    <b-form-input
       v-model="keyword"
       placeholder="Keywords"
-      prefix-icon="el-icon-search"
-    />
-    <el-table
-      v-loading="loading"
-      :data="problems"
-    >
-      <el-table-column
-        label="ID"
-        width="100"
-        prop="id"
-      />
-      <el-table-column
-        label="DisplayID"
-        width="200"
-        prop="_id"
-      />
-      <el-table-column
-        label="Title"
-        prop="title"
-      />
-      <el-table-column
-        label="option"
-        align="center"
-        width="100"
-        fixed="right"
-      >
-        <template slot-scope="{row}">
-          <icon-btn
-            icon="plus"
-            name="Add the problem"
-            @click.native="handleAddProblem(row.id)"
-          />
-        </template>
-      </el-table-column>
-    </el-table>
+    ></b-form-input>
 
-    <el-pagination
-      class="page"
-      layout="prev, pager, next"
-      :page-size="limit"
-      :total="total"
-      @current-change="getPublicProblem"
-    />
+    <b-table
+      :items="problems"
+      :fields="fields"
+      :per-page="limit"
+      :current-page="updatePage"
+      >
+      <template #cell(option)="row">
+        <icon-btn
+          icon="plus"
+          name="Add the problem"
+          @click.native="handleAddProblem(row.item.id)"
+        />
+      </template>
+    </b-table>
+
+    <b-pagination
+      v-model="page"
+      :total-rows="total"
+      :per-page="limit"
+      >
+    </b-pagination>
   </div>
 </template>
 <script>
@@ -62,7 +42,13 @@ export default {
       loading: false,
       problems: [],
       contest: {},
-      keyword: ''
+      keyword: '',
+      fields: [
+        { key: 'id', label: 'ID' },
+        { key: '_id', label: 'DisplayID' },
+        { key: 'title', label: 'Title' },
+        'option'
+      ]
     }
   },
   watch: {
@@ -90,6 +76,7 @@ export default {
         this.loading = false
         this.total = res.data.data.total
         this.problems = res.data.data.results
+        console.log(res.data.data.results)
       }).catch(() => {
       })
     },
@@ -106,6 +93,11 @@ export default {
         })
       }, () => {
       })
+    }
+  },
+  computed: {
+    updatePage () {
+      return this.getPublicProblem(this.page)
     }
   }
 }
