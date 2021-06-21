@@ -1,33 +1,24 @@
 import hashlib
 import json
 import os
-import tempfile
 import zipfile
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
-from django.db import transaction
 from django.db.models import Q
-from django.http import StreamingHttpResponse, FileResponse
+from django.http import StreamingHttpResponse
 
 from account.decorators import problem_permission_required, ensure_created_by
 from contest.models import Contest, ContestStatus
-from fps.parser import FPSHelper, FPSParser
 from judge.dispatcher import SPJCompiler
-from options.options import SysOptions
-from submission.models import Submission, JudgeStatus
+from submission.models import Submission
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer, APIError
-from utils.constants import Difficulty
 from utils.shortcuts import rand_str, natural_sort_key
-from utils.tasks import delete_files
 from ..models import Problem, ProblemRuleType, ProblemTag
 from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
                            CreateProblemSerializer, EditProblemSerializer, EditContestProblemSerializer,
                            ProblemAdminSerializer, TestCaseUploadForm, ContestProblemMakePublicSerializer,
-                           AddContestProblemSerializer, ExportProblemSerializer, TestCaseTextSerializer,
-                           ExportProblemRequestSerialzier, UploadProblemForm, ImportProblemSerializer,
-                           FPSProblemSerializer)
-from ..utils import TEMPLATE_BASE, build_problem_template
+                           AddContestProblemSerializer, TestCaseTextSerializer)
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -706,232 +697,3 @@ class AddContestProblemAPI(APIView):
         problem.save()
         problem.tags.set(tags)
         return self.success()
-
-
-class ExportProblemAPI(APIView):
-    def choose_answers(self, user, problem):
-        ret = []
-        for item in problem.languages:
-            submission = Submission.objects.filter(problem=problem,
-                                                   user_id=user.id,
-                                                   language=item,
-                                                   result=JudgeStatus.ACCEPTED).order_by("-create_time").first()
-            if submission:
-                ret.append({"language": submission.language, "code": submission.code})
-        return ret
-
-    def process_one_problem(self, zip_file, user, problem, index):
-        info = ExportProblemSerializer(problem).data
-        info["answers"] = self.choose_answers(user, problem=problem)
-        compression = zipfile.ZIP_DEFLATED
-        zip_file.writestr(zinfo_or_arcname=f"{index}/problem.json",
-                          data=json.dumps(info, indent=4),
-                          compress_type=compression)
-        problem_test_case_dir = os.path.join(settings.TEST_CASE_DIR, problem.test_case_id)
-        with open(os.path.join(problem_test_case_dir, "info")) as f:
-            info = json.load(f)
-        for k, v in info["test_cases"].items():
-            zip_file.write(filename=os.path.join(problem_test_case_dir, v["input_name"]),
-                           arcname=f"{index}/testcase/{v['input_name']}",
-                           compress_type=compression)
-            if not info["spj"]:
-                zip_file.write(filename=os.path.join(problem_test_case_dir, v["output_name"]),
-                               arcname=f"{index}/testcase/{v['output_name']}",
-                               compress_type=compression)
-
-    @swagger_auto_schema(
-        request_body=ExportProblemRequestSerialzier,
-        operation_description="Export problems as .zip file."
-    )
-    @validate_serializer(ExportProblemRequestSerialzier)
-    def post(self, request):
-        problems = Problem.objects.filter(id__in=request.data["problem_id"])
-        for problem in problems:
-            if problem.contest:
-                ensure_created_by(problem.contest, request.user)
-            else:
-                ensure_created_by(problem, request.user)
-        path = f"/tmp/{rand_str()}.zip"
-        with zipfile.ZipFile(path, "w") as zip_file:
-            for index, problem in enumerate(problems):
-                self.process_one_problem(zip_file=zip_file, user=request.user, problem=problem, index=index + 1)
-        delete_files.send_with_options(args=(path,), delay=300_000)
-        resp = FileResponse(open(path, "rb"))
-        resp["Content-Type"] = "application/zip"
-        resp["Content-Disposition"] = "attachment;filename=problem-export.zip"
-        return resp
-
-
-class ImportProblemAPI(CSRFExemptAPIView, TestCaseZipProcessor):
-    parser_classes = [MultiPartParser]
-
-    @swagger_auto_schema(
-        operation_description="Import problems through .zip file",
-        manual_parameters=[
-            openapi.Parameter(
-                name="file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE
-            )
-        ]
-    )
-    def post(self, request):
-        form = UploadProblemForm(request.POST, request.FILES)
-        if form.is_valid():
-            file = form.cleaned_data["file"]
-            tmp_file = f"/tmp/{rand_str()}.zip"
-            with open(tmp_file, "wb") as f:
-                for chunk in file:
-                    f.write(chunk)
-        else:
-            return self.error("Upload failed")
-
-        count = 0
-        with zipfile.ZipFile(tmp_file, "r") as zip_file:
-            name_list = zip_file.namelist()
-            for item in name_list:
-                if "/problem.json" in item:
-                    count += 1
-            with transaction.atomic():
-                for i in range(1, count + 1):
-                    with zip_file.open(f"{i}/problem.json") as f:
-                        problem_info = json.load(f)
-                        serializer = ImportProblemSerializer(data=problem_info)
-                        if not serializer.is_valid():
-                            return self.error(f"Invalid problem format, error is {serializer.errors}")
-                        else:
-                            problem_info = serializer.data
-                            for item in problem_info["template"].keys():
-                                if item not in SysOptions.language_names:
-                                    return self.error(f"Unsupported language {item}")
-
-                        problem_info["display_id"] = problem_info["display_id"][:24]
-                        for k, v in problem_info["template"].items():
-                            problem_info["template"][k] = build_problem_template(v["prepend"], v["template"],
-                                                                                 v["append"])
-
-                        spj = problem_info["spj"] is not None
-                        rule_type = problem_info["rule_type"]
-                        test_case_score = problem_info["test_case_score"]
-
-                        # process test case
-                        _, test_case_id = self.process_zip(tmp_file, spj=spj, dir=f"{i}/testcase/")
-
-                        problem_obj = Problem.objects.create(_id=problem_info["display_id"],
-                                                             title=problem_info["title"],
-                                                             description=problem_info["description"]["value"],
-                                                             input_description=problem_info["input_description"][
-                                                                 "value"],
-                                                             output_description=problem_info["output_description"][
-                                                                 "value"],
-                                                             hint=problem_info["hint"]["value"],
-                                                             test_case_score=test_case_score if test_case_score else [],
-                                                             time_limit=problem_info["time_limit"],
-                                                             memory_limit=problem_info["memory_limit"],
-                                                             samples=problem_info["samples"],
-                                                             template=problem_info["template"],
-                                                             rule_type=problem_info["rule_type"],
-                                                             source=problem_info["source"],
-                                                             spj=spj,
-                                                             spj_code=problem_info["spj"]["code"] if spj else None,
-                                                             spj_language=problem_info["spj"][
-                                                                 "language"] if spj else None,
-                                                             spj_version=rand_str(8) if spj else "",
-                                                             languages=SysOptions.language_names,
-                                                             created_by=request.user,
-                                                             visible=False,
-                                                             difficulty=Difficulty.Level1,
-                                                             total_score=sum(item["score"] for item in test_case_score)
-                                                             if rule_type == ProblemRuleType.OI else 0,
-                                                             test_case_id=test_case_id
-                                                             )
-                        for tag_name in problem_info["tags"]:
-                            tag_obj, _ = ProblemTag.objects.get_or_create(name=tag_name)
-                            problem_obj.tags.add(tag_obj)
-        return self.success({"import_count": count})
-
-
-class FPSProblemImport(CSRFExemptAPIView):
-    parser_classes = [MultiPartParser]
-
-    def _create_problem(self, problem_data, creator):
-        if problem_data["time_limit"]["unit"] == "ms":
-            time_limit = problem_data["time_limit"]["value"]
-        else:
-            time_limit = problem_data["time_limit"]["value"] * 1000
-        template = {}
-        prepend = {}
-        append = {}
-        for t in problem_data["prepend"]:
-            prepend[t["language"]] = t["code"]
-        for t in problem_data["append"]:
-            append[t["language"]] = t["code"]
-        for t in problem_data["template"]:
-            our_lang = lang = t["language"]
-            if lang == "Python":
-                our_lang = "Python3"
-            template[our_lang] = TEMPLATE_BASE.format(prepend.get(lang, ""), t["code"], append.get(lang, ""))
-        spj = problem_data["spj"] is not None
-        Problem.objects.create(_id=f"fps-{rand_str(4)}",
-                               title=problem_data["title"],
-                               description=problem_data["description"],
-                               input_description=problem_data["input"],
-                               output_description=problem_data["output"],
-                               hint=problem_data["hint"],
-                               test_case_score=problem_data["test_case_score"],
-                               time_limit=time_limit,
-                               memory_limit=problem_data["memory_limit"]["value"],
-                               samples=problem_data["samples"],
-                               template=template,
-                               rule_type=ProblemRuleType.ACM,
-                               source=problem_data.get("source", ""),
-                               spj=spj,
-                               spj_code=problem_data["spj"]["code"] if spj else None,
-                               spj_language=problem_data["spj"]["language"] if spj else None,
-                               spj_version=rand_str(8) if spj else "",
-                               visible=False,
-                               languages=SysOptions.language_names,
-                               created_by=creator,
-                               difficulty=Difficulty.Level1,
-                               test_case_id=problem_data["test_case_id"])
-
-    @swagger_auto_schema(
-        operation_description="Import Free Problem Set problems. Filename extension must be \'.xml\'",
-        manual_parameters=[
-            openapi.Parameter(
-                name="file", in_=openapi.IN_FORM, type=openapi.TYPE_FILE
-            )
-        ]
-    )
-    def post(self, request):
-        form = UploadProblemForm(request.POST, request.FILES)
-        if form.is_valid():
-            file = form.cleaned_data["file"]
-            with tempfile.NamedTemporaryFile("wb") as tf:
-                for chunk in file.chunks(4096):
-                    tf.file.write(chunk)
-
-                tf.file.flush()
-                os.fsync(tf.file)
-
-                problems = FPSParser(tf.name).parse()
-        else:
-            return self.error("Parse upload file error")
-
-        helper = FPSHelper()
-        with transaction.atomic():
-            for _problem in problems:
-                test_case_id = rand_str()
-                test_case_dir = os.path.join(settings.TEST_CASE_DIR, test_case_id)
-                os.mkdir(test_case_dir)
-                score = []
-                for item in helper.save_test_case(_problem, test_case_dir)["test_cases"].values():
-                    score.append({"score": 0, "input_name": item["input_name"],
-                                  "output_name": item.get("output_name")})
-                problem_data = helper.save_image(_problem, settings.UPLOAD_DIR, settings.UPLOAD_PREFIX)
-                s = FPSProblemSerializer(data=problem_data)
-                if not s.is_valid():
-                    return self.error(f"Parse FPS file error: {s.errors}")
-                problem_data = s.data
-                problem_data["test_case_id"] = test_case_id
-                problem_data["test_case_score"] = score
-                self._create_problem(problem_data, request.user)
-        return self.success({"import_count": len(problems)})
