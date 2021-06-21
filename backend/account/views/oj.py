@@ -393,62 +393,6 @@ class ResetPasswordAPI(APIView):
         return self.success("Succeeded")
 
 
-class SessionManagementAPI(APIView):
-    @swagger_auto_schema(operation_description="Manage Session")
-    @login_required
-    def get(self, request):
-        engine = import_module(settings.SESSION_ENGINE)
-        session_store = engine.SessionStore
-        current_session = request.session.session_key
-        session_keys = request.user.session_keys
-        result = []
-        modified = False
-        for key in session_keys[:]:
-            session = session_store(key)
-            # session does not exist or is expiry
-            if not session._session:
-                session_keys.remove(key)
-                modified = True
-                continue
-
-            s = {}
-            if current_session == key:
-                s["current_session"] = True
-            s["ip"] = session["ip"]
-            s["user_agent"] = session["user_agent"]
-            s["last_activity"] = datetime2str(session["last_activity"])
-            s["session_key"] = key
-            result.append(s)
-        if modified:
-            request.user.save()
-        return self.success(result)
-
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                name="session_key",
-                in_=openapi.IN_QUERY,
-                description="Session Key",
-                type=openapi.TYPE_STRING,
-                required=True,
-            ),
-        ],
-        operation_description="Delete session key"
-    )
-    @login_required
-    def delete(self, request):
-        session_key = request.GET.get("session_key")
-        if not session_key:
-            return self.error("Parameter Error")
-        request.session.delete(session_key)
-        if session_key in request.user.session_keys:
-            request.user.session_keys.remove(session_key)
-            request.user.save()
-            return self.success("Succeeded")
-        else:
-            return self.error("Invalid session_key")
-
-
 class UserRankAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
