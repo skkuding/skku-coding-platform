@@ -235,6 +235,7 @@ class UserRegisterAPITest(CaptchaTest):
         response = self.client.post(self.register_url, data=self.data)
         self.assertDictEqual(response.data, {"error": "error", "data": "Email already exists"})
 
+
 class SessionManagementAPITest(APITestCase):
     def setUp(self):
         self.create_user("2020222000", "test123")
@@ -256,6 +257,7 @@ class SessionManagementAPITest(APITestCase):
     def test_delete_session_with_invalid_key(self):
         resp = self.client.delete(self.url + "?session_key=aaaaaaaaaa")
         self.assertDictEqual(resp.data, {"error": "error", "data": "Invalid session_key"})
+
 
 class UserProfileAPITest(APITestCase):
     def setUp(self):
