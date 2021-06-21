@@ -4,8 +4,7 @@ from ..views.oj import (ApplyResetPasswordAPI, ResetPasswordAPI,
                         UserChangePasswordAPI, UserRegisterAPI, EmailAuthAPI, UserChangeEmailAPI,
                         UserLoginAPI, UserLogoutAPI, UsernameOrEmailCheck,
                         AvatarUploadAPI, UserProfileAPI,
-                        UserRankAPI, 
-                        OpenAPIAppkeyAPI, SSOAPI, UserSettingAPI)
+                        UserRankAPI, OpenAPIAppkeyAPI, SSOAPI, UserSettingAPI)
 
 from utils.captcha.views import CaptchaAPIView
 
