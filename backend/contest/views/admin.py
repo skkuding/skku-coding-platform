@@ -8,7 +8,7 @@ from django.http import FileResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from account.decorators import check_contest_permission, ensure_created_by
+from account.decorators import ensure_created_by
 from account.models import User
 from submission.models import Submission, JudgeStatus
 from utils.api import APIView, validate_serializer
@@ -16,7 +16,7 @@ from utils.cache import cache
 from utils.constants import CacheKey
 from utils.shortcuts import rand_str
 from utils.tasks import delete_files
-from ..models import Contest, ContestAnnouncement, ACMContestRank
+from ..models import Contest, ContestAnnouncement
 from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
                            CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
                            EditConetestSeriaizer, EditContestAnnouncementSerializer,)
