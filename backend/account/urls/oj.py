@@ -3,8 +3,7 @@ from django.conf.urls import url
 from ..views.oj import (ApplyResetPasswordAPI, ResetPasswordAPI,
                         UserChangePasswordAPI, UserRegisterAPI, EmailAuthAPI, UserChangeEmailAPI,
                         UserLoginAPI, UserLogoutAPI, UsernameOrEmailCheck,
-                        AvatarUploadAPI, UserProfileAPI, 
-                        UserRankAPI, SessionManagementAPI, OpenAPIAppkeyAPI, SSOAPI, UserSettingAPI)
+                        AvatarUploadAPI, UserProfileAPI, UserRankAPI, SessionManagementAPI, OpenAPIAppkeyAPI, SSOAPI, UserSettingAPI)
 
 from utils.captcha.views import CaptchaAPIView
 
