@@ -84,24 +84,6 @@ class WrongFormatUserCheckAPITest(APITestCase):
         self.assertEqual(resp.data["data"]["email"], 2)
 
 
-class TFARequiredCheckAPITest(APITestCase):
-    def setUp(self):
-        self.url = self.reverse("tfa_required_check")
-        self.create_user("2020222000", "test123", login=False)
-
-    def test_not_required_tfa(self):
-        resp = self.client.post(self.url, data={"username": "test"})
-        self.assertSuccess(resp)
-        self.assertEqual(resp.data["data"]["result"], False)
-
-    def test_required_tfa(self):
-        user = User.objects.first()
-        user.two_factor_auth = True
-        user.save()
-        resp = self.client.post(self.url, data={"username": "2020222000"})
-        self.assertEqual(resp.data["data"]["result"], True)
-
-
 class UserLoginAPITest(APITestCase):
     def setUp(self):
         self.username = self.password = "2020222000"
