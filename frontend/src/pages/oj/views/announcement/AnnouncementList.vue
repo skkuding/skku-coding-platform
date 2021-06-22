@@ -71,40 +71,42 @@ export default {
       return this.announcements.length
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
-    init () {
+    async init () {
       if (this.isContest) {
-        this.getContestAnnouncementList()
+        await this.getContestAnnouncementList()
       } else {
-        this.getAnnouncementList()
+        await this.getAnnouncementList()
       }
     },
-    getAnnouncementList (page = 1) {
+    async getAnnouncementList (page = 1) {
       this.btnLoading = true
-      api.getAnnouncementList((page - 1) * this.limit, this.limit).then(res => {
+      try {
+        const res = await api.getAnnouncementList((page - 1) * this.limit, this.limit)
         this.btnLoading = false
         this.announcements = res.data.data.results
         this.total = res.data.data.total
-      }, () => {
+      } catch (err) {
         this.btnLoading = false
-      })
+      }
     },
-    getContestAnnouncementList () {
+    async getContestAnnouncementList () {
       this.btnLoading = true
-      api.getContestAnnouncementList(this.$route.params.contestID).then(res => {
+      try {
+        const res = await api.getContestAnnouncementList(this.$route.params.contestID)
         this.btnLoading = false
         this.announcements = res.data.data
-      }, () => {
+      } catch (err) {
         this.btnLoading = false
-      })
+      }
     },
-    goAnnouncement (announcement) {
+    async goAnnouncement (announcement) {
       this.announcement = announcement
       this.listVisible = false
-      this.$router.push({ name: 'announcement-details', params: { announcementID: announcement.id } })
+      await this.$router.push({ name: 'announcement-details', params: { announcementID: announcement.id } })
     }
   }
 }

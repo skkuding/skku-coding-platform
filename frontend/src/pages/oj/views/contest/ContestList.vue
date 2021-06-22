@@ -49,15 +49,16 @@ import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/co
 
 export default {
   name: 'ContestList',
-  beforeRouteEnter (to, from, next) {
-    api.getContestList(0, 5).then((res) => {
+  async beforeRouteEnter (to, from, next) {
+    try {
+      const res = await api.getContestList(0, 5)
       next((vm) => {
         vm.contests = res.data.data.results
         vm.total = res.data.data.total
       })
-    }, (res) => {
+    } catch (err) {
       next()
-    })
+    }
   },
   data () {
     return {
@@ -98,42 +99,44 @@ export default {
   },
   methods: {
     ...mapActions(['changeDomTitle']),
-    handleRoute (route) {
-      this.$router.push(route)
+    async handleRoute (route) {
+      await this.$router.push(route)
     },
-    init () {
+    async init () {
       const route = this.$route.query
       this.query.status = route.status || ''
       this.query.rule_type = route.rule_type || ''
       this.query.keyword = route.keyword || ''
       this.page = parseInt(route.page) || 1
-      this.getContestList()
+      await this.getContestList()
     },
-    getContestList (page = 1) {
+    async getContestList (page = 1) {
       const offset = (page - 1) * this.limit
-      api.getContestList(offset, this.limit, this.query).then((res) => {
+      try {
+        const res = await api.getContestList(offset, this.limit, this.query)
         this.contests = res.data.data.results
         this.total = res.data.data.total
-      })
+      } catch (err) {
+      }
     },
-    changeRoute () {
+    async changeRoute () {
       const query = Object.assign({}, this.query)
       query.page = this.page
-      this.$router.push({
+      await this.$router.push({
         name: 'contest-list',
         query: utils.filterEmptyValue(query)
       })
     },
-    goContest (item) {
+    async goContest (item) {
       this.cur_contest_id = item.id
       if (!this.isAuthenticated) {
         this.$error('Please login first!')
-        this.$store.dispatch('changeModalStatus', { visible: true })
+        await this.$store.dispatch('changeModalStatus', { visible: true })
       } else {
         if (item.contest_type === CONTEST_TYPE.PRIVATE) {
           this.$error('This contest is locked')
         } else {
-          this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
+          await this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
         }
       }
     },
@@ -163,9 +166,9 @@ export default {
     }
   },
   watch: {
-    '$route' (newVal, oldVal) {
+    async '$route' (newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.init()
+        await this.init()
       }
     }
   }

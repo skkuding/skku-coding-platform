@@ -193,16 +193,21 @@ export default {
       releases: []
     }
   },
-  mounted () {
-    api.getDashboardInfo().then(resp => {
+  async mounted () {
+    try {
+      const resp = await api.getDashboardInfo()
       this.infoData = resp.data.data
-    }, () => {
-    })
-    api.getSessions().then(resp => {
+    } catch (err) {
+    }
+
+    try {
+      const resp = await api.getSessions()
       this.parseSession(resp.data.data)
-    }, () => {
-    })
-    api.getReleaseNotes().then(resp => {
+    } catch (err) {
+    }
+
+    try {
+      const resp = await api.getReleaseNotes()
       this.loadingReleases = false
       const data = resp.data.data
       if (!data) {
@@ -215,9 +220,9 @@ export default {
         }
       })
       this.releases = data.update
-    }, () => {
+    } catch (err) {
       this.loadingReleases = false
-    })
+    }
   },
   methods: {
     parseSession (sessions) {

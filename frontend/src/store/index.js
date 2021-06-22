@@ -40,12 +40,14 @@ const rootMutations = {
 }
 
 const rootActions = {
-  getWebsiteConfig ({ commit }) {
-    api.getWebsiteConf().then(res => {
+  async getWebsiteConfig ({ commit }) {
+    try {
+      const res = await api.getWebsiteConf()
       commit(types.UPDATE_WEBSITE_CONF, {
         websiteConfig: res.data.data
       })
-    })
+    } catch (err) {
+    }
   },
   changeModalStatus ({ commit }, payload) {
     commit(types.CHANGE_MODAL_STATUS, payload)

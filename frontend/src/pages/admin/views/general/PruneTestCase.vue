@@ -72,20 +72,24 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
-    init () {
-      api.getInvalidTestCaseList().then(resp => {
-        this.data = resp.data.data
-      }, () => {
-      })
+    async init () {
+      try {
+        const res = await api.getInvalidTestCaseList()
+        this.data = res.data.data
+      } catch (err) {
+      }
     },
-    deleteTestCase (id) {
-      api.pruneTestCase(id).then(resp => {
-        this.init()
-      })
+    async deleteTestCase (id) {
+      if (!id) {
+        this.loading = true
+      }
+      await api.pruneTestCase(id)
+      this.loading = false
+      await this.init()
     }
   }
 }

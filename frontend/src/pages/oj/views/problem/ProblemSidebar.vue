@@ -304,8 +304,8 @@ export default {
       })
       return submissions
     },
-    goContestProblem (problemID) {
-      this.$router.push({
+    async goContestProblem (problemID) {
+      await this.$router.push({
         name: 'contest-problem-details',
         params: {
           contestID: this.$route.params.contestID,
