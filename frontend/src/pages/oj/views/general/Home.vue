@@ -118,8 +118,8 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
     async init () {
@@ -139,17 +139,17 @@ export default {
       const status = [CONTEST_STATUS.UNDERWAY, CONTEST_STATUS.NOT_START]
       this.contests = contests.filter(contest => contest.status in status).reverse()
     },
-    goAnnouncement (item) {
+    async goAnnouncement (item) {
       if (item && item.id) {
-        this.$router.push({ name: 'announcement-details', params: { announcementID: item.id } })
+        await this.$router.push({ name: 'announcement-details', params: { announcementID: item.id } })
       } else {
-        this.$router.push({ name: 'announcement-list' })
+        await this.$router.push({ name: 'announcement-list' })
       }
     },
-    goContest (item) {
+    async goContest (item) {
       if (item.contest_type !== CONTEST_TYPE.PUBLIC && !this.isAuthenticated) {
         this.$error(this.$i18n.t('m.Please_login_first'))
-        this.$store.dispatch('changeModalStatus', { visible: true })
+        await this.$store.dispatch('changeModalStatus', { visible: true })
       } else {
         this.$router.push({
           name: 'contest-details',
@@ -157,8 +157,8 @@ export default {
         })
       }
     },
-    goContestList () {
-      this.$router.push({ name: 'contest-list' })
+    async goContestList () {
+      await this.$router.push({ name: 'contest-list' })
     },
     getTimeFormat (value, format) {
       return time.utcToLocal(value, format)

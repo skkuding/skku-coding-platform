@@ -51,13 +51,13 @@ export default {
       btnLoading: false
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
-    init () {
+    async init () {
       this.btnLoading = true
-      api.getAnnouncementDetail(this.$route.params.announcementID).then(res => {
+      await api.getAnnouncementDetail(this.$route.params.announcementID).then(res => {
         this.btnLoading = false
         this.announcement = res.data.data.current
         this.prevAnnouncement = 'previous' in res.data.data ? res.data.data.previous : null
@@ -69,8 +69,8 @@ export default {
     }
   },
   watch: {
-    '$route' () {
-      this.init()
+    async '$route' () {
+      await this.init()
     }
   }
 }

@@ -145,22 +145,22 @@ export default {
     }
   },
   watch: {
-    keyword () {
-      this.currentChange(1)
+    async keyword () {
+      await this.currentChange(1)
     }
   },
-  mounted () {
-    this.getContestList(this.currentPage)
+  async mounted () {
+    await this.getContestList(this.currentPage)
   },
   methods: {
     // 切换页码回调
-    currentChange (page) {
+    async currentChange (page) {
       this.currentPage = page
-      this.getContestList(page)
+      await this.getContestList(page)
     },
-    getContestList (page) {
+    async getContestList (page) {
       this.loading = true
-      api
+      await api
         .getContestList((page - 1) * this.pageSize, this.pageSize, this.keyword)
         .then(
           (res) => {
@@ -182,23 +182,23 @@ export default {
       const url = `/admin/download_submissions?contest_id=${this.currentId}&exclude_admin=${excludeAdmin}`
       utils.downloadFile(url)
     },
-    goEdit (contestId) {
-      this.$router.push({ name: 'edit-contest', params: { contestId } })
+    async goEdit (contestId) {
+      await this.$router.push({ name: 'edit-contest', params: { contestId } })
     },
-    goContestAnnouncement (contestId) {
-      this.$router.push({
+    async goContestAnnouncement (contestId) {
+      await this.$router.push({
         name: 'contest-announcement',
         params: { contestId }
       })
     },
-    goContestProblemList (contestId) {
-      this.$router.push({
+    async goContestProblemList (contestId) {
+      await this.$router.push({
         name: 'contest-problem-list',
         params: { contestId }
       })
     },
-    handleVisibleSwitch (row) {
-      api.editContest(row)
+    async handleVisibleSwitch (row) {
+      await api.editContest(row)
     }
   }
 }

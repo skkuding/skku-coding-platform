@@ -38,8 +38,8 @@ export default {
     backPage () {
       this.$router.go(-1)
     },
-    goHome () {
-      this.$router.push({
+    async goHome () {
+      await this.$router.push({
         name: 'home'
       })
     }
