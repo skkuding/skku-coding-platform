@@ -18,19 +18,19 @@
         <el-row :gutter="20">
           <el-col :span="24">
             <el-form-item prop="description" :label="$t('m.Description')" required>
-              <Simditor v-model="problem.description"></Simditor>
+              <Tiptap v-model="problem.description"></Tiptap>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="24">
             <el-form-item prop="input_description" :label="$t('m.Input_Description')" required>
-              <Simditor v-model="problem.input_description"></Simditor>
+              <Tiptap v-model="problem.input_description"></Tiptap>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item prop="output_description" :label="$t('m.Output_Description')" required>
-              <Simditor v-model="problem.output_description"></Simditor>
+              <Tiptap v-model="problem.output_description"></Tiptap>
             </el-form-item>
           </el-col>
         </el-row>
@@ -151,7 +151,7 @@
           </button>
         </div>
         <el-form-item style="margin-top: 20px" :label="$t('m.Hint')">
-          <Simditor v-model="problem.hint" placeholder=""></Simditor>
+          <Tiptap v-model = "problem.hint" placeholder=""></Tiptap>
         </el-form-item>
         <el-form-item :label="$t('m.Code_Template')">
           <el-row>
@@ -316,7 +316,7 @@
 </template>
 
 <script>
-import Simditor from '../../components/Simditor'
+import Tiptap from '../../components/Tiptap'
 import Accordion from '../../components/Accordion'
 import CodeMirror from '../../components/CodeMirror'
 import api from '../../api'
@@ -324,7 +324,7 @@ import api from '../../api'
 export default {
   name: 'Problem',
   components: {
-    Simditor,
+    Tiptap,
     Accordion,
     CodeMirror
   },
