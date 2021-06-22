@@ -171,45 +171,47 @@ export default {
     }
   },
   watch: {
-    '$route' () {
-      this.init()
+    async '$route' () {
+      await this.init()
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
-    init () {
+    async init () {
       this.contestID = this.$route.params.contestId
       if (this.contestID) {
-        this.getContestAnnouncementList()
+        await this.getContestAnnouncementList()
       } else {
-        this.getAnnouncementList(1)
+        await this.getAnnouncementList(1)
       }
     },
     // 페이지 번호 콜백 전환
-    currentChange (page) {
+    async currentChange (page) {
       this.currentPage = page
-      this.getAnnouncementList(page)
+      await this.getAnnouncementList(page)
     },
-    getAnnouncementList (page) {
+    async getAnnouncementList (page) {
       this.loading = true
-      api.getAnnouncementList((page - 1) * this.pageSize, this.pageSize).then(res => {
+      try {
+        const res = await api.getAnnouncementList((page - 1) * this.pageSize, this.pageSize)
         this.loading = false
         this.total = res.data.data.total
         this.announcementList = res.data.data.results
-      }, res => {
+      } catch (err) {
         this.loading = false
-      })
+      }
     },
-    getContestAnnouncementList () {
+    async getContestAnnouncementList () {
       this.loading = true
-      api.getContestAnnouncementList(this.contestID).then(res => {
+      try {
+        const res = await api.getContestAnnouncementList(this.contestID)
         this.loading = false
         this.contestAnnouncementList = res.data.data
-      }).catch(() => {
+      } catch (err) {
         this.loading = false
-      })
+      }
     },
     // 편집 대화 상자를 열기위한 콜백
     onOpenEditDialog () {
@@ -225,7 +227,9 @@ export default {
         }
       }, 0)
     },
-    submitAnnouncement (data = undefined) {
+    // 수정 제출
+    // MouseEvent 기본 수신
+    async submitAnnouncement (data = undefined) {
       let funcName = ''
       if (!data.title) {
         data = {
@@ -241,23 +245,25 @@ export default {
       } else {
         funcName = this.mode === 'edit' ? 'updateAnnouncement' : 'createAnnouncement'
       }
-      api[funcName](data).then(res => {
+      try {
+        await api[funcName](data)
         this.showEditAnnouncementDialog = false
-        this.init()
-      }).catch()
+        await this.init()
+      } catch (err) {
+      }
     },
-    deleteAnnouncement (announcementId) {
-      this.$confirm('Are you sure you want to delete this announcement?', 'Warning', 'warning', false
-      ).then(() => {
+    // 공지 사항 삭제
+    async deleteAnnouncement (announcementId) {
+      try {
+        await this.$confirm('Are you sure you want to delete this announcement?', 'Warning', 'warning', false)
         this.loading = true
         const funcName = this.contestID ? 'deleteContestAnnouncement' : 'deleteAnnouncement'
-        api[funcName](announcementId).then(res => {
-          this.loading = true
-          this.init()
-        })
-      }).catch(() => {
-        this.loading = false
-      })
+        await api[funcName](announcementId)
+        this.loading = true
+        await this.init()
+      } catch (err) {
+        this.loading = true
+      }
     },
     openAnnouncementDialog (id) {
       this.showEditAnnouncementDialog = true

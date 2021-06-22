@@ -33,12 +33,14 @@ const mutations = {
 }
 
 const actions = {
-  getProfile ({ commit }) {
-    api.getUserInfo().then(res => {
+  async getProfile ({ commit }) {
+    try {
+      const res = await api.getUserInfo()
       commit(types.CHANGE_PROFILE, {
         profile: res.data.data || {}
       })
-    })
+    } catch (err) {
+    }
   },
   clearProfile ({ commit }) {
     commit(types.CHANGE_PROFILE, {

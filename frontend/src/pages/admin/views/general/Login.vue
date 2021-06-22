@@ -66,13 +66,14 @@ export default {
     }
   },
   methods: {
-    handleLogin () {
-      api.login(this.account, this.password).then(data => {
+    async handleLogin () {
+      try {
+        await api.login(this.account, this.password)
         this.logining = false
         this.$router.push({ name: 'dashboard' })
-      }, () => {
+      } catch (err) {
         this.logining = false
-      })
+      }
     }
   },
   computed: {

@@ -92,15 +92,17 @@ export default {
       this.editor.setOption('mode', this.mode[newVal])
     }
   },
-  mounted () {
-    utils.getLanguages().then(languages => {
+  async mounted () {
+    try {
+      const res = await utils.getLanguages()
       const mode = {}
-      languages.forEach(lang => {
+      res.forEach(lang => {
         mode[lang.name] = lang.content_type
       })
       this.mode = mode
       this.editor.setOption('mode', this.mode[this.language])
-    })
+    } catch (err) {
+    }
     this.editor.focus()
   },
   methods: {

@@ -79,22 +79,23 @@ export default {
         visible: true
       })
     },
-    handleRegister () {
+    async handleRegister () {
       const formData = Object.assign({}, this.formRegister)
       if (formData.password !== formData.passwordAgain) {
         return this.$error('Password does not match')
       }
       delete formData.passwordAgain
       this.btnRegisterLoading = true
-      api.register(formData).then(res => {
+      try {
+        await api.register(formData)
         this.$success('You can login after email authentication. Please check your mailbox.', 2500)
         this.switchMode('login')
         this.btnRegisterLoading = false
-      }, _ => {
+      } catch (err) {
         this.getCaptchaSrc()
         this.formRegister.captcha = ''
         this.btnRegisterLoading = false
-      })
+      }
     }
   },
   computed: {

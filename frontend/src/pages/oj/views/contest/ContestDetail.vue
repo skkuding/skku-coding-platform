@@ -77,11 +77,12 @@ export default {
       ]
     }
   },
-  mounted () {
+  async mounted () {
     this.contestID = this.$route.params.contestID
     this.route_name = this.$route.name
     this.getContestProblems()
-    this.$store.dispatch('getContest').then(res => {
+    try {
+      const res = await this.$store.dispatch('getContest')
       this.changeDomTitle({ title: res.data.data.title })
       const data = res.data.data
       this.contest = data
@@ -91,24 +92,20 @@ export default {
           this.$store.commit(types.NOW_ADD_1S)
         }, 1000)
       }
-    })
+    } catch (err) {
+    }
   },
   methods: {
-    getContestProblems () {
-      this.$store.dispatch('getContestProblems').then(res => {
+    async getContestProblems () {
+      try {
+        const res = await this.$store.dispatch('getContestProblems')
         const data = res.data.data
         this.contestProblems = data
-        // if (this.isAuthenticated) {
-        //   if (this.contestRuleType === 'ACM') {
-        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
-        //   } else if (this.OIContestRealTimePermission) {
-        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
-        //   }
-        // }
-      })
+      } catch (err) {
+      }
     },
-    goContestProblem (row) {
-      this.$router.push({
+    async goContestProblem (row) {
+      await this.$router.push({
         name: 'contest-problem-details',
         params: {
           contestID: this.$route.params.contestID,
@@ -117,22 +114,23 @@ export default {
       })
     },
     ...mapActions(['changeDomTitle']),
-    handleRoute (route) {
-      this.$router.push(route)
+    async handleRoute (route) {
+      await this.$router.push(route)
     },
-    checkPassword () {
+    async checkPassword () {
       if (this.contestPassword === '') {
         this.$error('Password can\'t be empty')
         return
       }
       this.btnLoading = true
-      api.checkContestPassword(this.contestID, this.contestPassword).then((res) => {
+      try {
+        await api.checkContestPassword(this.contestID, this.contestPassword)
         this.$success('Succeeded')
         this.$store.commit(types.CONTEST_ACCESS, { access: true })
         this.btnLoading = false
-      }, (res) => {
+      } catch (err) {
         this.btnLoading = false
-      })
+      }
     }
   },
   computed: {

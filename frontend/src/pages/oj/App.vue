@@ -40,12 +40,14 @@ export default {
   },
   methods: {
     ...mapActions(['getWebsiteConfig', 'changeDomTitle']),
-    getContestList (page = 1) {
+    async getContestList (page = 1) {
       const offset = (page - 1) * this.limit
-      api.getContestList(offset, this.limit, this.query).then((res) => {
+      try {
+        const res = await api.getContestList(offset, this.limit, this.query)
         this.contests = res.data.data.results
         this.total = res.data.data.total
-      })
+      } catch (err) {
+      }
     }
   },
   computed: {

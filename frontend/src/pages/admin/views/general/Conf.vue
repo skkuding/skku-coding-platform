@@ -249,59 +249,48 @@ export default {
       websiteConfig: {}
     }
   },
-  mounted () {
-    api.getSMTPConfig().then(res => {
-      if (res.data.data) {
-        this.smtp = res.data.data
+  async mounted () {
+    try {
+      const [resSMTP, resWeb] = await Promise.all([api.getSMTPConfig(), api.getWebsiteConfig()])
+      if (resSMTP.data.data) {
+        this.smtp = resSMTP.data.data
       } else {
         this.init = true
         this.$warning('Please setup SMTP config at first')
       }
-    })
-    api.getWebsiteConfig().then(res => {
-      this.websiteConfig = res.data.data
-    }).catch(() => {
-    })
+      this.websiteConfig = resWeb.data.data
+    } catch (err) {
+    }
   },
   methods: {
-    saveSMTPConfig () {
-      if (!this.init) {
-        api.editSMTPConfig(this.smtp).then(() => {
-          this.saved = true
-        }, () => {
-        })
-      } else {
-        api.createSMTPConfig(this.smtp).then(() => {
-          this.saved = true
-        }, () => {
-        })
+    async saveSMTPConfig () {
+      try {
+        const funcName = this.init ? 'createSMTPConfig' : 'editSMTPConfig'
+        await api[funcName](this.smtp)
+        this.saved = true
+      } catch (err) {
       }
     },
-    testSMTPConfig () {
-      this.$prompt('Please input your email', '', '', 'info', {
-        inputValidator: (value) => {
-          return new Promise((resolve) => {
+    async testSMTPConfig () {
+      try {
+        const value = await this.$prompt('Please input your email', '', '', 'info', {
+          inputValidator: async (value) => {
             if (/[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/.test(value)) {
-              resolve()
+              return false
             } else {
-              resolve('Error email format')
+              return 'Error email format'
             }
-          })
-        }
-      }).then((value) => {
-        this.loadingBtnTest = true
-        api.testSMTPConfig(value).then(() => {
-          this.loadingBtnTest = false
-        }, () => {
-          this.loadingBtnTest = false
+          }
         })
-      }).catch(() => {
-      })
+        this.loadingBtnTest = true
+        await api.testSMTPConfig(value)
+      } catch (err) {
+      } finally {
+        this.loadingBtnTest = false
+      }
     },
-    saveWebsiteConfig () {
-      api.editWebsiteConfig(this.websiteConfig).then(() => {
-      }).catch(() => {
-      })
+    async saveWebsiteConfig () {
+      await api.editWebsiteConfig(this.websiteConfig).catch(() => {})
     }
   }
 }

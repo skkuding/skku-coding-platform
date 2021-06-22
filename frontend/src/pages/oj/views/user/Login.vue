@@ -53,17 +53,18 @@ export default {
         visible: true
       })
     },
-    handleLogin () {
+    async handleLogin () {
       this.btnLoginLoading = true
       const formData = Object.assign({}, this.formLogin)
-      api.login(formData).then(res => {
+      try {
+        await api.login(formData)
         this.btnLoginLoading = false
         this.changeModalStatus({ visible: false })
         this.getProfile()
         this.$success('Welcome back!')
-      }, _ => {
+      } catch (err) {
         this.btnLoginLoading = false
-      })
+      }
     }
   },
   computed: {

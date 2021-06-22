@@ -51,26 +51,28 @@ export default {
       btnLoading: false
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
-    init () {
+    async init () {
       this.btnLoading = true
-      api.getAnnouncementDetail(this.$route.params.announcementID).then(res => {
+      try {
+        const res = await api.getAnnouncementDetail(this.$route.params.announcementID)
         this.btnLoading = false
         this.announcement = res.data.data.current
         this.prevAnnouncement = 'previous' in res.data.data ? res.data.data.previous : null
         this.nextAnnouncement = 'next' in res.data.data ? res.data.data.next : null
-      })
+      } catch (err) {
+      }
     },
     getTimeFormat (value) {
       return time.utcToLocal(value, 'YYYY-M-D')
     }
   },
   watch: {
-    '$route' () {
-      this.init()
+    async '$route' () {
+      await this.init()
     }
   }
 }

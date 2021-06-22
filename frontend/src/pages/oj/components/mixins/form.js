@@ -7,21 +7,21 @@ export default {
     }
   },
   methods: {
-    validateForm (formName) {
-      return new Promise((resolve, reject) => {
-        this.$refs[formName].validate(valid => {
-          if (!valid) {
-            this.$error('please validate the error fields')
-          } else {
-            resolve(valid)
-          }
-        })
+    async validateForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (!valid) {
+          this.$error('please validate the error fields')
+        } else {
+          return valid
+        }
       })
     },
-    getCaptchaSrc () {
-      api.getCaptcha().then(res => {
+    async getCaptchaSrc () {
+      try {
+        const res = await api.getCaptcha()
         this.captchaSrc = res.data.data
-      })
+      } catch (err) {
+      }
     }
   }
 }

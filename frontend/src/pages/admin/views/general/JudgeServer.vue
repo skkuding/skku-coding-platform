@@ -113,34 +113,32 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.refreshJudgeServerList()
-    this.intervalId = setInterval(() => {
-      this.refreshJudgeServerList()
+  async mounted () {
+    await this.refreshJudgeServerList()
+    this.intervalId = setInterval(async () => {
+      await this.refreshJudgeServerList()
     }, 5000)
   },
   methods: {
-    refreshJudgeServerList () {
-      api.getJudgeServer().then(res => {
-        this.servers = res.data.data.servers
-        this.token = res.data.data.token
-      })
+    async refreshJudgeServerList () {
+      const res = await api.getJudgeServer()
+      this.servers = res.data.data.servers
+      this.token = res.data.data.token
     },
-    deleteJudgeServer (hostname) {
-      this.$confirm('If you delete this judge server, it can\'t be used until next heartbeat', 'Warning', 'warning', false
-      ).then(() => {
-        api.deleteJudgeServer(hostname).then(res =>
-          this.refreshJudgeServerList()
-        )
-      }).catch(() => {
-      })
+    async deleteJudgeServer (hostname) {
+      try {
+        await this.$confirm('If you delete this judge server, it can\'t be used until next heartbeat', 'Warning', 'warning', false)
+        await api.deleteJudgeServer(hostname)
+        await this.refreshJudgeServerList()
+      } catch (err) {
+      }
     },
-    handleDisabledSwitch (id, value) {
+    async handleDisabledSwitch (id, value) {
       const data = {
         id,
         is_disabled: value
       }
-      api.updateJudgeServer(data).catch(() => {})
+      await api.updateJudgeServer(data).catch(() => {})
     }
   }
 }

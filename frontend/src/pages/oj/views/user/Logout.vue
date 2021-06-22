@@ -2,12 +2,11 @@
 import api from '../../api.js'
 
 export default {
-  mounted () {
-    api.logout().then(res => {
-      this.$store.dispatch('clearProfile')
-      this.$router.replace({
-        path: '/'
-      })
+  async mounted () {
+    await api.logout()
+    this.$store.dispatch('clearProfile')
+    this.$router.replace({
+      path: '/'
     })
   }
 }

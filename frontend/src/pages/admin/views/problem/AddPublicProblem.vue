@@ -71,19 +71,21 @@ export default {
     }
   },
   watch: {
-    'keyword' () {
-      this.getPublicProblem(this.page)
+    async 'keyword' () {
+      await this.getPublicProblem(this.page)
     }
   },
-  mounted () {
-    api.getContest(this.contestID).then(res => {
+  async mounted () {
+    try {
+      const res = await api.getContest(this.contestID)
       this.contest = res.data.data
-      this.getPublicProblem()
-    }).catch(() => {
-    })
+      await this.getPublicProblem()
+    } catch (err) {
+    }
   },
   methods: {
     async getPublicProblem (page) {
+      this.loading = true
       const params = {
         keyword: this.keyword,
         offset: (page - 1) * this.limit,
@@ -91,10 +93,12 @@ export default {
         rule_type: this.contest.rule_type
       }
       try {
-        const results = await api.getProblemList(params)
-        this.total = results.data.data.total
-        this.problems = results.data.data.results
-      } catch (error) {
+        const res = await api.getProblemList(params)
+        this.total = res.data.data.total
+        this.problems = res.data.data.results
+      } catch (err) {
+      } finally {
+        this.loading = false
       }
     },
     async handleAddProblem () {
@@ -106,7 +110,7 @@ export default {
       try {
         await api.addProblemFromPublic(data)
         this.$emit('on-change')
-      } catch (error) {
+      } catch (err) {
       }
     },
     showConfirmModal (problemID) {
