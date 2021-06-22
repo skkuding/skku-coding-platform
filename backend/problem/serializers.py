@@ -2,7 +2,6 @@ import re
 
 from django import forms
 
-from options.options import SysOptions
 from utils.api import UsernameSerializer, serializers
 from utils.constants import Difficulty
 from utils.serializers import LanguageNameMultiChoiceField, SPJLanguageNameChoiceField, LanguageNameChoiceField
@@ -150,62 +149,6 @@ class ContestProblemMakePublicSerializer(serializers.Serializer):
     display_id = serializers.CharField(max_length=32)
 
 
-class ExportProblemSerializer(serializers.ModelSerializer):
-    display_id = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
-    input_description = serializers.SerializerMethodField()
-    output_description = serializers.SerializerMethodField()
-    test_case_score = serializers.SerializerMethodField()
-    hint = serializers.SerializerMethodField()
-    spj = serializers.SerializerMethodField()
-    template = serializers.SerializerMethodField()
-    source = serializers.SerializerMethodField()
-    tags = serializers.SlugRelatedField(many=True, slug_field="name", read_only=True)
-
-    def get_display_id(self, obj):
-        return obj._id
-
-    def _html_format_value(self, value):
-        return {"format": "html", "value": value}
-
-    def get_description(self, obj):
-        return self._html_format_value(obj.description)
-
-    def get_input_description(self, obj):
-        return self._html_format_value(obj.input_description)
-
-    def get_output_description(self, obj):
-        return self._html_format_value(obj.output_description)
-
-    def get_hint(self, obj):
-        return self._html_format_value(obj.hint)
-
-    def get_test_case_score(self, obj):
-        return [{"score": item["score"] if obj.rule_type == ProblemRuleType.OI else 100,
-                 "input_name": item["input_name"], "output_name": item["output_name"]}
-                for item in obj.test_case_score]
-
-    def get_spj(self, obj):
-        return {"code": obj.spj_code,
-                "language": obj.spj_language} if obj.spj else None
-
-    def get_template(self, obj):
-        ret = {}
-        for k, v in obj.template.items():
-            ret[k] = parse_problem_template(v)
-        return ret
-
-    def get_source(self, obj):
-        return obj.source or f"{SysOptions.website_name} {SysOptions.website_base_url}"
-
-    class Meta:
-        model = Problem
-        fields = ("display_id", "title", "description", "tags",
-                  "input_description", "output_description",
-                  "test_case_score", "hint", "time_limit", "memory_limit", "samples",
-                  "template", "spj", "rule_type", "source", "template")
-
-
 class AddContestProblemSerializer(serializers.Serializer):
     contest_id = serializers.IntegerField()
     problem_id = serializers.IntegerField()
@@ -245,42 +188,3 @@ class SPJSerializer(serializers.Serializer):
 class AnswerSerializer(serializers.Serializer):
     code = serializers.CharField()
     language = LanguageNameChoiceField()
-
-
-class ImportProblemSerializer(serializers.Serializer):
-    display_id = serializers.CharField(max_length=128)
-    title = serializers.CharField(max_length=128)
-    description = FormatValueSerializer()
-    input_description = FormatValueSerializer()
-    output_description = FormatValueSerializer()
-    hint = FormatValueSerializer()
-    test_case_score = serializers.ListField(child=TestCaseScoreSerializer(), allow_null=True)
-    time_limit = serializers.IntegerField(min_value=1, max_value=60000)
-    memory_limit = serializers.IntegerField(min_value=1, max_value=10240)
-    samples = serializers.ListField(child=CreateSampleSerializer())
-    template = serializers.DictField(child=TemplateSerializer())
-    spj = SPJSerializer(allow_null=True)
-    rule_type = serializers.ChoiceField(choices=ProblemRuleType.choices())
-    source = serializers.CharField(max_length=200, allow_blank=True, allow_null=True)
-    answers = serializers.ListField(child=AnswerSerializer())
-    tags = serializers.ListField(child=serializers.CharField())
-
-
-class FPSProblemSerializer(serializers.Serializer):
-    class UnitSerializer(serializers.Serializer):
-        unit = serializers.ChoiceField(choices=["MB", "s", "ms"])
-        value = serializers.IntegerField(min_value=1, max_value=60000)
-
-    title = serializers.CharField(max_length=128)
-    description = serializers.CharField()
-    input = serializers.CharField()
-    output = serializers.CharField()
-    hint = serializers.CharField(allow_blank=True, allow_null=True)
-    time_limit = UnitSerializer()
-    memory_limit = UnitSerializer()
-    samples = serializers.ListField(child=CreateSampleSerializer())
-    source = serializers.CharField(max_length=200, allow_blank=True, allow_null=True)
-    spj = SPJSerializer(allow_null=True)
-    template = serializers.ListField(child=serializers.DictField(), allow_empty=True, allow_null=True)
-    append = serializers.ListField(child=serializers.DictField(), allow_empty=True, allow_null=True)
-    prepend = serializers.ListField(child=serializers.DictField(), allow_empty=True, allow_null=True)
