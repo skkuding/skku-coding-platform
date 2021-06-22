@@ -113,7 +113,7 @@
           :label="$t('m.Announcement_Content')"
           required
         >
-          <Simditor v-model="announcement.content" />
+          <Tiptap v-model="announcement.content" />
         </el-form-item>
         <div class="visible-box">
           <span>{{ $t('m.Announcement_visible') }}</span>
@@ -139,13 +139,13 @@
 </template>
 
 <script>
-import Simditor from '../../components/Simditor.vue'
+import Tiptap from '../../components/Tiptap.vue'
 import api from '../../api.js'
 
 export default {
   name: 'Announcement',
   components: {
-    Simditor
+    Tiptap
   },
   data () {
     return {

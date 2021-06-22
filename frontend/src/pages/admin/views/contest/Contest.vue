@@ -19,7 +19,7 @@
               :label="$t('m.ContestDescription')"
               required
             >
-              <Simditor v-model="contest.description" />
+              <tiptap v-model="contest.description"/>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -119,12 +119,12 @@
 
 <script>
 import api from '../../api.js'
-import Simditor from '../../components/Simditor.vue'
+import Tiptap from '../../components/Tiptap.vue'
 
 export default {
   name: 'CreateContest',
   components: {
-    Simditor
+    Tiptap
   },
   data () {
     return {
