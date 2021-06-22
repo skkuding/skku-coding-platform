@@ -58,8 +58,8 @@ export default {
     KatexEditor,
     ScreenFull
   },
-  beforeRouteEnter (to, from, next) {
-    api.getProfile().then(res => {
+  async beforeRouteEnter (to, from, next) {
+    await api.getProfile().then(res => {
       if (!res.data.data) {
         // not login
         next({ name: 'login' })
@@ -77,9 +77,9 @@ export default {
     }
   },
   methods: {
-    handleCommand (command) {
+    async handleCommand (command) {
       if (command === 'logout') {
-        api.logout().then(() => {
+        await api.logout().then(() => {
           this.$router.push({ name: 'login' })
         })
       }

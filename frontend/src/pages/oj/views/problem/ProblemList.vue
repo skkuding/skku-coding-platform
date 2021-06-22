@@ -131,8 +131,8 @@ export default {
     },
     ...mapGetters(['isAuthenticated'])
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
     async init () {

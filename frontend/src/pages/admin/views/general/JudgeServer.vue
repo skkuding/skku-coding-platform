@@ -109,15 +109,15 @@ export default {
       intervalId: -1
     }
   },
-  mounted () {
-    this.refreshJudgeServerList()
-    this.intervalId = setInterval(() => {
-      this.refreshJudgeServerList()
+  async mounted () {
+    await this.refreshJudgeServerList()
+    this.intervalId = setInterval(async () => {
+      await this.refreshJudgeServerList()
     }, 5000)
   },
   methods: {
-    refreshJudgeServerList () {
-      api.getJudgeServer().then(res => {
+    async refreshJudgeServerList () {
+      await api.getJudgeServer().then(res => {
         this.servers = res.data.data.servers
         this.token = res.data.data.token
       })
@@ -127,19 +127,19 @@ export default {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'warning'
-      }).then(() => {
-        api.deleteJudgeServer(hostname).then(res =>
-          this.refreshJudgeServerList()
+      }).then(async () => {
+        await api.deleteJudgeServer(hostname).then(async res =>
+          await this.refreshJudgeServerList()
         )
       }).catch(() => {
       })
     },
-    handleDisabledSwitch (id, value) {
+    async handleDisabledSwitch (id, value) {
       const data = {
         id,
         is_disabled: value
       }
-      api.updateJudgeServer(data).catch(() => {})
+      await api.updateJudgeServer(data).catch(() => {})
     }
   }
 }

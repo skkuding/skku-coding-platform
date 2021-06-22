@@ -74,23 +74,23 @@ export default {
       loading: false
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
-    init () {
-      api.getInvalidTestCaseList().then(resp => {
+    async init () {
+      await api.getInvalidTestCaseList().then(resp => {
         this.data = resp.data.data
       }, () => {
       })
     },
-    deleteTestCase (id) {
+    async deleteTestCase (id) {
       if (!id) {
         this.loading = true
       }
-      api.pruneTestCase(id).then(resp => {
+      await api.pruneTestCase(id).then(async resp => {
         this.loading = false
-        this.init()
+        await this.init()
       })
     }
   }

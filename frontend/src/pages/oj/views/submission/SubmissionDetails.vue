@@ -151,13 +151,13 @@ export default {
       return this.$store.getters.isAdminRole
     }
   },
-  mounted () {
-    this.getSubmission()
+  async mounted () {
+    await this.getSubmission()
   },
   methods: {
-    getSubmission () {
+    async getSubmission () {
       this.loading = true
-      api.getSubmission(this.$route.params.id).then(res => {
+      await api.getSubmission(this.$route.params.id).then(res => {
         this.loading = false
         const data = res.data.data
         if (data.info && data.info.data && !this.isConcat) {
@@ -196,10 +196,10 @@ export default {
         this.loading = false
       })
     },
-    shareSubmission (shared) {
+    async shareSubmission (shared) {
       const data = { id: this.submission.id, shared: shared }
-      api.updateSubmission(data).then(res => {
-        this.getSubmission()
+      await api.updateSubmission(data).then(async res => {
+        await this.getSubmission()
         this.$success(this.$i18n.t('m.Succeeded'))
       }, () => {
       })
