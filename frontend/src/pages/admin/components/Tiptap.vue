@@ -1,62 +1,59 @@
 <template>
   <div>
     <div v-if="editor">
-      <div>
-        <b-button type="button" @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-          <b-icon icon="type-bold"></b-icon>
+      <b-button-toolbar>
+        <b-button-group>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+            <b-icon icon="type-bold" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
+            <b-icon icon="type-italic" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+            <b-icon icon="type-strikethrough" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
+            <b-icon icon="code" aria-hidden="true"></b-icon>
+          </b-button>
+        </b-button-group>
+        <b-button-group >
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
+            <b-icon icon="paragraph" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+            <b-icon icon="type-h1" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+            <b-icon icon="type-h2" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
+            <b-icon icon="type-h3" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
+            <b-icon icon="list-ul" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
+            <b-icon icon="list-ol" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button type="button" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-          <b-icon icon="type-italic"></b-icon>
-        </b-button>
-        <b-button type="button" @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
-          <b-icon icon="type-strikethrough"></b-icon>
-        </b-button>
-        <b-button type="button" @click="editor.chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
-          <b-icon icon="code"></b-icon>
-        </b-button>
-        <button type="button" @click="editor.chain().focus().unsetAllMarks().run()">
-          clear marks
-        </button>
-        <button type="button" @click="editor.chain().focus().clearNodes().run()">
-          clear nodes
-        </button>
-        <button type="button" @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
-          paragraph
-        </button>
-        <button type="button" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
-          h1
-        </button>
-        <button type="button" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
-          h2
-        </button>
-        <button type="button" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
-          h3
-        </button>
-        <button type="button" @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
-          bullet list
-        </button>
-        <button type="button" @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
-          ordered list
-        </button>
-        <button type="button" @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
-          code block
-        </button>
-        <button type="button" @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }">
-          blockquote
-        </button>
-        <button type="button" @click="editor.chain().focus().setHorizontalRule().run()">
-          horizontal rule
-        </button>
-        <button type="button" @click="editor.chain().focus().setHardBreak().run()">
-          hard break
-        </button>
-        <button type="button" @click="editor.chain().focus().undo().run()">
-          undo
-        </button>
-        <button type="button" @click="editor.chain().focus().redo().run()">
-          redo
-        </button>
-      </div>
+        </b-button-group>
+        <b-button-group >
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
+            <b-icon icon="code-square" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }">
+            <b-icon icon="blockquote-left" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().setHorizontalRule().run()">
+            <b-icon icon="distribute-horizontal" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().undo().run()">
+            <b-icon icon="arrow-counterclockwise" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button type="button" variant="outline-dark" @click="editor.chain().focus().redo().run()">
+            <b-icon icon="arrow-clockwise" aria-hidden="true"></b-icon>
+          </b-button>
+        </b-button-group>
+      </b-button-toolbar>
     </div>
     <editor-content :editor="editor" />
   </div>
