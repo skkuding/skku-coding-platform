@@ -4,7 +4,6 @@
       v-model="keyword"
       placeholder="Keywords"
     ></b-form-input>
-
     <b-table
       :items="problems"
       :fields="fields"
@@ -15,11 +14,29 @@
         <icon-btn
           icon="plus"
           name="Add the problem"
-          @click.native="handleAddProblem(row.item.id)"
+          @click.native="showConfirmModal(row.item.id)"
         />
       </template>
     </b-table>
-
+    <b-modal
+      title="Confirm"
+      ref="add-public-problem-confirm"
+      centered
+      @show="resetConfirmModal"
+      @hidden="resetConfirmModal"
+      @ok="handleAddProblem"
+    >
+      <b-form-group
+        label="Please input Display ID for the contest problem"
+        label-for="display-id-input"
+      >
+        <b-form-input
+          id="display-id-input"
+          v-model="displayID"
+          required
+        ></b-form-input>
+      </b-form-group>
+    </b-modal>
     <b-pagination
       v-model="page"
       :total-rows="total"
@@ -39,7 +56,6 @@ export default {
       page: 1,
       limit: 10,
       total: 0,
-      loading: false,
       problems: [],
       contest: {},
       keyword: '',
@@ -48,7 +64,10 @@ export default {
         { key: '_id', label: 'DisplayID' },
         { key: 'title', label: 'Title' },
         'option'
-      ]
+      ],
+      problemID: '',
+      displayID: '',
+      confirmModalState: null
     }
   },
   watch: {
@@ -64,35 +83,41 @@ export default {
     })
   },
   methods: {
-    getPublicProblem (page) {
-      this.loading = true
+    async getPublicProblem (page) {
       const params = {
         keyword: this.keyword,
         offset: (page - 1) * this.limit,
         limit: this.limit,
         rule_type: this.contest.rule_type
       }
-      api.getProblemList(params).then(res => {
-        this.loading = false
-        this.total = res.data.data.total
-        this.problems = res.data.data.results
-        console.log(res.data.data.results)
-      }).catch(() => {
-      })
+      try {
+        const results = await api.getProblemList(params)
+        this.total = results.data.data.total
+        this.problems = results.data.data.results
+      } catch (error) {
+        console.log(error)
+      }
     },
-    handleAddProblem (problemID) {
-      this.$prompt('Please input display id for the contest problem', 'confirm').then(({ value }) => {
-        const data = {
-          problem_id: problemID,
-          contest_id: this.contestID,
-          display_id: value
-        }
-        api.addProblemFromPublic(data).then(() => {
-          this.$emit('on-change')
-        }, () => {
-        })
-      }, () => {
-      })
+    async handleAddProblem () {
+      const data = {
+        problem_id: this.problemID,
+        contest_id: this.contestID,
+        display_id: this.displayID
+      }
+      try {
+        await api.addProblemFromPublic(data)
+        this.$emit('on-change')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    showConfirmModal (problemID) {
+      this.problemID = problemID
+      this.$refs['add-public-problem-confirm'].show()
+    },
+    resetConfirmModal () {
+      this.confirmModalState = null
+      this.displayID = ''
     }
   },
   computed: {
@@ -107,5 +132,4 @@ export default {
     margin-top: 20px;
     text-align: right
   }
-
 </style>
