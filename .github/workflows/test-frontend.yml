@@ -1,0 +1,37 @@
+name: Backend Tests
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  pull_request:
+    paths:
+      - "frontend/**"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    env:
+      working-directory: ./frontend
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node packages
+        working-directory: ${{ env.working-directory }}
+        run: yarn install
+
+      - name: Pre-build with Dll-Plugin
+        working-directory: ${{ env.working-directory }}
+        run: yarn dll
+
+      - name: Check styles
+        working-directory: ${{ env.working-directory }}
+        run: yarn lint --no-fix
+      
+      - name: Build production files
+        working-directory: ${{ env.working-directory }}
+        run: yarn build
