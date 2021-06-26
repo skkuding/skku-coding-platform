@@ -24,22 +24,19 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
       - name: Cache Node modules
         id: cache-yarn
         uses: actions/cache@v2
         with:
           path: |
-            ${{ steps.yarn-cache-path.outputs.dir }}
+            ./frontend/node_modules
             ./frontend/public
           key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-
 
       - name: Install Node packages
+        if: steps.cache-yarn.outputs.cache-hit != 'true'
         working-directory: ${{ env.working-directory }}
         run: yarn install
 
