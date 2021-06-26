@@ -86,14 +86,9 @@ export default {
     background-color: transparent;
     position: relative;
     height: 50px;
-    button {
+    .panel-button {
       margin-top: 18px;
       margin-right: 10px;
-    }
-    > .page {
-      position: absolute;
-      right:20px;
-      top: 20px;
     }
   }
 </style>
