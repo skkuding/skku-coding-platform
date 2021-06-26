@@ -2,162 +2,127 @@
   <div class="view">
     <Panel :title="contestId ? this.$i18n.t('m.Contest_Problem_List') : this.$i18n.t('m.Problem_List')">
       <div slot="header">
-        <el-input
+        <b-form-input
           v-model="keyword"
-          prefix-icon="el-icon-search"
           placeholder="Keywords"
-        />
+        ></b-form-input>
       </div>
-      <el-table
-        ref="table"
-        v-loading="loading"
-        element-loading-text="loading"
-        :data="problemList"
+      <b-table
+        :items="problemList"
+        :fields="fields"
+        :per-page="pageSize"
+        :current-page="updateCurrentPage"
+        responsive
         style="width: 100%"
-        @row-dblclick="handleDblclick"
+        @row-dblclicked="handleDblclick"
       >
-        <el-table-column
-          width="100"
-          prop="id"
-          label="ID"
-        />
-        <el-table-column
-          width="150"
-          label="Display ID"
-        >
-          <template slot-scope="{row}">
-            <span v-show="!row.isEditing">{{ row._id }}</span>
-            <el-input
-              v-show="row.isEditing"
-              v-model="row._id"
-              @keyup.enter.native="handleInlineEdit(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="title"
-          label="Title"
-        >
-          <template slot-scope="{row}">
-            <span v-show="!row.isEditing">{{ row.title }}</span>
-            <el-input
-              v-show="row.isEditing"
-              v-model="row.title"
-              @keyup.enter.native="handleInlineEdit(row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="created_by.username"
-          label="Author"
-        />
-        <el-table-column
-          width="200"
-          prop="create_time"
-          label="Create Time"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.create_time | localtime }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="100"
-          prop="visible"
-          label="Visible"
-        >
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.visible"
-              active-text=""
-              inactive-text=""
-              @change="updateProblem(scope.row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="Operation"
-          width="250"
-        >
-          <div slot-scope="scope">
-            <icon-btn
-              name="Edit"
-              icon="edit"
-              @click.native="goEdit(scope.row.id)"
-            />
-            <icon-btn
-              v-if="contestId"
-              name="Make Public"
-              icon="clone"
-              @click.native="makeContestProblemPublic(scope.row.id)"
-            />
-            <icon-btn
-              icon="download"
-              name="Download TestCase"
-              @click.native="downloadTestCase(scope.row.id)"
-            />
-            <icon-btn
-              icon="trash"
-              name="Delete Problem"
-              @click.native="deleteProblem(scope.row.id)"
-            />
-          </div>
-        </el-table-column>
-      </el-table>
+        <template #cell(edit-id)="row">
+          <span v-show="!row.item.isEditing">{{ row.item._id }}</span>
+          <b-form-input
+            size="sm"
+            v-show="row.item.isEditing"
+            v-model="row.item._id"
+            @keyup.enter.native="handleInlineEdit(row.item)"
+          />
+        </template>
+        <template #cell(edit-title)="row">
+          <span v-show="!row.item.isEditing">{{ row.item.title }}</span>
+          <b-form-input
+            size="sm"
+            v-show="row.item.isEditing"
+            v-model="row.item.title"
+            @keyup.enter.native="handleInlineEdit(row.item)"
+          />
+        </template>
+        <template #cell(create-time)="row">
+          {{ row.item.create_time | localtime }}
+        </template>
+        <template #cell(switch-visible)="row">
+          <b-form-checkbox
+            v-model="row.item.visible"
+            @change="updateProblem(row.item)"
+            switch
+          >
+          </b-form-checkbox>
+        </template>
+        <template #cell(operation)="row">
+          <icon-btn
+            name="Edit"
+            icon="clipboard-plus"
+            @click.native="goEdit(row.item.id)"
+          />
+          <icon-btn
+            v-if="contestId"
+            name="Make Public"
+            icon="files"
+            @click.native="makeContestProblemPublic(row.item.id)"
+          />
+          <icon-btn
+            icon="download"
+            name="Download TestCase"
+            @click.native="downloadTestCase(row.item.id)"
+          />
+          <icon-btn
+            icon="trash"
+            name="Delete Problem"
+            @click.native="deleteProblem(row.item.id)"
+          />
+        </template>
+      </b-table>
       <div class="panel-options">
-        <el-button
-          type="primary"
-          size="small"
-          icon="el-icon-plus"
+        <b-button
+          class="panel-button"
+          variant="primary"
+          size="sm"
           @click="goCreateProblem"
         >
-          Create
-        </el-button>
-        <el-button
+          + Create
+        </b-button>
+        <b-button
+          class="panel-button"
           v-if="contestId"
-          type="primary"
-          size="small"
-          icon="el-icon-plus"
-          @click="addProblemDialogVisible = true"
+          variant="primary"
+          size="sm"
+          @click="showAddPublicProblemModal"
         >
-          Add From Public Problem
-        </el-button>
-        <el-pagination
-          class="page"
-          layout="prev, pager, next"
-          :page-size="pageSize"
-          :total="total"
-          @current-change="currentChange"
+          + Add From Public Problem
+        </b-button>
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="total"
+          :per-page="pageSize"
+          align="right"
+          style="position: absolute; right:20px; top: 15px;"
         />
       </div>
     </Panel>
-    <el-dialog
-      title="Sure to update the problem? "
-      width="20%"
-      :visible.sync="InlineEditDialogVisible"
-      @close-on-click-modal="false"
+
+    <b-modal
+      title="Sure to update the problem?"
+      centered
+      ref="update-problem"
+      @ok="updateProblem(currentRow)"
+      @hidden="getProblemList(currentPage)"
     >
       <div>
         <p>DisplayID: {{ currentRow._id }}</p>
         <p>Title: {{ currentRow.title }}</p>
       </div>
-      <span slot="footer">
-        <cancel @click.native="InlineEditDialogVisible = false; getProblemList(currentPage)" />
-        <save @click.native="updateProblem(currentRow)" />
-      </span>
-    </el-dialog>
-    <el-dialog
+    </b-modal>
+
+    <b-modal
       v-if="contestId"
       title="Add Contest Problem"
-      width="80%"
-      :visible.sync="addProblemDialogVisible"
-      @close-on-click-modal="false"
+      hide-footer
+      ref="add-public-problem"
+      size="lg"
+      centered
     >
       <add-problem-component
         :contest-i-d="contestId"
         @on-change="getProblemList"
       />
-    </el-dialog>
+    </b-modal>
   </div>
 </template>
 
@@ -184,9 +149,15 @@ export default {
       // for make public use
       currentProblemID: '',
       currentRow: {},
-      InlineEditDialogVisible: false,
-      makePublicDialogVisible: false,
-      addProblemDialogVisible: false
+      fields: [
+        { key: 'id', label: 'ID' },
+        { key: 'edit-id', label: 'Display ID' },
+        { key: 'edit-title', label: 'Title' },
+        { key: 'created_by.username', label: 'Author' },
+        { key: 'create-time', label: 'Create Time' },
+        { key: 'switch-visible', label: 'Visible' },
+        { key: 'operation', label: 'Operation', stickyColumn: true }
+      ]
     }
   },
   watch: {
@@ -224,8 +195,10 @@ export default {
     },
     // 切换页码回调
     currentChange (page) {
-      this.currentPage = page
-      this.getProblemList(page)
+      if (this.contestId !== '') {
+        this.currentPage = page
+        this.getProblemList(page)
+      }
     },
     getProblemList (page = 1) {
       this.loading = true
@@ -275,23 +248,36 @@ export default {
         funcName = 'editProblem'
       }
       api[funcName](data).then(res => {
-        this.InlineEditDialogVisible = false
         this.getProblemList(this.currentPage)
       }).catch(() => {
-        this.InlineEditDialogVisible = false
       })
     },
     handleInlineEdit (row) {
       this.currentRow = row
-      this.InlineEditDialogVisible = true
+      this.showUpdateProblemModal()
     },
     downloadTestCase (problemID) {
       const url = '/admin/test_case?problem_id=' + problemID
       utils.downloadFile(url)
+    },
+    showUpdateProblemModal () {
+      this.$refs['update-problem'].show()
+    },
+    showAddPublicProblemModal () {
+      this.$refs['add-public-problem'].show()
+    }
+  },
+  computed: {
+    updateCurrentPage () {
+      return this.currentChange(this.currentPage)
     }
   }
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
+  .table th, .table td {
+    word-wrap: break-word;
+    max-width: 150px;
+  }
 </style>
