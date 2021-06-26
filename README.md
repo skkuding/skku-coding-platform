@@ -4,7 +4,7 @@
 ![docker](https://img.shields.io/docker/cloud/automated/skkunpc/coding-platform)
 ![checks](https://img.shields.io/github/checks-status/skku-npc/skku-coding-platform/master)  
 ![python](https://img.shields.io/badge/Python-3.7.10-blue)
-![django](https://img.shields.io/badge/Django-2.2.18-darkgreen)
+![django](https://img.shields.io/badge/Django-3.2.4-darkgreen)
 ![vue](https://img.shields.io/badge/Vue-2.6.11-green)
 
 [QingdaoU OJ](https://github.com/QingdaoU/OnlineJudge)를 기반으로 제작한 성균관대학교 Online Judge 시스템입니다.

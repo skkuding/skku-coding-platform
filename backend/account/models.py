@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser
 from django.conf import settings
 from django.db import models
-from utils.models import JSONField
+from django.db.models import JSONField
 
 
 class AdminType(object):

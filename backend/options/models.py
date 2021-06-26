@@ -1,5 +1,5 @@
 from django.db import models
-from utils.models import JSONField
+from django.db.models import JSONField
 
 
 class SysOptions(models.Model):
