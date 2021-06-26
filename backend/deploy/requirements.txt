@@ -4,7 +4,7 @@ chardet==4.0.0
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==5.4
-Django==2.2.24
+Django==3.2.4
 django-dbconn-retry==0.1.5
 django-dramatiq==0.9.1
 django-redis==4.12.1
