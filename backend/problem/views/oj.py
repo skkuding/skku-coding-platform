@@ -1,4 +1,3 @@
-import random
 from django.db.models import Q, Count
 from utils.api import APIView
 from account.decorators import check_contest_permission
@@ -17,18 +16,6 @@ class ProblemTagAPI(APIView):
     def get(self, request):
         tags = ProblemTag.objects.annotate(problem_count=Count("problem")).filter(problem_count__gt=0)
         return self.success(TagSerializer(tags, many=True).data)
-
-
-class PickOneAPI(APIView):
-    @swagger_auto_schema(
-        operation_description="Pick one problem arbitrarily",
-    )
-    def get(self, request):
-        problems = Problem.objects.filter(contest_id__isnull=True, visible=True)
-        count = problems.count()
-        if count == 0:
-            return self.error("No problem to pick")
-        return self.success(problems[random.randint(0, count - 1)]._id)
 
 
 class ProblemAPI(APIView):

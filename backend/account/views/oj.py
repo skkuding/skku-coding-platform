@@ -13,17 +13,16 @@ from drf_yasg import openapi
 from otpauth import OtpAuth
 from rest_framework.parsers import MultiPartParser
 
-from utils.constants import ContestRuleType
 from options.options import SysOptions
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.captcha import Captcha
 from utils.shortcuts import rand_str
 from ..decorators import login_required
-from ..models import User, UserProfile, AdminType
+from ..models import User, UserProfile
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
-                           RankInfoSerializer, UserChangeEmailSerializer, SSOSerializer)
+                           UserChangeEmailSerializer, SSOSerializer)
 from ..serializers import (UserProfileSerializer,
                            EditUserProfileSerializer, ImageUploadForm, EditUserSettingSerializer, UserSerializer)
 from ..tasks import send_email_async
@@ -390,31 +389,6 @@ class ResetPasswordAPI(APIView):
         user.set_password(data["password"])
         user.save()
         return self.success("Succeeded")
-
-
-class UserRankAPI(APIView):
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                name="rule",
-                in_=openapi.IN_QUERY,
-                description="Rule type of a contest ('ACM' or 'OI')",
-                type=openapi.TYPE_STRING,
-            ),
-        ],
-        operation_description="Get User Rank according to Rule Type"
-    )
-    def get(self, request):
-        rule_type = request.GET.get("rule")
-        if rule_type not in ContestRuleType.choices():
-            rule_type = ContestRuleType.ACM
-        profiles = UserProfile.objects.filter(user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False) \
-            .select_related("user")
-        if rule_type == ContestRuleType.ACM:
-            profiles = profiles.filter(submission_number__gt=0).order_by("-accepted_number", "submission_number")
-        else:
-            profiles = profiles.filter(total_score__gt=0).order_by("-total_score")
-        return self.success(self.paginate_data(request, profiles, RankInfoSerializer))
 
 
 class OpenAPIAppkeyAPI(APIView):

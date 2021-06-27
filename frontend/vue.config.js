@@ -38,7 +38,7 @@ module.exports = {
         'vue-router',
         'bootstrap-vue',
         'element-ui',
-        'iview',
+        'iview'
       ],
       cacheFilePath: path.resolve(__dirname, './public')
     }
