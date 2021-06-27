@@ -262,17 +262,16 @@ export default {
     await this.init()
     if (this.$route.params.contestID) {
       this.route_name = this.$route.name
-      this.getContestProblems()
-      this.$store.dispatch('getContest').then(res => {
-        this.changeDomTitle({ title: res.data.data.title })
-        const data = res.data.data
-        const endTime = moment(data.end_time)
-        if (endTime.isAfter(moment(data.now))) {
-          this.timer = setInterval(() => {
-            this.$store.commit(types.NOW_ADD_1S)
-          }, 1000)
-        }
-      })
+      await this.getContestProblems()
+      const res = await this.$store.dispatch('getContest')
+      this.changeDomTitle({ title: res.data.data.title })
+      const data = res.data.data
+      const endTime = moment(data.end_time)
+      if (endTime.isAfter(moment(data.now))) {
+        this.timer = setInterval(() => {
+          this.$store.commit(types.NOW_ADD_1S)
+        }, 1000)
+      }
     }
   },
   methods: {
@@ -314,19 +313,18 @@ export default {
         }
       }
     },
-    getContestProblems () {
-      this.$store.dispatch('getContestProblems').then(res => {
-        if (this.isAuthenticated) {
-          if (this.contestRuleType === 'ACM') {
-            this.addStatusColumn(this.ACMTableColumns, res.data.data)
-          } else if (this.OIContestRealTimePermission) {
-            this.addStatusColumn(this.ACMTableColumns, res.data.data)
-          }
+    async getContestProblems () {
+      const res = await this.$store.dispatch('getContestProblems')
+      if (this.isAuthenticated) {
+        if (this.contestRuleType === 'ACM') {
+          this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        } else if (this.OIContestRealTimePermission) {
+          this.addStatusColumn(this.ACMTableColumns, res.data.data)
         }
-      })
+      }
     },
-    handleRoute (route) {
-      this.$router.push(route)
+    async handleRoute (route) {
+      await this.$router.push(route)
     },
     openWindow (route) {
       window.open(route)
@@ -370,26 +368,27 @@ export default {
         // otherwise the timeout reference will be lost and unlimited requests
         clearTimeout(this.refreshStatus)
       }
-      const checkStatus = () => {
+      const checkStatus = async () => {
         const id = this.submissionId
-        api.getSubmission(id).then(res => {
+        try {
+          const res = await api.getSubmission(id)
           this.result = res.data.data
           if (Object.keys(res.data.data.statistic_info).length !== 0) {
             this.submitting = false
             this.submitted = false
             clearTimeout(this.refreshStatus)
-            this.init()
+            await this.init()
           } else {
             this.refreshStatus = setTimeout(checkStatus, 2000)
           }
-        }, res => {
+        } catch (res) {
           this.submitting = false
           clearTimeout(this.refreshStatus)
-        })
+        }
       }
       this.refreshStatus = setTimeout(checkStatus, 2000)
     },
-    submitCode () {
+    async submitCode () {
       if (this.code.trim() === '') {
         this.$error(this.$i18n.t('m.Code_can_not_be_empty'))
         return
@@ -406,9 +405,10 @@ export default {
       if (this.captchaRequired) {
         data.captcha = this.captchaCode
       }
-      const submitFunc = (data, detailsVisible) => {
+      const submitFunc = async (data, detailsVisible) => {
         this.statusVisible = true
-        api.submitCode(data).then(res => {
+        try {
+          const res = await api.submitCode(data)
           this.submissionId = res.data.data && res.data.data.submission_id
           // Regularly check status
           this.submitting = false
@@ -422,14 +422,14 @@ export default {
           }
           this.submitted = true
           this.checkSubmissionStatus()
-        }, res => {
+        } catch (res) {
           this.getCaptchaSrc()
           if (res.data.data.startsWith('Captcha is required')) {
             this.captchaRequired = true
           }
           this.submitting = false
           this.statusVisible = false
-        })
+        }
       }
       if (this.contestRuleType === 'OI' && !this.OIContestRealTimePermission) {
         if (this.submissionExists) {
@@ -439,8 +439,8 @@ export default {
             onOk: () => {
               // Temporarily solve the conflict between the dialog box
               // and the prompt dialog box behind (otherwise it will flash by)
-              setTimeout(() => {
-                submitFunc(data, false)
+              setTimeout(async () => {
+                await submitFunc(data, false)
               }, 1000)
             },
             onCancel: () => {
@@ -448,10 +448,10 @@ export default {
             }
           })
         } else {
-          submitFunc(data, false)
+          await submitFunc(data, false)
         }
       } else {
-        submitFunc(data, true)
+        await submitFunc(data, true)
       }
     }
   },
@@ -501,8 +501,8 @@ export default {
     next()
   },
   watch: {
-    '$route' () {
-      this.init()
+    async '$route' () {
+      await this.init()
     },
     contestEnded: () => {
       this.$error('Contest has ended :<')

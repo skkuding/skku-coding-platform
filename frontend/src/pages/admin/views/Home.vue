@@ -58,17 +58,16 @@ export default {
     KatexEditor,
     ScreenFull
   },
-  beforeRouteEnter (to, from, next) {
-    api.getProfile().then(res => {
-      if (!res.data.data) {
-        // not login
-        next({ name: 'login' })
-      } else {
-        next(vm => {
-          vm.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
-        })
-      }
-    })
+  async beforeRouteEnter (to, from, next) {
+    const res = await api.getProfile()
+    if (!res.data.data) {
+      // not login
+      next({ name: 'login' })
+    } else {
+      next(vm => {
+        vm.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
+      })
+    }
   },
   data () {
     return {
@@ -77,11 +76,10 @@ export default {
     }
   },
   methods: {
-    handleCommand (command) {
+    async handleCommand (command) {
       if (command === 'logout') {
-        api.logout().then(() => {
-          this.$router.push({ name: 'login' })
-        })
+        await api.logout()
+        await this.$router.push({ name: 'login' })
       }
     }
   },

@@ -65,15 +65,16 @@ export default {
   },
   methods: {
     handleLogin (ev) {
-      this.$refs.ruleForm2.validate((valid) => {
+      this.$refs.ruleForm2.validate(async (valid) => {
         if (valid) {
           this.logining = true
-          api.login(this.ruleForm2.account, this.ruleForm2.password).then(data => {
+          try {
+            await api.login(this.ruleForm2.account, this.ruleForm2.password)
             this.logining = false
-            this.$router.push({ name: 'dashboard' })
-          }, () => {
+            await this.$router.push({ name: 'dashboard' })
+          } catch (err) {
             this.logining = false
-          })
+          }
         } else {
           this.$error('Please check the error fields')
         }

@@ -66,11 +66,11 @@ export default {
       language: ''
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   },
   methods: {
-    init () {
+    async init () {
       this.contestID = this.$route.params.contestID
       const query = this.$route.query
       this.problemID = query.problemID
@@ -82,15 +82,14 @@ export default {
         this.page = 1
       }
       this.routeName = this.$route.name
-      this.getSubmissions()
+      await this.getSubmissions()
     },
-    rowClicked (record) {
+    async rowClicked (record) {
       this.show_detail = true
-      api.getSubmission(record.ID).then(res => {
-        const data = res.data.data
-        this.code = data.code
-        this.language = data.language
-      })
+      const res = await api.getSubmission(record.ID)
+      const data = res.data.data
+      this.code = data.code
+      this.language = data.language
     },
     buildQuery () {
       return {
@@ -100,14 +99,15 @@ export default {
         page: this.page
       }
     },
-    getSubmissions () {
+    async getSubmissions () {
       const params = this.buildQuery()
       params.contest_id = this.contestID
       params.problem_id = this.problemID
       const offset = (this.page - 1) * this.limit
       const func = this.contestID ? 'getContestSubmissionList' : 'getSubmissionList'
       this.loadingTable = true
-      api[func](offset, this.limit, params).then(res => {
+      try {
+        const res = await api[func](offset, this.limit, params)
         const data = res.data.data
         const refined = []
         for (const v of data.results) {
@@ -127,9 +127,9 @@ export default {
           this.all_sub = refined
         }
         this.total = data.total
-      }).catch(() => {
+      } catch (res) {
         this.loadingTable = false
-      })
+      }
     }
   }
 }
