@@ -157,7 +157,8 @@ export default {
   methods: {
     async getSubmission () {
       this.loading = true
-      await api.getSubmission(this.$route.params.id).then(res => {
+      try {
+        const res = await api.getSubmission(this.$route.params.id)
         this.loading = false
         const data = res.data.data
         if (data.info && data.info.data && !this.isConcat) {
@@ -192,17 +193,18 @@ export default {
           }
         }
         this.submission = data
-      }, () => {
+      } catch (res) {
         this.loading = false
-      })
+      }
     },
     async shareSubmission (shared) {
       const data = { id: this.submission.id, shared: shared }
-      await api.updateSubmission(data).then(async res => {
+      try {
+        await api.updateSubmission(data)
         await this.getSubmission()
-        this.$success(this.$i18n.t('m.Succeeded'))
-      }, () => {
-      })
+        this.$success('Succeeded')
+      } catch (err) {
+      }
     }
   }
 }

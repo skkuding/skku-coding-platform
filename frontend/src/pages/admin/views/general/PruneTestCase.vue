@@ -79,19 +79,19 @@ export default {
   },
   methods: {
     async init () {
-      await api.getInvalidTestCaseList().then(resp => {
-        this.data = resp.data.data
-      }, () => {
-      })
+      try {
+        const res = await api.getInvalidTestCaseList()
+        this.data = res.data.data
+      } catch (res) {
+      }
     },
     async deleteTestCase (id) {
       if (!id) {
         this.loading = true
       }
-      await api.pruneTestCase(id).then(async resp => {
-        this.loading = false
-        await this.init()
-      })
+      await api.pruneTestCase(id)
+      this.loading = false
+      await this.init()
     }
   }
 }

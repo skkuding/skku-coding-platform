@@ -171,8 +171,8 @@ export default {
     difficultyColor (value) {
       return DIFFICULTY_COLOR[value]
     },
-    goProblem (item) {
-      this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
+    async goProblem (item) {
+      await this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
     }
   },
   watch: {

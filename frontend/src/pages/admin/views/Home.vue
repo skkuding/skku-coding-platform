@@ -59,16 +59,15 @@ export default {
     ScreenFull
   },
   async beforeRouteEnter (to, from, next) {
-    await api.getProfile().then(res => {
-      if (!res.data.data) {
-        // not login
-        next({ name: 'login' })
-      } else {
-        next(vm => {
-          vm.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
-        })
-      }
-    })
+    const res = await api.getProfile()
+    if (!res.data.data) {
+      // not login
+      next({ name: 'login' })
+    } else {
+      next(vm => {
+        vm.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
+      })
+    }
   },
   data () {
     return {
@@ -79,9 +78,8 @@ export default {
   methods: {
     async handleCommand (command) {
       if (command === 'logout') {
-        await api.logout().then(() => {
-          this.$router.push({ name: 'login' })
-        })
+        await api.logout()
+        await this.$router.push({ name: 'login' })
       }
     }
   },

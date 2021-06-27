@@ -117,22 +117,21 @@ export default {
   },
   methods: {
     async refreshJudgeServerList () {
-      await api.getJudgeServer().then(res => {
-        this.servers = res.data.data.servers
-        this.token = res.data.data.token
-      })
+      const res = await api.getJudgeServer()
+      this.servers = res.data.data.servers
+      this.token = res.data.data.token
     },
-    deleteJudgeServer (hostname) {
-      this.$confirm('If you delete this judge server, it can\'t be used until next heartbeat', 'Warning', {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(async () => {
-        await api.deleteJudgeServer(hostname).then(async res =>
-          await this.refreshJudgeServerList()
-        )
-      }).catch(() => {
-      })
+    async deleteJudgeServer (hostname) {
+      try {
+        await this.$confirm('If you delete this judge server, it can\'t be used until next heartbeat', 'Warning', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        })
+        await api.deleteJudgeServer(hostname)
+        await this.refreshJudgeServerList()
+      } catch (err) {
+      }
     },
     async handleDisabledSwitch (id, value) {
       const data = {

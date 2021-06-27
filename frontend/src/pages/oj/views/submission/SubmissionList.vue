@@ -86,11 +86,10 @@ export default {
     },
     async rowClicked (record) {
       this.show_detail = true
-      await api.getSubmission(record.ID).then(res => {
-        const data = res.data.data
-        this.code = data.code
-        this.language = data.language
-      })
+      const res = await api.getSubmission(record.ID)
+      const data = res.data.data
+      this.code = data.code
+      this.language = data.language
     },
     buildQuery () {
       return {
@@ -107,7 +106,8 @@ export default {
       const offset = (this.page - 1) * this.limit
       const func = this.contestID ? 'getContestSubmissionList' : 'getSubmissionList'
       this.loadingTable = true
-      await api[func](offset, this.limit, params).then(res => {
+      try {
+        const res = await api[func](offset, this.limit, params)
         const data = res.data.data
         const refined = []
         for (const v of data.results) {
@@ -127,9 +127,9 @@ export default {
           this.all_sub = refined
         }
         this.total = data.total
-      }).catch(() => {
+      } catch (res) {
         this.loadingTable = false
-      })
+      }
     }
   }
 }
