@@ -464,32 +464,34 @@ export default {
     }
   },
   methods: {
-    switchSpj () {
+    async switchSpj () {
       if (this.testCaseUploaded) {
-        this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
+        try{
+          await this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
           confirmButtonText: 'Yes',
           cancelButtonText: 'Cancel',
           type: 'warning'
-        }).then(() => {
+          })
           this.problem.spj = !this.problem.spj
           this.resetTestCase()
-        }).catch(() => {
-        })
+        } catch(res) {
+        }
       } else {
         this.problem.spj = !this.problem.spj
       }
     },
-    switchTestcase () {
+    async switchTestcase () {
       if (this.testCaseUploaded) {
-        this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', {
+        try{
+          await this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', {
           confirmButtonText: 'Yes',
           cancelButtonText: 'Cancel',
           type: 'warning'
-        }).then(() => {
+          })
           this.testcase_file_upload = !this.testcase_file_upload
-          this.resetTestCase()
-        }).catch(() => {
-        })
+          this.resetTestCase()  
+        } catch(res) {
+        }
       } else {
         this.testcase_file_upload = !this.testcase_file_upload
       }
