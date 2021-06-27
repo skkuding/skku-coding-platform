@@ -72,7 +72,7 @@ export default {
   },
   async mounted () {
     try {
-      const res = api.getContest(this.contestID)
+      const res = await api.getContest(this.contestID)
       this.contest = res.data.data
       this.getPublicProblem()
     } catch (res) {
@@ -88,7 +88,7 @@ export default {
         rule_type: this.contest.rule_type
       }
       try {
-        const res = api.getProblemList(params)
+        const res = await api.getProblemList(params)
         this.loading = false
         this.total = res.data.data.total
         this.problems = res.data.data.results

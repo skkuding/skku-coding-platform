@@ -153,12 +153,12 @@ export default {
     async updateLanguage () {
       this.loading.btnLanguage = true
       const updateData = utils.filterEmptyValue(Object.assign({}, this.formProfile))
-      try{
+      try {
         const res = await api.updateProfile(updateData)
         this.$success('Success')
         this.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
-        this.loading.btnLanguage = false  
-      } catch(res) {
+        this.loading.btnLanguage = false
+      } catch (res) {
         this.loadin.btnLanguage = false
       }
     },
@@ -167,11 +167,11 @@ export default {
       const major = {
         major: this.formProfile.major
       }
-      try{
+      try {
         await api.updateUser(major)
         this.$success('Success')
         this.loading.btnMajor = false
-      } catch(res) {
+      } catch (res) {
         this.loading.btnMajor = false
       }
     },
@@ -190,17 +190,20 @@ export default {
       if (!this.visible.tfaRequired) {
         delete data.tfa_code
       }
-      try{
+      try {
         await api.changePassword(data)
         this.loading.btnPassword = false
         this.visible.passwordAlert = true
         this.$success('Updated password successfully.\nPlease login with new password.', 2500)
         this.visible.passwordAlert = false
-        setTimeout(() => {
-          this.$bvModal.hide('setting')
-          this.$router.push({ name: 'logout' })
-        }, 2500)
-      } catch(res) {
+        const logoutDelay = new Promise(() => {
+          setTimeout(() => {
+            this.$bvModal.hide('setting')
+            this.$router.push({ name: 'logout' })
+          }, 2500)
+        })
+        await logoutDelay()
+      } catch (res) {
         if (res.data.data === 'tfa_required') {
           this.visible.tfaRequired = true
         }
@@ -213,13 +216,13 @@ export default {
       if (!this.visible.tfaRequired) {
         delete data.tfa_code
       }
-      try{
+      try {
         await api.changeEmail(data)
         this.loading.btnEmail = false
         this.visible.emailAlert = true
         this.$success('Email changed successfully')
         this.formEmail.old_email = this.formEmail.new_email
-      } catch(res) {
+      } catch (res) {
         if (res.data.data === 'tfa_required') {
           this.visible.tfaRequired = true
         }

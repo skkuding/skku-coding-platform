@@ -236,7 +236,7 @@ export default {
         keyword: this.keyword,
         contest_id: this.contestId
       }
-      try{
+      try {
         const res = await api[funcName](params)
         this.loading = false
         this.total = res.data.data.total
@@ -244,32 +244,32 @@ export default {
           problem.isEditing = false
         }
         this.problemList = res.data.data.results
-      } catch(res) {
+      } catch (res) {
         this.loading = false
       }
     },
     async deleteProblem (id) {
-      try{
+      try {
         await this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', {
-        type: 'warning'
+          type: 'warning'
         })
         const funcName = this.routeName === 'problem-list' ? 'deleteProblem' : 'deleteContestProblem'
-        try{
+        try {
           await api[funcName](id)
-          try{
+          try {
             await this.getProblemList(this.currentPage - 1)
-          } catch(res) {
+          } catch (res) {
           }
-        } catch(res) {
+        } catch (res) {
         }
-      } catch(res) {
+      } catch (res) {
       }
     },
     async makeContestProblemPublic (problemID) {
-      try{
+      try {
         const value = await this.$prompt('Please input display id for the public problem', 'confirm')
         await api.makeContestProblemPublic({ id: problemID, display_id: value }).catch()
-      } catch(res) {
+      } catch (res) {
       }
     },
     async updateProblem (row) {
@@ -281,11 +281,11 @@ export default {
       } else {
         funcName = 'editProblem'
       }
-      try{
-        await api[fucnName](data)
+      try {
+        await api[funcName](data)
         this.InlineEditDialogVisible = false
         this.getProblemList(this.currentPage)
-      } catch(res) {
+      } catch (res) {
         this.InlineEditDialogVisible = false
       }
     },

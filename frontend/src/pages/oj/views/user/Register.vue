@@ -85,12 +85,12 @@ export default {
       }
       delete formData.passwordAgain
       this.btnRegisterLoading = true
-      try{
+      try {
         await api.register(formData)
         this.$success('You can login after email authentication. Please check your mailbox.', 2500)
         this.switchMode('login')
         this.btnRegisterLoading = false
-      } catch(res) {
+      } catch (res) {
         this.getCaptchaSrc()
         this.formRegister.captcha = ''
         this.btnRegisterLoading = false

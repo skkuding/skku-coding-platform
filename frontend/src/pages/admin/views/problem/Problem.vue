@@ -466,15 +466,15 @@ export default {
   methods: {
     async switchSpj () {
       if (this.testCaseUploaded) {
-        try{
+        try {
           await this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
           })
           this.problem.spj = !this.problem.spj
           this.resetTestCase()
-        } catch(res) {
+        } catch (res) {
         }
       } else {
         this.problem.spj = !this.problem.spj
@@ -482,15 +482,15 @@ export default {
     },
     async switchTestcase () {
       if (this.testCaseUploaded) {
-        try{
+        try {
           await this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
           })
           this.testcase_file_upload = !this.testcase_file_upload
-          this.resetTestCase()  
-        } catch(res) {
+          this.resetTestCase()
+        } catch (res) {
         }
       } else {
         this.testcase_file_upload = !this.testcase_file_upload
@@ -574,7 +574,7 @@ export default {
         this.$msgbox({
           title: 'Compile Error',
           type: 'error',
-          message: h('pre', err.data.data),
+          message: h('pre', res.data.data),
           showCancelButton: false,
           closeOnClickModal: false,
           customClass: 'dialog-compile-error'

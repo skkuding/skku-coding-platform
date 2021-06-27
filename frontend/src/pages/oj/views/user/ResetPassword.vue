@@ -87,12 +87,12 @@ export default {
         return this.$error('Password does not match')
       }
       delete data.passwordAgain
-      try{
+      try {
         await api.resetPassword(data)
         this.resetSuccess = true
         this.$success('Update password successfully.\nPlease login with new password.')
         this.$router.push({ name: 'logout' })
-      } catch(res) {
+      } catch (res) {
         this.btnLoading = false
         this.formResetPassword.captcha = ''
         this.getCaptchaSrc()
