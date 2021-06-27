@@ -31,9 +31,9 @@ jobs:
           path: |
             ./frontend/node_modules
             ./frontend/public
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-
+            ${{ runner.os }}-yarn-
 
       - name: Install Node packages
         if: steps.cache-yarn.outputs.cache-hit != 'true'
