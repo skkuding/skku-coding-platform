@@ -158,7 +158,7 @@ export default {
         this.$success('Success')
         this.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
         this.loading.btnLanguage = false  
-      } catch(err) {
+      } catch(res) {
         this.loadin.btnLanguage = false
       }
     },
@@ -171,7 +171,7 @@ export default {
         await api.updateUser(major)
         this.$success('Success')
         this.loading.btnMajor = false
-      } catch(err) {
+      } catch(res) {
         this.loading.btnMajor = false
       }
     },

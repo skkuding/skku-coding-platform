@@ -502,7 +502,7 @@ export default {
           tagList.push({ value: tag.name })
         }
         cb(tagList)
-      } catch (err) {
+      } catch (res) {
 
       }
     },
@@ -565,7 +565,7 @@ export default {
         this.loadingCompile = false
         this.problem.spj_compile_ok = true
         this.error.spj = ''
-      } catch (err) {
+      } catch (res) {
         this.loadingCompile = false
         this.problem.spj_compile_ok = false
         const h = this.$createElement
@@ -633,7 +633,7 @@ export default {
               this.$error('Invalid test case score')
               return
             }
-          } catch (e) {
+          } catch (res) {
             this.$error('Test case score must be an integer')
             return
           }
@@ -679,7 +679,7 @@ export default {
           } else {
             this.$router.push({ name: 'problem-list' })
           }
-        } catch (err) {
+        } catch (res) {
 
         }
       } else {

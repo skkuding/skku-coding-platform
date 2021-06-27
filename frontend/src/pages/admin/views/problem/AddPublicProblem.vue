@@ -75,7 +75,7 @@ export default {
       const res = api.getContest(this.contestID)
       this.contest = res.data.data
       this.getPublicProblem()
-    } catch (err) {
+    } catch (res) {
     }
   },
   methods: {
@@ -92,7 +92,7 @@ export default {
         this.loading = false
         this.total = res.data.data.total
         this.problems = res.data.data.results
-      } catch (err) {
+      } catch (res) {
 
       }
     },
@@ -107,10 +107,10 @@ export default {
         try {
           await api.addProblemFromPublic(data)
           this.$emit('on-change')
-        } catch (err) {
+        } catch (res) {
 
         }
-      } catch (err) {
+      } catch (res) {
 
       }
     }
