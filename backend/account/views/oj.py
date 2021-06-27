@@ -1,9 +1,7 @@
 import os
 import re
 from datetime import timedelta
-from importlib import import_module
 
-import qrcode
 from django.conf import settings
 from django.contrib import auth
 from django.template.loader import render_to_string
@@ -15,18 +13,17 @@ from drf_yasg import openapi
 from otpauth import OtpAuth
 from rest_framework.parsers import MultiPartParser
 
-from problem.models import Problem
 from options.options import SysOptions
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.captcha import Captcha
-from utils.shortcuts import rand_str, img2base64, datetime2str
+from utils.shortcuts import rand_str
 from ..decorators import login_required
 from ..models import User, UserProfile
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
                            UserChangeEmailSerializer, SSOSerializer)
-from ..serializers import (TwoFactorAuthCodeSerializer, UserProfileSerializer,
+from ..serializers import (UserProfileSerializer,
                            EditUserProfileSerializer, ImageUploadForm, EditUserSettingSerializer, UserSerializer)
 from ..tasks import send_email_async
 
@@ -146,83 +143,6 @@ class AvatarUploadAPI(APIView):
         user_profile.avatar = f"{settings.AVATAR_URI_PREFIX}/{name}"
         user_profile.save()
         return self.success("Succeeded")
-
-
-class TwoFactorAuthAPI(APIView):
-    @swagger_auto_schema(operation_description="Get QR code")
-    @login_required
-    def get(self, request):
-        """
-        Get QR code
-        """
-        user = request.user
-        if user.two_factor_auth:
-            return self.error("2FA is already turned on")
-        token = rand_str()
-        user.tfa_token = token
-        user.save()
-
-        label = f"{SysOptions.website_name_shortcut}:{user.username}"
-        image = qrcode.make(OtpAuth(token).to_uri("totp", label, SysOptions.website_name.replace(" ", "")))
-        return self.success(img2base64(image))
-
-    @swagger_auto_schema(
-        request_body=TwoFactorAuthCodeSerializer,
-        operation_description="Open 2FA",
-    )
-    @login_required
-    @validate_serializer(TwoFactorAuthCodeSerializer)
-    def post(self, request):
-        """
-        Open 2FA
-        """
-        code = request.data["code"]
-        user = request.user
-        if OtpAuth(user.tfa_token).valid_totp(code):
-            user.two_factor_auth = True
-            user.save()
-            return self.success("Succeeded")
-        else:
-            return self.error("Invalid code")
-
-    @swagger_auto_schema(
-        request_body=TwoFactorAuthCodeSerializer,
-        operation_description="Turn off 2FA",
-    )
-    @login_required
-    @validate_serializer(TwoFactorAuthCodeSerializer)
-    def put(self, request):
-        code = request.data["code"]
-        user = request.user
-        if not user.two_factor_auth:
-            return self.error("2FA is already turned off")
-        if OtpAuth(user.tfa_token).valid_totp(code):
-            user.two_factor_auth = False
-            user.save()
-            return self.success("Succeeded")
-        else:
-            return self.error("Invalid code")
-
-
-class CheckTFARequiredAPI(APIView):
-    @swagger_auto_schema(
-        request_body=UsernameOrEmailCheckSerializer,
-        operation_description="Check TFA is required",
-    )
-    @validate_serializer(UsernameOrEmailCheckSerializer)
-    def post(self, request):
-        """
-        Check TFA is required
-        """
-        data = request.data
-        result = False
-        if data.get("username"):
-            try:
-                user = User.objects.get(username=data["username"])
-                result = user.two_factor_auth
-            except User.DoesNotExist:
-                pass
-        return self.success({"result": result})
 
 
 class UserLoginAPI(APIView):
@@ -469,59 +389,6 @@ class ResetPasswordAPI(APIView):
         user.set_password(data["password"])
         user.save()
         return self.success("Succeeded")
-
-
-class SessionManagementAPI(APIView):
-    @swagger_auto_schema(operation_description="Manage Session")
-    @login_required
-    def get(self, request):
-        engine = import_module(settings.SESSION_ENGINE)
-        session_store = engine.SessionStore
-        current_session = request.session.session_key
-        session_keys = request.user.session_keys
-        result = []
-        modified = False
-        for key in session_keys[:]:
-            session = session_store(key)
-            # session does not exist or is expiry
-            if not session._session:
-                session_keys.remove(key)
-                modified = True
-                continue
-
-            s = {}
-            if current_session == key:
-                s["current_session"] = True
-            s["ip"] = session["ip"]
-            s["user_agent"] = session["user_agent"]
-            s["last_activity"] = datetime2str(session["last_activity"])
-            s["session_key"] = key
-            result.append(s)
-        if modified:
-            request.user.save()
-        return self.success(result)
-
-
-class ProfileProblemDisplayIDRefreshAPI(APIView):
-    @swagger_auto_schema(
-        operation_description="Update Solved Problem List"
-    )
-    @login_required
-    def get(self, request):
-        profile = request.user.userprofile
-        acm_problems = profile.acm_problems_status.get("problems", {})
-        oi_problems = profile.oi_problems_status.get("problems", {})
-        ids = list(acm_problems.keys()) + list(oi_problems.keys())
-        if not ids:
-            return self.success()
-        display_ids = Problem.objects.filter(id__in=ids, visible=True).values_list("_id", flat=True)
-        id_map = dict(zip(ids, display_ids))
-        for k, v in acm_problems.items():
-            v["_id"] = id_map[k]
-        for k, v in oi_problems.items():
-            v["_id"] = id_map[k]
-        profile.save(update_fields=["acm_problems_status", "oi_problems_status"])
-        return self.success()
 
 
 class OpenAPIAppkeyAPI(APIView):

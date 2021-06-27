@@ -83,24 +83,6 @@ class WrongFormatUserCheckAPITest(APITestCase):
         self.assertEqual(resp.data["data"]["email"], 2)
 
 
-class TFARequiredCheckAPITest(APITestCase):
-    def setUp(self):
-        self.url = self.reverse("tfa_required_check")
-        self.create_user("2020222000", "test123", login=False)
-
-    def test_not_required_tfa(self):
-        resp = self.client.post(self.url, data={"username": "test"})
-        self.assertSuccess(resp)
-        self.assertEqual(resp.data["data"]["result"], False)
-
-    def test_required_tfa(self):
-        user = User.objects.first()
-        user.two_factor_auth = True
-        user.save()
-        resp = self.client.post(self.url, data={"username": "2020222000"})
-        self.assertEqual(resp.data["data"]["result"], True)
-
-
 class UserLoginAPITest(APITestCase):
     def setUp(self):
         self.username = self.password = "2020222000"
@@ -236,21 +218,6 @@ class UserRegisterAPITest(CaptchaTest):
         self.assertDictEqual(response.data, {"error": "error", "data": "Email already exists"})
 
 
-class SessionManagementAPITest(APITestCase):
-    def setUp(self):
-        self.create_user("2020222000", "test123")
-        self.url = self.reverse("session_management_api")
-        # launch a request to provide session data
-        login_url = self.reverse("user_login_api")
-        self.client.post(login_url, data={"username": "test", "password": "test123"})
-
-    def test_get_sessions(self):
-        resp = self.client.get(self.url)
-        self.assertSuccess(resp)
-        data = resp.data["data"]
-        self.assertEqual(len(data), 1)
-
-
 class UserProfileAPITest(APITestCase):
     def setUp(self):
         self.url = self.reverse("user_profile_api")
@@ -273,49 +240,6 @@ class UserProfileAPITest(APITestCase):
         self.assertEqual(data["real_name"], "zemal")
         self.assertEqual(data["submission_number"], 0)
         self.assertEqual(data["language"], "en-US")
-
-
-class TwoFactorAuthAPITest(APITestCase):
-    def setUp(self):
-        self.url = self.reverse("two_factor_auth_api")
-        self.create_user("2020222000", "test123")
-
-    def _get_tfa_code(self):
-        user = User.objects.first()
-        code = OtpAuth(user.tfa_token).totp()
-        if len(str(code)) < 6:
-            code = (6 - len(str(code))) * "0" + str(code)
-        return code
-
-    def test_get_image(self):
-        resp = self.client.get(self.url)
-        self.assertSuccess(resp)
-
-    def test_open_tfa_with_invalid_code(self):
-        self.test_get_image()
-        resp = self.client.post(self.url, data={"code": "000000"})
-        self.assertDictEqual(resp.data, {"error": "error", "data": "Invalid code"})
-
-    def test_open_tfa_with_correct_code(self):
-        self.test_get_image()
-        code = self._get_tfa_code()
-        resp = self.client.post(self.url, data={"code": code})
-        self.assertSuccess(resp)
-        user = User.objects.first()
-        self.assertEqual(user.two_factor_auth, True)
-
-    def test_close_tfa_with_invalid_code(self):
-        self.test_open_tfa_with_correct_code()
-        resp = self.client.post(self.url, data={"code": "000000"})
-        self.assertDictEqual(resp.data, {"error": "error", "data": "Invalid code"})
-
-    def test_close_tfa_with_correct_code(self):
-        self.test_open_tfa_with_correct_code()
-        code = self._get_tfa_code()
-        resp = self.client.put(self.url, data={"code": code})
-        self.assertSuccess(resp)
-        user = User.objects.first()
-        self.assertEqual(user.two_factor_auth, False)
 
 
 @mock.patch("account.views.oj.send_email_async.send")
