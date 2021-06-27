@@ -13,7 +13,6 @@ from drf_yasg import openapi
 from otpauth import OtpAuth
 from rest_framework.parsers import MultiPartParser
 
-from utils.constants import ContestRuleType
 from options.options import SysOptions
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.captcha import Captcha
@@ -23,7 +22,7 @@ from ..models import User, UserProfile
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
-                           RankInfoSerializer, UserChangeEmailSerializer, SSOSerializer)
+                           UserChangeEmailSerializer, SSOSerializer)
 from ..serializers import (UserProfileSerializer,
                            EditUserProfileSerializer, ImageUploadForm, EditUserSettingSerializer, UserSerializer)
 from ..tasks import send_email_async
