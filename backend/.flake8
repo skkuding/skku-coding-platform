@@ -2,8 +2,9 @@
 exclude = 
   xss_filter.py,
   */migrations/,
-  *settings.py
-  */apps.py
+  *settings.py,
+  */apps.py,
+  .venv/,
   venv/
 max-line-length = 180
 inline-quotes = "
