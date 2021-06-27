@@ -2,315 +2,387 @@
   <div class="problem">
 
     <Panel :title="title">
-      <el-form ref="form" :model="problem" :rules="rules" label-position="top" label-width="70px">
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item prop="_id" :label="$t('m.Display_ID')">
-              <el-input :placeholder="$t('m.Display_ID')" v-model="problem._id"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="18">
-            <el-form-item prop="title" :label="$t('m.Title')" required>
-              <el-input :placeholder="$t('m.Title')" v-model="problem.title"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item prop="description" :label="$t('m.Description')" required>
-              <Simditor v-model="problem.description"></Simditor>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item prop="input_description" :label="$t('m.Input_Description')" required>
-              <Simditor v-model="problem.input_description"></Simditor>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item prop="output_description" :label="$t('m.Output_Description')" required>
-              <Simditor v-model="problem.output_description"></Simditor>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="8">
-            <el-form-item :label="$t('m.Time_Limit') + ' (ms)' " required>
-              <el-input type="Number" :placeholder="$t('m.Time_Limit')" v-model="problem.time_limit"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item :label="$t('m.Memory_limit') + ' (MB)' " required>
-              <el-input type="Number" :placeholder="$t('m.Memory_limit')" v-model="problem.memory_limit"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item :label="$t('m.Difficulty')">
-              <el-select class="difficulty-select" size="small" :placeholder="$t('m.Difficulty')" v-model="problem.difficulty">
-                <el-option value="Level1">Level 1</el-option>
-                <el-option value="Level2">Level 2</el-option>
-                <el-option value="Level3">Level 3</el-option>
-                <el-option value="Level4">Level 4</el-option>
-                <el-option value="Level5">Level 5</el-option>
-                <el-option value="Level6">Level 6</el-option>
-                <el-option value="Level7">Level 7</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="4">
-            <el-form-item :label="$t('m.Visible')">
-              <el-switch
-                v-model="problem.visible"
-                active-text=""
-                inactive-text="">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item :label="$t('m.ShareSubmission')">
-              <el-switch
-                v-model="problem.share_submission"
-                active-text=""
-                inactive-text="">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item :label="$t('m.Tag')" :error="error.tags" required>
-              <span class="tags">
-                <el-tag
-                  v-for="tag in problem.tags"
-                  :closable="true"
-                  :close-transition="false"
-                  :key="tag"
-                  type="success"
-                  @close="closeTag(tag)"
-                >{{tag}}</el-tag>
-              </span>
-              <el-autocomplete
-                v-if="inputVisible"
-                size="mini"
-                class="input-new-tag"
-                v-model="tagInput"
-                :trigger-on-focus="false"
-                @keyup.enter.native="addTag"
-                @blur="addTag"
-                @select="addTag"
-                :fetch-suggestions="querySearch">
-              </el-autocomplete>
-              <el-button class="button-new-tag" v-else size="small" @click="inputVisible = true">+ {{$t('m.New_Tag')}}</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item :label="$t('m.Languages')" :error="error.languages" required>
-              <el-checkbox-group v-model="problem.languages">
-                <el-tooltip class="spj-radio" v-for="lang in allLanguage.languages" :key="'spj'+lang.name" effect="dark"
-                            :content="lang.description" placement="top-start">
-                  <el-checkbox :label="lang.name"></el-checkbox>
-                </el-tooltip>
-              </el-checkbox-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <div>
-          <el-form-item v-for="(sample, index) in problem.samples" :key="'sample'+index">
-            <Accordion :title="'Sample' + (index + 1)">
-              <el-button type="warning" size="small" icon="el-icon-delete" slot="header" @click="deleteSample(index)">
-                Delete
-              </el-button>
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <el-form-item :label="$t('m.Input_Samples')" required>
-                    <el-input
-                      :rows="5"
-                      type="textarea"
-                      :placeholder="$t('m.Input_Samples')"
-                      v-model="sample.input">
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item :label="$t('m.Output_Samples')" required>
-                    <el-input
-                      :rows="5"
-                      type="textarea"
-                      :placeholder="$t('m.Output_Samples')"
-                      v-model="sample.output">
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </Accordion>
-          </el-form-item>
-        </div>
-        <div class="add-sample-btn">
-          <button type="button" class="add-samples" @click="addSample()"><i class="el-icon-plus"></i>{{$t('m.Add_Sample')}}
-          </button>
-        </div>
-        <el-form-item style="margin-top: 20px" :label="$t('m.Hint')">
-          <Simditor v-model="problem.hint" placeholder=""></Simditor>
-        </el-form-item>
-        <el-form-item :label="$t('m.Code_Template')">
-          <el-row>
-            <el-col :span="24" v-for="(v, k) in template" :key="'template'+k">
-              <el-form-item>
-                <el-checkbox v-model="v.checked">{{ k }}</el-checkbox>
-                <div v-if="v.checked">
-                  <code-mirror v-model="v.code" :mode="v.mode"></code-mirror>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item :label="$t('m.Special_Judge')" :error="error.spj">
-          <el-col :span="24">
-            <el-checkbox v-model="problem.spj" @click.native.prevent="switchSpj()">{{$t('m.Use_Special_Judge')}}</el-checkbox>
-          </el-col>
-        </el-form-item>
-        <el-form-item v-if="problem.spj">
-          <Accordion :title="$t('m.Special_Judge_Code')">
-            <template slot="header">
-              <span>{{$t('m.SPJ_language')}}</span>
-              <el-radio-group v-model="problem.spj_language">
-                <el-tooltip class="spj-radio" v-for="lang in allLanguage.spj_languages" :key="lang.name" effect="dark"
-                            :content="lang.description" placement="top-start">
-                  <el-radio :label="lang.name">{{ lang.name }}</el-radio>
-                </el-tooltip>
-              </el-radio-group>
-              <el-button type="primary" size="small" icon="el-icon-fa-random" @click="compileSPJ"
-                         :loading="loadingCompile">
-                {{$t('m.Compile')}}
-              </el-button>
+      <b-row>
+        <b-col cols="3">
+          <b-form-group
+            label-for="input-display-id"
+          >
+            <template v-slot:label>
+              <p class="labels">
+                Display ID
+              </p>
             </template>
-            <code-mirror v-model="problem.spj_code" :mode="spjMode"></code-mirror>
+            <b-form-input
+              id="input-display-id"
+              v-model="problem._id"
+              placeholder="Display ID"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="9">
+          <b-form-group
+            label-for="input-title"
+            :invalid-feedback="titleInvalidFeedback"
+            :state="titleState"
+          >
+            <template v-slot:label>
+              <p class="labels">
+                <span class="text-danger">*</span> Title
+              </p>
+            </template>
+            <b-form-input
+              id="input-title"
+              v-model="problem.title"
+              placeholder="Title"
+              :state="titleState"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
+          <p class="labels">
+            <span class="text-danger">*</span> Description
+          </p>
+          <Simditor v-model="problem.description"></Simditor>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
+          <p class="labels">
+            <span class="text-danger">*</span> Input Description
+          </p>
+          <Simditor v-model="problem.input_description"></Simditor>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
+          <p class="labels">
+            <span class="text-danger">*</span> Output Description
+          </p>
+          <Simditor v-model="problem.output_description"></Simditor>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col cols="4">
+          <p class="labels">
+            <span class="text-danger">*</span> Time Limit (ms)
+          </p>
+          <b-form-input
+            v-model="problem.time_limit"
+            placeholder="Time Limit"
+            type="number"
+          ></b-form-input>
+        </b-col>
+        <b-col cols="4">
+          <p class="labels">
+            <span class="text-danger">*</span> Memory Limit (MB)
+          </p>
+          <b-form-input
+            v-model="problem.memory_limit"
+            placeholder="Memory Limit"
+            type="number"
+          ></b-form-input>
+        </b-col>
+        <b-col cols="2">
+          <p class="labels">
+            Difficulty
+          </p>
+          <b-form-select
+            v-model="problem.difficulty"
+            :options="difficultyOptions"
+            size="sm"
+          ></b-form-select>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col cols="2">
+          <p class="labels">
+            Visible
+          </p>
+          <b-form-checkbox
+            v-model="problem.visible"
+            switch
+          >
+          </b-form-checkbox>
+        </b-col>
+        <b-col cols="2">
+          <p class="labels">
+            Share Submission
+          </p>
+          <b-form-checkbox
+            v-model="problem.share_submission"
+            switch
+          >
+          </b-form-checkbox>
+        </b-col>
+        <b-col cols="4">
+          <p class="labels">
+            <span class="text-danger">*</span> Tag
+          </p>
+          <b-form-tags
+            v-model="problem.tags"
+            size="sm"
+            variant="success"
+          >
+          </b-form-tags>
+        </b-col>
+        <b-col cols="4">
+          <b-form-group>
+            <template v-slot:label>
+              <p class="labels">
+                <span class="text-danger">*</span> Languages
+              </p>
+            </template>
+            <b-form-checkbox-group
+              id="languages-checkbox-group"
+              v-model="problem.languages"
+            >
+              <b-form-checkbox
+                v-for="lang in allLanguage.languages"
+                :key="lang.name"
+                :value="lang.name"
+                :title="lang.description"
+                v-b-tooltip.hover
+                style="margin: 0px 24px 24px 0px;"
+              >
+              {{ lang.name }}
+              </b-form-checkbox>
+            </b-form-checkbox-group>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
+      <div>
+        <b-form-group v-for="(sample, index) in problem.samples" :key="'sample'+index">
+          <Accordion :title="'Sample' + (index + 1)">
+            <b-button variant="danger" size="sm" slot="header" @click="deleteSample(index)">
+              <b-icon icon="trash-fill"></b-icon> Delete
+            </b-button>
+            <b-row>
+              <b-col cols="6">
+                <p class="labels" style="margin-top: 8px">
+                  <span class="text-danger">*</span> Input Samples
+                </p>
+                <b-form-textarea
+                  v-model="sample.input"
+                  placeholder="Input Samples"
+                  rows="5"
+                ></b-form-textarea>
+              </b-col>
+              <b-col cols="6">
+                <p class="labels" style="margin-top: 8px">
+                  <span class="text-danger">*</span> Output Samples
+                </p>
+                <b-form-textarea
+                  v-model="sample.output"
+                  placeholder="Output Samples"
+                  rows="5"
+                ></b-form-textarea>
+              </b-col>
+            </b-row>
           </Accordion>
-        </el-form-item>
-        <el-row :gutter="20">
-            <!-- <el-col :span="4">
-                 <el-form-item :label="$t('m.Type')">
-                 <el-radio-group v-model="problem.rule_type" :disabled="disableRuleType">
-                 <el-radio label="ACM">ACM</el-radio>
-                 <el-radio label="OI">OI</el-radio>
-                 </el-radio-group>
-                 </el-form-item>
-                 </el-col> -->
+        </b-form-group>
+      </div>
 
-          <el-col :span="6">
-            <el-form-item :label="$t('m.IOMode')">
-              <el-radio-group v-model="problem.io_mode.io_mode">
-                <el-radio label="Standard IO">Standard IO</el-radio>
-                <el-radio label="File IO">File IO</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
+      <div class="add-sample-btn">
+        <button type="button" class="add-samples" @click="addSample()"><b-icon icon="plus"></b-icon> Add Sample
+        </button>
+      </div>
 
-          <el-col :span="4" v-if="problem.io_mode.io_mode == 'File IO'">
-            <el-form-item :label="$t('m.InputFileName')" required>
-              <el-input type="text" v-model="problem.io_mode.input"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4" v-if="problem.io_mode.io_mode == 'File IO'">
-            <el-form-item :label="$t('m.OutputFileName')" required>
-              <el-input type="text" v-model="problem.io_mode.output"></el-input>
-            </el-form-item>
-          </el-col>
+      <b-row>
+        <b-col>
+          <p class="labels">
+            Hint
+          </p>
+          <Simditor v-model="problem.hint"></Simditor>
+        </b-col>
+      </b-row>
 
-        </el-row>
-
-        <el-row>
-          <el-form-item :label="Testcase_Upload_mode" :error="error.testcase">
-            <el-col :span="6">
-              <el-checkbox v-model="testcase_file_upload"
-                           @click.native.prevent="switchTestcase()">Upload with file</el-checkbox>
-            </el-col>
-          </el-form-item>
-          <el-col :span="6" v-if="testcase_file_upload">
-            <el-form-item :label="Testcase" :error="error.testcase">
-              <el-upload
-                action="/api/admin/test_case"
-                name="file"
-                :data="{spj: problem.spj}"
-                :show-file-list="true"
-                :on-success="uploadSucceeded"
-                :on-error="uploadFailed">
-                <el-button size="small" type="primary" icon="el-icon-fa-upload">Choose File</el-button>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <div v-if="!testcase_file_upload">
-          <el-form-item v-for="(testcase, index) in problem.testcases" :key="'testcase'+index">
-            <Accordion :title="'Testcase ' + (index + 1)">
-              <el-button type="warning" size="small" icon="el-icon-delete" slot="header" @click="deleteTestCase(index)">
-                Delete
-              </el-button>
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <el-form-item :label="Input">
-                    <el-input
-                      :rows="5"
-                      type="textarea"
-                      :placeholder="Input"
-                      v-model="testcase.input">
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item :label="Output">
-                    <el-input
-                      :rows="5"
-                      type="textarea"
-                      :placeholder="Output"
-                      v-model="testcase.output">
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </Accordion>
-          </el-form-item>
+      <p class="labels">
+        Code Template
+      </p>
+      <b-row v-for="(v, k) in template" :key="'template'+k" style="margin: 12px 0px;">
+        <p><b-form-checkbox v-model="v.checked">{{ k }}</b-form-checkbox></p>
+        <div v-if="v.checked">
+          <code-mirror v-model="v.code" :mode="v.mode"></code-mirror>
         </div>
-        <div class="add-sample-btn" v-if="!testcase_file_upload">
-          <button type="button" class="add-samples" @click="addTestCase()"><i class="el-icon-plus"></i>Add Testcase
-          </button>
-        </div>
-        <el-row>
-          <el-col :span="24">
-            <el-table
-              :data="problem.test_case_score"
-              style="width: 100%">
-              <el-table-column
-                prop="input_name"
-                :label="$t('m.Input')">
-              </el-table-column>
-              <el-table-column
-                prop="output_name"
-                :label="$t('m.Output')">
-              </el-table-column>
-              <el-table-column
-                prop="score"
-                :label="$t('m.Score')">
-                <template slot-scope="scope">
-                  <el-input
-                    size="small"
-                    :placeholder="$t('m.Score')"
-                    v-model="scope.row.score"
-                    :disabled="problem.rule_type !== 'OI'">
-                  </el-input>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
-        </el-row>
+      </b-row>
 
-        <el-form-item :label="$t('m.Source')">
-          <el-input :placeholder="$t('m.Source')" v-model="problem.source"></el-input>
-        </el-form-item>
-        <save @click.native="submit()">Save</save>
-      </el-form>
+      <b-row>
+        <b-col>
+          <p class="labels">
+            Special Judge
+          </p>
+          <b-form-checkbox v-model="problem.spj" @click.native.prevent="switchSpj()">Use Special Judge</b-form-checkbox>
+        </b-col>
+      </b-row>
+
+      <b-form-group v-if="problem.spj" style="margin-top: 20px;">
+        <Accordion :title="$t('m.Special_Judge_Code')">
+          <template slot="header">
+            <b-row style="align-items: center;">
+              <span style="margin-right: 8px">SPJ Language</span>
+              <b-form-radio-group
+                id="spj-radio-group"
+                v-model="problem.spj_language"
+              >
+                <b-form-radio
+                  v-for="spj_lang in allLanguage.spj_languages"
+                  :key="'spj'+spj_lang.name"
+                  :value="spj_lang.name"
+                  :title="spj_lang.description"
+                  v-b-tooltip.hover
+                >
+                {{ spj_lang.name }}
+                </b-form-radio>
+              </b-form-radio-group>
+              <b-button
+                variant="primary"
+                size="sm"
+                style="margin-right: 16px"
+                @click="compileSPJ"
+              >
+                <b-icon icon="shuffle"></b-icon> Compile
+              </b-button>
+            </b-row>
+          </template>
+          <code-mirror v-model="problem.spj_code" :mode="spjMode"></code-mirror>
+        </Accordion>
+      </b-form-group>
+
+      <b-row>
+        <b-col cols="4">
+          <b-form-group>
+            <template v-slot:label>
+              <p class="labels">
+                IO Mode
+              </p>
+            </template>
+            <b-form-radio-group v-model="problem.io_mode.io_mode">
+              <b-form-radio value="Standard IO">Standard IO</b-form-radio>
+              <b-form-radio value="File IO">File IO</b-form-radio>
+            </b-form-radio-group>
+          </b-form-group>
+        </b-col>
+        <b-col cols="3" v-if="problem.io_mode.io_mode == 'File IO'">
+          <b-form-group
+            label-for="file-input"
+          >
+            <template v-slot:label>
+              <p class="labels">
+                <span class="text-danger">*</span> Input File Name
+              </p>
+            </template>
+            <b-form-input
+              id="file-input"
+              v-model="problem.io_mode.input"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="3" v-if="problem.io_mode.io_mode == 'File IO'">
+          <b-form-group
+            label-for="file-output"
+          >
+            <template v-slot:label>
+              <p class="labels">
+                <span class="text-danger">*</span> Output File Name
+              </p>
+            </template>
+            <b-form-input
+              id="file-output"
+              v-model="problem.io_mode.output"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
+      <b-form-checkbox
+        style="margin: 24px 0px;"
+        v-model="testcase_file_upload"
+        @click.native.prevent="switchTestcase()"
+      >
+        Upload with file
+      </b-form-checkbox>
+      <b-row>
+        <b-col cols="6" v-if="testcase_file_upload">
+          <b-form-file
+            multiple
+            v-model="testcaseFile"
+            :state="Boolean(testcaseFile)"
+          ></b-form-file>
+        </b-col>
+      </b-row>
+
+      <div v-if="!testcase_file_upload">
+        <b-form-group v-for="(testcase, index) in problem.testcases" :key="'testcase'+index">
+          <Accordion :title="'Testcase' + (index + 1)">
+            <b-button variant="danger" size="sm" slot="header" @click="deleteTestCase(index)">
+              <b-icon icon="trash-fill"></b-icon> Delete
+            </b-button>
+            <b-row>
+              <b-col cols="6">
+                <p class="labels" style="margin-top: 8px">
+                  Input
+                </p>
+                <b-form-textarea
+                  v-model="testcase.input"
+                  placeholder="Input"
+                  rows="5"
+                ></b-form-textarea>
+              </b-col>
+              <b-col cols="6">
+                <p class="labels" style="margin-top: 8px">
+                  Output
+                </p>
+                <b-form-textarea
+                  v-model="testcase.output"
+                  placeholder="Output"
+                  rows="5"
+                ></b-form-textarea>
+              </b-col>
+            </b-row>
+          </Accordion>
+        </b-form-group>
+      </div>
+
+      <div class="add-sample-btn">
+        <button type="button" class="add-samples" @click="addTestCase()"><b-icon icon="plus"></b-icon> Add Testcase
+        </button>
+      </div>
+
+      <b-row>
+        <b-col>
+          <b-table
+            :items="problem.test_case_score"
+            :fields="testcaseTableFields"
+            style="width: 100%"
+          >
+            <template #cell(score)="row">
+              <b-form-input
+                size="sm"
+                v-model="row.item.score"
+                :placeholder="Score"
+                :disabled="problem.rule_type !== 'OI'"
+              />
+            </template>
+          </b-table>
+        </b-col>
+      </b-row>
+
+      <p class="labels">
+        Source
+      </p>
+      <b-form-input
+        v-model="problem.source"
+        placeholder="Source"
+      ></b-form-input>
+      <save @click.native="submit()" style="margin-top: 24px;">Save</save>
     </Panel>
   </div>
 </template>
@@ -351,6 +423,7 @@ export default {
       allLanguage: {},
       inputVisible: false,
       tagInput: '',
+      problemTagList: [],
       template: {},
       title: '',
       spjMode: '',
@@ -361,7 +434,23 @@ export default {
         spj: '',
         languages: '',
         testCase: ''
-      }
+      },
+      difficultyOptions: [
+        { value: 'Level1', text: 'Level 1' },
+        { value: 'Level2', text: 'Level 2' },
+        { value: 'Level3', text: 'Level 3' },
+        { value: 'Level4', text: 'Level 4' },
+        { value: 'Level5', text: 'Level 5' },
+        { value: 'Level6', text: 'Level 6' },
+        { value: 'Level7', text: 'Level 7' }
+      ],
+      testcaseFile: null,
+      testcaseFileList: [],
+      testcaseTableFields: [
+        { key: 'input_name', label: 'Input' },
+        { key: 'output_name', label: 'Output' },
+        { key: 'score', label: 'Score' }
+      ]
     }
   },
   mounted () {
@@ -441,6 +530,7 @@ export default {
         }
       }
     })
+    this.getProblemTagList()
   },
   watch: {
     '$route' () {
@@ -471,6 +561,9 @@ export default {
       this.spjMode = this.allLanguage.spj_languages.find(item => {
         return item.name === this.problem.spj_language
       }).content_type
+    },
+    'testcaseFile' () {
+      // this.uploadTestcase()
     }
   },
   methods: {
@@ -504,15 +597,11 @@ export default {
         this.testcase_file_upload = !this.testcase_file_upload
       }
     },
-    querySearch (queryString, cb) {
-      api.getProblemTagList().then(res => {
-        const tagList = []
-        for (const tag of res.data.data) {
-          tagList.push({ value: tag.name })
-        }
-        cb(tagList)
-      }).catch(() => {
-      })
+    async getProblemTagList () {
+      const response = await api.getProblemTagList()
+      for (const tag of response.data.data) {
+        this.problemTagList.push(tag.name)
+      }
     },
     resetTestCase () {
       this.testCaseUploaded = false
@@ -541,6 +630,21 @@ export default {
     },
     deleteTestCase (index) {
       this.problem.testcases.splice(index, 1)
+    },
+    async uploadTestcase () {
+      if (this.testcaseFile === null) {
+        this.$error('No file selected')
+        return
+      }
+      try {
+        const response = await api.uploadTestcase({
+          file: this.testcaseFile,
+          spj: this.problem.spj
+        })
+        this.uploadSucceeded(response)
+      } catch (err) {
+        this.uploadFailed()
+      }
     },
     uploadSucceeded (response) {
       if (response.error) {
@@ -699,6 +803,14 @@ export default {
         })
       }
     }
+  },
+  computed: {
+    titleState () {
+      return this.problem.title.length > 0
+    },
+    titleInvalidFeedback () {
+      return 'Title is required'
+    }
   }
 }
 </script>
@@ -750,7 +862,10 @@ export default {
     .add-sample-btn {
       margin-bottom: 10px;
     }
-
+  }
+  .labels {
+    margin-top: 24px;
+    margin-bottom: 24px;
   }
 </style>
 
