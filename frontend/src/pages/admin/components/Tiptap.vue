@@ -141,7 +141,7 @@ import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
-import axios from 'axios'
+import api from '../api'
 export default {
   components: {
     EditorContent,
@@ -219,21 +219,12 @@ export default {
     },
     uploadImage: async function () {
       const formData = new FormData()
-      formData.append('file', this.selectedFile)
+      formData.append('image', this.selectedFile)
       if (this.selectedFile === null) {
         return
       }
-      await axios({
-        url: '/admin/upload_file',
-        method: 'post',
-        data: formData
-      }).then(res => {
-        if (!res.data.success) {
-          alert('Upload Image failed')
-        } else if (res.data.file_path.endsWith('.jpg') || res.data.file_path.endsWith('.png')) {
-          this.fileURL = res.data.file_path
-        }
-      })
+      const res = await api.uploadImage(formData)
+      this.fileURL = res.data.data.file_path
     },
     insertFile: function (link) {
       this.editor.chain().focus().insertContent(this.fileLink).run()
@@ -244,18 +235,9 @@ export default {
       if (this.selectedFile == null) {
         return
       }
-      await axios({
-        url: '/admin/upload_file',
-        method: 'post',
-        data: formData
-      }).then(res => {
-        if (!res.data.success) {
-          alert('Upload file failed')
-        } else {
-          const link = '<a target="_blank" href="' + res.data.file_path + '">' + res.data.file_name + '</a>'
-          this.fileLink = link
-        }
-      })
+      const res = await api.uploadFile(formData)
+      const link = '<a target="_blank" href="' + res.data.data.file_path + '">' + res.data.data.file_name + '</a>'
+      this.fileLink = link
     }
   }
 }
