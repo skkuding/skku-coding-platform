@@ -84,22 +84,24 @@ export default {
     },
     async getAnnouncementList (page = 1) {
       this.btnLoading = true
-      await api.getAnnouncementList((page - 1) * this.limit, this.limit).then(res => {
+      try {
+        const res = await api.getAnnouncementList((page - 1) * this.limit, this.limit)
         this.btnLoading = false
         this.announcements = res.data.data.results
         this.total = res.data.data.total
-      }, () => {
+      } catch (err) {
         this.btnLoading = false
-      })
+      }
     },
     async getContestAnnouncementList () {
       this.btnLoading = true
-      await api.getContestAnnouncementList(this.$route.params.contestID).then(res => {
+      try {
+        const res = await api.getContestAnnouncementList(this.$route.params.contestID)
         this.btnLoading = false
         this.announcements = res.data.data
-      }, () => {
+      } catch (err) {
         this.btnLoading = false
-      })
+      }
     },
     async goAnnouncement (announcement) {
       this.announcement = announcement

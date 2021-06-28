@@ -187,51 +187,59 @@ export default {
     }
   },
   async mounted () {
-    await api.getSMTPConfig().then(res => {
+    try {
+      const res = await api.getSMTPConfig()
       if (res.data.data) {
         this.smtp = res.data.data
       } else {
         this.init = true
         this.$warning('Please setup SMTP config at first')
       }
-    })
-    await api.getWebsiteConfig().then(res => {
+    } catch (err) {
+    }
+    try {
+      const res = await api.getWebsiteConfig()
       this.websiteConfig = res.data.data
-    }).catch(() => {
-    })
+    } catch (err) {
+    }
   },
   methods: {
     async saveSMTPConfig () {
       if (!this.init) {
-        await api.editSMTPConfig(this.smtp).then(() => {
+        try {
+          await api.editSMTPConfig(this.smtp)
           this.saved = true
-        }, () => {
-        })
+        } catch (err) {
+        }
       } else {
-        await api.createSMTPConfig(this.smtp).then(() => {
+        try {
+          await api.createSMTPConfig(this.smtp)
           this.saved = true
-        }, () => {
-        })
+        } catch (err) {
+        }
       }
     },
-    testSMTPConfig () {
-      this.$prompt('Please input your email', '', {
-        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        inputErrorMessage: 'Error email format'
-      }).then(async ({ value }) => {
-        this.loadingBtnTest = true
-        await api.testSMTPConfig(value).then(() => {
-          this.loadingBtnTest = false
-        }, () => {
-          this.loadingBtnTest = false
+    async testSMTPConfig () {
+      try {
+        const { value } = await this.$prompt('Please input your email', '', {
+          inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+          inputErrorMessage: 'Error email format'
         })
-      }).catch(() => {
-      })
+        this.loadingBtnTest = true
+        try {
+          await api.testSMTPConfig(value)
+        } catch (err) {
+        } finally {
+          this.loadingBtnTest = false
+        }
+      } catch (err) {
+      }
     },
     async saveWebsiteConfig () {
-      await api.editWebsiteConfig(this.websiteConfig).then(() => {
-      }).catch(() => {
-      })
+      try {
+        await api.editWebsiteConfig(this.websiteConfig)
+      } catch (err) {
+      }
     }
   }
 }

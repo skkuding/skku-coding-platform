@@ -111,10 +111,12 @@ export default {
     },
     async getContestList (page = 1) {
       const offset = (page - 1) * this.limit
-      await api.getContestList(offset, this.limit, this.query).then((res) => {
+      try {
+        const res = await api.getContestList(offset, this.limit, this.query)
         this.contests = res.data.data.results
         this.total = res.data.data.total
-      })
+      } catch (err) {
+      }
     },
     async changeRoute () {
       const query = Object.assign({}, this.query)

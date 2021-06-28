@@ -81,7 +81,8 @@ export default {
     this.contestID = this.$route.params.contestID
     this.route_name = this.$route.name
     this.getContestProblems()
-    await this.$store.dispatch('getContest').then(res => {
+    try {
+      const res = await this.$store.dispatch('getContest')
       this.changeDomTitle({ title: res.data.data.title })
       const data = res.data.data
       this.contest = data
@@ -91,20 +92,14 @@ export default {
           this.$store.commit(types.NOW_ADD_1S)
         }, 1000)
       }
-    })
+    } catch (err) {
+    }
   },
   methods: {
     async getContestProblems () {
       await this.$store.dispatch('getContestProblems').then(res => {
         const data = res.data.data
         this.contestProblems = data
-        // if (this.isAuthenticated) {
-        //   if (this.contestRuleType === 'ACM') {
-        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
-        //   } else if (this.OIContestRealTimePermission) {
-        //     this.addStatusColumn(this.ACMTableColumns, res.data.data)
-        //   }
-        // }
       })
     },
     async goContestProblem (row) {
@@ -126,13 +121,14 @@ export default {
         return
       }
       this.btnLoading = true
-      await api.checkContestPassword(this.contestID, this.contestPassword).then((res) => {
+      try {
+        await api.checkContestPassword(this.contestID, this.contestPassword)
         this.$success('Succeeded')
         this.$store.commit(types.CONTEST_ACCESS, { access: true })
         this.btnLoading = false
-      }, (res) => {
+      } catch (err) {
         this.btnLoading = false
-      })
+      }
     }
   },
   computed: {

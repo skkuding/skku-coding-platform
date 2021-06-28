@@ -195,15 +195,20 @@ export default {
     }
   },
   async mounted () {
-    await api.getDashboardInfo().then(resp => {
+    try {
+      const resp = await api.getDashboardInfo()
       this.infoData = resp.data.data
-    }, () => {
-    })
-    await api.getSessions().then(resp => {
+    } catch (err) {
+    }
+
+    try {
+      const resp = await api.getSessions()
       this.parseSession(resp.data.data)
-    }, () => {
-    })
-    await api.getReleaseNotes().then(resp => {
+    } catch (err) {
+    }
+
+    try {
+      const resp = await api.getReleaseNotes()
       this.loadingReleases = false
       const data = resp.data.data
       if (!data) {
@@ -216,9 +221,9 @@ export default {
         }
       })
       this.releases = data.update
-    }, () => {
+    } catch (err) {
       this.loadingReleases = false
-    })
+    }
   },
   methods: {
     parseSession (sessions) {

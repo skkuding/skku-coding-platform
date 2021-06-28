@@ -57,12 +57,14 @@ export default {
   methods: {
     async init () {
       this.btnLoading = true
-      await api.getAnnouncementDetail(this.$route.params.announcementID).then(res => {
+      try {
+        const res = await api.getAnnouncementDetail(this.$route.params.announcementID)
         this.btnLoading = false
         this.announcement = res.data.data.current
         this.prevAnnouncement = 'previous' in res.data.data ? res.data.data.previous : null
         this.nextAnnouncement = 'next' in res.data.data ? res.data.data.next : null
-      })
+      } catch (err) {
+      }
     },
     getTimeFormat (value) {
       return time.utcToLocal(value, 'YYYY-M-D')

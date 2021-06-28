@@ -199,22 +199,24 @@ export default {
     },
     async getAnnouncementList (page) {
       this.loading = true
-      await api.getAnnouncementList((page - 1) * this.pageSize, this.pageSize).then(res => {
+      try {
+        const res = await api.getAnnouncementList((page - 1) * this.pageSize, this.pageSize)
         this.loading = false
         this.total = res.data.data.total
         this.announcementList = res.data.data.results
-      }, res => {
+      } catch (err) {
         this.loading = false
-      })
+      }
     },
     async getContestAnnouncementList () {
       this.loading = true
-      await api.getContestAnnouncementList(this.contestID).then(res => {
+      try {
+        const res = await api.getContestAnnouncementList(this.contestID)
         this.loading = false
         this.announcementList = res.data.data
-      }).catch(() => {
+      } catch (err) {
         this.loading = false
-      })
+      }
     },
     // 편집 대화 상자를 열기위한 콜백
     onOpenEditDialog () {
@@ -248,27 +250,29 @@ export default {
       } else {
         funcName = this.mode === 'edit' ? 'updateAnnouncement' : 'createAnnouncement'
       }
-      await api[funcName](data).then(async res => {
+      try {
+        await api[funcName](data)
         this.showEditAnnouncementDialog = false
         await this.init()
-      }).catch()
+      } catch (err) {
+      }
     },
     // 공지 사항 삭제
-    deleteAnnouncement (announcementId) {
+    async deleteAnnouncement (announcementId) {
       this.$confirm('Are you sure you want to delete this announcement?', 'Warning', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'warning'
-      }).then(async () => {
+      })
+      try {
         this.loading = true
         const funcName = this.contestID ? 'deleteContestAnnouncement' : 'deleteAnnouncement'
-        await api[funcName](announcementId).then(async res => {
-          this.loading = true
-          await this.init()
-        })
-      }).catch(() => {
-        this.loading = false
-      })
+        await api[funcName](announcementId)
+        this.loading = true
+        await this.init()
+      } finally {
+        this.loading = true
+      }
     },
     openAnnouncementDialog (id) {
       this.showEditAnnouncementDialog = true

@@ -160,18 +160,14 @@ export default {
     },
     async getContestList (page) {
       this.loading = true
-      await api
-        .getContestList((page - 1) * this.pageSize, this.pageSize, this.keyword)
-        .then(
-          (res) => {
-            this.loading = false
-            this.total = res.data.data.total
-            this.contestList = res.data.data.results
-          },
-          (res) => {
-            this.loading = false
-          }
-        )
+      try {
+        const res = await api.getContestList((page - 1) * this.pageSize, this.pageSize, this.keyword)
+        this.total = res.data.data.total
+        this.contestList = res.data.data.results
+      } catch (err) {
+      } finally {
+        this.loading = false
+      }
     },
     openDownloadOptions (contestId) {
       this.downloadDialogVisible = true
