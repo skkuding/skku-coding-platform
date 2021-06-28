@@ -92,7 +92,7 @@ export default {
         this.resetSuccess = true
         this.$success('Update password successfully.\nPlease login with new password.')
         this.$router.push({ name: 'logout' })
-      } catch (res) {
+      } catch (err) {
         this.btnLoading = false
         this.formResetPassword.captcha = ''
         this.getCaptchaSrc()

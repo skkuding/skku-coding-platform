@@ -66,7 +66,7 @@ export default {
           this.btnResetLoading = false
           this.successApply = true
         }, 2000)
-      } catch (res) {
+      } catch (err) {
         this.btnResetLoading = false
         this.formResetPassword.captcha = ''
         this.getCaptchaSrc()

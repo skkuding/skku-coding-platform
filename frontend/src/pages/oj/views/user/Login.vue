@@ -63,7 +63,7 @@ export default {
         this.changeModalStatus({ visible: false })
         this.getProfile()
         this.$success('Welcome back!')
-      } catch (res) {
+      } catch (err) {
         this.btnLoginLoading = false
       }
     }

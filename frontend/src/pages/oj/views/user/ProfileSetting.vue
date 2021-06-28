@@ -158,7 +158,7 @@ export default {
         this.$success('Success')
         this.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
         this.loading.btnLanguage = false
-      } catch (res) {
+      } catch (err) {
         this.loadin.btnLanguage = false
       }
     },
@@ -171,7 +171,7 @@ export default {
         await api.updateUser(major)
         this.$success('Success')
         this.loading.btnMajor = false
-      } catch (res) {
+      } catch (err) {
         this.loading.btnMajor = false
       }
     },
@@ -203,8 +203,8 @@ export default {
           }, 2500)
         })
         await logoutDelay()
-      } catch (res) {
-        if (res.data.data === 'tfa_required') {
+      } catch (err) {
+        if (err.data.data === 'tfa_required') {
           this.visible.tfaRequired = true
         }
         this.loading.btnPassword = false
@@ -222,8 +222,8 @@ export default {
         this.visible.emailAlert = true
         this.$success('Email changed successfully')
         this.formEmail.old_email = this.formEmail.new_email
-      } catch (res) {
-        if (res.data.data === 'tfa_required') {
+      } catch (err) {
+        if (err.data.data === 'tfa_required') {
           this.visible.tfaRequired = true
         }
         this.loading.btnEmail = false
