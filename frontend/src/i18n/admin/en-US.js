@@ -28,6 +28,7 @@ export const m = {
   User_Email: 'Email',
   User_New_Password: 'New Password',
   User_Type: 'User Type',
+  User_Major: 'User Major',
   Problem_Permission: 'Problem Permission',
   Two_Factor_Auth: 'Two Factor Auth',
   Is_Disabled: 'Is Disabled',
