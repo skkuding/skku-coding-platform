@@ -301,6 +301,16 @@ export default {
         id
       }
     })
+  },
+  uploadImage (data) {
+    return ajax('admin/upload_image', 'post', {
+      data
+    })
+  },
+  uploadFile (data) {
+    return ajax('admin/upload_file', 'post', {
+      data
+    })
   }
 }
 
@@ -339,7 +349,7 @@ function ajax (url, method, options) {
         }
       }
     }, res => {
-      // API请求异常，一般为Server error 或 network error
+      // API request is abnormal, usually Server error or network error
       reject(res)
       Vue.prototype.$error(res.data.data)
     })
