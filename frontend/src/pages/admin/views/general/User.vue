@@ -83,9 +83,18 @@
         </el-table-column>
 
         <el-table-column
+          prop="major"
+          label="User Major"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.major }}
+          </template>
+        </el-table-column>
+
+        <el-table-column
           fixed="right"
           label="Option"
-          width="200"
+          width="120"
         >
           <template slot-scope="{row}">
             <icon-btn
@@ -290,7 +299,7 @@
     >
       <el-form
         :model="user"
-        label-width="120px"
+        label-width="140px"
         label-position="left"
       >
         <el-row :gutter="20">
@@ -305,7 +314,6 @@
           <el-col :span="12">
             <el-form-item
               :label="$t('m.User_Real_Name')"
-              required
             >
               <el-input v-model="user.real_name" />
             </el-form-item>
@@ -342,6 +350,24 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item :label="$t('m.User_Major')">
+              <el-select v-model="user.major">
+                <el-option
+                  label="Major(원전공)"
+                  value="Major"
+                />
+                <el-option
+                  label="Double Major(복수전공)"
+                  value="Double Major"
+                />
+                <el-option
+                  label="Non-CS Major(비전공)"
+                  value="Non-CS Major"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="20">
             <el-form-item :label="$t('m.Problem_Permission')">
               <el-select
                 v-model="user.problem_permission"
@@ -469,7 +495,7 @@ export default {
       this.showUserDialog = true
       api.getUser(id).then(res => {
         this.user = res.data.data
-        this.user.password = ''
+        this.user.real_tfa = this.user.two_factor_auth
       })
     },
     // 사용자 목록 가져 오기
