@@ -90,7 +90,7 @@
         <b-icon icon="code"></b-icon>
       </b-button>
       <b-button size="sm" title="Link" type="button" variant="outline-dark" :class="{ 'is-disabled': shouldDisableButton(editor.isActive('link')), 'is-active': editor.isActive('link') }"
-                  @click.prevent="editor.isActive('link') ? editor.chain().focus().unsetLink() : addLinkDialog()">
+          @click.prevent="editor.isActive('link') ? editor.chain().focus().unsetLink() : addLinkDialog()">
         <b-icon icon="link"></b-icon>
       </b-button>
       <b-button size="sm" title="Unset Marks" type="button" variant="outline-dark" @click="editor.chain().focus().unsetAllMarks().run()" class="EditorButton">
@@ -112,7 +112,7 @@
           </b-tab>
           <b-tab href="#Upload-From-Local" title="Upload From Local">
             <b-card-text class="mt-3 mb-3">
-              <b-form-file v-model="selectedFile" accept="image/*" drop-placeholder="Drop a Image here" placeholder="Select a Image or Drop a file here" @input="uploadImage" >
+              <b-form-file v-model="selectedFile" accept="image/*" drop-placeholder="Drop a Image here" placeholder="Select a Image or Drop a file here" @input="uploadImage">
               </b-form-file>
             </b-card-text>
             <b-btn dark @click="insertImage(); $bvModal.hide('image-modal')" :class="{ 'is-disabled': selectedFile === null }">
@@ -220,13 +220,13 @@ export default {
     uploadImage: async function () {
       const formData = new FormData()
       formData.append('file', this.selectedFile)
+      if (this.selectedFile === null) {
+        return
+      }
       await axios({
         url: '/admin/upload_file',
         method: 'post',
-        cache: false,
-        data: formData,
-        processData: false,
-        contentType: false
+        data: formData
       }).then(res => {
         if (!res.data.success) {
           alert('Upload Image failed')
@@ -241,13 +241,13 @@ export default {
     uploadFile: async function () {
       const formData = new FormData()
       formData.append('file', this.selectedFile)
+      if (this.selectedFile == null) {
+        return
+      }
       await axios({
         url: '/admin/upload_file',
         method: 'post',
-        cache: false,
-        data: formData,
-        processData: false,
-        contentType: false
+        data: formData
       }).then(res => {
         if (!res.data.success) {
           alert('Upload file failed')
