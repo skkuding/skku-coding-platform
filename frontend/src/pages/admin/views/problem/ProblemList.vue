@@ -150,13 +150,13 @@ export default {
       currentProblemID: '',
       currentRow: {},
       fields: [
-        { key: 'id', label: 'ID' },
-        { key: 'edit-id', label: 'Display ID' },
-        { key: 'edit-title', label: 'Title' },
-        { key: 'created_by.username', label: 'Author' },
-        { key: 'create-time', label: 'Create Time' },
-        { key: 'switch-visible', label: 'Visible' },
-        { key: 'operation', label: 'Operation', stickyColumn: true }
+        { key: 'id', label: 'ID', thClass: 'problemListTable' },
+        { key: 'edit-id', label: 'Display ID', thClass: 'problemListTable' },
+        { key: 'edit-title', label: 'Title', thClass: 'problemListTable' },
+        { key: 'created_by.username', label: 'Author', thClass: 'problemListTable' },
+        { key: 'create-time', label: 'Create Time', thClass: 'problemListTable' },
+        { key: 'switch-visible', label: 'Visible', thClass: 'problemListTable' },
+        { key: 'operation', label: 'Operation', stickyColumn: true, thClass: 'problemListTable' }
       ]
     }
   },
@@ -276,7 +276,7 @@ export default {
 </script>
 
 <style lang="less">
-  .table th, .table td {
+  .problemListTable{
     word-wrap: break-word;
     max-width: 150px;
   }

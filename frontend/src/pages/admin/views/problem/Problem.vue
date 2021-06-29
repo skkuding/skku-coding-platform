@@ -351,7 +351,7 @@
         </b-form-group>
       </div>
 
-      <div class="add-sample-btn">
+      <div class="add-sample-btn" v-if="!testcase_file_upload">
         <button type="button" class="add-samples" @click="addTestCase()"><b-icon icon="plus"></b-icon> Add Testcase
         </button>
       </div>
@@ -411,6 +411,7 @@ export default {
       mode: '',
       contest: {},
       problem: {
+        title: '',
         languages: [],
         io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
       },
