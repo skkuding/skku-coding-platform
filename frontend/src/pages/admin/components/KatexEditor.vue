@@ -1,17 +1,21 @@
 <template>
-  <el-form>
-    <el-form-item :label="$t('m.Input')">
-      <el-input
-        v-model="input"
-        type="textarea"
-        @change="changeInput"
-        @keyup.enter.native="changeInput"
-      />
-    </el-form-item>
+  <b-form-gorup>
+    <p class="labels">
+      Input
+    </p>
+    <b-form-textarea
+      v-model="input"
+      style="margin-bottom: 24px"
+      @keyup.enter.native="changeInput"
+      rows="4"
+    >
+    </b-form-textarea>
 
-    <el-form-item :label="$t('m.Output')" />
+    <p class="labels">
+      Output
+    </p>
     <div v-html="text" />
-  </el-form>
+  </b-form-gorup>
 </template>
 
 <script>
@@ -41,9 +45,17 @@ export default {
         this.text = '<p style="text-align: center"><span style="color:red">Error Input</span></p>'
       }
     }
+  },
+  watch: {
+    'input' () {
+      this.changeInput()
+    }
   }
 }
 </script>
 
 <style scoped>
+  .labels {
+    margin-bottom: 24px;
+  }
 </style>
