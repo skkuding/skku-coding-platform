@@ -1,140 +1,97 @@
 <template>
   <div class="announcement view">
-    <Panel :title="$t('m.General_Announcement')">
+    <Panel title="Announcement">
       <div class="list">
-        <el-table
-          ref="table"
-          v-loading="loading"
-          element-loading-text="loading"
-          :data="announcementList"
+        <b-table
+          :items="announcementList"
+          :fields="announcementListFields"
+          :per-page="pageSize"
+          :current-page="updateCurrentPage"
           style="width: 100%"
         >
-          <el-table-column
-            width="100"
-            prop="id"
-            label="ID"
-          />
-          <el-table-column
-            prop="title"
-            label="Title"
-          />
-          <el-table-column
-            prop="create_time"
-            label="CreateTime"
-          >
-            <template slot-scope="scope">
-              {{ scope.row.create_time | localtime }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="last_update_time"
-            label="LastUpdateTime"
-          >
-            <template slot-scope="scope">
-              {{ scope.row.last_update_time | localtime }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="created_by.username"
-            label="Author"
-          />
-          <el-table-column
-            width="100"
-            prop="visible"
-            label="Visible"
-          >
-            <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.visible"
-                active-text=""
-                inactive-text=""
-                @change="handleVisibleSwitch(scope.row)"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            fixed="right"
-            label="Option"
-            width="200"
-          >
-            <div slot-scope="scope">
-              <icon-btn
-                name="Edit"
-                icon="edit"
-                @click.native="openAnnouncementDialog(scope.row.id)"
-              />
-              <icon-btn
-                name="Delete"
-                icon="trash"
-                @click.native="deleteAnnouncement(scope.row.id)"
-              />
-            </div>
-          </el-table-column>
-        </el-table>
+          <template #cell(create_time)="row">
+            {{ row.item.create_time | localtime }}
+          </template>
+
+          <template #cell(last_update_time)="row">
+            {{ row.item.last_update_time | localtime }}
+          </template>
+
+          <template #cell(visible)="row">
+            <b-form-checkbox
+              v-model="row.item.visible"
+              @change="handleVisibleSwitch(row.item)"
+              switch
+            >
+            </b-form-checkbox>
+          </template>
+
+          <template #cell(option)="row">
+            <icon-btn
+              name="Edit"
+              icon="edit"
+              @click.native="openAnnouncementDialog(row.item.id)"
+            />
+            <icon-btn
+              name="Delete"
+              icon="trash"
+              @click.native="deleteAnnouncement(row.item.id)"
+            />
+          </template>
+        </b-table>
+
         <div class="panel-options">
-          <el-button
-            type="primary"
-            size="small"
-            icon="el-icon-plus"
+          <b-button
+            variant="primary"
+            size="sm"
             @click="openAnnouncementDialog(null)"
           >
+            <b-icon icon="plus" />
             Create
-          </el-button>
-          <el-pagination
+          </b-button>
+
+          <b-pagination
             v-if="!contestID"
-            class="page"
-            layout="prev, pager, next"
-            :page-size="pageSize"
-            :total="total"
-            @current-change="currentChange"
-          />
+            v-model="currentPage"
+            :total-rows="total"
+            :per-page="pageSize"
+            style="position: absolute; right: 20px; top: 15px;"
+          >
+          </b-pagination>
         </div>
       </div>
     </Panel>
     <!--대화 상자-->
-    <el-dialog
+    <b-modal
+      ref="announcement-modal"
       :title="announcementDialogTitle"
-      :visible.sync="showEditAnnouncementDialog"
-      :close-on-click-modal="false"
-      @open="onOpenEditDialog"
+      size="lg"
+      centered
     >
-      <el-form label-position="top">
-        <el-form-item
-          :label="$t('m.Announcement_Title')"
-          required
-        >
-          <el-input
-            v-model="announcement.title"
-            :placeholder="$t('m.Announcement_Title')"
-            class="title-input"
-          />
-        </el-form-item>
-        <el-form-item
-          :label="$t('m.Announcement_Content')"
-          required
-        >
-          <tiptap v-model="announcement.content" />
-        </el-form-item>
-        <div class="visible-box">
-          <span>{{ $t('m.Announcement_visible') }}</span>
-          <el-switch
-            v-model="announcement.visible"
-            active-text=""
-            inactive-text=""
-          />
-        </div>
-      </el-form>
-      <span
-        slot="footer"
-        class="dialog-footer"
+      <p class="labels">
+        <span class="text-danger">*</span> Title
+      </p>
+      <b-form-input
+        v-model="announcement.title"
+        placeholder="Title"
       >
-        <cancel @click.native="showEditAnnouncementDialog = false" />
-        <save
-          type="primary"
-          @click.native="submitAnnouncement"
+      </b-form-input>
+      <p class="labels">
+        <span class="text-danger">*</span> Content
+      </p>
+      <tiptap v-model="announcement.content" />
+      <div class="visible-box">
+        <span>Visible</span>
+        <b-form-checkbox
+          v-model="announcement.visible"
+          switch
         />
-      </span>
-    </el-dialog>
+      </div>
+      <template #modal-footer>
+        <cancel @click.native="hideAnnouncementModal">Cancel</cancel>
+        <save @click.native="submitAnnouncement" />
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -150,10 +107,17 @@ export default {
   data () {
     return {
       contestID: '',
-      // 공지 사항 수정 대화 상자 표시
-      showEditAnnouncementDialog: false,
       // 공지 목록
       announcementList: [],
+      announcementListFields: [
+        { key: 'id', label: 'ID', thStyle: 'width: 100px' },
+        { key: 'title', label: 'Title' },
+        { key: 'create_time', label: 'CreateTime' },
+        { key: 'last_update_time', label: 'LastUpdateTime' },
+        { key: 'created_by.username', label: 'Author' },
+        { key: 'visible', label: 'Visible' },
+        { key: 'option', label: 'Option' }
+      ],
       // 한 페이지에 표시되는 공지 사항 수
       pageSize: 15,
       // 총 공지 수
@@ -170,7 +134,6 @@ export default {
       // 대화 제목
       announcementDialogTitle: 'Edit Announcement',
       // loading 표시 여부
-      loading: true,
       // 현재 페이지 번호
       currentPage: 0
     }
@@ -249,9 +212,9 @@ export default {
         funcName = this.mode === 'edit' ? 'updateAnnouncement' : 'createAnnouncement'
       }
       api[funcName](data).then(res => {
-        this.showEditAnnouncementDialog = false
         this.init()
       }).catch()
+      this.$refs['announcement-modal'].hide()
     },
     // 공지 사항 삭제
     deleteAnnouncement (announcementId) {
@@ -271,7 +234,6 @@ export default {
       })
     },
     openAnnouncementDialog (id) {
-      this.showEditAnnouncementDialog = true
       if (id !== null) {
         this.currentAnnouncementId = id
         this.announcementDialogTitle = 'Edit Announcement'
@@ -292,6 +254,10 @@ export default {
         this.announcement.content = ''
         this.mode = 'create'
       }
+      this.$refs['announcement-modal'].show()
+    },
+    hideUserModal () {
+      this.$refs['announcement-modal'].hide()
     },
     handleVisibleSwitch (row) {
       this.mode = 'edit'
@@ -301,6 +267,11 @@ export default {
         content: row.content,
         visible: row.visible
       })
+    }
+  },
+  computed: {
+    updateCurrentPage () {
+      return this.currentChange(this.currentPage)
     }
   }
 }
