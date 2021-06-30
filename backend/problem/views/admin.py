@@ -186,6 +186,9 @@ class TestCaseTextAPI(CSRFExemptAPIView, TestCaseZipProcessor):
         spj = data["spj"]
         testcases = data["testcases"]
 
+        if not testcases:
+            return self.error("Testcase is required")
+
         test_case_id = rand_str()
         test_case_dir = os.path.join(settings.TEST_CASE_DIR, test_case_id)
         os.mkdir(test_case_dir, mode=0o710)
