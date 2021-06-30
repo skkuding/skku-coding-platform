@@ -1,57 +1,51 @@
 <template>
   <div>
     <panel>
-      <span slot="title">{{ $t('m.Test_Case_Prune_Test_Case') }}
-        <el-popover
+      <span slot="title">Prune Test Case
+        <b-popover
           placement="right"
-          trigger="hover"
+          triggers="hover"
+          target="prune-popover"
         >
           These test cases are not owned by any problem, you can clean them safely.
-          <i
-            slot="reference"
-            class="el-icon-fa-question-circle import-user-icon"
-          />
-        </el-popover>
-      </span>
-      <el-table :data="data">
-        <el-table-column
-          label="Last Modified"
-        >
-          <template slot-scope="{row}">
-            {{ row.create_time | timestampFormat }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="id"
-          label="Test Case ID"
+        </b-popover>
+        <b-icon
+          id="prune-popover"
+          icon="question-circle-fill"
         />
-        <el-table-column
-          label="Option"
-          fixed="right"
-          width="200"
-        >
-          <template slot-scope="{row}">
-            <icon-btn
-              name="Delete"
-              icon="trash"
-              @click.native="deleteTestCase(row.id)"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
+      </span>
+
+      <b-table
+        :items="data"
+        :fields="dataFields"
+      >
+        <template #cell(create_time)="row">
+          {{ row.item.create_time | timestampFormat }}
+        </template>
+
+        <template #cell(option)="row">
+          <icon-btn
+            name="Delete"
+            icon="trash"
+            @click.native="deleteTestCase(row.item.id)"
+          />
+        </template>
+      </b-table>
+
       <div
         v-show="data.length > 0"
         class="panel-options"
       >
-        <el-button
-          type="warning"
-          size="small"
-          :loading="loading"
+        <b-button
+          variant="warning"
+          size="sm"
           icon="el-icon-fa-trash"
           @click="deleteTestCase()"
+          style="margin-top: 18px"
         >
+          <b-icon icon="trash-fill" />
           Delete All
-        </el-button>
+        </b-button>
       </div>
     </panel>
   </div>
@@ -71,7 +65,11 @@ export default {
   data () {
     return {
       data: [],
-      loading: false
+      dataFields: [
+        { key: 'create_time', label: 'Last Modified', tdClass: 'align-middle' },
+        { key: 'id', label: 'Test Case ID', tdClass: 'align-middle' },
+        { key: 'option', label: 'Option', thStyle: 'min-width: 200px;', tdClass: 'align-middle' }
+      ]
     }
   },
   mounted () {
@@ -85,11 +83,7 @@ export default {
       })
     },
     deleteTestCase (id) {
-      if (!id) {
-        this.loading = true
-      }
       api.pruneTestCase(id).then(resp => {
-        this.loading = false
         this.init()
       })
     }
