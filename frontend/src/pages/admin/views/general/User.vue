@@ -2,418 +2,342 @@
   <div class="view">
     <Panel :title="$t('m.User_User') ">
       <div slot="header">
-        <el-row :gutter="20">
-          <el-col :span="8">
-            <el-button
+        <b-row>
+          <b-col cols="4" style="padding-left: 0px;">
+            <b-button
               v-show="selectedUsers.length"
-              type="warning"
-              icon="el-icon-fa-trash"
+              variant="danger"
               @click="deleteUsers(selectedUserIDs)"
             >
-              Delete
-            </el-button>
-          </el-col>
-          <el-col :span="selectedUsers.length ? 16: 24">
-            <el-input
+              <b-icon icon="trash-fill"></b-icon> Delete
+            </b-button>
+          </b-col>
+          <b-col :cols="selectedUsers.length ? 8 : 12" style="padding-left: 0px;">
+            <b-form-input
               v-model="keyword"
-              prefix-icon="el-icon-search"
               placeholder="Keywords"
             />
-          </el-col>
-        </el-row>
+          </b-col>
+        </b-row>
       </div>
-      <el-table
-        ref="table"
+
+      <b-table
         v-loading="loadingTable"
-        element-loading-text="loading"
-        :data="userList"
+        :items="userList"
+        :fields="userListFields"
+        :per-page="pageSize"
+        :current-page="updateCurrentPage"
+        responsive
         style="width: 100%"
-        @selection-change="handleSelectionChange"
       >
-        <el-table-column
-          type="selection"
-          width="55"
-        />
+        <template #cell(selection)="row">
+          <b-form-checkbox
+            v-model="selectedUsers"
+            :value="row.item"
+          >
+          </b-form-checkbox>
+        </template>
 
-        <el-table-column
-          prop="id"
-          label="ID"
-        />
+        <template #cell(create_time)="row">
+          {{ row.item.create_time | localtime }}
+        </template>
 
-        <el-table-column
-          prop="username"
-          label="Username"
-        />
+        <template #cell(last_login)="row">
+          {{ row.item.last_login | localtime }}
+        </template>
 
-        <el-table-column
-          prop="create_time"
-          label="Create Time"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.create_time | localtime }}
-          </template>
-        </el-table-column>
+        <template #cell(Option)="row">
+          <icon-btn
+            name="Edit"
+            icon="edit"
+            @click.native="openUserDialog(row.item.id)"
+          />
+          <icon-btn
+            name="Delete"
+            icon="trash"
+            @click.native="deleteUsers([row.item.id])"
+          />
+        </template>
+      </b-table>
 
-        <el-table-column
-          prop="last_login"
-          label="Last Login"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.last_login | localtime }}
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="real_name"
-          label="Real Name"
-        />
-
-        <el-table-column
-          prop="email"
-          label="Email"
-        />
-
-        <el-table-column
-          prop="admin_type"
-          label="User Type"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.admin_type }}
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="major"
-          label="User Major"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.major }}
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          fixed="right"
-          label="Option"
-          width="120"
-        >
-          <template slot-scope="{row}">
-            <icon-btn
-              name="Edit"
-              icon="edit"
-              @click.native="openUserDialog(row.id)"
-            />
-            <icon-btn
-              name="Delete"
-              icon="trash"
-              @click.native="deleteUsers([row.id])"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
       <div class="panel-options">
-        <el-pagination
-          class="page"
-          layout="prev, pager, next"
-          :page-size="pageSize"
-          :total="total"
-          @current-change="currentChange"
-        />
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="total"
+          :per-page="pageSize"
+          align="right"
+          style="position: absolute; right:20px; top: 15px;"
+        ></b-pagination>
       </div>
     </Panel>
 
     <Panel>
-      <span slot="title">{{ $t('m.Import_User') }}
-        <el-popover
+      <span slot="title"> Import User
+        <b-popover
           placement="right"
-          trigger="hover"
+          triggers="hover"
+          target="import-icon"
         >
           <p>Only support csv file without headers, check the <a
             href="http://docs.onlinejudge.me/#/onlinejudge/guide/import_users"
           >link</a> for details</p>
-          <i
-            slot="reference"
-            class="el-icon-fa-question-circle import-user-icon"
-          />
-        </el-popover>
+        </b-popover>
+        <b-icon
+          id="import-icon"
+          icon="question-circle-fill"
+        />
       </span>
-      <el-upload
+
+      <b-form-file
         v-if="!uploadUsers.length"
-        action=""
-        :show-file-list="false"
+        v-model="uploadUsersFile"
         accept=".csv"
-        :before-upload="handleUsersCSV"
-      >
-        <el-button
-          size="small"
-          icon="el-icon-fa-upload"
-          type="primary"
-        >
-          Choose File
-        </el-button>
-      </el-upload>
+      ></b-form-file>
+
       <template v-else>
-        <el-table :data="uploadUsersPage">
-          <el-table-column label="Username">
-            <template slot-scope="{row}">
-              {{ row[0] }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Password">
-            <template slot-scope="{row}">
-              {{ row[1] }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Email">
-            <template slot-scope="{row}">
-              {{ row[2] }}
-            </template>
-          </el-table-column>
-        </el-table>
+        <b-table
+          :items="uploadUsersPage"
+          :fields="uploadUsersPageFields"
+          :per-page="0"
+          :current-page="uploadUsersCurrentPage"
+        >
+          <template #cell(Username)="row">
+            {{ row.item[0] }}
+          </template>
+
+          <template #cell(Password)="row">
+            {{ row.item[1] }}
+          </template>
+
+          <template #cell(Email)="row">
+            {{ row.item[2] }}
+          </template>
+        </b-table>
+
         <div class="panel-options">
-          <el-button
-            type="primary"
-            size="small"
-            icon="el-icon-fa-upload"
+          <b-button
+            variant="primary"
+            size="sm"
             @click="handleUsersUpload"
+            style="margin-right: 10px;"
           >
+            <b-icon
+              icon="upload"
+              size="sm"
+            ></b-icon>
             Import All
-          </el-button>
-          <el-button
-            type="warning"
-            size="small"
-            icon="el-icon-fa-undo"
+          </b-button>
+          <b-button
+            variant="danger"
+            size="sm"
             @click="handleResetData"
           >
+            <b-icon
+              icon="arrow-counterclockwise"
+              size="sm"
+            ></b-icon>
             Reset Data
-          </el-button>
-          <el-pagination
+          </b-button>
+          <b-pagination
             class="page"
-            layout="prev, pager, next"
-            :page-size="uploadUsersPageSize"
-            :current-page.sync="uploadUsersCurrentPage"
-            :total="uploadUsers.length"
-          />
+            v-model="uploadUsersCurrentPage"
+            :total-rows="uploadUsers.length"
+            :per-page="uploadUsersPageSize"
+            align="right"
+            style="position: absolute; right:20px; top: 15px;"
+          >
+          </b-pagination>
         </div>
       </template>
     </Panel>
 
-    <Panel :title="$t('m.Generate_User')">
-      <el-form
-        ref="formGenerateUser"
-        :model="formGenerateUser"
+    <Panel title="Generate User">
+      <b-form-group
+        ref="form-generate-user"
       >
-        <el-row
+        <b-row
           type="flex"
           justify="space-between"
         >
-          <el-col :span="4">
-            <el-form-item
-              label="Prefix"
-              prop="prefix"
-            >
-              <el-input
-                v-model="formGenerateUser.prefix"
-                placeholder="Prefix"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item
-              label="Suffix"
-              prop="suffix"
-            >
-              <el-input
-                v-model="formGenerateUser.suffix"
-                placeholder="Suffix"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item
-              label="Start Number"
-              prop="number_from"
-              required
-            >
-              <el-input-number
-                v-model="formGenerateUser.number_from"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item
-              label="End Number"
-              prop="number_to"
-              required
-            >
-              <el-input-number
-                v-model="formGenerateUser.number_to"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item
-              label="Password Length"
-              prop="password_length"
-              required
-            >
-              <el-input
-                v-model="formGenerateUser.password_length"
-                placeholder="Password Length"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
+          <b-col cols="2">
+            <p class="labels">
+              Prefix
+            </p>
+            <b-form-input
+              v-model="formGenerateUser.prefix"
+              placeholder="Prefix"
+            ></b-form-input>
+          </b-col>
+          <b-col cols="2">
+            <p class="labels">
+              Suffix
+            </p>
+            <b-form-input
+              v-model="formGenerateUser.suffix"
+              placeholder="Suffix"
+            ></b-form-input>
+          </b-col>
+          <b-col cols="2">
+            <p class="labels">
+              <span class="text-danger">*</span> Start Number
+            </p>
+            <b-form-input
+              v-model="formGenerateUser.number_from"
+              type="number"
+            ></b-form-input>
+          </b-col>
+          <b-col cols="2">
+            <p class="labels">
+              <span class="text-danger">*</span> End Number
+            </p>
+            <b-form-input
+              v-model="formGenerateUser.number_to"
+              type="number"
+            ></b-form-input>
+          </b-col>
+          <b-col cols="3">
+            <p class="labels">
+              <span class="text-danger">*</span> Password Length
+            </p>
+            <b-form-input
+              v-model="formGenerateUser.password_length"
+              placeholder="Password Length"
+              type="number"
+            ></b-form-input>
+          </b-col>
+        </b-row>
+      </b-form-group>
 
-        <el-form-item>
-          <el-button
-            type="primary"
-            icon="el-icon-fa-users"
-            :loading="loadingGenerate"
-            @click="generateUser"
-          >
-            Generate & Export
-          </el-button>
-          <span
-            v-if="formGenerateUser.number_from && formGenerateUser.number_to &&
-              formGenerateUser.number_from <= formGenerateUser.number_to"
-            class="userPreview"
-          >
-            The usernames will be {{ formGenerateUser.prefix + formGenerateUser.number_from + formGenerateUser.suffix }},
-            <span v-if="formGenerateUser.number_from + 1 < formGenerateUser.number_to">
-              {{ formGenerateUser.prefix + (formGenerateUser.number_from + 1) + formGenerateUser.suffix + '...' }}
-            </span>
-            <span v-if="formGenerateUser.number_from + 1 <= formGenerateUser.number_to">
-              {{ formGenerateUser.prefix + formGenerateUser.number_to + formGenerateUser.suffix }}
-            </span>
-          </span>
-        </el-form-item>
-      </el-form>
+      <b-button
+        variant="primary"
+        size="sm"
+        @click="generateUser"
+      >
+        <b-icon icon="people-fill" />
+        Generate & Export
+      </b-button>
+      <!-- <span
+        v-if="numberFromToInt && numberToToInt &&
+          numberFromToInt <= numberToToInt"
+        class="userPreview"
+      >
+        The usernames will be {{ prefixToInt + numberFromToInt + suffixToInt }},
+        <span v-if="numberFromToInt + 1 < numberToToInt">
+          {{ prefixToInt + (numberFromToInt + 1) + suffixToInt + '...' }}
+        </span>
+        <span v-if="numberFromToInt + 1 <= numberToToInt">
+          {{ prefixToInt + numberToToInt + suffixToInt }}
+        </span>
+      </span> -->
     </Panel>
     <!--对话框-->
-    <el-dialog
-      :title="$t('m.User_Info')"
-      :visible.sync="showUserDialog"
-      :close-on-click-modal="false"
+    <b-modal
+      ref="user-edit"
+      title="User"
+      size="lg"
+      centered
     >
-      <el-form
-        :model="user"
-        label-width="140px"
-        label-position="left"
-      >
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('m.User_Username')"
-              required
+      <b-form-group>
+        <b-row style="margin-top: 24px;">
+          <b-col cols="3">
+            <span class="text-danger">*</span> Username
+          </b-col>
+          <b-col cols="3">
+            <b-form-input
+              v-model="user.username"
+            ></b-form-input>
+          </b-col>
+          <b-col cols="3">
+            Real Name
+          </b-col>
+          <b-col cols="3">
+            <b-form-input
+              v-model="user.real_name"
+            ></b-form-input>
+          </b-col>
+        </b-row>
+
+        <b-row style="margin-top: 24px;">
+          <b-col cols="3">
+            <span class="text-danger">*</span> Email
+          </b-col>
+          <b-col cols="3">
+            <b-form-input
+              v-model="user.email"
+            ></b-form-input>
+          </b-col>
+          <b-col cols="3">
+            New password
+          </b-col>
+          <b-col cols="3">
+            <b-form-input
+              v-model="user.password"
+            ></b-form-input>
+          </b-col>
+        </b-row>
+
+        <b-row style="margin-top: 24px;">
+          <b-col cols="3">
+            User Type
+          </b-col>
+          <b-col cols="3">
+            <b-form-select
+              v-model="user.admin_type"
+              :options="adminTypeOptions"
+            ></b-form-select>
+          </b-col>
+          <b-col cols="3">
+            User Major
+          </b-col>
+          <b-col cols="3">
+            <b-form-select
+              v-model="user.major"
+              :options="majorOptions"
+            ></b-form-select>
+          </b-col>
+        </b-row>
+
+        <b-row style="margin-top: 24px;">
+          <b-col cols="3">
+            Problem Permission
+          </b-col>
+          <b-col cols="4">
+            <b-form-select
+              v-model="user.problem_permission"
+              :options="problemPermissionOptions"
+              :disabled="user.admin_type!=='Admin'"
+            ></b-form-select>
+          </b-col>
+        </b-row>
+
+        <b-row style="margin-top: 24px;">
+          <b-col cols="3">
+            Open API
+          </b-col>
+          <b-col cols="1">
+            <b-form-checkbox
+              v-model="user.open_api"
+              switch
             >
-              <el-input v-model="user.username" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('m.User_Real_Name')"
+            </b-form-checkbox>
+          </b-col>
+          <b-col cols="3">
+            Is Disabled
+          </b-col>
+          <b-col cols="1">
+            <b-form-checkbox
+              v-model="user.is_disabled"
+              switch
             >
-              <el-input v-model="user.real_name" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('m.User_Email')"
-              required
-            >
-              <el-input v-model="user.email" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('m.User_New_Password')">
-              <el-input v-model="user.password" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('m.User_Type')">
-              <el-select v-model="user.admin_type">
-                <el-option
-                  label="Regular User"
-                  value="Regular User"
-                />
-                <el-option
-                  label="Admin"
-                  value="Admin"
-                />
-                <el-option
-                  label="Super Admin"
-                  value="Super Admin"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('m.User_Major')">
-              <el-select v-model="user.major">
-                <el-option
-                  label="Major(원전공)"
-                  value="Major"
-                />
-                <el-option
-                  label="Double Major(복수전공)"
-                  value="Double Major"
-                />
-                <el-option
-                  label="Non-CS Major(비전공)"
-                  value="Non-CS Major"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="20">
-            <el-form-item :label="$t('m.Problem_Permission')">
-              <el-select
-                v-model="user.problem_permission"
-                :disabled="user.admin_type!=='Admin'"
-              >
-                <el-option
-                  label="None"
-                  value="None"
-                />
-                <el-option
-                  label="Own"
-                  value="Own"
-                />
-                <el-option
-                  label="All"
-                  value="All"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="Open Api">
-              <el-switch
-                v-model="user.open_api"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item :label="$t('m.Is_Disabled')">
-              <el-switch
-                v-model="user.is_disabled"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <cancel @click.native="showUserDialog = false">Cancel</cancel>
-        <save @click.native="saveUser()" />
-      </span>
-    </el-dialog>
+            </b-form-checkbox>
+          </b-col>
+        </b-row>
+      </b-form-group>
+      <template #modal-footer>
+        <cancel @click.native="hideUserModal">Cancel</cancel>
+        <save @click.native="saveUser" />
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -432,8 +356,26 @@ export default {
       total: 0,
       // 사용자 목록
       userList: [],
+      userListFields: [
+        { key: 'selection', label: '' },
+        { key: 'id', label: 'ID' },
+        { key: 'username', label: 'Username' },
+        { key: 'create_time', label: 'Create Time' },
+        { key: 'last_login', label: 'Last Login' },
+        { key: 'real_name', label: 'Real Name' },
+        { key: 'email', label: 'Eamil' },
+        { key: 'admin_type', label: 'User Type' },
+        { key: 'major', label: 'User Major' },
+        { key: 'Option', label: 'Option', thClass: 'userTable' }
+      ],
+      uploadUsersFile: null,
       uploadUsers: [],
       uploadUsersPage: [],
+      uploadUsersPageFields: [
+        { key: 'Username', label: 'Username', thClass: 'uploadUserTable' },
+        { key: 'Password', label: 'Password', thClass: 'uploadUserTable' },
+        { key: 'Email', label: 'Email', thClass: 'uploadUserTable' }
+      ],
       uploadUsersCurrentPage: 1,
       uploadUsersPageSize: 15,
       // 키워드 검색
@@ -443,7 +385,6 @@ export default {
       // 현재 사용자 model
       user: {},
       loadingTable: false,
-      loadingGenerate: false,
       // 현재 페이지 번호
       currentPage: 0,
       selectedUsers: [],
@@ -453,7 +394,22 @@ export default {
         number_from: 0,
         number_to: 0,
         password_length: 8
-      }
+      },
+      adminTypeOptions: [
+        { value: 'Regular User', text: 'Regular User' },
+        { value: 'Admin', text: 'Admin' },
+        { value: 'Super Admin', text: 'Super Admin' }
+      ],
+      majorOptions: [
+        { value: 'Major', text: 'Major(원전공)' },
+        { value: 'Double Major', text: 'Double Major(복수전공)' },
+        { value: 'Non-CS Major', text: 'Non-CS Major(비전공)' }
+      ],
+      problemPermissionOptions: [
+        { value: 'None', text: 'None' },
+        { value: 'Own', text: 'Own' },
+        { value: 'All', text: 'All' }
+      ]
     }
   },
   computed: {
@@ -464,6 +420,39 @@ export default {
       }
       return ids
     }
+    // emailInputState () {
+    //   return this.user.email.length > 0
+    // },
+    // passwordInputState () {
+    //   return this.user.email.length > 0
+    // },
+    // prefixToInt () {
+    //   return parseInt(this.formGenerateUser.prefix)
+    // },
+    // suffixToInt () {
+    //   return parseInt(this.formGenerateUser.suffix)
+    // },
+    // numberFromToInt () {
+    //   return parseInt(this.formGenerateUser.number_from)
+    // },
+    // numberToToInt () {
+    //   return parseInt(this.formGenerateUser.number_to)
+    // },
+    // updateCurrentPage () {
+    //   return this.currentChange(this.currentPage)
+    // }
+    // startNumberState () {
+    //   return !!(typeof this.formGenerateUser.number_from === 'number')
+    // },
+    // endNumberState () {
+    //   return !!(typeof this.formGenerateUser.number_to === 'number')
+    // },
+    // passwordLengthState () {
+    //   return !!(typeof this.formGenerateUser.password_length === 'number')
+    // },
+    // userGeneraterValid () {
+    //   return this.startNumberState && this.endNumberState && this.passwordLengthState
+    // }
   },
   watch: {
     'keyword' () {
@@ -478,6 +467,9 @@ export default {
     },
     'uploadUsersCurrentPage' (page) {
       this.uploadUsersPage = this.uploadUsers.slice((page - 1) * this.uploadUsersPageSize, page * this.uploadUsersPageSize)
+    },
+    'uploadUsersFile' () {
+      this.handleUsersCSV(this.uploadUsersFile)
     }
   },
   mounted () {
@@ -498,14 +490,15 @@ export default {
         this.showUserDialog = false
       }).catch(() => {
       })
+      this.$refs['user-edit'].hide()
     },
     // 사용자 대화 상자 열기
     openUserDialog (id) {
-      this.showUserDialog = true
       api.getUser(id).then(res => {
         this.user = res.data.data
         this.user.real_tfa = this.user.two_factor_auth
       })
+      this.$refs['user-edit'].show()
     },
     // 사용자 목록 가져 오기
     getUserList (page) {
@@ -529,28 +522,42 @@ export default {
         })
       }, () => {
       })
+      this.selectedUsers = []
     },
     handleSelectionChange (val) {
       this.selectedUsers = val
     },
     generateUser () {
-      this.$refs.formGenerateUser.validate((valid) => {
-        if (!valid) {
-          this.$error('Please validate the error fields')
-          return
-        }
-        this.loadingGenerate = true
-        const data = Object.assign({}, this.formGenerateUser)
-        api.generateUser(data).then(res => {
-          this.loadingGenerate = false
-          const url = '/admin/generate_user?file_id=' + res.data.data.file_id
-          utils.downloadFile(url).then(() => {
-            this.$alert('All users created successfully, the users sheets have downloaded to your disk.', 'Notice')
-          })
-          this.getUserList(1)
-        }).catch(() => {
-          this.loadingGenerate = false
+      // this.$refs['form-generate-user'].validate((valid) => {
+      //   if (!valid) {
+      //     this.$error('Please validate the error fields')
+      //     return
+      //   }
+      //   this.loadingGenerate = true
+      //   const data = Object.assign({}, this.formGenerateUser)
+      //   api.generateUser(data).then(res => {
+      //     this.loadingGenerate = false
+      //     const url = '/admin/generate_user?file_id=' + res.data.data.file_id
+      //     utils.downloadFile(url).then(() => {
+      //       this.$alert('All users created successfully, the users sheets have downloaded to your disk.', 'Notice')
+      //     })
+      //     this.getUserList(1)
+      //   }).catch(() => {
+      //     this.loadingGenerate = false
+      //   })
+      // })
+      // if (this.userGeneraterValid) {
+      //   this.$error('Please validate the error fields')
+      //   return
+      // }
+      const data = Object.assign({}, this.formGenerateUser)
+      api.generateUser(data).then(res => {
+        const url = '/admin/generate_user?file_id=' + res.data.data.file_id
+        utils.downloadFile(url).then(() => {
+          this.$alert('All users created successfully, the users sheets have downloaded to your disk.', 'Notice')
         })
+        this.getUserList(1)
+      }).catch(() => {
       })
     },
     handleUsersCSV (file) {
@@ -581,6 +588,9 @@ export default {
     },
     handleResetData () {
       this.uploadUsers = []
+    },
+    hideUserModal () {
+      this.$refs['user-edit'].hide()
     }
   }
 }
@@ -601,5 +611,14 @@ export default {
       margin: 0;
       text-align: left;
     }
+  }
+</style>
+<style>
+  .userTable {
+    min-width: 100px;
+  }
+  uploadUserTable {
+    word-break: break-all;
+    max-width: 200px;
   }
 </style>
