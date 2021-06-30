@@ -824,6 +824,7 @@ export default {
             }
           }).catch(() => {
           })
+        }).catch(() => {
         })
       } else {
         api[funcName](this.problem).then(res => {
