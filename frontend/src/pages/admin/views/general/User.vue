@@ -22,7 +22,6 @@
       </div>
 
       <b-table
-        v-loading="loadingTable"
         :items="userList"
         :fields="userListFields"
         :per-page="pageSize"
@@ -216,19 +215,19 @@
         <b-icon icon="people-fill" />
         Generate & Export
       </b-button>
-      <!-- <span
-        v-if="numberFromToInt && numberToToInt &&
-          numberFromToInt <= numberToToInt"
+      <span
+        v-if="formGenerateUser.number_from && formGenerateUser.number_to &&
+          formGenerateUser.number_from <= formGenerateUser.number_to"
         class="userPreview"
       >
-        The usernames will be {{ prefixToInt + numberFromToInt + suffixToInt }},
-        <span v-if="numberFromToInt + 1 < numberToToInt">
-          {{ prefixToInt + (numberFromToInt + 1) + suffixToInt + '...' }}
+        The usernames will be {{ formGenerateUser.prefix + formGenerateUser.number_from + formGenerateUser.suffix }},
+        <span v-if="formGenerateUser.number_from + 1 < formGenerateUser.number_to">
+          {{ formGenerateUser.prefix + (formGenerateUser.number_from + 1) + formGenerateUser.suffix + '...' }}
         </span>
-        <span v-if="numberFromToInt + 1 <= numberToToInt">
-          {{ prefixToInt + numberToToInt + suffixToInt }}
+        <span v-if="formGenerateUser.number_from + 1 <= formGenerateUser.number_to">
+          {{ formGenerateUser.prefix + formGenerateUser.number_to + formGenerateUser.suffix }}
         </span>
-      </span> -->
+      </span>
     </Panel>
     <!--对话框-->
     <b-modal
@@ -419,40 +418,10 @@ export default {
         ids.push(user.id)
       }
       return ids
+    },
+    updateCurrentPage () {
+      return this.currentChange(this.currentPage)
     }
-    // emailInputState () {
-    //   return this.user.email.length > 0
-    // },
-    // passwordInputState () {
-    //   return this.user.email.length > 0
-    // },
-    // prefixToInt () {
-    //   return parseInt(this.formGenerateUser.prefix)
-    // },
-    // suffixToInt () {
-    //   return parseInt(this.formGenerateUser.suffix)
-    // },
-    // numberFromToInt () {
-    //   return parseInt(this.formGenerateUser.number_from)
-    // },
-    // numberToToInt () {
-    //   return parseInt(this.formGenerateUser.number_to)
-    // },
-    // updateCurrentPage () {
-    //   return this.currentChange(this.currentPage)
-    // }
-    // startNumberState () {
-    //   return !!(typeof this.formGenerateUser.number_from === 'number')
-    // },
-    // endNumberState () {
-    //   return !!(typeof this.formGenerateUser.number_to === 'number')
-    // },
-    // passwordLengthState () {
-    //   return !!(typeof this.formGenerateUser.password_length === 'number')
-    // },
-    // userGeneraterValid () {
-    //   return this.startNumberState && this.endNumberState && this.passwordLengthState
-    // }
   },
   watch: {
     'keyword' () {
@@ -528,28 +497,6 @@ export default {
       this.selectedUsers = val
     },
     generateUser () {
-      // this.$refs['form-generate-user'].validate((valid) => {
-      //   if (!valid) {
-      //     this.$error('Please validate the error fields')
-      //     return
-      //   }
-      //   this.loadingGenerate = true
-      //   const data = Object.assign({}, this.formGenerateUser)
-      //   api.generateUser(data).then(res => {
-      //     this.loadingGenerate = false
-      //     const url = '/admin/generate_user?file_id=' + res.data.data.file_id
-      //     utils.downloadFile(url).then(() => {
-      //       this.$alert('All users created successfully, the users sheets have downloaded to your disk.', 'Notice')
-      //     })
-      //     this.getUserList(1)
-      //   }).catch(() => {
-      //     this.loadingGenerate = false
-      //   })
-      // })
-      // if (this.userGeneraterValid) {
-      //   this.$error('Please validate the error fields')
-      //   return
-      // }
       const data = Object.assign({}, this.formGenerateUser)
       api.generateUser(data).then(res => {
         const url = '/admin/generate_user?file_id=' + res.data.data.file_id
