@@ -1,94 +1,83 @@
 <template>
   <div class="view">
-    <Panel :title="$t('m.Judge_Server_Token')">
+    <Panel title="Judge Server Token">
       <code>{{ token }}</code>
     </Panel>
-    <Panel :title="$t('m.Judge_Server_Info')">
-      <el-table
-        :data="servers"
-        :default-expand-all="true"
-        border
+    <Panel title="Judge Server">
+      <b-table
+        :items="servers"
+        :fields="serverTableFields"
+        bordered
+        responsive
       >
-        <el-table-column
-          type="expand"
-        >
-          <template slot-scope="props">
+        <template #cell(status)="row">
+          <b-button :variant="row.item.status === 'normal' ? 'success' : 'danger'" size="sm" disabled>
+            {{ row.item.status === 'normal' ? 'Normal' : 'Abnormal' }}
+          </b-button>
+        </template>
+
+        <template #cell(ip)="row">
+          <b-button variant="success" size="sm" disabled>
+            {{ row.item.ip }}
+          </b-button>
+        </template>
+
+        <template #cell(judger_version)="row">
+          <b-button variant="success" size="sm" disabled>
+            {{ row.item.judger_version }}
+          </b-button>
+        </template>
+
+        <template #cell(service_url)="row">
+            <code>{{ row.item.service_url }}</code>
+        </template>
+
+        <template #cell(last_heartbeat)="row">
+            {{ row.item.last_heartbeat | localtime }}
+        </template>
+
+        <template #cell(create_time)="row">
+            {{ row.item.create_time | localtime }}
+        </template>
+
+        <template #cell(disabled)="row">
+          <b-form-checkbox
+            v-model="row.item.is_disabled"
+            @change="handleDisabledSwitch(row.item.id, row.item.is_disabled)"
+            switch
+          >
+          </b-form-checkbox>
+        </template>
+
+        <template #cell(options)="row">
+          <b-button
+            variant="outline-danger"
+            size="sm"
+            @click="deleteJudgeServer(row.item.hostname)"
+          >
+            <b-icon icon="trash-fill" />
+          </b-button>
+        </template>
+
+        <template #row-details="row">
+          <b-card style="padding: 24px;">
             <p>
-              {{ $t('m.IP') }}:
-              <el-tag type="success">
-                {{ props.row.ip }}
-              </el-tag>&nbsp;&nbsp;
-              {{ $t('m.Judger_Version') }}:
-              <el-tag type="success">
-                {{ props.row.judger_version }}
-              </el-tag>
+              IP:
+              <b-button variant="success" disabled>
+                {{ row.item.ip }}
+              </b-button>&nbsp;&nbsp;
+                Judger Version:
+              <b-button variant="success" disabled>
+                {{ row.item.judger_version }}
+              </b-button>
             </p>
-            <p>{{ $t('m.Service_URL') }}: <code>{{ props.row.service_url }}</code></p>
-            <p>{{ $t('m.Last_Heartbeat') }}: {{ props.row.last_heartbeat | localtime }}</p>
-            <p>{{ $t('m.Create_Time') }}: {{ props.row.create_time | localtime }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="status"
-          label="Status"
-        >
-          <template slot-scope="scope">
-            <el-tag
-              :type="scope.row.status === 'normal' ? 'success' : 'danger'"
-            >
-              {{ scope.row.status === 'normal' ? 'Normal' : 'Abnormal' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="hostname"
-          label="Hostname"
-        />
-        <el-table-column
-          prop="task_number"
-          label="Task Number"
-        />
-        <el-table-column
-          prop="cpu_core"
-          label="CPU Core"
-        />
-        <el-table-column
-          prop="cpu_usage"
-          label="CPU Usage"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.cpu_usage }}%
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="memory_usage"
-          label="Memory Usage"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.memory_usage }}%
-          </template>
-        </el-table-column>
-        <el-table-column label="Disabled">
-          <template slot-scope="{row}">
-            <el-switch
-              v-model="row.is_disabled"
-              @change="handleDisabledSwitch(row.id, row.is_disabled)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="Options"
-        >
-          <template slot-scope="scope">
-            <icon-btn
-              name="Delete"
-              icon="trash"
-              @click.native="deleteJudgeServer(scope.row.hostname)"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
+            <p>Service URL: <code>{{ row.item.service_url }}</code></p>
+            <p>Last Heartbeat: {{ row.item.last_heartbeat | localtime }}</p>
+            <p>Create Time: {{ row.item.create_time | localtime }}</p>
+          </b-card>
+        </template>
+      </b-table>
+
     </Panel>
   </div>
 </template>
@@ -106,7 +95,22 @@ export default {
     return {
       servers: [],
       token: '',
-      intervalId: -1
+      intervalId: -1,
+      serverTableFields: [
+        { key: 'status', label: 'Status', tdClass: 'align-middle' },
+        { key: 'hostname', label: 'hostname', tdClass: 'align-middle' },
+        { key: 'task_number', label: 'Task Number', tdClass: 'align-middle' },
+        { key: 'cpu_core', label: 'CPU Core', tdClass: 'align-middle' },
+        { key: 'cpu_usage', label: 'CPU Usage', tdClass: 'align-middle' },
+        { key: 'memory_usage', label: 'Memory Usage', tdClass: 'align-middle' },
+        { key: 'ip', label: 'IP', tdClass: 'align-middle' },
+        { key: 'judger_version', label: 'Judger Version', tdClass: 'align-middle' },
+        { key: 'service_url', label: 'Service URL', tdClass: 'align-middle' },
+        { key: 'last_heartbeat', label: 'Last Heartbeat', thStyle: 'min-width: 90px;', tdClass: 'align-middle' },
+        { key: 'create_time', label: 'Create time', thStyle: 'min-width: 90px;', tdClass: 'align-middle' },
+        { key: 'disabled', label: 'Disabled', tdClass: 'align-middle' },
+        { key: 'options', label: 'Options', tdClass: 'align-middle' }
+      ]
     }
   },
   mounted () {
