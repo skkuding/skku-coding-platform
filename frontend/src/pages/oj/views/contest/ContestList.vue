@@ -49,15 +49,16 @@ import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/co
 
 export default {
   name: 'ContestList',
-  beforeRouteEnter (to, from, next) {
-    api.getContestList(0, 5).then((res) => {
+  async beforeRouteEnter (to, from, next) {
+    try {
+      const res = await api.getContestList(0, 5)
       next((vm) => {
         vm.contests = res.data.data.results
         vm.total = res.data.data.total
       })
-    }, (res) => {
+    } catch (err) {
       next()
-    })
+    }
   },
   data () {
     return {

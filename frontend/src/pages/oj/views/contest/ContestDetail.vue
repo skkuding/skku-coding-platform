@@ -97,10 +97,12 @@ export default {
   },
   methods: {
     async getContestProblems () {
-      await this.$store.dispatch('getContestProblems').then(res => {
+      try {
+        const res = await this.$store.dispatch('getContestProblems')
         const data = res.data.data
         this.contestProblems = data
-      })
+      } catch (err) {
+      }
     },
     async goContestProblem (row) {
       await this.$router.push({

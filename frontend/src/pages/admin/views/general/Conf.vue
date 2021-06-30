@@ -188,18 +188,15 @@ export default {
   },
   async mounted () {
     try {
-      const res = await api.getSMTPConfig()
-      if (res.data.data) {
-        this.smtp = res.data.data
+      const resSMTP = await api.getSMTPConfig()
+      const resWeb = await api.getWebsiteConfig()
+      if (resSMTP.data.data) {
+        this.smtp = resSMTP.data.data
       } else {
         this.init = true
         this.$warning('Please setup SMTP config at first')
       }
-    } catch (err) {
-    }
-    try {
-      const res = await api.getWebsiteConfig()
-      this.websiteConfig = res.data.data
+      this.websiteConfig = resWeb.data.data
     } catch (err) {
     }
   },

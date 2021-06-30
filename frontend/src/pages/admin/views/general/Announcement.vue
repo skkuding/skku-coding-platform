@@ -259,18 +259,18 @@ export default {
     },
     // 공지 사항 삭제
     async deleteAnnouncement (announcementId) {
-      this.$confirm('Are you sure you want to delete this announcement?', 'Warning', {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      })
       try {
+        await this.$confirm('Are you sure you want to delete this announcement?', 'Warning', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        })
         this.loading = true
         const funcName = this.contestID ? 'deleteContestAnnouncement' : 'deleteAnnouncement'
         await api[funcName](announcementId)
         this.loading = true
         await this.init()
-      } finally {
+      } catch (err) {
         this.loading = true
       }
     },
