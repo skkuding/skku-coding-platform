@@ -135,7 +135,7 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     const profile = this.$store.state.user.profile
     Object.keys(this.formProfile).forEach(element => {
       if (profile[element] !== undefined) {
@@ -143,39 +143,40 @@ export default {
       }
     })
     const user = this.$store.getters.user
-    api.getUser(user.username).then(res => {
-      this.formProfile.major = res.data.data.major
-      this.formEmail.old_email = res.data.data.email
-    })
-    api.getUserInfo(user.username).then(res => {
-      this.formProfile.language = res.data.data.language
-    })
+    const res = await api.getUser(user.username)
+    this.formProfile.major = res.data.data.major
+    this.formEmail.old_email = res.data.data.email
+    const infoRes = await api.getUserInfo(user.username)
+    this.formProfile.language = infoRes.data.data.language
   },
   methods: {
-    updateLanguage () {
+    async updateLanguage () {
       this.loading.btnLanguage = true
       const updateData = utils.filterEmptyValue(Object.assign({}, this.formProfile))
-      api.updateProfile(updateData).then(res => {
+      try {
+        const res = await api.updateProfile(updateData)
         this.$success('Success')
         this.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
         this.loading.btnLanguage = false
-      }, _ => {
+      } catch (err) {
+      } finally {
         this.loading.btnLanguage = false
-      })
+      }
     },
-    updateMajor () {
+    async updateMajor () {
       this.loading.btnMajor = true
       const major = {
         major: this.formProfile.major
       }
-      api.updateUser(major).then(res => {
+      try {
+        await api.updateUser(major)
         this.$success('Success')
         this.loading.btnMajor = false
-      }, _ => {
+      } catch (err) {
         this.loading.btnMajor = false
-      })
+      }
     },
-    changePassword () {
+    async changePassword () {
       this.loading.btnPassword = true
       const data = Object.assign({}, this.formPassword)
       if (data.again_password !== data.new_password) {
@@ -190,7 +191,8 @@ export default {
       if (!this.visible.tfaRequired) {
         delete data.tfa_code
       }
-      api.changePassword(data).then(res => {
+      try {
+        await api.changePassword(data)
         this.loading.btnPassword = false
         this.visible.passwordAlert = true
         this.$success('Updated password successfully.\nPlease login with new password.', 2500)
@@ -199,30 +201,31 @@ export default {
           this.$bvModal.hide('setting')
           this.$router.push({ name: 'logout' })
         }, 2500)
-      }, res => {
-        if (res.data.data === 'tfa_required') {
+      } catch (err) {
+        if (err.data.data === 'tfa_required') {
           this.visible.tfaRequired = true
         }
         this.loading.btnPassword = false
-      })
+      }
     },
-    changeEmail () {
+    async changeEmail () {
       this.loading.btnEmail = true
       const data = Object.assign({}, this.formEmail)
       if (!this.visible.tfaRequired) {
         delete data.tfa_code
       }
-      api.changeEmail(data).then(res => {
+      try {
+        await api.changeEmail(data)
         this.loading.btnEmail = false
         this.visible.emailAlert = true
         this.$success('Email changed successfully')
         this.formEmail.old_email = this.formEmail.new_email
-      }, res => {
-        if (res.data.data === 'tfa_required') {
+      } catch (err) {
+        if (err.data.data === 'tfa_required') {
           this.visible.tfaRequired = true
         }
         this.loading.btnEmail = false
-      })
+      }
     }
   },
   computed: {

@@ -70,15 +70,16 @@ export default {
       this.getPublicProblem(this.page)
     }
   },
-  mounted () {
-    api.getContest(this.contestID).then(res => {
+  async mounted () {
+    try {
+      const res = await api.getContest(this.contestID)
       this.contest = res.data.data
       this.getPublicProblem()
-    }).catch(() => {
-    })
+    } catch (err) {
+    }
   },
   methods: {
-    getPublicProblem (page) {
+    async getPublicProblem (page) {
       this.loading = true
       const params = {
         keyword: this.keyword,
@@ -86,26 +87,26 @@ export default {
         limit: this.limit,
         rule_type: this.contest.rule_type
       }
-      api.getProblemList(params).then(res => {
+      try {
+        const res = await api.getProblemList(params)
         this.loading = false
         this.total = res.data.data.total
         this.problems = res.data.data.results
-      }).catch(() => {
-      })
+      } catch (err) {
+      }
     },
-    handleAddProblem (problemID) {
-      this.$prompt('Please input display id for the contest problem', 'confirm').then(({ value }) => {
+    async handleAddProblem (problemID) {
+      try {
+        const value = await this.$prompt('Please input display id for the contest problem', 'confirm')
         const data = {
           problem_id: problemID,
           contest_id: this.contestID,
           display_id: value
         }
-        api.addProblemFromPublic(data).then(() => {
-          this.$emit('on-change')
-        }, () => {
-        })
-      }, () => {
-      })
+        await api.addProblemFromPublic(data)
+        this.$emit('on-change')
+      } catch (err) {
+      }
     }
   }
 }

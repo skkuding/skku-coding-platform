@@ -58,18 +58,19 @@ export default {
   },
   methods: {
     ...mapActions(['changeModalStatus']),
-    sendEmail () {
+    async sendEmail () {
       this.btnResetLoading = true
-      api.applyResetPassword(this.formResetPassword).then(res => {
+      try {
+        await api.applyResetPassword(this.formResetPassword)
         setTimeout(() => {
           this.btnResetLoading = false
           this.successApply = true
         }, 2000)
-      }, _ => {
+      } catch (err) {
         this.btnResetLoading = false
         this.formResetPassword.captcha = ''
         this.getCaptchaSrc()
-      })
+      }
     },
     handleBtnClick (mode) {
       this.changeModalStatus({

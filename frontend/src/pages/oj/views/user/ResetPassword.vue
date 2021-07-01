@@ -77,7 +77,7 @@ export default {
     this.showModal()
   },
   methods: {
-    resetPassword () {
+    async resetPassword () {
       this.btnLoading = true
       const data = Object.assign({}, this.formResetPassword)
       if (data.password !== data.passwordAgain) {
@@ -87,15 +87,16 @@ export default {
         return this.$error('Password does not match')
       }
       delete data.passwordAgain
-      api.resetPassword(data).then(res => {
+      try {
+        await api.resetPassword(data)
         this.resetSuccess = true
         this.$success('Update password successfully.\nPlease login with new password.')
         this.$router.push({ name: 'logout' })
-      }, _ => {
+      } catch (err) {
         this.btnLoading = false
         this.formResetPassword.captcha = ''
         this.getCaptchaSrc()
-      })
+      }
     },
     showModal () {
       this.$refs.modal.show()

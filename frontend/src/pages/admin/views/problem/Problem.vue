@@ -364,83 +364,78 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     this.routeName = this.$route.name
     if (this.routeName === 'edit-problem' || this.routeName === 'edit-contest-problem') {
       this.mode = 'edit'
     } else {
       this.mode = 'add'
     }
-    api.getLanguages().then(res => {
-      this.problem = this.reProblem = {
-        _id: '',
-        title: '',
-        description: '',
-        input_description: '',
-        output_description: '',
-        time_limit: 1000,
-        memory_limit: 256,
-        difficulty: 'Level1',
-        visible: true,
-        share_submission: false,
-        tags: [],
-        languages: [],
-        template: {},
-        samples: [{ input: '', output: '' }],
-        testcases: [{ input: '', output: '' }],
-        spj: false,
-        spj_language: '',
-        spj_code: '',
-        spj_compile_ok: false,
-        test_case_id: '',
-        test_case_score: [],
-        rule_type: 'ACM',
-        hint: '',
-        source: '',
-        io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
-      }
-      const contestID = this.$route.params.contestId
-      if (contestID) {
-        this.problem.contest_id = this.reProblem.contest_id = contestID
-        this.disableRuleType = true
-        api.getContest(contestID).then(res => {
-          this.problem.rule_type = this.reProblem.rule_type = res.data.data.rule_type
-          this.contest = res.data.data
-        })
-      }
+    const res = await api.getLanguages()
+    this.problem = this.reProblem = {
+      _id: '',
+      title: '',
+      description: '',
+      input_description: '',
+      output_description: '',
+      time_limit: 1000,
+      memory_limit: 256,
+      difficulty: 'Level1',
+      visible: true,
+      share_submission: false,
+      tags: [],
+      languages: [],
+      template: {},
+      samples: [{ input: '', output: '' }],
+      testcases: [{ input: '', output: '' }],
+      spj: false,
+      spj_language: '',
+      spj_code: '',
+      spj_compile_ok: false,
+      test_case_id: '',
+      test_case_score: [],
+      rule_type: 'ACM',
+      hint: '',
+      source: '',
+      io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
+    }
 
-      this.problem.spj_language = 'C'
+    const contestID = this.$route.params.contestId
+    if (contestID) {
+      this.problem.contest_id = this.reProblem.contest_id = contestID
+      this.disableRuleType = true
+      const res = await api.getContest(contestID)
+      this.problem.rule_type = this.reProblem.rule_type = res.data.data.rule_type
+      this.contest = res.data.data
+    }
 
-      const allLanguage = res.data.data
-      this.allLanguage = allLanguage
+    this.problem.spj_language = 'C'
+    const allLanguage = res.data.data
+    this.allLanguage = allLanguage
 
-      // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
-      if (this.mode === 'edit') {
-        this.title = this.$i18n.t('m.Edit_Problem')
-        const funcName = { 'edit-problem': 'getProblem', 'edit-contest-problem': 'getContestProblem' }[this.routeName]
-        api[funcName](this.$route.params.problemId).then(problemRes => {
-          const data = problemRes.data.data
-          if (!data.spj_code) {
-            data.spj_code = ''
-          }
-          data.spj_language = data.spj_language || 'C'
-          data.testcases = []
-          this.problem = data
-          this.testCaseUploaded = true
-          api.getTestCase(this.$route.params.problemId).then(testcaseRes => {
-            const testcaseData = testcaseRes.data.data
-            this.problem.testcases = this.problem.testcases.concat(testcaseData.testcases)
-            if (testcaseData.spj === 'True') this.problem.spj = true
-            else this.problem.spj = false
-          })
-        })
-      } else {
-        this.title = this.$i18n.t('m.Add_Problem')
-        for (const item of allLanguage.languages) {
-          this.problem.languages.push(item.name)
-        }
+    // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
+    if (this.mode === 'edit') {
+      this.title = this.$i18n.t('m.Edit_Problem')
+      const funcName = { 'edit-problem': 'getProblem', 'edit-contest-problem': 'getContestProblem' }[this.routeName]
+      const problemRes = await api[funcName](this.$rout.params.problemId)
+      const data = problemRes.data.data
+      if (!data.spj_code) {
+        data.spj_code = ''
       }
-    })
+      data.spj_language = data.spj_language || 'C'
+      this.problem = data
+      this.testCaseUploaded = true
+      const testcaseRes = await api.getTestCase(this.$route.params.problemID)
+      const testcaseData = testcaseRes.data.data
+      this.problem.testcases = this.problem.testcases.concat(testcaseData.testcase)
+      if (testcaseData.spj === 'True') this.problem.spj = true
+      else this.problem.spj = false
+    } else {
+      this.title = this.$i18n.t('m.Add_Problem')
+      for (const item of allLanguage.languages) {
+        this.problem.languages.push(item.name)
+      }
+    }
   },
   watch: {
     '$route' () {
@@ -474,45 +469,48 @@ export default {
     }
   },
   methods: {
-    switchSpj () {
+    async switchSpj () {
       if (this.testCaseUploaded) {
-        this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
+        try {
+          await this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          })
           this.problem.spj = !this.problem.spj
           this.resetTestCase()
-        }).catch(() => {
-        })
+        } catch (err) {
+        }
       } else {
         this.problem.spj = !this.problem.spj
       }
     },
-    switchTestcase () {
+    async switchTestcase () {
       if (this.testCaseUploaded) {
-        this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
+        try {
+          await this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', {
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          })
           this.testcase_file_upload = !this.testcase_file_upload
           this.resetTestCase()
-        }).catch(() => {
-        })
+        } catch (err) {
+        }
       } else {
         this.testcase_file_upload = !this.testcase_file_upload
       }
     },
-    querySearch (queryString, cb) {
-      api.getProblemTagList().then(res => {
+    async querySearch (queryString, cb) {
+      try {
+        const res = await api.getProblemTagList()
         const tagList = []
         for (const tag of res.data.data) {
           tagList.push({ value: tag.name })
         }
         cb(tagList)
-      }).catch(() => {
-      })
+      } catch (err) {
+      }
     },
     resetTestCase () {
       this.testCaseUploaded = false
@@ -561,18 +559,19 @@ export default {
     uploadFailed () {
       this.$error('Upload failed')
     },
-    compileSPJ () {
+    async compileSPJ () {
       const data = {
         id: this.problem.id,
         spj_code: this.problem.spj_code,
         spj_language: this.problem.spj_language
       }
       this.loadingCompile = true
-      api.compileSPJ(data).then(res => {
+      try {
+        await api.compileSPJ(data)
         this.loadingCompile = false
         this.problem.spj_compile_ok = true
         this.error.spj = ''
-      }, err => {
+      } catch (err) {
         this.loadingCompile = false
         this.problem.spj_compile_ok = false
         const h = this.$createElement
@@ -584,9 +583,9 @@ export default {
           closeOnClickModal: false,
           customClass: 'dialog-compile-error'
         })
-      })
+      }
     },
-    submit () {
+    async submit () {
       if (!this.problem.samples.length) {
         this.$error('Sample is required')
         return
@@ -640,7 +639,7 @@ export default {
               this.$error('Invalid test case score')
               return
             }
-          } catch (e) {
+          } catch (err) {
             this.$error('Test case score must be an integer')
             return
           }
@@ -665,10 +664,11 @@ export default {
       }
 
       if (!this.testcase_file_upload) {
-        api.createTestCase({
-          testcases: this.problem.testcases,
-          spj: this.problem.spj
-        }).then(response => {
+        try {
+          const response = await api.createTestCase({
+            testcases: this.problem.testcases,
+            spj: this.problem.spj
+          })
           const fileList = response.data.data.info
           for (const file of fileList) {
             file.score = (100 / fileList.length).toFixed(0)
@@ -679,24 +679,24 @@ export default {
           this.problem.test_case_score = fileList
           this.testCaseUploaded = true
           this.problem.test_case_id = response.data.data.id
-          api[funcName](this.problem).then(res => {
-            if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
-              this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })
-            } else {
-              this.$router.push({ name: 'problem-list' })
-            }
-          }).catch(() => {
-          })
-        })
-      } else {
-        api[funcName](this.problem).then(res => {
+          await api[funcName](this.problem)
           if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
             this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })
           } else {
             this.$router.push({ name: 'problem-list' })
           }
-        }).catch(() => {
-        })
+        } catch (err) {
+        }
+      } else {
+        try {
+          await api[funcName](this.problem)
+          if (this.routeName === 'create-contest-problem' || this.routeName === 'edit-contest-problem') {
+            this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })
+          } else {
+            this.$router.push({ name: 'problem-list' })
+          }
+        } catch (err) {
+        }
       }
     }
   }

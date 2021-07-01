@@ -227,7 +227,7 @@ export default {
       this.currentPage = page
       this.getProblemList(page)
     },
-    getProblemList (page = 1) {
+    async getProblemList (page = 1) {
       this.loading = true
       const funcName = this.routeName === 'problem-list' ? 'getProblemList' : 'getContestProblemList'
       const params = {
@@ -236,36 +236,37 @@ export default {
         keyword: this.keyword,
         contest_id: this.contestId
       }
-      api[funcName](params).then(res => {
+      try {
+        const res = await api[funcName](params)
         this.loading = false
         this.total = res.data.data.total
         for (const problem of res.data.data.results) {
           problem.isEditing = false
         }
         this.problemList = res.data.data.results
-      }, res => {
+      } catch (err) {
         this.loading = false
-      })
+      }
     },
-    deleteProblem (id) {
-      this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', {
-        type: 'warning'
-      }).then(() => {
-        const funcName = this.routeName === 'problem-list' ? 'deleteProblem' : 'deleteContestProblem'
-        api[funcName](id).then(() => [
-          this.getProblemList(this.currentPage - 1)
-        ]).catch(() => {
+    async deleteProblem (id) {
+      try {
+        await this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', {
+          type: 'warning'
         })
-      }, () => {
-      })
+        const funcName = this.routeName === 'problem-list' ? 'deleteProblem' : 'deleteContestProblem'
+        await api[funcName](id)
+        await this.getProblemList(this.currentPage - 1)
+      } catch (err) {
+      }
     },
-    makeContestProblemPublic (problemID) {
-      this.$prompt('Please input display id for the public problem', 'confirm').then(({ value }) => {
-        api.makeContestProblemPublic({ id: problemID, display_id: value }).catch()
-      }, () => {
-      })
+    async makeContestProblemPublic (problemID) {
+      try {
+        const value = await this.$prompt('Please input display id for the public problem', 'confirm')
+        await api.makeContestProblemPublic({ id: problemID, display_id: value }).catch()
+      } catch (err) {
+      }
     },
-    updateProblem (row) {
+    async updateProblem (row) {
       const data = Object.assign({}, row)
       let funcName = ''
       if (this.contestId) {
@@ -274,12 +275,13 @@ export default {
       } else {
         funcName = 'editProblem'
       }
-      api[funcName](data).then(res => {
+      try {
+        await api[funcName](data)
         this.InlineEditDialogVisible = false
         this.getProblemList(this.currentPage)
-      }).catch(() => {
+      } catch (err) {
         this.InlineEditDialogVisible = false
-      })
+      }
     },
     handleInlineEdit (row) {
       this.currentRow = row
