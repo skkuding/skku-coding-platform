@@ -156,6 +156,7 @@
             Sample Output {{index + 1}}
           </h2>
           <pre class="sample-io">{{sample.output}}</pre>
+          <pre class="blank-line"></pre>
         </div>
 
         <div v-if="problem.hint" v-katex>
@@ -619,6 +620,10 @@ export default {
       border-radius: 5px;
       background: #24272D;
       color: white;
+    }
+
+    .blank-line {
+      margin-bottom: 70px;
     }
   }
 
