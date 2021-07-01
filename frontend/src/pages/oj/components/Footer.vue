@@ -71,6 +71,7 @@ a {
   bottom: 0;
   background: #FFFFFF;
   color:#aaaaaa;
+  padding: 1rem;
 }
 .footer-info {
   padding-bottom: 1vh;
