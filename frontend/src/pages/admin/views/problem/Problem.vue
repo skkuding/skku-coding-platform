@@ -503,7 +503,7 @@ export default {
     },
     async querySearch (queryString, cb) {
       try {
-        const res = api.getProblemTagList()
+        const res = await api.getProblemTagList()
         const tagList = []
         for (const tag of res.data.data) {
           tagList.push({ value: tag.name })

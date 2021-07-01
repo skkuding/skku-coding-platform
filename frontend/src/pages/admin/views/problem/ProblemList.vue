@@ -254,14 +254,8 @@ export default {
           type: 'warning'
         })
         const funcName = this.routeName === 'problem-list' ? 'deleteProblem' : 'deleteContestProblem'
-        try {
-          await api[funcName](id)
-          try {
-            await this.getProblemList(this.currentPage - 1)
-          } catch (err) {
-          }
-        } catch (err) {
-        }
+        await api[funcName](id)
+        await this.getProblemList(this.currentPage - 1)
       } catch (err) {
       }
     },

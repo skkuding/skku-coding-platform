@@ -159,7 +159,8 @@ export default {
         this.$store.commit(types.CHANGE_PROFILE, { profile: res.data.data })
         this.loading.btnLanguage = false
       } catch (err) {
-        this.loadin.btnLanguage = false
+      } finally {
+        this.loading.btnLanguage = false
       }
     },
     async updateMajor () {
@@ -196,13 +197,10 @@ export default {
         this.visible.passwordAlert = true
         this.$success('Updated password successfully.\nPlease login with new password.', 2500)
         this.visible.passwordAlert = false
-        const logoutDelay = new Promise(() => {
-          setTimeout(() => {
-            this.$bvModal.hide('setting')
-            this.$router.push({ name: 'logout' })
-          }, 2500)
-        })
-        await logoutDelay()
+        setTimeout(() => {
+          this.$bvModal.hide('setting')
+          this.$router.push({ name: 'logout' })
+        }, 2500)
       } catch (err) {
         if (err.data.data === 'tfa_required') {
           this.visible.tfaRequired = true

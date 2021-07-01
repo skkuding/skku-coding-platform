@@ -103,11 +103,8 @@ export default {
           contest_id: this.contestID,
           display_id: value
         }
-        try {
-          await api.addProblemFromPublic(data)
-          this.$emit('on-change')
-        } catch (err) {
-        }
+        await api.addProblemFromPublic(data)
+        this.$emit('on-change')
       } catch (err) {
       }
     }
