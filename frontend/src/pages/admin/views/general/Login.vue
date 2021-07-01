@@ -1,5 +1,5 @@
 <template>
-  <el-form
+  <b-form
     ref="ruleForm2"
     :model="ruleForm2"
     :rules="rules2"
@@ -10,35 +10,41 @@
     <h3 class="title">
       {{ $t('m.Welcome_to_Login') }}
     </h3>
-    <el-form-item prop="account">
-      <el-input
-        v-model="ruleForm2.account"
-        type="text"
-        auto-complete="off"
-        :placeholder="$t('m.username')"
-        @keyup.enter.native="handleLogin"
-      />
-    </el-form-item>
-    <el-form-item prop="password">
-      <el-input
-        v-model="ruleForm2.password"
-        type="password"
-        auto-complete="off"
-        :placeholder="$t('m.password')"
-        @keyup.enter.native="handleLogin"
-      />
-    </el-form-item>
-    <el-form-item style="width:100%;">
-      <el-button
-        type="primary"
-        style="width:100%;"
-        :loading="logining"
-        @click.native.prevent="handleLogin"
-      >
-        {{ $t('m.GO') }}
-      </el-button>
-    </el-form-item>
-  </el-form>
+    <div class = "remember">
+      <b-form prop="account" >
+        <b-input
+          v-model="ruleForm2.account"
+          type="text"
+          auto-complete="off"
+          :placeholder="$t('m.username')"
+          @keyup.enter.native="handleLogin"
+        />
+      </b-form>
+    </div>
+    <div class = "remember">
+      <b-form prop="password">
+        <b-input
+          v-model="ruleForm2.password"
+          type="password"
+          auto-complete="off"
+          :placeholder="$t('m.password')"
+          @keyup.enter.native="handleLogin"
+        />
+      </b-form>
+    </div>
+    <div class = "remember">
+      <b-form style="width:100%;">
+        <b-button
+          variant="primary"
+          style="width:100%;"
+          :loading="logining"
+          @click.native.prevent="handleLogin"
+        >
+          {{ $t('m.GO') }}
+        </b-button>
+      </b-form>
+    </div>
+  </b-form>
 </template>
 
 <script>
@@ -102,7 +108,7 @@ export default {
       color: #505458;
     }
     .remember {
-      margin: 0px 0px 35px 0px;
+    margin: 0px 0px 35px 0px;
     }
   }
 </style>
