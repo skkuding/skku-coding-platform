@@ -139,6 +139,7 @@
           <p v-html=problem.input_description></p>
           <h2>Output</h2>
           <p v-html=problem.output_description></p>
+          <div class="blank-line"></div>
         </div>
 
         <div v-for="(sample, index) of problem.samples" :key="index">
@@ -156,7 +157,7 @@
             Sample Output {{index + 1}}
           </h2>
           <pre class="sample-io">{{sample.output}}</pre>
-          <pre class="blank-line"></pre>
+          <div class="blank-line"></div>
         </div>
 
         <div v-if="problem.hint" v-katex>
