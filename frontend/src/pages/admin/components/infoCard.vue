@@ -1,35 +1,32 @@
 <template>
-  <el-card
-    :body-style="{padding: 0, height: '100%'}"
+  <b-card
     class="info-card"
   >
-    <el-row
-      type="flex"
+    <b-row
       class="info-card-container"
     >
-      <el-col
-        :span="8"
-        :style="{'background-color': color}"
-        class="height-100"
+      <b-col
+        cols="4"
+        :style="{'background-color': color, 'font-size': iconSize}"
       >
-        <i
-          :class="['info-card-icon', icon]"
-          :style="{'font-size': iconSize}"
-        />
-      </el-col>
-      <el-col
-        :span="16"
+        <b-icon
+          class="info-card-icon"
+          v-bind:icon="icon"
+        ></b-icon>
+      </b-col>
+      <b-col
+        cols="8"
         class="info-card-text"
       >
-        <p :style="textStyle">
+        <p :style="textStyle" class="p-header">
           {{ value }}
         </p>
         <p style="font-weight: 300;">
           {{ message }}
         </p>
-      </el-col>
-    </el-row>
-  </el-card>
+      </b-col>
+    </b-row>
+  </b-card>
 </template>
 
 <script>
@@ -67,26 +64,24 @@ export default {
 
 <style lang="less" scoped>
   @card-height: 90px;
-  .height-100 {
-    height: 100%;
-  }
 
   .info-card {
     display: inline-block;
     margin-right: 10px;
     width: 250px;
-    height: @card-height;
     text-align: center;
     vertical-align: middle;
 
     &-container {
-      height: 100%;
-      align-items: center;
+      height: 90px;
+      margin: 0px;
+      align-items: stretch;
       justify-content: center;
     }
     &-icon {
       line-height: @card-height;
       color: white;
+      margin-top: calc( @card-height / 3 );
     }
     &-text {
       p {
@@ -98,5 +93,9 @@ export default {
         }
       }
     }
+  }
+
+  .p-header {
+    padding-top: calc( @card-height / 6 );
   }
 </style>
