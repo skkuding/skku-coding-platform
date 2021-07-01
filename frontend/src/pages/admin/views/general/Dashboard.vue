@@ -1,51 +1,53 @@
 <template>
-  <el-row
+  <b-row
     type="flex"
-    :gutter="20"
+    cols = "2"
   >
-    <el-col
-      :md="10"
-      :lg="8"
+    <b-col
+      :md="5"
+      :lg="4"
     >
-      <el-card class="admin-info">
-        <el-row :gutter="20">
-          <el-col :span="10">
+      <b-card class="admin-info">
+        <b-row cols ="3">
+          <b-col cols = "4">
             <img
-              class="avatar"
-              :src="profile.avatar"
-            >
-          </el-col>
-          <el-col :span="14">
+              class = "avatar"
+              :src = "profile.avatar"
+              >
+          </b-col>
+          <b-col cols = "8">
             <p class="admin-info-name">
               {{ user.username }}
             </p>
             <p>{{ user.admin_type }}</p>
-          </el-col>
-        </el-row>
+          </b-col>
+        </b-row>
         <hr>
         <div class="last-info">
-          <p class="last-info-title">
+          <p class="last-info-title" >
             {{ $t('m.Last_Login') }}
           </p>
-          <el-form
-            label-width="80px"
-            class="last-info-body"
-          >
-            <el-form-item label="Time:">
+          <b-form class="last-info-body">
+            <b-form-group label-cols="3"
+            label= Time:>
               <span>{{ session.last_activity | localtime }}</span>
-            </el-form-item>
-            <el-form-item label="IP:">
+            </b-form-group>
+            <b-form-group label-cols="3"
+            label = "IP:">
+              <label class=“mr-sm-2”>IP:</label>
               <span>{{ session.ip }}</span>
-            </el-form-item>
-            <el-form-item label="OS">
+            </b-form-group>
+            <b-form-group label-cols="3"
+             label = "OS">
               <span>{{ os }}</span>
-            </el-form-item>
-            <el-form-item label="Browser:">
+            </b-form-group>
+            <b-form-group label-cols="4"
+             label = "Browser:" >
               <span>{{ browser }}</span>
-            </el-form-item>
-          </el-form>
+            </b-form-group>
+          </b-form>
         </div>
-      </el-card>
+      </b-card>
       <panel
         v-if="isSuperAdmin"
         :title="$t('m.System_Overview')"
@@ -53,43 +55,43 @@
         <p>{{ $t('m.DashBoardJudge_Server') }}:  {{ infoData.judge_server_count }}</p>
         <p>
           {{ $t('m.HTTPS_Status') }}:
-          <el-tag
-            :type="https ? 'success' : 'danger'"
+          <b-badge
+            :variant="https ? 'success' : 'danger'"
             size="small"
           >
             {{ https ? 'Enabled' : 'Disabled' }}
-          </el-tag>
+          </b-badge>
         </p>
         <p>
           {{ $t('m.Force_HTTPS') }}:
-          <el-tag
-            :type="forceHttps ? 'success' : 'danger'"
+          <b-badge
+            :variant="forceHttps ? 'success' : 'danger'"
             size="small"
           >
             {{ forceHttps ? 'Enabled' : 'Disabled' }}
-          </el-tag>
+          </b-badge>
         </p>
         <p>
           {{ $t('m.CDN_HOST') }}:
-          <el-tag
-            :type="cdn ? 'success' : 'warning'"
+          <b-badge
+            :variant="cdn ? 'success' : 'warning'"
             size="small"
           >
             {{ cdn ? cdn : 'Not Use' }}
-          </el-tag>
+          </b-badge>
         </p>
       </panel>
-    </el-col>
+    </b-col>
 
-    <el-col
+    <b-col
       v-if="isSuperAdmin"
-      :md="14"
-      :lg="16"
+      :md="7"
+      :lg="8"
     >
       <div class="info-container">
         <info-card
           color="#909399"
-          icon="el-icon-fa-users"
+          icon="people-fill"
           message="Total Users"
           icon-size="30px"
           class="info-item"
@@ -97,14 +99,14 @@
         />
         <info-card
           color="#67C23A"
-          icon="el-icon-fa-list"
+          icon="list"
           message="Today Submissions"
           class="info-item"
           :value="infoData.today_submission_count"
         />
         <info-card
           color="#409EFF"
-          icon="el-icon-fa-trophy"
+          icon="trophy"
           message="Recent Contests"
           class="info-item"
           :value="infoData.recent_contest_count"
@@ -115,57 +117,54 @@
           slot="title"
           v-loading="loadingReleases"
         >Release Notes
-          <el-popover
-            placement="right"
-            trigger="hover"
-          >
-            <i
-              slot="reference"
-              class="el-icon-fa-question-circle import-user-icon"
-            />
-            <p>Please upgrade to the latest version to enjoy the new features. </p>
-            <p>Reference: <a
-              href="http://docs.onlinejudge.me/#/onlinejudge/guide/upgrade"
-              target="_blank"
-            >
-              http://docs.onlinejudge.me/#/onlinejudge/guide/upgrade</a>
-            </p>
-          </el-popover>
+        <b-icon size = "sm" id = "rel" icon="question-circle-fill"> </b-icon>
+          <b-popover target="rel" triggers="hover focus">
+          <p>
+            Please upgrade to the latest version to enjoy the new features.
+          </p>
+          <p> Reference: <a href="http://docs.onlinejudge.me/#/onlinejudge/guide/upgrade"
+                          target="_blank">
+            http://docs.onlinejudge.me/#/onlinejudge/guide/upgrade</a> </p>
+        </b-popover>
         </span>
-
-        <el-collapse
-          v-for="(release, index) of releases"
-          :key="'release' + index"
-          v-model="activeNames"
-        >
-          <el-collapse-item :name="index+1">
-            <template slot="title">
-              <div v-if="release.new_version">
-                {{ release.title }}
-                <el-tag
-                  size="mini"
-                  type="success"
-                >
-                  New Version
-                </el-tag>
-              </div>
-              <span v-else>{{ release.title }}</span>
-            </template>
-            <p>Level: {{ release.level }}</p>
-            <p>Details: </p>
-            <div class="release-body">
-              <ul
-                v-for="detail in release.details"
-                :key="detail"
-              >
-                <li v-html="detail" />
-              </ul>
-            </div>
-          </el-collapse-item>
-        </el-collapse>
+        <div class="accordion" role="tablist">
+          <b-collapse
+            v-for="(release, index) of releases"
+            :key="'release' + index"
+            v-model="activeNames">
+                <b-link v-b-toggle="'accordion-' + index">
+                  <b-card border-variant="light" :name="index+1" class="p-1" :id="index+1">
+                  <div style="color:black" v-if="release.new_version">
+                    {{ release.title }}
+                    <b-badge
+                      size="mini"
+                      variant="success"
+                    >
+                      New Version
+                    </b-badge>
+                  </div>
+                  <span v-else style="color:black">{{ release.title }}</span>
+                  </b-card>
+                </b-link>
+              <b-collapse :name="index+1" :id="'accordion-' + index" role="tabpanel">
+                <b-card-body>
+                  <p>Level: {{ release.level }}</p>
+                  <p>Details: </p>
+                  <div class="release-body">
+                    <ul
+                      v-for="detail in release.details"
+                      :key="detail"
+                    >
+                      <li v-html="detail" />
+                    </ul>
+                  </div>
+                </b-card-body>
+              </b-collapse>
+          </b-collapse>
+        </div>
       </panel>
-    </el-col>
-  </el-row>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
@@ -275,13 +274,12 @@ export default {
         font-size: 16px;
       }
       &-body {
-        .el-form-item {
+        .b-form {
           margin-bottom: 5px;
         }
       }
     }
   }
-
   .info-container {
     display: flex;
     justify-content: flex-start;
@@ -292,5 +290,4 @@ export default {
       margin-bottom: 10px;
     }
   }
-
 </style>
