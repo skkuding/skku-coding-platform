@@ -569,7 +569,7 @@ export default {
   .userTable {
     min-width: 100px;
   }
-  uploadUserTable {
+  .uploadUserTable {
     word-break: break-all;
     max-width: 200px;
   }
