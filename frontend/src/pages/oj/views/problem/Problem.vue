@@ -135,6 +135,7 @@
         <div v-katex>
           <h2>Description</h2>
           <p v-html=problem.description></p>
+          <div class="blank-line"></div>
           <h2>Input</h2>
           <p v-html=problem.input_description></p>
           <h2>Output</h2>
