@@ -152,10 +152,6 @@ export default {
     img {
       max-width: 100%;
       height: auto;
-
-      &.ProseMirror-selectednode {
-        outline: 3px solid #68CEF8;
-      }
     }
   }
   .announcement__pagination{

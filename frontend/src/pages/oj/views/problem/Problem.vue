@@ -620,9 +620,9 @@ export default {
       }
 
       pre {
-        background: #0D0D0D;
+        background: #24272D;
         color: #FFF;
-        font-family: 'JetBrainsMono', monospace;
+        font-family: 'Manrope', monospace;
         padding: 0.75rem 1rem;
         border-radius: 0.5rem;
 
@@ -651,10 +651,6 @@ export default {
       img {
         max-width: 100%;
         height: auto;
-
-        &.ProseMirror-selectednode {
-          outline: 3px solid #68CEF8;
-        }
       }
     }
 
