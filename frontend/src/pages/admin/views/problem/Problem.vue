@@ -125,12 +125,49 @@
           <p class="labels">
             <span class="text-danger">*</span> Tag
           </p>
-          <b-form-tags
-            v-model="problem.tags"
-            size="sm"
-            variant="success"
-          >
-          </b-form-tags>
+          <div>
+            <b-form-tags v-model="problem.tags">
+              <template v-slot="{tags, addTag, removeTag}">
+                <div>
+                  <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                    <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                      <b-form-tag
+                        @remove="removeTag(tag)"
+                        :title="tag"
+                        :disabled="disabled"
+                        variant="info"
+                      >{{ tag }}</b-form-tag>
+                    </li>
+                  </ul>
+                </div>
+                <b-dropdown size="sm" text="tag" variant="outline-secondary" block-menu-class="w-100">
+                  <b-dropdown-form @submit.stop.prevent="() => {}">
+                    <b-form-group>
+                      <b-input-group class="mb-2">
+                        <b-form-input
+                          v-model="search"
+                          type="search"
+                          size="sm"
+                          autocomplete="off"
+                        ></b-form-input>
+                        <b-input-group-append>
+                          <b-button size="sm" @click="onAddClick({search, addTag})" variant="primary">Add</b-button>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-form-group>
+                  </b-dropdown-form>
+                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-item-button
+                    v-for="item in availableTags"
+                    :key="item"
+                    @click="onTagClick({ item, addTag })"
+                  >
+                    {{ item }}
+                  </b-dropdown-item-button>
+                </b-dropdown>
+              </template>
+            </b-form-tags>
+          </div>
         </b-col>
         <b-col cols="4">
           <b-form-group>
@@ -194,7 +231,6 @@
         <button type="button" class="add-samples" @click="addSample()"><b-icon icon="plus"></b-icon> Add Sample
         </button>
       </div>
-
       <b-row>
         <b-col>
           <p class="labels">
@@ -392,7 +428,6 @@ import Simditor from '../../components/Simditor'
 import Accordion from '../../components/Accordion'
 import CodeMirror from '../../components/CodeMirror'
 import api from '../../api'
-
 export default {
   name: 'Problem',
   components: {
@@ -451,7 +486,8 @@ export default {
         { key: 'input_name', label: 'Input' },
         { key: 'output_name', label: 'Output' },
         { key: 'score', label: 'Score' }
-      ]
+      ],
+      search: ''
     }
   },
   mounted () {
@@ -568,6 +604,14 @@ export default {
     }
   },
   methods: {
+    onTagClick ({ item, addTag }) {
+      addTag(item)
+      this.search = ''
+    },
+    onAddClick ({ search, addTag }) {
+      addTag(search)
+      this.search = ''
+    },
     switchSpj () {
       if (this.testCaseUploaded) {
         this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
@@ -608,14 +652,6 @@ export default {
       this.testCaseUploaded = false
       this.problem.test_case_score = []
       this.problem.test_case_id = ''
-    },
-    addTag () {
-      const inputValue = this.tagInput
-      if (inputValue) {
-        this.problem.tags.push(inputValue)
-      }
-      this.inputVisible = false
-      this.tagInput = ''
     },
     closeTag (tag) {
       this.problem.tags.splice(this.problem.tags.indexOf(tag), 1)
@@ -806,6 +842,17 @@ export default {
     }
   },
   computed: {
+    criteria () {
+      return this.search.trim().toLowerCase()
+    },
+    availableTags () {
+      const criteria = this.criteria
+      const tags = this.problemTagList.filter(opt => this.problem.tags.indexOf(opt) === -1)
+      if (criteria) {
+        return tags.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
+      }
+      return tags
+    },
     titleState () {
       return this.problem.title.length > 0
     },
