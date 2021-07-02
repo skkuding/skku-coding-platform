@@ -13,7 +13,7 @@
           <b-form-input type="email" v-model="formRegister.email" placeholder="Email Address" @keydown.enter.native="handleRegister"></b-form-input>
         </b-row>
         <b-row class="mb-4">
-            <b-form-select class="modal-select" v-model="formRegister.major" :options="majors" placeholder="Major" @keydown.enter.native="handleRegister"></b-form-select>
+            <b-form-select class="modal-select" v-model="formRegister.major" :options="majors" @keydown.enter.native="handleRegister"></b-form-select>
         </b-row>
         <b-row class="mb-4">
           <b-form-input type="password" v-model="formRegister.password" placeholder="Password" @keydown.enter.native="handleRegister"></b-form-input>
@@ -60,10 +60,11 @@ export default {
         password: '',
         passwordAgain: '',
         email: '',
-        major: 'Major(원전공)',
+        major: '',
         captcha: ''
       },
       majors: [
+        { value: '', text: '-- Select Your Major --', disabled: 'true' },
         { value: 'Major(원전공)', text: 'Major(원전공)' },
         { value: 'Double Major(복수전공)', text: 'Double Major(복수전공)' },
         { value: 'Non-CS Major(비전공)', text: 'Non-CS Major(비전공)' }
@@ -151,5 +152,8 @@ export default {
   .oj-captcha-img {
     margin-right:20px !important;
     border-radius:4px;
+  }
+  input::placeholder {
+    color: rgb(158, 158, 158)
   }
 </style>
