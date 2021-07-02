@@ -1,100 +1,115 @@
 <template>
   <div class="view">
-    <Panel :title="$t('m.SMTP_Config')">
+    <Panel title="SMTP Config">
       <b-form
         label-size="sm"
-        :model="smtp"
       >
         <b-container fluid>
-            <b-row cols="2">
-              <b-col cols = "6">
-                <b-form-group
-                label-cols-sm="3"
-                label-size="sm"
-                :label = "$t('m.Server')"
-                required>
-                  <b-form-input
-                    v-model="smtp.server"
-                    placeholder="SMTP Server Address"
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col cols = "6">
-                <b-form-group
-                label-cols-sm="2"
-                label-size="sm"
-                :label = "$t('m.Port')"
-                required>
-                  <b-form-input
-                    v-model="smtp.port"
-                    type="number"
-                    class="mb-2 mr-sm-2 mb-sm-0"
-                    placeholder="SMTP Server Port"
-                  />
-                </b-form-group>
-              </b-col>
-            </b-row>
+          <b-row cols="2">
+            <b-col cols ="6">
+              <b-form-group
+              label-cols-sm="2"
+              label-size="sm"
+              label-for="server"
+              >
+                <template v-slot:label>
+                  <span class="text-danger">*</span> Server
+                </template>
+                <b-form-input
+                  id="server"
+                  v-model="smtp.server"
+                  placeholder="SMTP Server Address"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="6">
+              <b-form-group
+              label-cols-sm="2"
+              label-size="sm"
+              label-for="port"
+              >
+                <template v-slot:label>
+                  <span class="text-danger">*</span> Port
+                </template>
+                <b-form-input
+                  id="port"
+                  v-model="smtp.port"
+                  type="number"
+                  placeholder="SMTP Server Port"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
         </b-container>
-          <b-container fluid>
-            <b-row cols = "2">
-              <b-col cols = "6">
-                <b-form-group
-                label-cols-sm="2"
-                label-size="sm"
-                :label = "$t('m.Email')"
-                 required>
-                  <b-form-input
-                    v-model="smtp.email"
-                    class="mb-2 mr-sm-2 mb-sm-0"
-                    placeholder="Account Used To Send Email"
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col cols = "6">
-                <b-form-group
-                label-cols-sm="3"
-                label-size="sm"
-                :label ="$t('m.Password')"
-                 required>
-                  <b-input
-                    v-model="smtp.password"
-                    type="password"
-                    class="mb-2 mr-sm-2 mb-sm-0"
-                    placeholder="SMTP Server Password"
-                  />
-                </b-form-group>
-              </b-col>
-            </b-row>
-            </b-container>
-            <b-container fluid>
-            <b-row cols = "1">
-              <b-col cols = "12">
-                <b-form-group
-                label-cols-sm="4"
-                label-size="sm"
-                label = "TLS"
-                required>
-                    <b-form-checkbox switch v-model = "smtp.tls">
-                  </b-form-checkbox>
-                </b-form-group>
-              </b-col>
-            </b-row>
+        <b-container fluid>
+          <b-row cols="2">
+            <b-col cols="6">
+              <b-form-group
+              label-cols-sm="2"
+              label-size="sm"
+              label-for="email"
+              >
+                <template v-slot:label>
+                  <span class="text-danger">*</span> Email
+                </template>
+                <b-form-input
+                  id="email"
+                  v-model="smtp.email"
+                  placeholder="Account Used To Send Email"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols = "6">
+              <b-form-group
+              label-cols-sm="3"
+              label-size="sm"
+              label-for="password"
+              >
+                <template v-slot:label>
+                  <span class="text-danger">*</span> Password
+                </template>
+                <b-form-input
+                  id="password"
+                  v-model="smtp.password"
+                  type="password"
+                  placeholder="SMTP Server Password"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
           </b-container>
+          <b-container fluid>
+          <b-row cols="1">
+            <b-col cols="3">
+              <b-form-group
+              label-cols-sm="4"
+              label-size="sm"
+              label="TLS"
+              >
+                <b-form-checkbox
+                  switch
+                  v-model="smtp.tls"
+                >
+                </b-form-checkbox>
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-button
+          variant="primary"
+          style="margin-right: 8px;"
+          @click="saveSMTPConfig"
+        >
+          Save
+        </b-button>
+        <b-button
+          v-if="saved"
+          variant="warning"
+          @click="testSMTPConfig"
+        >
+          Send Test Email
+        </b-button>
       </b-form>
-      <b-button
-        variant="primary"
-        @click="saveSMTPConfig"
-      >
-        Save
-      </b-button>
-      <b-button
-        v-if="saved"
-        variant="warning"
-        :loading="loadingBtnTest"
-        @click="testSMTPConfig"
-      >
-        Send Test Email
-      </b-button>
     </Panel>
 
     <Panel :title="$t('m.Website_Config')">
