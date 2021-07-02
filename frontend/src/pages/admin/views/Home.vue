@@ -193,4 +193,8 @@ export default {
   .list-group-item-action:focus, .list-group-item-action:hover {
     background-color: #40a0ff38;
   }
+
+  .table td, .table th {
+    vertical-align: middle;
+  }
 </style>

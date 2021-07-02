@@ -150,13 +150,13 @@ export default {
       currentProblemID: '',
       currentRow: {},
       fields: [
-        { key: 'id', label: 'ID', thClass: 'problemListTable' },
-        { key: 'edit-id', label: 'Display ID', thClass: 'problemListTable' },
-        { key: 'edit-title', label: 'Title', thClass: 'problemListTable' },
-        { key: 'created_by.username', label: 'Author', thClass: 'problemListTable' },
-        { key: 'create-time', label: 'Create Time', thClass: 'problemListTable' },
-        { key: 'switch-visible', label: 'Visible', thClass: 'problemListTable' },
-        { key: 'operation', label: 'Operation', stickyColumn: true, thClass: 'problemListTable' }
+        { key: 'id', label: 'ID', tdClass: 'problemListTable' },
+        { key: 'edit-id', label: 'Display ID', tdClass: 'problemListTable' },
+        { key: 'edit-title', label: 'Title', tdClass: 'problemListTable' },
+        { key: 'created_by.username', label: 'Author', tdClass: 'problemListTable' },
+        { key: 'create-time', label: 'Create Time', tdClass: 'problemListTable' },
+        { key: 'switch-visible', label: 'Visible', tdClass: 'problemListTable' },
+        { key: 'operation', label: 'Operation', tdClass: 'problemListTable' }
       ]
     }
   },
@@ -275,9 +275,9 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style>
   .problemListTable{
-    word-wrap: break-word;
     max-width: 150px;
+    word-wrap: break-word;
   }
 </style>
