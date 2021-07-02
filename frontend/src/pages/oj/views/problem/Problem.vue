@@ -135,10 +135,12 @@
         <div v-katex>
           <h2>Description</h2>
           <p v-html=problem.description></p>
+          <div class="blank-line"></div>
           <h2>Input</h2>
           <p v-html=problem.input_description></p>
           <h2>Output</h2>
           <p v-html=problem.output_description></p>
+          <div class="blank-line"></div>
         </div>
 
         <div v-for="(sample, index) of problem.samples" :key="index">
@@ -156,6 +158,7 @@
             Sample Output {{index + 1}}
           </h2>
           <pre class="sample-io">{{sample.output}}</pre>
+          <div class="blank-line"></div>
         </div>
 
         <div v-if="problem.hint" v-katex>
@@ -619,6 +622,10 @@ export default {
       border-radius: 5px;
       background: #24272D;
       color: white;
+    }
+
+    .blank-line {
+      margin-bottom: 70px;
     }
   }
 
