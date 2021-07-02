@@ -217,14 +217,14 @@
       </b-button>
       <span
         v-if="formGenerateUser.number_from && formGenerateUser.number_to &&
-          formGenerateUser.number_from <= formGenerateUser.number_to"
+          compareNumber(formGenerateUser.number_from, formGenerateUser.number_to)"
         class="userPreview"
       >
         The usernames will be {{ formGenerateUser.prefix + formGenerateUser.number_from + formGenerateUser.suffix }},
-        <span v-if="formGenerateUser.number_from + 1 < formGenerateUser.number_to">
-          {{ formGenerateUser.prefix + (formGenerateUser.number_from + 1) + formGenerateUser.suffix + '...' }}
+        <sapn v-if="compareNumber(formGenerateUser.number_from, formGenerateUser.number_to) > 1">
+          {{ formGenerateUser.prefix + ((Number)(formGenerateUser.number_from) + 1) + formGenerateUser.suffix + '...' }}
         </span>
-        <span v-if="formGenerateUser.number_from + 1 <= formGenerateUser.number_to">
+        <span v-if="compareNumber(formGenerateUser.number_from, formGenerateUser.number_to) >= 1">
           {{ formGenerateUser.prefix + formGenerateUser.number_to + formGenerateUser.suffix }}
         </span>
       </span>
@@ -506,6 +506,11 @@ export default {
         this.getUserList(1)
       }).catch(() => {
       })
+    },
+    compareNumber (start, end) {
+      start *= 1
+      end *= 1
+      return end - start
     },
     handleUsersCSV (file) {
       papa.parse(file, {
