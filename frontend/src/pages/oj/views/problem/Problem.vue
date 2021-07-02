@@ -132,13 +132,13 @@
 
     <b-row id="problem-container">
       <b-col id="problem-description" cols="5">
-        <div v-katex>
+        <div class="description-io" v-katex>
           <h2>Description</h2>
-          <p v-html=problem.description></p>
+          <p v-html="problem.description"/>
           <h2>Input</h2>
-          <p v-html=problem.input_description></p>
+          <p v-html="problem.input_description"/>
           <h2>Output</h2>
-          <p v-html=problem.output_description></p>
+          <p v-html="problem.output_description"/>
         </div>
 
         <div v-for="(sample, index) of problem.samples" :key="index">
@@ -517,7 +517,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss">
 @font-face {
   font-family: 'Manrope';
   src: url("../../../../fonts/Manrope-Bold.ttf");
@@ -606,6 +606,56 @@ export default {
     p {
       font-size: 15px;
       margin-bottom: 40px;
+    }
+
+    .description-io {
+      ul,
+      ol {
+        padding: 0 1rem;
+      }
+
+      code {
+        background-color: #0D0D0D;
+        color: #FFF;
+      }
+
+      pre {
+        background: #0D0D0D;
+        color: #FFF;
+        font-family: 'JetBrainsMono', monospace;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+
+        code {
+          color: inherit;
+          padding: 0;
+          background: none;
+          font-size: 0.8rem;
+        }
+      }
+
+      blockquote {
+        border-left: 2px solid rgba(#fcfcfc, 0.5);
+        padding-left: 1rem;
+      }
+
+      hr {
+        border: none;
+        border-top: 2px solid rgba(#fcfcfc, 0.5);
+        margin: 2rem 0;
+        &.ProseMirror-selectednode {
+          outline: 3px solid #68CEF8;
+        }
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+
+        &.ProseMirror-selectednode {
+          outline: 3px solid #68CEF8;
+        }
+      }
     }
 
     .copy-icon {
