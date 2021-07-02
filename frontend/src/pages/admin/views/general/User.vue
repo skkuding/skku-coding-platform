@@ -217,7 +217,7 @@
       </b-button>
       <span
         v-if="formGenerateUser.number_from && formGenerateUser.number_to &&
-          compareNumber(formGenerateUser.number_from, formGenerateUser.number_to)"
+          compareNumber(formGenerateUser.number_from, formGenerateUser.number_to) >= 0"
         class="userPreview"
       >
         The usernames will be {{ formGenerateUser.prefix + formGenerateUser.number_from + formGenerateUser.suffix }},
