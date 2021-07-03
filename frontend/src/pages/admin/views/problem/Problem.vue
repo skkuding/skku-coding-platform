@@ -140,7 +140,7 @@
                     </li>
                   </ul>
                 </div>
-                <b-dropdown size="sm" text="tag" variant="outline-secondary" block-menu-class="w-100">
+                <b-dropdown size="sm" text="tag" variant="outline-secondary" block-menu-class="w-100" class="tag-dropdown" drop-right>
                   <b-dropdown-form @submit.stop.prevent="() => {}">
                     <b-form-group>
                       <b-input-group class="mb-2">
@@ -149,6 +149,7 @@
                           type="search"
                           size="sm"
                           autocomplete="off"
+                          @keyup.enter="onAddClick({ search, addTag })"
                         ></b-form-input>
                         <b-input-group-append>
                           <b-button size="sm" @click="onAddClick({search, addTag})" variant="primary">Add</b-button>
@@ -534,12 +535,9 @@ export default {
           this.contest = res.data.data
         })
       }
-
       this.problem.spj_language = 'C'
-
       const allLanguage = res.data.data
       this.allLanguage = allLanguage
-
       // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
       if (this.mode === 'edit') {
         this.title = this.$i18n.t('m.Edit_Problem')
@@ -738,7 +736,6 @@ export default {
           return
         }
       }
-
       if (!this.problem.tags.length) {
         this.error.tags = 'Please add at least one tag'
         this.$error(this.error.tags)
@@ -804,7 +801,6 @@ export default {
       if (funcName === 'editContestProblem') {
         this.problem.contest_id = this.contest.id
       }
-
       if (!this.testcase_file_upload) {
         api.createTestCase({
           testcases: this.problem.testcases,
@@ -842,14 +838,11 @@ export default {
     }
   },
   computed: {
-    criteria () {
-      return this.search.trim().toLowerCase()
-    },
     availableTags () {
-      const criteria = this.criteria
-      const tags = this.problemTagList.filter(opt => this.problem.tags.indexOf(opt) === -1)
-      if (criteria) {
-        return tags.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
+      const tagInput = this.search.trim().toLowerCase()
+      const tags = this.problemTagList.filter(tag => this.problem.tags.indexOf(tag) === -1)
+      if (tagInput) {
+        return tags.filter(tag => tag.toLowerCase().indexOf(tagInput) > -1)
       }
       return tags
     },
@@ -922,5 +915,10 @@ export default {
     width: auto;
     max-width: 80%;
     overflow-x: scroll;
+  }
+
+  .tag-dropdown .dropdown-menu{
+    max-height: 400px;
+    overflow-y: auto;
   }
 </style>
