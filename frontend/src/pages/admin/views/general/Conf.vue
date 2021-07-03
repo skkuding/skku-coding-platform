@@ -112,7 +112,7 @@
       </b-form>
     </Panel>
 
-    <Panel :title="$t('m.Website_Config')">
+    <Panel title="Web Config">
       <b-form
         ref="form"
         label-align="left"
@@ -122,10 +122,12 @@
             <b-row>
               <b-col cols = "4">
                 <b-form-group
-                label-cols-sm="3"
+                label-cols-sm="4"
                 label-size="sm"
-                :label = "$t('m.Base_Url')"
-                 required>
+                >
+                 <template v-slot:label>
+                  <span class="text-danger">*</span> Base Url
+                </template>
                   <b-form-input
                     v-model="websiteConfig.website_base_url"
                     class="mb-2 mr-sm-2 mb-sm-0"
@@ -135,10 +137,12 @@
               </b-col>
               <b-col cols = "4">
                 <b-form-group
-                  label-cols-sm="2"
+                  label-cols-sm="3"
                   label-size="sm"
-                  :label ="$t('m.Name')"
-                  required>
+                  >
+                  <template v-slot:label>
+                  <span class="text-danger">*</span> Name
+                </template>
                 <b-form-input
                   class="mb-2 mr-sm-2 mb-sm-0"
                   v-model="websiteConfig.website_name"
@@ -148,10 +152,12 @@
               </b-col>
               <b-col cols = "4">
                 <b-form-group
-                  label-cols-sm="3"
+                  label-cols-sm="4"
                   label-size="sm"
-                  :label = "$t('m.Shortcut')"
-                   required>
+                  >
+                   <template v-slot:label>
+                  <span class="text-danger">*</span> Shortcut
+                </template>
                   <b-form-input
                     class="mb-2 mr-sm-2 mb-sm-0"
                     v-model="websiteConfig.website_name_shortcut"
@@ -167,8 +173,10 @@
                 <b-form-group
                   label-cols-sm="2"
                   label-size="sm"
-                  :label = "$t('m.Footer')"
-                  required>
+                  >
+                  <template v-slot:label>
+                  <span class="text-danger">*</span> Footer
+                </template>
                   <b-form-input
                     class="mb-2 mr-sm-2 mb-sm-0"
                     v-model="websiteConfig.website_footer"
@@ -186,7 +194,7 @@
               <b-form-group
                   label-cols-sm="5"
                   label-size="sm"
-                  :label = "$t('m.Allow_Register')"
+                  label = "Allow Register"
                    required>
                   <b-form-checkbox switch
                     v-model="websiteConfig.allow_register"
@@ -199,7 +207,7 @@
                 <b-form-group
                   label-cols-sm="5"
                   label-size="sm"
-                  :label = "$t('m.Submission_List_Show_All')"
+                  label = "Submission List Show All"
                    required>
                   <b-form-checkbox switch
                     v-model="websiteConfig.submission_list_show_all"
