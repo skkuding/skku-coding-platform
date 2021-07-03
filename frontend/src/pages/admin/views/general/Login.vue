@@ -1,48 +1,55 @@
 <template>
   <b-form
-    ref="ruleForm2"
-    :model="ruleForm2"
-    :rules="rules2"
+    @submit.stop.prevent
     label-position="left"
     label-width="0px"
     class="demo-ruleForm login-container"
   >
     <h3 class="title">
-      {{ $t('m.Welcome_to_Login') }}
+      Welcome to Login
     </h3>
     <div class = "remember">
-      <b-form prop="account" >
-        <b-input
-          v-model="ruleForm2.account"
-          type="text"
+      <b-form-group>
+        <b-form-input
+          id="input-account"
+          v-model="account"
           auto-complete="off"
-          :placeholder="$t('m.username')"
-          @keyup.enter.native="handleLogin"
+          placeholder="username"
+          @keyup.enter="handleLogin"
+          :state="accountState"
         />
-      </b-form>
+        <b-form-invalid-feedback id="input-account-feedback">
+          Account is required
+        </b-form-invalid-feedback>
+      </b-form-group>
     </div>
     <div class = "remember">
-      <b-form prop="password">
-        <b-input
-          v-model="ruleForm2.password"
+      <b-form-group>
+        <b-form-input
+          id="password-account"
+          v-model="password"
           type="password"
           auto-complete="off"
-          :placeholder="$t('m.password')"
-          @keyup.enter.native="handleLogin"
+          placeholder="password"
+          @keyup.enter="handleLogin"
+          :state="passwordState"
         />
-      </b-form>
+        <b-form-invalid-feedback id="input-password-feedback">
+          Password is required
+        </b-form-invalid-feedback>
+      </b-form-group>
     </div>
     <div class = "remember">
-      <b-form style="width:100%;">
+      <b-form-group style="width:100%;">
         <b-button
           variant="primary"
           style="width:100%;"
           :loading="logining"
-          @click.native.prevent="handleLogin"
+          @click="handleLogin"
         >
-          {{ $t('m.GO') }}
+          GO
         </b-button>
-      </b-form>
+      </b-form-group>
     </div>
   </b-form>
 </template>
@@ -54,36 +61,26 @@ export default {
   data () {
     return {
       logining: false,
-      ruleForm2: {
-        account: '',
-        password: ''
-      },
-      rules2: {
-        account: [
-          { required: true, trigger: 'blur' }
-        ],
-        password: [
-          { required: true, trigger: 'blur' }
-        ]
-      },
-      checked: true
+      account: '',
+      password: ''
     }
   },
   methods: {
-    handleLogin (ev) {
-      this.$refs.ruleForm2.validate((valid) => {
-        if (valid) {
-          this.logining = true
-          api.login(this.ruleForm2.account, this.ruleForm2.password).then(data => {
-            this.logining = false
-            this.$router.push({ name: 'dashboard' })
-          }, () => {
-            this.logining = false
-          })
-        } else {
-          this.$error('Please check the error fields')
-        }
+    handleLogin () {
+      api.login(this.account, this.password).then(data => {
+        this.logining = false
+        this.$router.push({ name: 'dashboard' })
+      }, () => {
+        this.logining = false
       })
+    }
+  },
+  computed: {
+    accountState () {
+      return this.account.length > 0
+    },
+    passwordState () {
+      return this.password.length > 0
     }
   }
 }
