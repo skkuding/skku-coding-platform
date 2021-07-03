@@ -79,7 +79,7 @@
           </b-row>
           </b-container>
           <b-container fluid>
-          <b-row cols="1">
+          <b-row>
             <b-col cols="3">
               <b-form-group
               label-cols-sm="4"
@@ -119,104 +119,105 @@
         :model="websiteConfig"
       >
         <b-container fluid>
-            <b-row>
-              <b-col cols = "4">
-                <b-form-group
+          <b-row>
+            <b-col cols = "4">
+              <b-form-group
+              label-cols-sm="4"
+              label-size="sm"
+              >
+              <template v-slot:label>
+                <span class="text-danger">*</span> Base Url
+              </template>
+                <b-form-input
+                  v-model="websiteConfig.website_base_url"
+                  class="mb-2 mr-sm-2 mb-sm-0"
+                  placeholder="Website Base Url"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols = "4">
+              <b-form-group
+                label-cols-sm="3"
+                label-size="sm"
+                >
+                <template v-slot:label>
+                <span class="text-danger">*</span> Name
+              </template>
+              <b-form-input
+                class="mb-2 mr-sm-2 mb-sm-0"
+                v-model="websiteConfig.website_name"
+                placeholder="Website Name"
+              />
+              </b-form-group>
+            </b-col>
+            <b-col cols = "4">
+              <b-form-group
                 label-cols-sm="4"
                 label-size="sm"
                 >
-                 <template v-slot:label>
-                  <span class="text-danger">*</span> Base Url
-                </template>
-                  <b-form-input
-                    v-model="websiteConfig.website_base_url"
-                    class="mb-2 mr-sm-2 mb-sm-0"
-                    placeholder="Website Base Url"
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col cols = "4">
-                <b-form-group
-                  label-cols-sm="3"
-                  label-size="sm"
-                  >
-                  <template v-slot:label>
-                  <span class="text-danger">*</span> Name
-                </template>
+                <template v-slot:label>
+                <span class="text-danger">*</span> Shortcut
+              </template>
                 <b-form-input
                   class="mb-2 mr-sm-2 mb-sm-0"
-                  v-model="websiteConfig.website_name"
-                  placeholder="Website Name"
+                  v-model="websiteConfig.website_name_shortcut"
+                  placeholder="Website Name Shortcut"
                 />
-                </b-form-group>
-              </b-col>
-              <b-col cols = "4">
-                <b-form-group
-                  label-cols-sm="4"
-                  label-size="sm"
-                  >
-                   <template v-slot:label>
-                  <span class="text-danger">*</span> Shortcut
-                </template>
-                  <b-form-input
-                    class="mb-2 mr-sm-2 mb-sm-0"
-                    v-model="websiteConfig.website_name_shortcut"
-                    placeholder="Website Name Shortcut"
-                  />
-                </b-form-group>
-              </b-col>
-            </b-row>
-            </b-container>
-            <b-container fluid>
-            <b-row>
-              <b-col cols = "12">
-                <b-form-group
-                  label-cols-sm="2"
-                  label-size="sm"
-                  >
-                  <template v-slot:label>
-                  <span class="text-danger">*</span> Footer
-                </template>
-                  <b-form-input
-                    class="mb-2 mr-sm-2 mb-sm-0"
-                    v-model="websiteConfig.website_footer"
-                    type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4}"
-                    placeholder="Website Footer HTML"
-                  />
-                </b-form-group>
-              </b-col>
-            </b-row>
-            </b-container>
-            <b-container fluid>
-            <b-row>
-              <b-col cols = "6">
-              <b-form-group
-                  label-cols-sm="5"
-                  label-size="sm"
-                  label = "Allow Register"
-                   required>
-                  <b-form-checkbox switch
-                    v-model="websiteConfig.allow_register"
-                    class="mb-2 mr-sm-2 mb-sm-0"
-                  >
-                  </b-form-checkbox>
               </b-form-group>
-              </b-col>
-              <b-col cols = "6">
-                <b-form-group
-                  label-cols-sm="5"
-                  label-size="sm"
-                  label = "Submission List Show All"
-                   required>
-                  <b-form-checkbox switch
-                    v-model="websiteConfig.submission_list_show_all"
-                    class="mb-2 mr-sm-2 mb-sm-0">
-                  </b-form-checkbox>
-                </b-form-group>
-              </b-col>
-            </b-row>
+            </b-col>
+          </b-row>
           </b-container>
+          <b-container fluid>
+          <b-row>
+            <b-col cols = "12">
+              <b-form-group
+                label-cols-sm="2"
+                label-size="sm"
+                >
+                <template v-slot:label>
+                <span class="text-danger">*</span> Footer
+              </template>
+                <b-form-textarea
+                  class="mb-2 mr-sm-2 mb-sm-0"
+                  v-model="websiteConfig.website_footer"
+                  rows="2"
+                  max-rows="4"
+                  placeholder="Website Footer HTML"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+          </b-container>
+          <b-container fluid>
+          <b-row>
+            <b-col cols="2" style="padding-right: 0px">
+              <p>
+                Allow Register
+              </p>
+            </b-col>
+            <b-col cols="2">
+              <b-form-checkbox
+                switch
+                v-model="websiteConfig.allow_register"
+                class="mb-2 mr-sm-2 mb-sm-0"
+              >
+              </b-form-checkbox>
+            </b-col>
+            <b-col cols="3">
+              <p>
+                Submission List Show All
+              </p>
+            </b-col>
+            <b-col cols="2">
+              <b-form-checkbox
+                switch
+                v-model="websiteConfig.submission_list_show_all"
+                class="mb-2 mr-sm-2 mb-sm-0"
+              >
+              </b-form-checkbox>
+            </b-col>
+          </b-row>
+        </b-container>
       </b-form>
       <b-button
         variant="primary"

@@ -38,11 +38,11 @@
               <span>{{ session.ip }}</span>
             </b-form-group>
             <b-form-group label-cols="3"
-             label = "OS">
+            label = "OS">
               <span>{{ os }}</span>
             </b-form-group>
             <b-form-group label-cols="4"
-             label = "Browser:" >
+            label = "Browser:" >
               <span>{{ browser }}</span>
             </b-form-group>
           </b-form>
