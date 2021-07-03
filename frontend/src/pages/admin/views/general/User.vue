@@ -1,18 +1,28 @@
 <template>
   <div class="view">
-    <Panel :title="$t('m.User_User') ">
+    <Panel title="Users">
       <div slot="header">
-        <b-row>
-          <b-col cols="4" style="padding-left: 0px;">
+        <b-row align-v="center" align-h="center" style="margin: 0px">
+          <b-col cols="3" style="padding: 0px">
             <b-button
-              v-show="selectedUsers.length"
+              :disabled="!selectedUserIDs.length"
               variant="danger"
+              size="sm"
               @click="deleteUsers(selectedUserIDs)"
             >
               <b-icon icon="trash-fill"></b-icon> Delete
             </b-button>
           </b-col>
-          <b-col :cols="selectedUsers.length ? 8 : 12" style="padding-left: 0px;">
+          <b-col cols="3" style="padding: 0px">
+            <b-button
+              variant="outline-primary"
+              size="sm"
+              @click="selectAll()"
+            >
+              Select All
+            </b-button>
+          </b-col>
+          <b-col cols="6" style="padding: 0px">
             <b-form-input
               v-model="keyword"
               placeholder="Keywords"
@@ -22,6 +32,7 @@
       </div>
 
       <b-table
+        v-model="usersPerPage"
         :items="userList"
         :fields="userListFields"
         :per-page="pageSize"
@@ -31,8 +42,8 @@
       >
         <template #cell(selection)="row">
           <b-form-checkbox
-            v-model="selectedUsers"
-            :value="row.item"
+            v-model="selectedUserIDs"
+            :value="row.item.id"
           >
           </b-form-checkbox>
         </template>
@@ -229,9 +240,9 @@
         </span>
       </span>
     </Panel>
-    <!--对话框-->
+
     <b-modal
-      ref="user-edit"
+      v-model="showUserDialog"
       title="User"
       size="lg"
       centered
@@ -333,8 +344,8 @@
         </b-row>
       </b-form-group>
       <template #modal-footer>
-        <cancel @click.native="hideUserModal">Cancel</cancel>
-        <save @click.native="saveUser" />
+        <cancel @click.native="showUserDialog = false">Cancel</cancel>
+        <save @click.native="saveUser()" />
       </template>
     </b-modal>
   </div>
@@ -349,11 +360,8 @@ export default {
   name: 'User',
   data () {
     return {
-      // 한 페이지에 표시되는 사용자 수
       pageSize: 10,
-      // 총 사용자 수
       total: 0,
-      // 사용자 목록
       userList: [],
       userListFields: [
         { key: 'selection', label: '' },
@@ -367,6 +375,7 @@ export default {
         { key: 'major', label: 'User Major' },
         { key: 'Option', label: 'Option', thClass: 'userTable' }
       ],
+      usersPerPage: [],
       uploadUsersFile: null,
       uploadUsers: [],
       uploadUsersPage: [],
@@ -377,16 +386,11 @@ export default {
       ],
       uploadUsersCurrentPage: 1,
       uploadUsersPageSize: 15,
-      // 키워드 검색
       keyword: '',
-      // 사용자 대화 상자 표시 여부
       showUserDialog: false,
-      // 현재 사용자 model
       user: {},
       loadingTable: false,
-      // 현재 페이지 번호
       currentPage: 0,
-      selectedUsers: [],
       formGenerateUser: {
         prefix: '',
         suffix: '',
@@ -408,17 +412,11 @@ export default {
         { value: 'None', text: 'None' },
         { value: 'Own', text: 'Own' },
         { value: 'All', text: 'All' }
-      ]
+      ],
+      selectedUserIDs: []
     }
   },
   computed: {
-    selectedUserIDs () {
-      const ids = []
-      for (const user of this.selectedUsers) {
-        ids.push(user.id)
-      }
-      return ids
-    },
     updateCurrentPage () {
       return this.currentChange(this.currentPage)
     }
@@ -445,31 +443,25 @@ export default {
     this.getUserList(1)
   },
   methods: {
-    // 페이지 번호 콜백 전환
     currentChange (page) {
       this.currentPage = page
       this.getUserList(page)
     },
-    // 사용자 정보 수정을 위해 제출
     saveUser () {
       api.editUser(this.user).then(res => {
-        // 업데이트 목록
         this.getUserList(this.currentPage)
       }).then(() => {
         this.showUserDialog = false
       }).catch(() => {
       })
-      this.$refs['user-edit'].hide()
     },
-    // 사용자 대화 상자 열기
     openUserDialog (id) {
+      this.showUserDialog = true
       api.getUser(id).then(res => {
         this.user = res.data.data
         this.user.real_tfa = this.user.two_factor_auth
       })
-      this.$refs['user-edit'].show()
     },
-    // 사용자 목록 가져 오기
     getUserList (page) {
       this.loadingTable = true
       api.getUserList((page - 1) * this.pageSize, this.pageSize, this.keyword).then(res => {
@@ -486,15 +478,13 @@ export default {
       }).then(() => {
         api.deleteUsers(ids.join(',')).then(res => {
           this.getUserList(this.currentPage)
+          this.selectedUserIDs = []
         }).catch(() => {
           this.getUserList(this.currentPage)
+          this.selectedUserIDs = []
         })
       }, () => {
       })
-      this.selectedUsers = []
-    },
-    handleSelectionChange (val) {
-      this.selectedUsers = val
     },
     generateUser () {
       const data = Object.assign({}, this.formGenerateUser)
@@ -541,8 +531,16 @@ export default {
     handleResetData () {
       this.uploadUsers = []
     },
-    hideUserModal () {
-      this.$refs['user-edit'].hide()
+    selectAll () {
+      if (this.selectedUserIDs.length === this.usersPerPage.length) {
+        this.selectedUserIDs = []
+      } else {
+        for (const users of this.usersPerPage) {
+          if (this.selectedUserIDs.indexOf(users.id) === -1) {
+            this.selectedUserIDs.push(users.id)
+          }
+        }
+      }
     }
   }
 }
