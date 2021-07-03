@@ -3,6 +3,7 @@
     <Panel title="Announcement">
       <div class="list">
         <b-table
+          v-if="!contestID"
           :items="announcementList"
           :fields="announcementListFields"
           :per-page="pageSize"
@@ -29,7 +30,44 @@
           <template #cell(option)="row">
             <icon-btn
               name="Edit"
-              icon="edit"
+              icon="clipboard-plus"
+              @click.native="openAnnouncementDialog(row.item.id)"
+            />
+            <icon-btn
+              name="Delete"
+              icon="trash"
+              @click.native="deleteAnnouncement(row.item.id)"
+            />
+          </template>
+        </b-table>
+
+        <b-table
+          v-else
+          :items="contestAnnouncementList"
+          :fields="announcementListFields"
+          style="width: 100%"
+        >
+          <template #cell(create_time)="row">
+            {{ row.item.create_time | localtime }}
+          </template>
+
+          <template #cell(last_update_time)="row">
+            {{ row.item.last_update_time | localtime }}
+          </template>
+
+          <template #cell(visible)="row">
+            <b-form-checkbox
+              v-model="row.item.visible"
+              @change="handleVisibleSwitch(row.item)"
+              switch
+            >
+            </b-form-checkbox>
+          </template>
+
+          <template #cell(option)="row">
+            <icon-btn
+              name="Edit"
+              icon="clipboard-plus"
               @click.native="openAnnouncementDialog(row.item.id)"
             />
             <icon-btn
@@ -61,7 +99,7 @@
         </div>
       </div>
     </Panel>
-    <!--대화 상자-->
+
     <b-modal
       v-model="showEditAnnouncementDialog"
       :title="announcementDialogTitle"
@@ -108,6 +146,7 @@ export default {
     return {
       contestID: '',
       showEditAnnouncementDialog: false,
+      contestAnnouncementList: [],
       announcementList: [],
       announcementListFields: [
         { key: 'id', label: 'ID', thStyle: 'width: 100px' },
@@ -132,7 +171,7 @@ export default {
     }
   },
   watch: {
-    $route () {
+    '$route' () {
       this.init()
     }
   },
@@ -167,7 +206,7 @@ export default {
       this.loading = true
       api.getContestAnnouncementList(this.contestID).then(res => {
         this.loading = false
-        this.announcementList = res.data.data
+        this.contestAnnouncementList = res.data.data
       }).catch(() => {
         this.loading = false
       })
