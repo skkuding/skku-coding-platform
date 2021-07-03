@@ -1,44 +1,57 @@
 <template>
-  <el-form
-    ref="ruleForm2"
-    :model="ruleForm2"
-    :rules="rules2"
+  <b-form
+    @submit.stop.prevent
     label-position="left"
     label-width="0px"
     class="demo-ruleForm login-container"
   >
     <h3 class="title">
-      {{ $t('m.Welcome_to_Login') }}
+      Welcome to Login
     </h3>
-    <el-form-item prop="account">
-      <el-input
-        v-model="ruleForm2.account"
-        type="text"
-        auto-complete="off"
-        :placeholder="$t('m.username')"
-        @keyup.enter.native="handleLogin"
-      />
-    </el-form-item>
-    <el-form-item prop="password">
-      <el-input
-        v-model="ruleForm2.password"
-        type="password"
-        auto-complete="off"
-        :placeholder="$t('m.password')"
-        @keyup.enter.native="handleLogin"
-      />
-    </el-form-item>
-    <el-form-item style="width:100%;">
-      <el-button
-        type="primary"
-        style="width:100%;"
-        :loading="logining"
-        @click.native.prevent="handleLogin"
-      >
-        {{ $t('m.GO') }}
-      </el-button>
-    </el-form-item>
-  </el-form>
+    <div class = "remember">
+      <b-form-group>
+        <b-form-input
+          id="input-account"
+          v-model="account"
+          auto-complete="off"
+          placeholder="username"
+          @keyup.enter="handleLogin"
+          :state="accountState"
+        />
+        <b-form-invalid-feedback id="input-account-feedback">
+          Account is required
+        </b-form-invalid-feedback>
+      </b-form-group>
+    </div>
+    <div class = "remember">
+      <b-form-group>
+        <b-form-input
+          id="password-account"
+          v-model="password"
+          type="password"
+          auto-complete="off"
+          placeholder="password"
+          @keyup.enter="handleLogin"
+          :state="passwordState"
+        />
+        <b-form-invalid-feedback id="input-password-feedback">
+          Password is required
+        </b-form-invalid-feedback>
+      </b-form-group>
+    </div>
+    <div class = "remember">
+      <b-form-group style="width:100%;">
+        <b-button
+          variant="primary"
+          style="width:100%;"
+          :loading="logining"
+          @click="handleLogin"
+        >
+          GO
+        </b-button>
+      </b-form-group>
+    </div>
+  </b-form>
 </template>
 
 <script>
@@ -48,36 +61,26 @@ export default {
   data () {
     return {
       logining: false,
-      ruleForm2: {
-        account: '',
-        password: ''
-      },
-      rules2: {
-        account: [
-          { required: true, trigger: 'blur' }
-        ],
-        password: [
-          { required: true, trigger: 'blur' }
-        ]
-      },
-      checked: true
+      account: '',
+      password: ''
     }
   },
   methods: {
-    handleLogin (ev) {
-      this.$refs.ruleForm2.validate((valid) => {
-        if (valid) {
-          this.logining = true
-          api.login(this.ruleForm2.account, this.ruleForm2.password).then(data => {
-            this.logining = false
-            this.$router.push({ name: 'dashboard' })
-          }, () => {
-            this.logining = false
-          })
-        } else {
-          this.$error('Please check the error fields')
-        }
+    handleLogin () {
+      api.login(this.account, this.password).then(data => {
+        this.logining = false
+        this.$router.push({ name: 'dashboard' })
+      }, () => {
+        this.logining = false
       })
+    }
+  },
+  computed: {
+    accountState () {
+      return this.account.length > 0
+    },
+    passwordState () {
+      return this.password.length > 0
     }
   }
 }
@@ -102,7 +105,7 @@ export default {
       color: #505458;
     }
     .remember {
-      margin: 0px 0px 35px 0px;
+    margin: 0px 0px 35px 0px;
     }
   }
 </style>
