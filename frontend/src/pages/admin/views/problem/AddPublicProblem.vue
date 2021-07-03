@@ -95,7 +95,6 @@ export default {
         this.total = results.data.data.total
         this.problems = results.data.data.results
       } catch (error) {
-        console.log(error)
       }
     },
     async handleAddProblem () {
@@ -108,7 +107,6 @@ export default {
         await api.addProblemFromPublic(data)
         this.$emit('on-change')
       } catch (error) {
-        console.log(error)
       }
     },
     showConfirmModal (problemID) {
