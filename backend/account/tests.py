@@ -331,7 +331,7 @@ class AdminUserTest(APITestCase):
         self.data = {"id": self.regular_user.id, "username": self.username, "real_name": "test_name",
                      "email": "example@skku.edu", "major": "Computer Science (컴퓨터공학과)",
                      "admin_type": AdminType.REGULAR_USER, "problem_permission": ProblemPermission.OWN,
-                     "open_api": True, "is_disabled": False}
+                     "is_disabled": False}
 
     def test_user_list(self):
         response = self.client.get(self.url)
@@ -344,7 +344,6 @@ class AdminUserTest(APITestCase):
         self.assertEqual(resp_data["username"], self.username)
         self.assertEqual(resp_data["email"], "example@skku.edu")
         self.assertEqual(resp_data["major"], "Computer Science (컴퓨터공학과)")
-        self.assertEqual(resp_data["open_api"], True)
         self.assertEqual(resp_data["is_disabled"], False)
         self.assertEqual(resp_data["problem_permission"], ProblemPermission.NONE)
 
@@ -359,25 +358,6 @@ class AdminUserTest(APITestCase):
         user = User.objects.get(id=self.regular_user.id)
         self.assertFalse(user.check_password(self.password))
         self.assertTrue(user.check_password(new_password))
-
-    def test_edit_user_openapi(self):
-        data = self.data
-        self.assertIsNone(self.regular_user.open_api_appkey)
-        data["open_api"] = True
-        response = self.client.put(self.url, data=data)
-        self.assertSuccess(response)
-        resp_data = response.data["data"]
-        # if `open_api_appkey` is None, a new value will be generated
-        self.assertTrue(resp_data["open_api"])
-        key = User.objects.get(id=self.regular_user.id).open_api_appkey
-        self.assertIsNotNone(key)
-
-        response = self.client.put(self.url, data=data)
-        self.assertSuccess(response)
-        resp_data = response.data["data"]
-        # if `openapi_app_key` is not None, the value is not changed
-        self.assertTrue(resp_data["open_api"])
-        self.assertEqual(User.objects.get(id=self.regular_user.id).open_api_appkey, key)
 
     def test_import_users(self):
         data = {"users": [["user1", "pass1", "eami1@skku.edu"],
@@ -434,19 +414,3 @@ class GenerateUserAPITest(APITestCase):
         resp = self.client.post(self.url, data=self.data)
         self.assertSuccess(resp)
         mock_workbook.assert_called()
-
-
-class OpenAPIAppkeyAPITest(APITestCase):
-    def setUp(self):
-        self.user = self.create_super_admin()
-        self.url = self.reverse("open_api_appkey_api")
-
-    def test_reset_appkey(self):
-        resp = self.client.post(self.url, data={})
-        self.assertFailed(resp)
-
-        self.user.open_api = True
-        self.user.save()
-        resp = self.client.post(self.url, data={})
-        self.assertSuccess(resp)
-        self.assertEqual(resp.data["data"]["appkey"], User.objects.get(username=self.user.username).open_api_appkey)

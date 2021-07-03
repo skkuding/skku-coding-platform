@@ -37,9 +37,6 @@ class User(AbstractBaseUser):
     problem_permission = models.TextField(default=ProblemPermission.NONE)
     reset_password_token = models.TextField(null=True)
     reset_password_token_expire_time = models.DateTimeField(null=True)
-    # open api key
-    open_api = models.BooleanField(default=False)
-    open_api_appkey = models.TextField(null=True)
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
