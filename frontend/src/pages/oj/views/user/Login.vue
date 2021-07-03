@@ -41,8 +41,7 @@ export default {
       btnLoginLoading: false,
       formLogin: {
         username: '',
-        password: '',
-        tfa_code: ''
+        password: ''
       }
     }
   },

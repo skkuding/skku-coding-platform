@@ -3,7 +3,7 @@ from django.conf.urls import url
 from ..views.oj import (ApplyResetPasswordAPI, ResetPasswordAPI,
                         UserChangePasswordAPI, UserRegisterAPI, EmailAuthAPI, UserChangeEmailAPI,
                         UserLoginAPI, UserLogoutAPI, UsernameOrEmailCheck,
-                        AvatarUploadAPI, UserProfileAPI, OpenAPIAppkeyAPI, SSOAPI, UserSettingAPI)
+                        AvatarUploadAPI, UserProfileAPI, OpenAPIAppkeyAPI, UserSettingAPI)
 
 from utils.captcha.views import CaptchaAPIView
 
@@ -21,6 +21,5 @@ urlpatterns = [
     url(r"^profile/?$", UserProfileAPI.as_view(), name="user_profile_api"),
     url(r"^user/?$", UserSettingAPI.as_view(), name="user_setting_api"),
     url(r"^upload_avatar/?$", AvatarUploadAPI.as_view(), name="avatar_upload_api"),
-    url(r"^open_api_appkey/?$", OpenAPIAppkeyAPI.as_view(), name="open_api_appkey_api"),
-    url(r"^sso?$", SSOAPI.as_view(), name="sso_api")
+    url(r"^open_api_appkey/?$", OpenAPIAppkeyAPI.as_view(), name="open_api_appkey_api")
 ]

@@ -479,7 +479,6 @@ export default {
       api.getUser(id).then(res => {
         this.user = res.data.data
         this.user.password = ''
-        this.user.real_tfa = this.user.two_factor_auth
       })
     },
     // 사용자 목록 가져 오기
