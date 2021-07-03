@@ -156,7 +156,7 @@ export default {
         { key: 'created_by.username', label: 'Author', tdClass: 'problemListTable' },
         { key: 'create-time', label: 'Create Time', tdClass: 'problemListTable' },
         { key: 'switch-visible', label: 'Visible', tdClass: 'problemListTable' },
-        { key: 'operation', label: 'Operation', tdClass: 'problemListTable' }
+        { key: 'operation', label: 'Operation', tdClass: 'problemOptionField', thClass: 'problemOptionField' }
       ]
     }
   },
@@ -277,7 +277,10 @@ export default {
 
 <style>
   .problemListTable{
-    max-width: 150px;
+    max-width: 120px;
     word-wrap: break-word;
+  }
+  .problemOptionField {
+    min-width: 150px;
   }
 </style>

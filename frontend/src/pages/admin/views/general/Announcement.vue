@@ -150,12 +150,12 @@ export default {
       announcementList: [],
       announcementListFields: [
         { key: 'id', label: 'ID', thStyle: 'width: 100px' },
-        { key: 'title', label: 'Title' },
+        { key: 'title', label: 'Title', thClass: 'announcementTitle', tdClass: 'announcementTitle' },
         { key: 'create_time', label: 'CreateTime' },
         { key: 'last_update_time', label: 'LastUpdateTime' },
         { key: 'created_by.username', label: 'Author' },
         { key: 'visible', label: 'Visible' },
-        { key: 'option', label: 'Option' }
+        { key: 'option', label: 'Option', thClass: 'announcementOption', tdClass: 'announcementOption' }
       ],
       pageSize: 15,
       total: 0,
@@ -312,5 +312,16 @@ export default {
     margin-top: 10px;
     width: 205px;
     float: left;
+  }
+</style>
+
+<style>
+  .announcementTitle {
+    max-width: 150px;
+    word-break: break-all;
+  }
+
+  .announcementOption {
+    min-width: 150px;
   }
 </style>

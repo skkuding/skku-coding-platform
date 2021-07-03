@@ -59,7 +59,7 @@
         <template #cell(Option)="row">
           <icon-btn
             name="Edit"
-            icon="edit"
+            icon="clipboard-plus"
             @click.native="openUserDialog(row.item.id)"
           />
           <icon-btn
