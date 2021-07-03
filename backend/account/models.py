@@ -85,9 +85,6 @@ class UserProfile(models.Model):
 
     real_name = models.TextField(null=True)
     avatar = models.TextField(default=f"{settings.AVATAR_URI_PREFIX}/default.png")
-    blog = models.URLField(null=True)
-    mood = models.TextField(null=True)
-    github = models.TextField(null=True)
     language = models.TextField(null=True)
     # for ACM
     accepted_number = models.IntegerField(default=0)
