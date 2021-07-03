@@ -63,7 +63,7 @@
     </Panel>
     <!--대화 상자-->
     <b-modal
-      ref="announcement-modal"
+      v-model="showEditAnnouncementDialog"
       :title="announcementDialogTitle"
       size="lg"
       centered
@@ -88,7 +88,7 @@
         />
       </div>
       <template #modal-footer>
-        <cancel @click.native="hideAnnouncementModal">Cancel</cancel>
+        <cancel @click.native="showEditAnnouncementDialog = false">Cancel</cancel>
         <save @click.native="submitAnnouncement" />
       </template>
     </b-modal>
@@ -107,7 +107,7 @@ export default {
   data () {
     return {
       contestID: '',
-      // 공지 목록
+      showEditAnnouncementDialog: false,
       announcementList: [],
       announcementListFields: [
         { key: 'id', label: 'ID', thStyle: 'width: 100px' },
@@ -118,23 +118,16 @@ export default {
         { key: 'visible', label: 'Visible' },
         { key: 'option', label: 'Option' }
       ],
-      // 한 페이지에 표시되는 공지 사항 수
       pageSize: 15,
-      // 총 공지 수
       total: 0,
-      // 현재 공지 ID
       currentAnnouncementId: null,
       mode: 'create',
-      // 공지 (new | edit) model
       announcement: {
         title: '',
         visible: true,
         content: ''
       },
-      // 대화 제목
       announcementDialogTitle: 'Edit Announcement',
-      // loading 표시 여부
-      // 현재 페이지 번호
       currentPage: 0
     }
   },
@@ -193,8 +186,6 @@ export default {
         }
       }, 0)
     },
-    // 수정 제출
-    // MouseEvent 기본 수신
     submitAnnouncement (data = undefined) {
       let funcName = ''
       if (!data.title) {
@@ -212,11 +203,10 @@ export default {
         funcName = this.mode === 'edit' ? 'updateAnnouncement' : 'createAnnouncement'
       }
       api[funcName](data).then(res => {
+        this.showEditAnnouncementDialog = false
         this.init()
       }).catch()
-      this.$refs['announcement-modal'].hide()
     },
-    // 공지 사항 삭제
     deleteAnnouncement (announcementId) {
       this.$confirm('Are you sure you want to delete this announcement?', 'Warning', {
         confirmButtonText: 'Delete',
@@ -234,6 +224,7 @@ export default {
       })
     },
     openAnnouncementDialog (id) {
+      this.showEditAnnouncementDialog = true
       if (id !== null) {
         this.currentAnnouncementId = id
         this.announcementDialogTitle = 'Edit Announcement'
@@ -254,10 +245,6 @@ export default {
         this.announcement.content = ''
         this.mode = 'create'
       }
-      this.$refs['announcement-modal'].show()
-    },
-    hideUserModal () {
-      this.$refs['announcement-modal'].hide()
     },
     handleVisibleSwitch (row) {
       this.mode = 'edit'
