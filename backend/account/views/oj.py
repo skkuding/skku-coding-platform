@@ -7,14 +7,13 @@ from django.contrib import auth
 from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from otpauth import OtpAuth
 from rest_framework.parsers import MultiPartParser
 
 from options.options import SysOptions
-from utils.api import APIView, validate_serializer, CSRFExemptAPIView
+from utils.api import APIView, validate_serializer
 from utils.captcha import Captcha
 from utils.shortcuts import rand_str
 from ..decorators import login_required
@@ -22,7 +21,7 @@ from ..models import User, UserProfile
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
-                           UserChangeEmailSerializer, SSOSerializer)
+                           UserChangeEmailSerializer)
 from ..serializers import (UserProfileSerializer,
                            EditUserProfileSerializer, ImageUploadForm, EditUserSettingSerializer, UserSerializer)
 from ..tasks import send_email_async
@@ -155,26 +154,14 @@ class UserLoginAPI(APIView):
         data = request.data
         user = auth.authenticate(username=data["username"], password=data["password"])
         # None is returned if username or password is wrong
-        if user:
-            if user.is_disabled:
-                return self.error("Your account has been disabled")
-            if not user.has_email_auth:
-                return self.error("Your need to authenticate your email")
-            if not user.two_factor_auth:
-                auth.login(request, user)
-                return self.success("Succeeded")
-
-            # `tfa_code` not in post data
-            if user.two_factor_auth and "tfa_code" not in data:
-                return self.error("tfa_required")
-
-            if OtpAuth(user.tfa_token).valid_totp(data["tfa_code"]):
-                auth.login(request, user)
-                return self.success("Succeeded")
-            else:
-                return self.error("Invalid two factor verification code")
-        else:
+        if not user:
             return self.error("Invalid username or password")
+        if user.is_disabled:
+            return self.error("Your account has been disabled")
+        if not user.has_email_auth:
+            return self.error("Your need to authenticate your email")
+        auth.login(request, user)
+        return self.success("Succeeded")
 
 
 class UserLogoutAPI(APIView):
@@ -285,22 +272,16 @@ class UserChangeEmailAPI(APIView):
     def post(self, request):
         data = request.data
         user = auth.authenticate(username=request.user.username, password=data["password"])
-        if user:
-            if user.two_factor_auth:
-                if "tfa_code" not in data:
-                    return self.error("tfa_required")
-                if not OtpAuth(user.tfa_token).valid_totp(data["tfa_code"]):
-                    return self.error("Invalid two factor verification code")
-            data["new_email"] = data["new_email"].lower()
-            if User.objects.filter(email=data["new_email"]).exists():
-                return self.error("The email is owned by other account")
-            if data["new_email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
-                return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
-            user.email = data["new_email"]
-            user.save()
-            return self.success("Succeeded")
-        else:
+        if not user:
             return self.error("Wrong password")
+        data["new_email"] = data["new_email"].lower()
+        if User.objects.filter(email=data["new_email"]).exists():
+            return self.error("The email is owned by other account")
+        if data["new_email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
+            return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
+        user.email = data["new_email"]
+        user.save()
+        return self.success("Succeeded")
 
 
 class UserChangePasswordAPI(APIView):
@@ -317,17 +298,11 @@ class UserChangePasswordAPI(APIView):
         data = request.data
         username = request.user.username
         user = auth.authenticate(username=username, password=data["old_password"])
-        if user:
-            if user.two_factor_auth:
-                if "tfa_code" not in data:
-                    return self.error("tfa_required")
-                if not OtpAuth(user.tfa_token).valid_totp(data["tfa_code"]):
-                    return self.error("Invalid two factor verification code")
-            user.set_password(data["new_password"])
-            user.save()
-            return self.success("Succeeded")
-        else:
+        if not user:
             return self.error("Invalid old password")
+        user.set_password(data["new_password"])
+        user.save()
+        return self.success("Succeeded")
 
 
 class ApplyResetPasswordAPI(APIView):
@@ -385,7 +360,6 @@ class ResetPasswordAPI(APIView):
         if user.reset_password_token_expire_time < now():
             return self.error("Token has expired")
         user.reset_password_token = None
-        user.two_factor_auth = False
         user.set_password(data["password"])
         user.save()
         return self.success("Succeeded")
@@ -404,28 +378,3 @@ class OpenAPIAppkeyAPI(APIView):
         user.open_api_appkey = api_appkey
         user.save()
         return self.success({"appkey": api_appkey})
-
-
-class SSOAPI(CSRFExemptAPIView):
-    @swagger_auto_schema(
-        operation_description="Generate token for SSO"
-    )
-    @login_required
-    def get(self, request):
-        token = rand_str()
-        request.user.auth_token = token
-        request.user.save()
-        return self.success({"token": token})
-
-    @swagger_auto_schema(
-        request_body=SSOSerializer,
-        operation_description="Find user corresponding with SSO token"
-    )
-    @method_decorator(csrf_exempt)
-    @validate_serializer(SSOSerializer)
-    def post(self, request):
-        try:
-            user = User.objects.get(auth_token=request.data["token"])
-        except User.DoesNotExist:
-            return self.error("User does not exist")
-        return self.success({"username": user.username, "avatar": user.userprofile.avatar, "admin_type": user.admin_type})

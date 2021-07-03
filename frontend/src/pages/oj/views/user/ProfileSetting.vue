@@ -40,9 +40,6 @@
           <b-form-group class="setting-label" label="Confirm New Password" prop="again_password">
             <b-form-input class="setting-input" type="password" v-model="formPassword.again_password" required></b-form-input>
           </b-form-group>
-          <b-form-group v-if="visible.tfaRequired" label="Two Factor Auth" prop="tfa_coded">
-            <b-form-input class="setting-input" type="password" v-model="formPassword.again_password" required></b-form-input>
-          </b-form-group>
           <b-button class="setting-btn" variant="success" @click="changePassword">
             <b-spinner v-if="loading.btnPassword" small></b-spinner> Change Password
           </b-button>
@@ -57,9 +54,6 @@
           </b-form-group>
           <b-form-group class="setting-label" label="Current Password" prop="password">
             <b-form-input class="setting-input" type="password" v-model="formEmail.password"></b-form-input>
-          </b-form-group>
-          <b-form-group v-if="visible.tfaRequired" label="Two Factor Auth" prop="tfa_coded">
-            <b-form-input type="text" v-model="formEmail.tfa_code"></b-form-input>
           </b-form-group>
           <b-button class="setting-btn" variant="success" @click="changeEmail">
             <b-spinner v-if="loading.btnEmail" small></b-spinner> Change Email
@@ -117,18 +111,15 @@ export default {
         { value: 4, text: '7+' }
       ],
       formPassword: {
-        tfa_code: '',
         old_password: '',
         new_password: '',
         again_password: ''
       },
       visible: {
         passwordAlert: false,
-        emailAlert: false,
-        tfaRequired: false
+        emailAlert: false
       },
       formEmail: {
-        tfa_code: '',
         password: '',
         old_email: '',
         new_email: ''
@@ -187,9 +178,6 @@ export default {
         return this.$error('New password doesn\'t change')
       }
       delete data.again_password
-      if (!this.visible.tfaRequired) {
-        delete data.tfa_code
-      }
       api.changePassword(data).then(res => {
         this.loading.btnPassword = false
         this.visible.passwordAlert = true
@@ -200,27 +188,18 @@ export default {
           this.$router.push({ name: 'logout' })
         }, 2500)
       }, res => {
-        if (res.data.data === 'tfa_required') {
-          this.visible.tfaRequired = true
-        }
         this.loading.btnPassword = false
       })
     },
     changeEmail () {
       this.loading.btnEmail = true
       const data = Object.assign({}, this.formEmail)
-      if (!this.visible.tfaRequired) {
-        delete data.tfa_code
-      }
       api.changeEmail(data).then(res => {
         this.loading.btnEmail = false
         this.visible.emailAlert = true
         this.$success('Email changed successfully')
         this.formEmail.old_email = this.formEmail.new_email
       }, res => {
-        if (res.data.data === 'tfa_required') {
-          this.visible.tfaRequired = true
-        }
         this.loading.btnEmail = false
       })
     }

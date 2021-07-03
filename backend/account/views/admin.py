@@ -94,15 +94,6 @@ class UserAdminAPI(APIView):
             user.open_api_appkey = None
         user.open_api = data["open_api"]
 
-        if data["two_factor_auth"]:
-            # Avoid reset user tfa_token after saving changes
-            if not user.two_factor_auth:
-                user.tfa_token = rand_str()
-        else:
-            user.tfa_token = None
-
-        user.two_factor_auth = data["two_factor_auth"]
-
         user.save()
         if pre_username != user.username:
             Submission.objects.filter(username=pre_username).update(username=user.username)
