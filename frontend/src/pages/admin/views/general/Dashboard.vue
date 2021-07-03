@@ -25,11 +25,11 @@
         <hr>
         <div class="last-info">
           <p class="last-info-title" >
-            {{ $t('m.Last_Login') }}
+            {{ "Last Login" }}
           </p>
           <b-form class="last-info-body">
             <b-form-group label-cols="3"
-            label= Time:>
+            label= "Time:">
               <span>{{ session.last_activity | localtime }}</span>
             </b-form-group>
             <b-form-group label-cols="3"
@@ -50,11 +50,11 @@
       </b-card>
       <panel
         v-if="isSuperAdmin"
-        :title="$t('m.System_Overview')"
+        title="System Overview"
       >
-        <p>{{ $t('m.DashBoardJudge_Server') }}:  {{ infoData.judge_server_count }}</p>
+        <p>{{ "Judge Server" }}  :  {{ infoData.judge_server_count }}</p>
         <p>
-          {{ $t('m.HTTPS_Status') }}:
+            HTTPS Status:
           <b-badge
             :variant="https ? 'success' : 'danger'"
             size="small"
@@ -63,7 +63,7 @@
           </b-badge>
         </p>
         <p>
-          {{ $t('m.Force_HTTPS') }}:
+          force HTTPS:
           <b-badge
             :variant="forceHttps ? 'success' : 'danger'"
             size="small"
@@ -72,7 +72,7 @@
           </b-badge>
         </p>
         <p>
-          {{ $t('m.CDN_HOST') }}:
+          CDN HOST:
           <b-badge
             :variant="cdn ? 'success' : 'warning'"
             size="small"
