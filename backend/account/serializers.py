@@ -56,7 +56,7 @@ class UserAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "major", "admin_type", "problem_permission", "real_name",
-                  "create_time", "last_login", "open_api", "is_disabled"]
+                  "create_time", "last_login", "is_disabled"]
 
     def get_real_name(self, obj):
         return obj.userprofile.real_name
@@ -66,7 +66,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "major", "admin_type", "problem_permission",
-                  "create_time", "last_login", "open_api", "is_disabled"]
+                  "create_time", "last_login", "is_disabled"]
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -95,7 +95,6 @@ class EditUserSerializer(serializers.Serializer):
     admin_type = serializers.ChoiceField(choices=(AdminType.REGULAR_USER, AdminType.ADMIN, AdminType.SUPER_ADMIN))
     problem_permission = serializers.ChoiceField(choices=(ProblemPermission.NONE, ProblemPermission.OWN,
                                                           ProblemPermission.ALL))
-    open_api = serializers.BooleanField()
     is_disabled = serializers.BooleanField()
 
 

@@ -363,18 +363,3 @@ class ResetPasswordAPI(APIView):
         user.set_password(data["password"])
         user.save()
         return self.success("Succeeded")
-
-
-class OpenAPIAppkeyAPI(APIView):
-    @swagger_auto_schema(
-        operation_description="Configure whether user can use open_api. If possible, generate APIAppkey.",
-    )
-    @login_required
-    def post(self, request):
-        user = request.user
-        if not user.open_api:
-            return self.error("OpenAPI function is truned off for you")
-        api_appkey = rand_str()
-        user.open_api_appkey = api_appkey
-        user.save()
-        return self.success({"appkey": api_appkey})

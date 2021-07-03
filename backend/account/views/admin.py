@@ -86,14 +86,6 @@ class UserAdminAPI(APIView):
         if data["password"]:
             user.set_password(data["password"])
 
-        if data["open_api"]:
-            # Avoid reset user appkey after saving changes
-            if not user.open_api:
-                user.open_api_appkey = rand_str()
-        else:
-            user.open_api_appkey = None
-        user.open_api = data["open_api"]
-
         user.save()
         if pre_username != user.username:
             Submission.objects.filter(username=pre_username).update(username=user.username)
