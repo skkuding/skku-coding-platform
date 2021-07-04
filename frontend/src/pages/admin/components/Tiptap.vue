@@ -168,8 +168,7 @@ export default {
   },
   watch: {
     value (value) {
-      const isSame = this.editor.getHTML() === value
-      if (isSame) {
+      if (this.editor.getHTML() === value) {
         return
       }
       this.editor.commands.setContent(this.value, false)
@@ -192,16 +191,16 @@ export default {
     this.editor.destroy()
   },
   methods: {
-    openImageModal: function () {
+    openImageModal () {
       this.imageModal = true
     },
-    openFileModal: function () {
+    openFileModal () {
       this.fileModal = true
     },
-    shouldDisableButton: function (isActive) {
+    shouldDisableButton (isActive) {
       return !isActive & window.getSelection().isCollapsed
     },
-    addLinkDialog: async function () {
+    async addLinkDialog () {
       if (window.getSelection().isCollapsed) {
         return
       }
@@ -210,7 +209,7 @@ export default {
         this.editor.chain().focus().setLink({ href: res }).run()
       }
     },
-    insertImage: function () {
+    insertImage () {
       const url = this.fileURL
       if (url) {
         this.editor.chain().focus().setImage({ src: url }).run()
@@ -219,7 +218,7 @@ export default {
       this.fileURL = null
       this.imageModal = false
     },
-    uploadImage: async function () {
+    async uploadImage () {
       const formData = new FormData()
       formData.append('image', this.selectedFile)
       if (this.selectedFile === null) {
@@ -228,10 +227,10 @@ export default {
       const res = await api.uploadImage(formData)
       this.fileURL = res.data.data.file_path
     },
-    insertFile: function (link) {
+    insertFile () {
       this.editor.chain().focus().insertContent(this.fileLink).run()
     },
-    uploadFile: async function () {
+    async uploadFile () {
       const formData = new FormData()
       formData.append('file', this.selectedFile)
       if (this.selectedFile == null) {
