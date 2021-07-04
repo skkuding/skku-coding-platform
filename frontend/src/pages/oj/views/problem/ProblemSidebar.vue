@@ -49,7 +49,7 @@
             :fields="clarifications_table_fields">
             <template #cell(Clarifications)="data">
               <div v-katex>
-                <p v-html="data.value"/>
+                <p v-dompurify-html="data.value"/>
               </div>
             </template>
             <template #cell(created_time)="data">

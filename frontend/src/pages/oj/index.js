@@ -6,6 +6,7 @@ import i18n from '@/i18n'
 import VueClipboard from 'vue-clipboard2'
 import VueAnalytics from 'vue-analytics'
 import VueSimpleAlert from 'vue-simple-alert'
+import VueDOMPurifyHTML from 'vue-dompurify-html'
 import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
 
 import iView from 'iview'
@@ -42,6 +43,7 @@ Vue.use(VueClipboard)
 Vue.use(highlight)
 Vue.use(katex)
 Vue.use(VueSimpleAlert)
+Vue.use(VueDOMPurifyHTML)
 Vue.use(VueAnalytics, {
   id: GOOGLE_ANALYTICS_ID,
   router
