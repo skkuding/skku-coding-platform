@@ -158,7 +158,7 @@
                 v-for="detail in release.details"
                 :key="detail"
               >
-                <li v-html="detail" />
+                <li v-dompurify-html="detail" />
               </ul>
             </div>
           </el-collapse-item>

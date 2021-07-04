@@ -134,12 +134,12 @@
       <b-col id="problem-description" cols="5">
         <div v-katex>
           <h2>Description</h2>
-          <p v-html=problem.description></p>
+          <p v-dompurify-html=problem.description></p>
           <div class="blank-line"></div>
           <h2>Input</h2>
-          <p v-html=problem.input_description></p>
+          <p v-dompurify-html=problem.input_description></p>
           <h2>Output</h2>
-          <p v-html=problem.output_description></p>
+          <p v-dompurify-html=problem.output_description></p>
           <div class="blank-line"></div>
         </div>
 
@@ -163,7 +163,7 @@
 
         <div v-if="problem.hint" v-katex>
           <h2>Hint</h2>
-          <p v-html=problem.hint></p>
+          <p v-dompurify-html=problem.hint></p>
         </div>
       </b-col>
       <b-col id="console" cols="7">

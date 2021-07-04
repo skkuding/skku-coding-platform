@@ -10,6 +10,7 @@ import router from './router'
 import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
 import VueAnalytics from 'vue-analytics'
 import katex from '@/plugins/katex'
+import VueDOMPurifyHTML from 'vue-dompurify-html'
 
 import Panel from './components/Panel.vue'
 import IconBtn from './components/btn/IconBtn.vue'
@@ -32,6 +33,7 @@ Vue.use(Element, {
 })
 
 Vue.use(katex)
+Vue.use(VueDOMPurifyHTML)
 Vue.component(IconBtn.name, IconBtn)
 Vue.component(Panel.name, Panel)
 Vue.component(Save.name, Save)

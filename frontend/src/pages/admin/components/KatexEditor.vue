@@ -10,7 +10,7 @@
     </el-form-item>
 
     <el-form-item :label="$t('m.Output')" />
-    <div v-html="text" />
+    <div v-dompurify-html="text" />
   </el-form>
 </template>
 
