@@ -111,11 +111,8 @@
             </b-btn>
           </b-tab>
           <b-tab href="#Upload-From-Local" title="Upload From Local">
-            <b-form-file class="mt-3 mb-1" v-model="selectedFile" accept="image/*" drop-placeholder="Drop a Image here" placeholder="Select a Image or Drop a file here" @input="uploadImage">
+            <b-form-file class="mt-3 mb-3" v-model="selectedFile" accept="image/*" drop-placeholder="Drop a Image here" placeholder="Select a Image or Drop a file here" @input="uploadImage">
             </b-form-file>
-            <b-card-text>
-              <b>Image size should be less than 2.5MB.</b>
-            </b-card-text>
             <b-btn dark @click="insertImage(); $bvModal.hide('image-modal')" :class="{ 'is-disabled': selectedFile === null }">
               Insert image
             </b-btn>
@@ -125,11 +122,8 @@
     </b-modal>
     <b-modal id="file-modal" v-model="fileModal" max-width="540" title="Insert File" hide-footer>
       <b-card class="pa-1" >
-        <b-form-file class="mb-1" v-model="selectedFile" accept="*" drop-placeholder="Drop a file here" placeholder="Select a file or Drop a file here" @input="uploadFile">
+        <b-form-file class="mb-3" v-model="selectedFile" accept="*" drop-placeholder="Drop a file here" placeholder="Select a file or Drop a file here" @input="uploadFile">
         </b-form-file>
-        <b-card-text>
-          <b>File size should be less than 2.5MB.</b>
-        </b-card-text>
         <b-btn type="submit" dark @click="insertFile(); $bvModal.hide('file-modal')" :class="{ 'is-disabled': selectedFile === null }" >
           Insert File
         </b-btn>
