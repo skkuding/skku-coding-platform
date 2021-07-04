@@ -21,10 +21,10 @@
         </b-button-group>
         <div class="divider"></div>
         <b-button-group class="mx-2">
-          <b-button size="sm" title="Heading 3" type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" class="EditorButton" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
+          <b-button size="sm" title="Heading 1" type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" class="EditorButton" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
             <b-icon icon="type-h1"></b-icon>
           </b-button>
-          <b-button size="sm" title="Heading 4" type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 4 }).run()" class="EditorButton" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">
+          <b-button size="sm" title="Heading 2" type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 4 }).run()" class="EditorButton" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">
             <b-icon icon="type-h2"></b-icon>
           </b-button>
           <b-button size="sm" title="Paragraph" type="button" variant="outline-dark" @click="editor.chain().focus().setParagraph().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('paragraph') }">
