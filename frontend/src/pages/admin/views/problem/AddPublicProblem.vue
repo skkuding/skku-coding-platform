@@ -1,51 +1,48 @@
 <template>
   <div>
-    <el-input
+    <b-form-input
       v-model="keyword"
       placeholder="Keywords"
-      prefix-icon="el-icon-search"
-    />
-    <el-table
-      v-loading="loading"
-      :data="problems"
-    >
-      <el-table-column
-        label="ID"
-        width="100"
-        prop="id"
-      />
-      <el-table-column
-        label="DisplayID"
-        width="200"
-        prop="_id"
-      />
-      <el-table-column
-        label="Title"
-        prop="title"
-      />
-      <el-table-column
-        label="option"
-        align="center"
-        width="100"
-        fixed="right"
+    ></b-form-input>
+    <b-table
+      :items="problems"
+      :fields="fields"
+      :per-page="limit"
+      :current-page="updatePage"
       >
-        <template slot-scope="{row}">
-          <icon-btn
-            icon="plus"
-            name="Add the problem"
-            @click.native="handleAddProblem(row.id)"
-          />
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-pagination
-      class="page"
-      layout="prev, pager, next"
-      :page-size="limit"
-      :total="total"
-      @current-change="getPublicProblem"
-    />
+      <template #cell(option)="row">
+        <icon-btn
+          icon="plus"
+          name="Add the problem"
+          @click.native="showConfirmModal(row.item.id)"
+        />
+      </template>
+    </b-table>
+    <b-modal
+      title="Confirm"
+      ref="add-public-problem-confirm"
+      centered
+      @show="resetConfirmModal"
+      @hidden="resetConfirmModal"
+      @ok="handleAddProblem"
+    >
+      <b-form-group
+        label="Please input Display ID for the contest problem"
+        label-for="display-id-input"
+      >
+        <b-form-input
+          id="display-id-input"
+          v-model="displayID"
+          required
+        ></b-form-input>
+      </b-form-group>
+    </b-modal>
+    <b-pagination
+      v-model="page"
+      :total-rows="total"
+      :per-page="limit"
+      >
+    </b-pagination>
   </div>
 </template>
 <script>
@@ -59,10 +56,18 @@ export default {
       page: 1,
       limit: 10,
       total: 0,
-      loading: false,
       problems: [],
       contest: {},
-      keyword: ''
+      keyword: '',
+      fields: [
+        { key: 'id', label: 'ID' },
+        { key: '_id', label: 'DisplayID' },
+        { key: 'title', label: 'Title' },
+        'option'
+      ],
+      problemID: '',
+      displayID: '',
+      confirmModalState: null
     }
   },
   watch: {
@@ -78,34 +83,44 @@ export default {
     })
   },
   methods: {
-    getPublicProblem (page) {
-      this.loading = true
+    async getPublicProblem (page) {
       const params = {
         keyword: this.keyword,
         offset: (page - 1) * this.limit,
         limit: this.limit,
         rule_type: this.contest.rule_type
       }
-      api.getProblemList(params).then(res => {
-        this.loading = false
-        this.total = res.data.data.total
-        this.problems = res.data.data.results
-      }).catch(() => {
-      })
+      try {
+        const results = await api.getProblemList(params)
+        this.total = results.data.data.total
+        this.problems = results.data.data.results
+      } catch (error) {
+      }
     },
-    handleAddProblem (problemID) {
-      this.$prompt('Please input display id for the contest problem', 'confirm').then(({ value }) => {
-        const data = {
-          problem_id: problemID,
-          contest_id: this.contestID,
-          display_id: value
-        }
-        api.addProblemFromPublic(data).then(() => {
-          this.$emit('on-change')
-        }, () => {
-        })
-      }, () => {
-      })
+    async handleAddProblem () {
+      const data = {
+        problem_id: this.problemID,
+        contest_id: this.contestID,
+        display_id: this.displayID
+      }
+      try {
+        await api.addProblemFromPublic(data)
+        this.$emit('on-change')
+      } catch (error) {
+      }
+    },
+    showConfirmModal (problemID) {
+      this.problemID = problemID
+      this.$refs['add-public-problem-confirm'].show()
+    },
+    resetConfirmModal () {
+      this.confirmModalState = null
+      this.displayID = ''
+    }
+  },
+  computed: {
+    updatePage () {
+      return this.getPublicProblem(this.page)
     }
   }
 }
@@ -115,5 +130,4 @@ export default {
     margin-top: 20px;
     text-align: right
   }
-
 </style>

@@ -49,8 +49,8 @@ export default {
       line-height: 50px;
     }
     .header_right{
-      right: 5px;
-      top: 5px;
+      right: 9px;
+      top: 9px;
       position: absolute;
     }
   }

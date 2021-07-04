@@ -4,23 +4,41 @@
       <SideMenu />
     </div>
     <div id="header">
-      <i
-        class="el-icon-fa-font katex-editor"
-        @click="katexVisible=true"
-      />
-      <screen-full
-        :width="14"
-        :height="14"
-        class="screen-full"
-      />
-      <el-dropdown @command="handleCommand">
-        <span>{{ user.username }}<i class="el-icon-caret-bottom el-icon--right" /></span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="logout">
+      <b-button-group>
+        <b-button
+          variant="outline-secondary"
+          size="sm"
+          v-b-tooltip.hover
+          title="KatexEditor"
+          @click="showKatexEditor"
+        >
+          <b-icon icon="fonts"></b-icon>
+        </b-button>
+        <b-button
+          variant="outline-secondary"
+          size="sm"
+          v-b-tooltip.hover
+          title="FullScrean"
+        >
+          <screen-full
+            :width="14"
+            :height="14"
+            class="screen-full"
+            style="margin: 0;"
+          />
+        </b-button>
+        <b-dropdown
+          variant="outline-secondary"
+          size="sm"
+          v-bind:text="user.username"
+          >
+          <b-dropdown-item
+            @click="handleCommand('logout')"
+            >
             Logout
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+          </b-dropdown-item>
+        </b-dropdown>
+      </b-button-group>
     </div>
     <div class="content-app">
       <transition
@@ -34,12 +52,15 @@
       </div>
     </div>
 
-    <el-dialog
+    <b-modal
+      hide-footer
+      centered
+      size="lg"
+      ref="latex-editor"
       :title="$t('m.Latex_Editor')"
-      :visible.sync="katexVisible"
     >
       <KatexEditor />
-    </el-dialog>
+    </b-modal>
   </div>
 </template>
 
@@ -72,8 +93,7 @@ export default {
   },
   data () {
     return {
-      version: process.env.VERSION,
-      katexVisible: false
+      version: process.env.VERSION
     }
   },
   methods: {
@@ -83,6 +103,9 @@ export default {
           this.$router.push({ name: 'login' })
         })
       }
+    },
+    showKatexEditor () {
+      this.$refs['latex-editor'].show()
     }
   },
   computed: {
@@ -90,7 +113,6 @@ export default {
   }
 }
 </script>
-
 <style lang="less">
   a {
     background-color: transparent;
@@ -163,4 +185,16 @@ export default {
     /*font-size: 18px;*/
   }
 
+  .list-group-item {
+    padding: 1rem 2rem;
+    border: 0px solid
+  }
+
+  .list-group-item-action:focus, .list-group-item-action:hover {
+    background-color: #40a0ff38;
+  }
+
+  .table td, .table th {
+    vertical-align: middle;
+  }
 </style>
