@@ -5,6 +5,10 @@ import i18n from '@/i18n'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 import filters from '@/utils/filters'
 import router from './router'
 import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
@@ -31,6 +35,9 @@ Vue.use(VueAnalytics, {
 Vue.use(Element, {
   i18n: (key, value) => i18n.t(key, value)
 })
+
+Vue.use(BootstrapVue)
+Vue.use(BootstrapVueIcons)
 
 Vue.use(katex)
 Vue.use(VueDOMPurifyHTML)
