@@ -27,6 +27,6 @@ urlpatterns = [
     url(r"^api/admin/", include("problem.urls.admin")),
     url(r"^api/", include("contest.urls.oj")),
     url(r"^api/admin/", include("contest.urls.admin")),
-    url(r"^api/", include("submission.urls.oj")),
+    url(r"^api/", include("submission.urls")),
     url(r"^api/admin/", include("utils.urls")),
 ]

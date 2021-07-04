@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from ..views.oj import SubmissionAPI, SubmissionListAPI, ContestSubmissionListAPI, SubmissionExistsAPI
+from .views import SubmissionAPI, SubmissionListAPI, ContestSubmissionListAPI, SubmissionExistsAPI
 
 urlpatterns = [
     url(r"^submission/?$", SubmissionAPI.as_view(), name="submission_api"),
