@@ -1,6 +1,6 @@
 from django import forms
 
-from utils.api import serializers, UsernameSerializer
+from utils.api import serializers
 
 from .models import AdminType, ProblemPermission, User, UserProfile
 
@@ -8,7 +8,6 @@ from .models import AdminType, ProblemPermission, User, UserProfile
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
-    tfa_code = serializers.CharField(required=False, allow_blank=True)
 
 
 class UsernameOrEmailCheckSerializer(serializers.Serializer):
@@ -31,13 +30,11 @@ class EmailAuthSerializer(serializers.Serializer):
 class UserChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField()
     new_password = serializers.CharField(min_length=6)
-    tfa_code = serializers.CharField(required=False, allow_blank=True)
 
 
 class UserChangeEmailSerializer(serializers.Serializer):
     password = serializers.CharField()
     new_email = serializers.EmailField(max_length=64)
-    tfa_code = serializers.CharField(required=False, allow_blank=True)
 
 
 class GenerateUserSerializer(serializers.Serializer):
@@ -59,7 +56,7 @@ class UserAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "major", "admin_type", "problem_permission", "real_name",
-                  "create_time", "last_login", "two_factor_auth", "open_api", "is_disabled"]
+                  "create_time", "last_login", "is_disabled"]
 
     def get_real_name(self, obj):
         return obj.userprofile.real_name
@@ -69,7 +66,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "major", "admin_type", "problem_permission",
-                  "create_time", "last_login", "two_factor_auth", "open_api", "is_disabled"]
+                  "create_time", "last_login", "is_disabled"]
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -98,8 +95,6 @@ class EditUserSerializer(serializers.Serializer):
     admin_type = serializers.ChoiceField(choices=(AdminType.REGULAR_USER, AdminType.ADMIN, AdminType.SUPER_ADMIN))
     problem_permission = serializers.ChoiceField(choices=(ProblemPermission.NONE, ProblemPermission.OWN,
                                                           ProblemPermission.ALL))
-    open_api = serializers.BooleanField()
-    two_factor_auth = serializers.BooleanField()
     is_disabled = serializers.BooleanField()
 
 
@@ -110,9 +105,6 @@ class EditUserSettingSerializer(serializers.Serializer):
 class EditUserProfileSerializer(serializers.Serializer):
     real_name = serializers.CharField(max_length=32, allow_null=True, required=False)
     avatar = serializers.CharField(max_length=256, allow_blank=True, required=False)
-    blog = serializers.URLField(max_length=256, allow_blank=True, required=False)
-    mood = serializers.CharField(max_length=256, allow_blank=True, required=False)
-    github = serializers.CharField(max_length=64, allow_blank=True, required=False)
     language = serializers.CharField(max_length=32, allow_blank=True, required=False)
 
 
@@ -131,21 +123,9 @@ class SSOSerializer(serializers.Serializer):
     token = serializers.CharField()
 
 
-class TwoFactorAuthCodeSerializer(serializers.Serializer):
-    code = serializers.IntegerField()
-
-
 class ImageUploadForm(forms.Form):
     image = forms.FileField()
 
 
 class FileUploadForm(forms.Form):
     file = forms.FileField()
-
-
-class RankInfoSerializer(serializers.ModelSerializer):
-    user = UsernameSerializer()
-
-    class Meta:
-        model = UserProfile
-        fields = "__all__"

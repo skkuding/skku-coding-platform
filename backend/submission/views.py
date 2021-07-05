@@ -13,18 +13,14 @@ from utils.api import APIView, validate_serializer
 from utils.cache import cache
 from utils.captcha import Captcha
 from utils.throttling import TokenBucket
-from ..models import Submission
-from ..serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
-                           ShareSubmissionSerializer)
-from ..serializers import SubmissionSafeModelSerializer, SubmissionListSerializer
+from .models import Submission
+from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
+                          ShareSubmissionSerializer)
+from .serializers import SubmissionSafeModelSerializer, SubmissionListSerializer
 
 
 class SubmissionAPI(APIView):
     def throttling(self, request):
-        # Requests using open_api are not restricted for the time being
-        auth_method = getattr(request, "auth_method", "")
-        if auth_method == "api_key":
-            return
         user_bucket = TokenBucket(key=str(request.user.id),
                                   redis_conn=cache, **SysOptions.throttling["user"])
         can_consume, wait = user_bucket.consume()

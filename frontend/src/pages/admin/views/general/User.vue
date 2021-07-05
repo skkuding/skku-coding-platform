@@ -363,15 +363,6 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="Open Api">
-              <el-switch
-                v-model="user.open_api"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item :label="$t('m.Is_Disabled')">
               <el-switch
                 v-model="user.is_disabled"
@@ -479,7 +470,6 @@ export default {
       api.getUser(id).then(res => {
         this.user = res.data.data
         this.user.password = ''
-        this.user.real_tfa = this.user.two_factor_auth
       })
     },
     // 사용자 목록 가져 오기
