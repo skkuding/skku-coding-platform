@@ -876,11 +876,6 @@ export default {
       padding-top: 0;
       padding-bottom: 0;
     }
-    .tags {
-      .el-tag {
-        margin-right: 10px;
-      }
-    }
     .accordion {
       margin-bottom: 10px;
     }
