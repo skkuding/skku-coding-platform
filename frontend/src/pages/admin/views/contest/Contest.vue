@@ -36,7 +36,7 @@
             </template>
             <b-form-datepicker
               id="Contest_Start_Time"
-              v-model="contest.startDate"
+              v-model="startDate"
               today-button
               close-button
               type="datetime"
@@ -46,7 +46,7 @@
               style = "margin-bottom:10px"
             />
             <b-form-timepicker
-              v-model="contest.startTime"
+              v-model="startTime"
               show-seconds
               now-button
             >
@@ -63,7 +63,7 @@
             </template>
             <b-form-datepicker
               id="Contest_End_Time"
-              v-model="contest.endDate"
+              v-model="endDate"
               today-button
               close-button
               type="datetime"
@@ -73,7 +73,7 @@
               style="margin-bottom:10px"
             />
             <b-form-timepicker
-              v-model="contest.endTime"
+              v-model="endTime"
               show-seconds
               now-button
             >
@@ -175,11 +175,7 @@ export default {
       contest: {
         title: '',
         description: '',
-        startTime: '',
-        startDate: '',
         start_time: '',
-        endTime: '',
-        endDate: '',
         end_time: '',
         rule_type: 'ACM',
         password: '',
@@ -188,7 +184,11 @@ export default {
         allowed_ip_ranges: [{
           value: ''
         }]
-      }
+      },
+      startTime: '',
+      startDate: '',
+      endTime: '',
+      endDate: ''
     }
   },
   mounted () {
@@ -206,6 +206,7 @@ export default {
         }
         data.allowed_ip_ranges = ranges
         this.contest = data
+        this.initTime()
       }).catch(() => {
       })
     }
@@ -228,11 +229,15 @@ export default {
       }).catch(() => {
       })
     },
+    initTime () {
+      ;[this.startDate, this.startTime] = this.contest.start_time.split(/T|[+]/)
+      ;[this.endDate, this.endTime] = this.contest.end_time.split(/T|[+]/)
+    },
     setStartTime () {
-      this.contest.start_time = this.contest.startDate + ' ' + this.contest.startTime
+      this.contest.start_time = this.startDate + ' ' + this.startTime
     },
     setEndTime () {
-      this.contest.end_time = this.contest.endDate + ' ' + this.contest.endTime
+      this.contest.end_time = this.endDate + ' ' + this.endTime
     },
     addIPRange () {
       this.contest.allowed_ip_ranges.push({ value: '' })
@@ -244,9 +249,9 @@ export default {
       }
     }
   }
-
 }
 </script>
+
 <style scoped>
   .row, .col {
     word-wrap: break-word;
