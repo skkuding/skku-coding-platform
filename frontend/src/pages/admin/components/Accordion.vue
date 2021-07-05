@@ -13,9 +13,9 @@
       <slot />
     </div>
     <footer @click="isOpen = !isOpen">
-      <i
-        :class="{'rotate': !isOpen}"
-        class="el-icon-caret-top"
+      <b-icon
+        :icon="isOpen ? 'chevron-double-up' : 'chevron-double-down'"
+        style="margin-top: 10px"
       />
     </footer>
   </div>
