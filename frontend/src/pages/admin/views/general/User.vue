@@ -232,7 +232,7 @@
         class="userPreview"
       >
         The usernames will be {{ formGenerateUser.prefix + formGenerateUser.number_from + formGenerateUser.suffix }},
-        <sapn v-if="compareNumber(formGenerateUser.number_from, formGenerateUser.number_to) > 1">
+        <span v-if="compareNumber(formGenerateUser.number_from, formGenerateUser.number_to) > 1">
           {{ formGenerateUser.prefix + ((Number)(formGenerateUser.number_from) + 1) + formGenerateUser.suffix + '...' }}
         </span>
         <span v-if="compareNumber(formGenerateUser.number_from, formGenerateUser.number_to) >= 1">
