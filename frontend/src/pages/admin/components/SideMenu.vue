@@ -63,7 +63,7 @@
         font-scale="1.25"
         style="margin-right: 8px"
       />
-      problem
+      Problem
     </b-list-group-item>
     <b-collapse id="problem" role="tabpanel">
       <b-list-group-item
