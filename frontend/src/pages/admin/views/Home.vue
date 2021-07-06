@@ -155,7 +155,7 @@ export default {
   .content-app {
     padding-top: 20px;
     padding-right: 10px;
-    padding-left: 210px;
+    padding-left: 10px;
   }
 
   .footer {
