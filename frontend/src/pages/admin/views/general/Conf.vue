@@ -1,167 +1,230 @@
 <template>
   <div class="view">
-    <Panel :title="$t('m.SMTP_Config')">
-      <el-form
-        label-position="left"
-        label-width="70px"
-        :model="smtp"
+    <Panel title="SMTP Config">
+      <b-form
+        label-size="sm"
       >
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('m.Server')"
-              required
-            >
-              <el-input
-                v-model="smtp.server"
-                placeholder="SMTP Server Address"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('m.Port')"
-              required
-            >
-              <el-input
-                v-model="smtp.port"
-                type="number"
-                placeholder="SMTP Server Port"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('m.Email')"
-              required
-            >
-              <el-input
-                v-model="smtp.email"
-                placeholder="Account Used To Send Email"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('m.Password')"
-              label-width="90px"
-              required
-            >
-              <el-input
-                v-model="smtp.password"
-                type="password"
-                placeholder="SMTP Server Password"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="TLS">
-              <el-switch
-                v-model="smtp.tls"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <el-button
-        type="primary"
-        @click="saveSMTPConfig"
-      >
-        Save
-      </el-button>
-      <el-button
-        v-if="saved"
-        type="warning"
-        :loading="loadingBtnTest"
-        @click="testSMTPConfig"
-      >
-        Send Test Email
-      </el-button>
+        <b-container fluid>
+          <b-row cols="2">
+            <b-col cols ="6">
+              <b-form-group
+              label-cols-sm="2"
+              label-size="sm"
+              label-for="server"
+              >
+                <template v-slot:label>
+                  <span class="text-danger">*</span> Server
+                </template>
+                <b-form-input
+                  id="server"
+                  v-model="smtp.server"
+                  placeholder="SMTP Server Address"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="6">
+              <b-form-group
+              label-cols-sm="2"
+              label-size="sm"
+              label-for="port"
+              >
+                <template v-slot:label>
+                  <span class="text-danger">*</span> Port
+                </template>
+                <b-form-input
+                  id="port"
+                  v-model="smtp.port"
+                  type="number"
+                  placeholder="SMTP Server Port"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container fluid>
+          <b-row cols="2">
+            <b-col cols="6">
+              <b-form-group
+              label-cols-sm="2"
+              label-size="sm"
+              label-for="email"
+              >
+                <template v-slot:label>
+                  <span class="text-danger">*</span> Email
+                </template>
+                <b-form-input
+                  id="email"
+                  v-model="smtp.email"
+                  placeholder="Account Used To Send Email"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols = "6">
+              <b-form-group
+              label-cols-sm="3"
+              label-size="sm"
+              label-for="password"
+              >
+                <template v-slot:label>
+                  <span class="text-danger">*</span> Password
+                </template>
+                <b-form-input
+                  id="password"
+                  v-model="smtp.password"
+                  type="password"
+                  placeholder="SMTP Server Password"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+          </b-container>
+          <b-container fluid>
+          <b-row>
+            <b-col cols="3">
+              <b-form-group
+              label-cols-sm="4"
+              label-size="sm"
+              label="TLS"
+              >
+                <b-form-checkbox
+                  switch
+                  v-model="smtp.tls"
+                >
+                </b-form-checkbox>
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-button
+          variant="primary"
+          style="margin-right: 8px;"
+          @click="saveSMTPConfig"
+        >
+          Save
+        </b-button>
+        <b-button
+          v-if="saved"
+          variant="warning"
+          @click="testSMTPConfig"
+        >
+          Send Test Email
+        </b-button>
+      </b-form>
     </Panel>
 
-    <Panel :title="$t('m.Website_Config')">
-      <el-form
+    <Panel title="Web Config">
+      <b-form
         ref="form"
-        label-position="left"
-        label-width="100px"
+        label-align="left"
         :model="websiteConfig"
       >
-        <el-row :gutter="20">
-          <el-col :span="8">
-            <el-form-item
-              :label="$t('m.Base_Url')"
-              required
-            >
-              <el-input
-                v-model="websiteConfig.website_base_url"
-                placeholder="Website Base Url"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item
-              :label="$t('m.Name')"
-              required
-            >
-              <el-input
+        <b-container fluid>
+          <b-row>
+            <b-col cols = "4">
+              <b-form-group
+              label-cols-sm="4"
+              label-size="sm"
+              >
+              <template v-slot:label>
+                <span class="text-danger">*</span> Base Url
+              </template>
+                <b-form-input
+                  v-model="websiteConfig.website_base_url"
+                  class="mb-2 mr-sm-2 mb-sm-0"
+                  placeholder="Website Base Url"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols = "4">
+              <b-form-group
+                label-cols-sm="3"
+                label-size="sm"
+                >
+                <template v-slot:label>
+                <span class="text-danger">*</span> Name
+              </template>
+              <b-form-input
+                class="mb-2 mr-sm-2 mb-sm-0"
                 v-model="websiteConfig.website_name"
                 placeholder="Website Name"
               />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item
-              :label="$t('m.Shortcut')"
-              required
-            >
-              <el-input
-                v-model="websiteConfig.website_name_shortcut"
-                placeholder="Website Name Shortcut"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item
-              :label="$t('m.Footer')"
-              required
-            >
-              <el-input
-                v-model="websiteConfig.website_footer"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 4}"
-                placeholder="Website Footer HTML"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-col :span="12">
-              <el-form-item
-                :label="$t('m.Allow_Register')"
-                label-width="200px"
-              >
-                <el-switch
-                  v-model="websiteConfig.allow_register"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
+              </b-form-group>
+            </b-col>
+            <b-col cols = "4">
+              <b-form-group
+                label-cols-sm="4"
+                label-size="sm"
+                >
+                <template v-slot:label>
+                <span class="text-danger">*</span> Shortcut
+              </template>
+                <b-form-input
+                  class="mb-2 mr-sm-2 mb-sm-0"
+                  v-model="websiteConfig.website_name_shortcut"
+                  placeholder="Website Name Shortcut"
                 />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                :label="$t('m.Submission_List_Show_All')"
-                label-width="200px"
-              >
-                <el-switch
-                  v-model="websiteConfig.submission_list_show_all"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
+              </b-form-group>
+            </b-col>
+          </b-row>
+          </b-container>
+          <b-container fluid>
+          <b-row>
+            <b-col cols = "12">
+              <b-form-group
+                label-cols-sm="2"
+                label-size="sm"
+                >
+                <template v-slot:label>
+                <span class="text-danger">*</span> Footer
+              </template>
+                <b-form-textarea
+                  class="mb-2 mr-sm-2 mb-sm-0"
+                  v-model="websiteConfig.website_footer"
+                  rows="2"
+                  max-rows="4"
+                  placeholder="Website Footer HTML"
                 />
-              </el-form-item>
-            </el-col>
-          </el-col>
-        </el-row>
-      </el-form>
-      <save @click.native="saveWebsiteConfig" />
+              </b-form-group>
+            </b-col>
+          </b-row>
+          </b-container>
+          <b-container fluid>
+          <b-row>
+            <b-col cols="2" style="padding-right: 0px">
+              <p>
+                Allow Register
+              </p>
+            </b-col>
+            <b-col cols="2">
+              <b-form-checkbox
+                switch
+                v-model="websiteConfig.allow_register"
+                class="mb-2 mr-sm-2 mb-sm-0"
+              >
+              </b-form-checkbox>
+            </b-col>
+            <b-col cols="3">
+              <p>
+                Submission List Show All
+              </p>
+            </b-col>
+            <b-col cols="2">
+              <b-form-checkbox
+                switch
+                v-model="websiteConfig.submission_list_show_all"
+                class="mb-2 mr-sm-2 mb-sm-0"
+              >
+              </b-form-checkbox>
+            </b-col>
+          </b-row>
+        </b-container>
+      </b-form>
+      <b-button
+        variant="primary"
+        @click="saveWebsiteConfig"
+      >
+        Save
+      </b-button>
     </Panel>
   </div>
 </template>

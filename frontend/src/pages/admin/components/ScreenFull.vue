@@ -59,5 +59,6 @@ export default {
   display: inline-block;
   cursor: pointer;
   vertical-align: -0.15em;
+  margin: 0;
 }
 </style>

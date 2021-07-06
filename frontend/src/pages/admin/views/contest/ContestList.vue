@@ -2,120 +2,136 @@
   <div class="view">
     <Panel title="Contest List">
       <div slot="header">
-        <el-input
+        <b-form-input
           v-model="keyword"
-          prefix-icon="el-icon-search"
           placeholder="Keywords"
         />
       </div>
-      <el-table
+      <b-table
         ref="table"
-        v-loading="loading"
-        element-loading-text="loading"
-        :data="contestList"
+        :items="contestList"
+        :fields="contestListFields"
+        :per-page="pageSize"
+        :current-page="updateCurrentPage"
         style="width: 100%"
       >
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <p>Start Time: {{ props.row.start_time | localtime }}</p>
-            <p>End Time: {{ props.row.end_time | localtime }}</p>
-            <p>Create Time: {{ props.row.create_time | localtime }}</p>
-            <p>Creator: {{ props.row.created_by.username }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column prop="id" width="80" label="ID" />
-        <el-table-column prop="title" label="Title" />
-        <el-table-column label="Rule Type" width="130">
-          <template slot-scope="scope">
-            <el-tag type="gray">
-              {{ scope.row.rule_type }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="Contest Type" width="180">
-          <template slot-scope="scope">
-            <el-tag
-              :type="
-                scope.row.contest_type === 'Public' ? 'success' : 'primary'
-              "
-            >
-              {{ scope.row.contest_type }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="Status" width="130">
-          <template slot-scope="scope">
-            <el-tag
-              :type="
-                scope.row.status === '-1'
-                  ? 'danger'
-                  : scope.row.status === '0'
-                  ? 'success'
-                  : 'primary'
-              "
-            >
-              {{ scope.row.status | contestStatus }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column width="100" label="Visible">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.visible"
-              active-text=""
-              inactive-text=""
-              @change="handleVisibleSwitch(scope.row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" width="250" label="Operation">
-          <div slot-scope="scope">
+        <template #cell(expand)="row">
+          <b-icon
+            :icon="row.detailsShowing ? 'chevron-down' : 'chevron-right'"
+            @click="row.toggleDetails"
+          />
+        </template>
+
+        <template #cell(rule_type)="row">
+          <b-button
+            size="sm"
+            variant="outline-primary"
+            disabled
+          >
+            {{ row.item.rule_type }}
+          </b-button>
+        </template>
+
+        <template #cell(contest_type)="row">
+          <b-button
+            size="sm"
+            :variant="row.item.contest_type === 'Public' ? 'outline-success' : 'outline-primary'"
+            disabled
+          >
+            {{ row.item.contest_type }}
+          </b-button>
+        </template>
+
+        <template #cell(status)="row">
+          <b-button
+            size="sm"
+            :variant="
+              row.item.status === '-1'
+                ? 'outline-danger'
+                : row.item.status === '0'
+                ? 'outline-success'
+                : 'outline-primary'
+            "
+            disabled
+          >
+            {{ row.item.status | contestStatus }}
+          </b-button>
+        </template>
+
+        <template #cell(visible)="row">
+          <b-form-checkbox
+            switch
+            v-model="row.item.visible"
+            @change="handleVisibleSwitch(row.item)"
+          >
+          </b-form-checkbox>
+        </template>
+
+        <template #cell(operation)="row">
+          <div>
             <icon-btn
               name="Edit"
-              icon="edit"
-              @click.native="goEdit(scope.row.id)"
+              icon="clipboard-plus"
+              @click.native="goEdit(row.item.id)"
             />
             <icon-btn
               name="Problem"
-              icon="list-ol"
-              @click.native="goContestProblemList(scope.row.id)"
+              icon="list"
+              @click.native="goContestProblemList(row.item.id)"
             />
             <icon-btn
               name="Announcement"
               icon="info-circle"
-              @click.native="goContestAnnouncement(scope.row.id)"
+              @click.native="goContestAnnouncement(row.item.id)"
             />
             <icon-btn
-              icon="download"
               name="Download Accepted Submissions"
-              @click.native="openDownloadOptions(scope.row.id)"
+              icon="download"
+              @click.native="openDownloadOptions(row.item.id)"
             />
           </div>
-        </el-table-column>
-      </el-table>
+        </template>
+
+        <template #row-details="row">
+          <b-card>
+            <p>Start Time: {{ row.item.start_time | localtime }}</p>
+            <p>End Time: {{ row.item.end_time | localtime }}</p>
+            <p>Create Time: {{ row.item.create_time | localtime }}</p>
+            <p>Creator: {{ row.item.created_by.username }}</p>
+          </b-card>
+        </template>
+      </b-table>
+
       <div class="panel-options">
-        <el-pagination
-          class="page"
-          layout="prev, pager, next"
-          :page-size="pageSize"
-          :total="total"
-          @current-change="currentChange"
+        <b-pagination
+          v-model="currentPage"
+          :per-page="pageSize"
+          :total-rows="total"
+          style="position: absolute; right: 20px; top: 15px;"
         />
       </div>
     </Panel>
-    <el-dialog
+
+    <b-modal
       title="Download Contest Submissions"
-      width="30%"
-      :visible.sync="downloadDialogVisible"
+      v-model="downloadDialogVisible"
+      centered
     >
-      <el-switch
+      <b-form-checkbox
+        switch
         v-model="excludeAdmin"
-        active-text="Exclude admin submissions"
-      />
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="downloadSubmissions">确 定</el-button>
-      </span>
-    </el-dialog>
+      >
+        Exclude admin submissions
+      </b-form-checkbox>
+      <template #modal-footer>
+        <b-button
+          variant="primary"
+          @click="downloadSubmissions"
+        >
+          Download
+        </b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -136,8 +152,17 @@ export default {
       pageSize: 10,
       total: 0,
       contestList: [],
+      contestListFields: [
+        { key: 'expand', label: '' },
+        { key: 'id', label: 'ID' },
+        { key: 'title', label: 'Title', tdClass: 'contestTitle' },
+        { key: 'rule_type', label: 'Rule Type' },
+        { key: 'contest_type', label: 'Contest Type' },
+        { key: 'status', label: 'Status' },
+        { key: 'visible', label: 'Visible' },
+        { key: 'operation', label: 'Operation' }
+      ],
       keyword: '',
-      loading: false,
       excludeAdmin: true,
       currentPage: 1,
       currentId: 1,
@@ -200,6 +225,18 @@ export default {
     handleVisibleSwitch (row) {
       api.editContest(row)
     }
+  },
+  computed: {
+    updateCurrentPage () {
+      return this.currentChange(this.currentPage)
+    }
   }
 }
 </script>
+
+<style>
+  .contestTitle {
+    max-width: 120px;
+    word-break: break-all;
+  }
+</style>

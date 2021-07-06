@@ -1,17 +1,13 @@
 <template>
   <div style="display: inline-block;">
-    <el-tooltip
-      class="item"
-      effect="dark"
-      :content="name"
-      placement="top"
+    <b-button
+      variant="outline-secondary"
+      size="sm"
+      v-b-tooltip.hover
+      v-bind:title="name"
     >
-      <el-button
-        plain
-        :icon="'el-icon-fa-' + icon"
-        size="mini"
-      />
-    </el-tooltip>
+      <b-icon v-bind:icon="icon"></b-icon>
+    </b-button>
   </div>
 </template>
 

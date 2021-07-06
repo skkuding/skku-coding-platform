@@ -1,9 +1,5 @@
 <template>
-  <el-menu
-    class="vertical_menu"
-    :router="true"
-    :default-active="currentPath"
-  >
+  <b-list-group class="vertical_menu">
     <div class="logo">
       <img
         src="@/assets/logos/logo.png"
@@ -11,58 +7,102 @@
         alt="oj admin"
       >
     </div>
-    <el-menu-item index="/">
-      <i class="el-icon-fa-dashboard" />{{ $t('m.Dashboard') }}
-    </el-menu-item>
-    <el-submenu
-      v-if="isSuperAdmin"
-      index="general"
-    >
-      <template slot="title">
-        <i class="el-icon-menu" />{{ $t('m.General') }}
-      </template>
-      <el-menu-item index="/user">
-        {{ $t('m.User') }}
-      </el-menu-item>
-      <el-menu-item index="/announcement">
-        {{ $t('m.Announcement') }}
-      </el-menu-item>
-      <el-menu-item index="/conf">
-        {{ $t('m.System_Config') }}
-      </el-menu-item>
-      <el-menu-item index="/judge-server">
-        {{ $t('m.Judge_Server') }}
-      </el-menu-item>
-      <el-menu-item index="/prune-test-case">
-        {{ $t('m.Prune_Test_Case') }}
-      </el-menu-item>
-    </el-submenu>
-    <el-submenu
-      v-if="hasProblemPermission"
-      index="problem"
-    >
-      <template slot="title">
-        <i class="el-icon-fa-bars" />{{ $t('m.Problem') }}
-      </template>
-      <el-menu-item index="/problems">
-        {{ $t('m.Problem_List') }}
-      </el-menu-item>
-      <el-menu-item index="/problem/create">
-        {{ $t('m.Create_Problem') }}
-      </el-menu-item>
-    </el-submenu>
-    <el-submenu index="contest">
-      <template slot="title">
-        <i class="el-icon-fa-trophy" />{{ $t('m.Contest') }}
-      </template>
-      <el-menu-item index="/contest">
-        {{ $t('m.Contest_List') }}
-      </el-menu-item>
-      <el-menu-item index="/contest/create">
-        {{ $t('m.Create_Contest') }}
-      </el-menu-item>
-    </el-submenu>
-  </el-menu>
+    <b-list-group-item to="/">
+      <b-icon
+        icon="journal-text"
+        font-scale="1.25"
+        style="margin-right: 8px"
+      />
+      Dashboard
+    </b-list-group-item>
+
+    <b-list-group-item href="#" role="tab" v-b-toggle.general>
+      <b-icon
+        icon="grid-fill"
+        font-scale="1.25"
+        style="margin-right: 8px"
+      />
+      General
+    </b-list-group-item>
+    <b-collapse id="general" role="tabpanel">
+      <b-list-group-item
+        to="/user"
+        class="list-group-subitem"
+      >
+        User
+      </b-list-group-item>
+      <b-list-group-item
+        to="/announcement"
+        class="list-group-subitem"
+      >
+        Announcement
+      </b-list-group-item>
+      <b-list-group-item
+        to="/conf"
+        class="list-group-subitem"
+      >
+        System Config
+      </b-list-group-item>
+      <b-list-group-item
+        to="/judge-server"
+        class="list-group-subitem"
+      >
+        Judge Server
+      </b-list-group-item>
+      <b-list-group-item
+        to="/prune-test-case"
+        class="list-group-subitem"
+      >
+        Prune Test Case
+      </b-list-group-item>
+    </b-collapse>
+
+    <b-list-group-item href="#" role="tab" v-b-toggle.problem>
+      <b-icon
+        icon="list"
+        font-scale="1.25"
+        style="margin-right: 8px"
+      />
+      Problem
+    </b-list-group-item>
+    <b-collapse id="problem" role="tabpanel">
+      <b-list-group-item
+        to="/problems"
+        class="list-group-subitem"
+      >
+        Problem List
+      </b-list-group-item>
+      <b-list-group-item
+        to="/problem/create"
+        class="list-group-subitem"
+      >
+        Create Problem
+      </b-list-group-item>
+    </b-collapse>
+
+    <b-list-group-item href="#" role="tab" v-b-toggle.contest>
+      <b-icon
+        icon="trophy"
+        font-scale="1.25"
+        style="margin-right: 8px"
+      />
+      Contest
+    </b-list-group-item>
+    <b-collapse id="contest" role="tabpanel">
+      <b-list-group-item
+        to="/contest"
+        class="list-group-subitem"
+      >
+        Contest List
+      </b-list-group-item>
+      <b-list-group-item
+        to="/contest/create"
+        class="list-group-subitem"
+      >
+        Create Contest
+      </b-list-group-item>
+    </b-collapse>
+  </b-list-group>
 </template>
 
 <script>
@@ -94,9 +134,13 @@ export default {
     top: 0;
     bottom: 0;
     left: 0;
+    background-color: white;
     .logo {
       margin: 20px 0;
       text-align: center;
     }
+  }
+  .list-group-subitem {
+    padding: 16px 0px 16px 50px;
   }
 </style>

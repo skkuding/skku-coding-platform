@@ -13,9 +13,9 @@
       <slot />
     </div>
     <footer @click="isOpen = !isOpen">
-      <i
-        :class="{'rotate': !isOpen}"
-        class="el-icon-caret-top"
+      <b-icon
+        :icon="isOpen ? 'chevron-double-up' : 'chevron-double-down'"
+        style="margin-top: 10px"
       />
     </footer>
   </div>
@@ -49,8 +49,8 @@ export default {
       line-height: 50px;
     }
     .header_right{
-      right: 5px;
-      top: 5px;
+      right: 9px;
+      top: 9px;
       position: absolute;
     }
   }
