@@ -6,8 +6,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': '127.0.0.1',
-        'PORT': 5435,
+        'HOST': "pgbouncer",
+        'PORT': 6543,
         'NAME': "onlinejudge",
         'USER': "onlinejudge",
         'PASSWORD': 'onlinejudge'
