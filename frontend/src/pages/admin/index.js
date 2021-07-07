@@ -2,8 +2,6 @@ import Vue from 'vue'
 import App from './App.vue'
 import store from '@/store'
 import i18n from '@/i18n'
-import Element from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
 
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -30,10 +28,6 @@ Object.keys(filters).forEach(key => {
 Vue.use(VueAnalytics, {
   id: GOOGLE_ANALYTICS_ID,
   router
-})
-
-Vue.use(Element, {
-  i18n: (key, value) => i18n.t(key, value)
 })
 
 Vue.use(BootstrapVue)
