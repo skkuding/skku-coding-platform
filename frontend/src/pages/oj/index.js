@@ -16,9 +16,6 @@ import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-import Panel from '@oj/components/Panel.vue'
-import VerticalMenu from '@oj/components/verticalMenu/verticalMenu.vue'
-import VerticalMenuItem from '@oj/components/verticalMenu/verticalMenu-item.vue'
 import '@/styles/bootstrap.scss'
 import '@/styles/index.less'
 
@@ -48,10 +45,6 @@ Vue.use(VueAnalytics, {
   id: GOOGLE_ANALYTICS_ID,
   router
 })
-
-Vue.component(VerticalMenu.name, VerticalMenu)
-Vue.component(VerticalMenuItem.name, VerticalMenuItem)
-Vue.component(Panel.name, Panel)
 
 Vue.config.devtools = process.env.NODE_ENV !== 'production'
 // 注册全局消息提示

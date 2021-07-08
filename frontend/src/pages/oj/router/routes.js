@@ -12,9 +12,7 @@ import {
   Problem,
   ProblemList,
   ResetPassword,
-  ProfileSetting,
-  SubmissionDetails,
-  SubmissionList
+  ProfileSetting
 } from '../views'
 
 export default [
@@ -71,18 +69,6 @@ export default [
     path: '/problem/:problemID',
     meta: { title: 'Problem Details' },
     component: Problem
-  },
-  {
-    name: 'submission-list',
-    path: '/status',
-    meta: { title: 'Submission List' },
-    component: SubmissionList
-  },
-  {
-    name: 'submission-details',
-    path: '/status/:id/',
-    meta: { title: 'Submission Details' },
-    component: SubmissionDetails
   },
   {
     name: 'contest-list',
