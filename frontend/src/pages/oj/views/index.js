@@ -8,9 +8,6 @@ import Home from './general/Home.vue'
 // Grouping Components in the Same Chunk
 const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
 
-const SubmissionList = () => import(/* webpackChunkName: "submission" */ '@oj/views/submission/SubmissionList.vue')
-const SubmissionDetails = () => import(/* webpackChunkName: "submission" */ '@oj/views/submission/SubmissionDetails.vue')
-
 const ApplyResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views/user/ApplyResetPassword.vue')
 const ResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views/user/ResetPassword.vue')
 
@@ -24,7 +21,6 @@ const ContestDetail = () => import(/* webpackChunkName: "contest" */ '@oj/views/
 export {
   Home, NotFound,
   Logout, ProblemList, Announcement, AnnouncementList, Problem,
-  SubmissionList, SubmissionDetails,
   ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting,
   ContestList, ContestDetail
 }
