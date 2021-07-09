@@ -37,8 +37,9 @@ class ChooseJudgeServer:
 
     def __enter__(self) -> [JudgeServer, None]:
         with transaction.atomic():
-            servers = JudgeServer.objects.select_for_update().filter(is_disabled=False).order_by("task_number")
+            servers = JudgeServer.objects.select_for_update().filter(is_disabled=False).order_by("id")
             servers = [s for s in servers if s.status == "normal"]
+            servers.sort(key=lambda server: server.task_number)
             for server in servers:
                 if server.task_number <= server.cpu_core * 2:
                     server.task_number = F("task_number") + 1
