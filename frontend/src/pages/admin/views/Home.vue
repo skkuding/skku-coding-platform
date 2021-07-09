@@ -57,7 +57,7 @@
       centered
       size="lg"
       ref="latex-editor"
-      :title="$t('m.Latex_Editor')"
+      title="Latex Editor"
     >
       <KatexEditor />
     </b-modal>
