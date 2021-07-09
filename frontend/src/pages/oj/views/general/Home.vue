@@ -174,94 +174,90 @@ export default {
   }
 }
 </script>
-<style lang='less' scoped>
-.contest {
-  &-title {
-    font-style: italic;
-    font-size: 21px;
-  }
-  &-content {
-    padding: 0 70px 40px 70px;
-    &-description {
-      margin-top: 25px;
-    }
-  }
-}
 
-.post-area {
-  width: 100%;
-  height: 100%;
-  margin-top: 30px;
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  flex-direction: row;
-  flex-wrap: wrap;
-  position: relative;
-}
-
-.card {
-  max-width:800px;
-}
-.post-card {
-  margin-top: 30px;
-  height: 255px;
-  width: 45%;
-}
-
-.post-card-header {
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 25px;
-
-  * {
-    display: inline-block;
-  }
-
-  .post-card-title {
-    margin-left: 8px;
-
-    p {
+<style lang="scss" scoped>
+  .contest {
+    &-title {
+      font-style: italic;
       font-size: 21px;
-      margin-left: 15px;
+    }
+    &-content {
+      padding: 0 70px 40px 70px;
+      &-description {
+        margin-top: 25px;
+      }
     }
   }
-}
 
-/deep/ .table {
-  tr {
-    outline: none;
-    font-size: 16px;
-  }
-
-  thead {
-    display: none;
-  }
-
-  & .icon-field {
-    // width: 40px;
-  }
-
-  & .title-field {
+  .post-area {
     width: 100%;
-    display: inline-block;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+    height: 100%;
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    position: relative;
   }
 
-  & .date-field {
-    // width: 125px;
-    text-align: right;
+  .card {
+    max-width:800px;
   }
-}
-
-@media screen and (max-width: 1016px) {
   .post-card {
-    width:80%;
-    margin-top: 40px;
+    margin-top: 30px;
+    height: 255px;
+    width: 45%;
   }
-}
 
+  .post-card-header {
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 25px;
+
+    * {
+      display: inline-block;
+    }
+
+    .post-card-title {
+      margin-left: 8px;
+
+      p {
+        font-size: 21px;
+        margin-left: 15px;
+      }
+    }
+  }
+
+  /deep/ .table {
+    tr {
+      outline: none;
+      font-size: 16px;
+    }
+
+    thead {
+      display: none;
+    }
+
+    & .title-field {
+      width: 100%;
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    & .date-field {
+      // width: 125px;
+      text-align: right;
+    }
+  }
+
+  @media screen and (max-width: 1016px) {
+    .post-card {
+      width:80%;
+      margin-top: 40px;
+    }
+  }
 </style>

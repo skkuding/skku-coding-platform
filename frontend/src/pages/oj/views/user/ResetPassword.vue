@@ -106,7 +106,8 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+
+<style lang="scss" scoped>
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');

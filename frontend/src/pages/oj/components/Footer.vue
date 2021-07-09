@@ -43,56 +43,56 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-*, *:before, *:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-a {
-  text-decoration: none;
-  background-color: transparent;
-  &:link {
-    color: white;
+<style lang="scss" scoped>
+  *, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
   }
-  &:active {
-    color: white;
+  a {
+    text-decoration: none;
+    background-color: transparent;
+    &:link {
+      color: white;
+    }
+    &:active {
+      color: white;
+    }
+    &:hover {
+      outline-width: 0;
+    }
+    &:visited {
+      color: white;
+    }
   }
-  &:hover {
-    outline-width: 0;
+  #footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background: #FFFFFF;
+    color:#aaaaaa;
+    padding: 1rem;
   }
-  &:visited {
-    color: white;
+  .footer-info {
+    padding-bottom: 1vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
   }
-}
-#footer {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  background: #FFFFFF;
-  color:#aaaaaa;
-  padding: 1rem;
-}
-.footer-info {
-  padding-bottom: 1vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-}
-.footer-bottom {
-  font-size:16px;
-}
-.icons {
-  margin-top:16px;
-  margin-bottom:16px;
-  > a{
-    margin: 16px 16px 16px 16px;
+  .footer-bottom {
+    font-size:16px;
   }
-}
-img {
-  width:20px;
-  height:20px;
-  filter: invert(36%) sepia(3%) saturate(0%) hue-rotate(153deg) brightness(94%) contrast(88%);
-}
+  .icons {
+    margin-top:16px;
+    margin-bottom:16px;
+    > a{
+      margin: 16px 16px 16px 16px;
+    }
+  }
+  img {
+    width:20px;
+    height:20px;
+    filter: invert(36%) sepia(3%) saturate(0%) hue-rotate(153deg) brightness(94%) contrast(88%);
+  }
 </style>
