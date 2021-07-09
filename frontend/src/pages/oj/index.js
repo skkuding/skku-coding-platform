@@ -2,7 +2,6 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from '@/store'
-import i18n from '@/i18n'
 import VueClipboard from 'vue-clipboard2'
 import VueAnalytics from 'vue-analytics'
 import VueSimpleAlert from 'vue-simple-alert'
@@ -29,10 +28,8 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.config.productionTip = false
-Vue.use(iView, {
-  i18n: (key, value) => i18n.t(key, value)
-})
 
+Vue.use(iView)
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 
@@ -112,4 +109,4 @@ Vue.prototype.$success = (s) => {
     })
 }
 
-new Vue(Vue.util.extend({ router, store, i18n }, App)).$mount('#app')
+new Vue(Vue.util.extend({ router, store }, App)).$mount('#app')
