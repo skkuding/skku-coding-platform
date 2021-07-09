@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 import store from '@/store'
-import i18n from '@/i18n'
 
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -108,4 +107,4 @@ Vue.prototype.$success = (s) => {
     })
 }
 
-new Vue(Vue.util.extend({ router, store, i18n }, App)).$mount('#app')
+new Vue(Vue.util.extend({ router, store }, App)).$mount('#app')
