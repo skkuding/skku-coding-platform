@@ -34,8 +34,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.banner {
-  position: relative;
-}
+<style lang="scss" scoped>
+  .banner {
+    position: relative;
+  }
 </style>

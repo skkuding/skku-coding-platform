@@ -80,7 +80,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="scss" scoped>
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
@@ -93,7 +93,7 @@ export default {
     margin-right:auto;
     filter:invert(68%) sepia(59%) saturate(458%) hue-rotate(42deg) brightness(94%) contrast(88%);
   }
- .logo-title {
+  .logo-title {
     margin:8px 0 28px 0;
     color: #8DC63F;
     text-align:center;
@@ -117,7 +117,7 @@ export default {
     margin-right:auto;
     filter:invert(68%) sepia(59%) saturate(458%) hue-rotate(42deg) brightness(94%) contrast(88%);
   }
- .logo-title {
+  .logo-title {
     margin:8px 0 28px 0;
     color: #8DC63F;
     text-align:center;

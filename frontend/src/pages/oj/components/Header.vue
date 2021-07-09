@@ -94,41 +94,41 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-#header {
-  position: relative;
-  height: 72px;
-  width: 100%;
-  z-index: 1000;
-  background-color: #fff;
-  border-bottom: 2px solid #E2E2E2;
-}
-.header__menu {
-  width: 100%;
-}
-.header__menu__item {
-  width: 100px;
-  text-align: center;
-  &:hover {
-    text-decoration: underline;
-    text-decoration-color: #8dc63f;
+<style lang="scss" scoped>
+  #header {
+    position: relative;
+    height: 72px;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff;
+    border-bottom: 2px solid #E2E2E2;
   }
-}
-/deep/ .modal-med > .modal-dialog > .modal-content > .modal-header {
-  padding-bottom:0;
-  padding-top:4px;
-}
-/deep/ .modal-med > .modal-dialog > .modal-content > .modal-body {
-  padding-top:0;
-}
-/deep/ .modal-med > .modal-dialog > .modal-content  {
-  position:absolute;
-  top:auto;
-  left:auto;
-  right:auto;
-  bottom:auto;
-}
-/deep/ .modal-big > .modal-dialog > .modal-content {
-  min-width:800px;
-}
+  .header__menu {
+    width: 100%;
+  }
+  .header__menu__item {
+    width: 100px;
+    text-align: center;
+    &:hover {
+      text-decoration: underline;
+      text-decoration-color: #8dc63f;
+    }
+  }
+  /deep/ .modal-med > .modal-dialog > .modal-content > .modal-header {
+    padding-bottom:0;
+    padding-top:4px;
+  }
+  /deep/ .modal-med > .modal-dialog > .modal-content > .modal-body {
+    padding-top:0;
+  }
+  /deep/ .modal-med > .modal-dialog > .modal-content  {
+    position:absolute;
+    top:auto;
+    left:auto;
+    right:auto;
+    bottom:auto;
+  }
+  /deep/ .modal-big > .modal-dialog > .modal-content {
+    min-width:800px;
+  }
 </style>

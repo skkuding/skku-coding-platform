@@ -32,7 +32,7 @@
       </b-container>
     </b-form>
     <b-button variant="primary" @click="handleRegister" class="sign-btn">
-       <b-spinner v-if="btnRegisterLoading" small></b-spinner> Register
+      <b-spinner v-if="btnRegisterLoading" small></b-spinner> Register
     </b-button>
     <div class="modal-low mt-3 font-bold" style="text-align:center;">
       <a @click="switchMode('login')">
@@ -103,7 +103,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="scss" scoped>
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
