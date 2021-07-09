@@ -344,7 +344,7 @@ export default {
     // when reset button clicked
     onResetToTemplate () {
       this.$Modal.confirm({
-        content: "Are you sure you want to reset your code?",
+        content: 'Are you sure you want to reset your code?',
         onOk: () => {
           const template = this.problem.template
           if (template && template[this.language]) {
@@ -394,7 +394,7 @@ export default {
     },
     submitCode () {
       if (this.code.trim() === '') {
-        this.$error("Code can not be empty")
+        this.$error('Code can not be empty')
         return
       }
       this.submissionId = ''
