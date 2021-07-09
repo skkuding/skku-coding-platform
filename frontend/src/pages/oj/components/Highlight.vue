@@ -36,7 +36,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="scss" scoped>
   pre {
     padding: 0;
     display: block;

@@ -380,194 +380,193 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
+  #sidebar-container {
+    height: 100%;
+    background: #24272D;
+    color: white;
 
-#sidebar-container {
-  height: 100%;
-  background: #24272D;
-  color: white;
+    .sidebar-row {
+      padding: 15px 15px;
+      padding-left: 25px;
 
-  .sidebar-row {
-    padding: 15px 15px;
-    padding-left: 25px;
+      .sidebar-icon {
+        margin-right: 7px;
+      }
 
-    .sidebar-icon {
-      margin-right: 7px;
-    }
-
-    h2 {
-      width: 100%;
-      margin-top: 10px;
-      margin-bottom: 20px;
-      font-size: 18px;
-    }
-
-    #problem-list {
-      margin-left: 30px;
-
-      li {
-        list-style-type: none;
+      h2 {
+        width: 100%;
         margin-top: 10px;
         margin-bottom: 20px;
         font-size: 18px;
       }
+
+      #problem-list {
+        margin-left: 30px;
+
+        li {
+          list-style-type: none;
+          margin-top: 10px;
+          margin-bottom: 20px;
+          font-size: 18px;
+        }
+      }
+    }
+
+    .bottom-border {
+      border-bottom: 1px solid #3B4F56;
     }
   }
 
-  .bottom-border {
-    border-bottom: 1px solid #3B4F56;
-  }
-}
+  /deep/ .modal {
+    .modal-dialog {
+      min-width: 1200px;
 
-/deep/ .modal {
-  .modal-dialog {
-    min-width: 1200px;
+      .modal-content {
+        color: white;
+        border: none;
+        border-radius: 10px;
+        background: #24272D;
+        box-shadow: 0px 0px 15px #000000;
 
-    .modal-content {
-      color: white;
-      border: none;
-      border-radius: 10px;
-      background: #24272D;
-      box-shadow: 0px 0px 15px #000000;
+        .modal-header {
+          border-bottom: none;
 
-      .modal-header {
-        border-bottom: none;
+          .modal-title-close {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
 
-        .modal-title-close {
-          width: 100%;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-
-          h1 {
-            display: inline-block;
-            margin-top: 10px;
-            margin-left: 10px;
-            font-size: 35px;
-          }
-
-          .close-icon {
-            font-size: 60px;
-          }
-        }
-      }
-
-      .modal-body {
-        padding: 0;
-
-        #clarifications-table {
-          table {
-            color: white;
-
-            th {
-              min-width: 230px;
-              padding: 15px 25px;
-              border: none;
+            h1 {
+              display: inline-block;
+              margin-top: 10px;
+              margin-left: 10px;
+              font-size: 35px;
             }
 
-            td {
-              min-width: 230px;
-              padding: 15px 25px;
-              border-top: 1px solid #3B4F56;
+            .close-icon {
+              font-size: 60px;
             }
           }
         }
 
-        #my-submissions-table, #all-submissions-table {
-          table {
-            color: white;
+        .modal-body {
+          padding: 0;
 
-            th {
-              min-width: 100px;
-              padding: 15px 25px;
-              border: none;
+          #clarifications-table {
+            table {
+              color: white;
+
+              th {
+                min-width: 230px;
+                padding: 15px 25px;
+                border: none;
+              }
+
+              td {
+                min-width: 230px;
+                padding: 15px 25px;
+                border-top: 1px solid #3B4F56;
+              }
             }
+          }
 
-            td {
-              min-width: 100px;
-              padding: 15px 25px;
-              border-top: 1px solid #3B4F56;
+          #my-submissions-table, #all-submissions-table {
+            table {
+              color: white;
+
+              th {
+                min-width: 100px;
+                padding: 15px 25px;
+                border: none;
+              }
+
+              td {
+                min-width: 100px;
+                padding: 15px 25px;
+                border-top: 1px solid #3B4F56;
+              }
             }
           }
-        }
 
-        #submission-info-table {
-          table {
-            color: white;
-            font-size: 15px;
-          }
-
-          tr th:first-child,
-          tr td:first-child {
-            padding-left: 50px;
-          }
-
-          tr th:last-child,
-          tr td:last-child {
-            padding-right: 50px;
-          }
-        }
-
-        #submission-source-code {
-          padding: 20px 50px;
-          padding-bottom: 40px;
-          color: white;
-
-          h3 {
-            font-size: 30px;
-            display: inline;
-          }
-          p {
-            font-size: 25px;
-          }
-        }
-
-        // occasional code indent css fix
-        /deep/ #submission-source-code .CodeMirror-sizer {
-          margin-left: 38px !important;
-        }
-
-        /deep/ #submission-source-code .CodeMirror-gutter-wrapper {
-          left: -38px !important;
-        }
-
-        #submission-detail-table {
-          table {
-            font-size: 13px;
-            color: white;
-            border-collapse: collapse;
-
-            th {
-              border: none;
-            }
-
-            td {
-              border-color: #3B4F56;
+          #submission-info-table {
+            table {
+              color: white;
+              font-size: 15px;
             }
 
             tr th:first-child,
             tr td:first-child {
-              padding-left: 70px;
+              padding-left: 50px;
             }
 
             tr th:last-child,
             tr td:last-child {
-              padding-right: 70px;
+              padding-right: 50px;
+            }
+          }
+
+          #submission-source-code {
+            padding: 20px 50px;
+            padding-bottom: 40px;
+            color: white;
+
+            h3 {
+              font-size: 30px;
+              display: inline;
+            }
+            p {
+              font-size: 25px;
+            }
+          }
+
+          // occasional code indent css fix
+          /deep/ #submission-source-code .CodeMirror-sizer {
+            margin-left: 38px !important;
+          }
+
+          /deep/ #submission-source-code .CodeMirror-gutter-wrapper {
+            left: -38px !important;
+          }
+
+          #submission-detail-table {
+            table {
+              font-size: 13px;
+              color: white;
+              border-collapse: collapse;
+
+              th {
+                border: none;
+              }
+
+              td {
+                border-color: #3B4F56;
+              }
+
+              tr th:first-child,
+              tr td:first-child {
+                padding-left: 70px;
+              }
+
+              tr th:last-child,
+              tr td:last-child {
+                padding-right: 70px;
+              }
             }
           }
         }
       }
     }
   }
-}
 
-/deep/ .pagination {
-  margin-left: 25px;
+  /deep/ .pagination {
+    margin-left: 25px;
 
-  .page-link {
-    background: #24272D;
-    border-color: #3B4F56;
-    color: white;
+    .page-link {
+      background: #24272D;
+      border-color: #3B4F56;
+      color: white;
+    }
   }
-}
 </style>
