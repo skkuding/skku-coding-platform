@@ -418,8 +418,8 @@ export default {
           this.submissionExists = true
           if (!detailsVisible) {
             this.$Modal.success({
-              title: "Success",
-              content: "Submit code successfully"
+              title: 'Success',
+              content: 'Submit code successfully'
             })
             return
           }
@@ -438,7 +438,7 @@ export default {
         if (this.submissionExists) {
           this.$Modal.confirm({
             title: '',
-            content: '<h3>' + "You have submission in this problem, sure to cover it?" + '<h3>',
+            content: '<h3>' + 'You have submission in this problem, sure to cover it?' + '<h3>',
             onOk: () => {
               // Temporarily solve the conflict between the dialog box
               // and the prompt dialog box behind (otherwise it will flash by)
