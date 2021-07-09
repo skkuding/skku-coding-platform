@@ -1,6 +1,6 @@
 <template>
   <b-button class="btn-cancel" variant="outline-primary" >
-    {{ $t('m.Cancel') }}
+    Cancel
   </b-button>
 </template>
 <script>

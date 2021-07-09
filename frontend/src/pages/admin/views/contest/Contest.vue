@@ -15,7 +15,7 @@
             <b-form-input
               id="ContestTitle"
               v-model="contest.title"
-              :placeholder="$t('m.ContestTitle')"
+              placeholder="Title"
             />
           </b-form-group>
         </b-col>
@@ -42,7 +42,7 @@
               type="datetime"
               :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
               locale="en"
-              :placeholder="$t('m.Contest_Start_Time')"
+              placeholder="Start Time"
               style = "margin-bottom:10px"
             />
             <b-form-timepicker
@@ -69,7 +69,7 @@
               type="datetime"
               :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
               locale="en"
-              :placeholder="$t('m.Contest_End_Time')"
+              placeholder="End Time"
               style="margin-bottom:10px"
             />
             <b-form-timepicker
@@ -89,7 +89,7 @@
             </template>
             <b-input
               v-model="contest.password"
-              :placeholder="$t('m.Contest_Password')"
+              placeholder="Password"
             />
           </b-form-group>
         </b-col>
@@ -136,7 +136,7 @@
                 <b-col cols="4">
                   <b-form-input
                     v-model="range.value"
-                    :placeholder="$t('m.CIDR_Network')"
+                    placeholder="CIDR Network"
                   />
                 </b-col>
                 <b-col cols="1">

@@ -15,7 +15,7 @@
             type="ghost"
             @click="goHome"
           >
-            {{ $t('m.Go_Home') }}
+            Go Home
           </Button>
           <Button
             size="large"
@@ -23,7 +23,7 @@
             type="primary"
             @click="backPage"
           >
-            {{ $t('m.Back') }}
+            Back
           </Button>
         </div>
       </Card>

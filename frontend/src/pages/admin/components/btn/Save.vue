@@ -1,6 +1,6 @@
 <template>
   <b-button class="btn-save" variant="primary">
-    {{ $t('m.Save') }}
+    Save
   </b-button>
 </template>
 <script>
