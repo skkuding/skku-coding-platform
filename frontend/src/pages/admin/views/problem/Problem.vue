@@ -261,7 +261,7 @@
       </b-row>
 
       <b-form-group v-if="problem.spj" style="margin-top: 20px;">
-        <Accordion :title="$t('m.Special_Judge_Code')">
+        <Accordion title="Special Judge Code">
           <template slot="header">
             <b-row style="align-items: center;">
               <span style="margin-right: 8px">SPJ Language</span>
@@ -540,7 +540,7 @@ export default {
       this.allLanguage = allLanguage
       // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
       if (this.mode === 'edit') {
-        this.title = this.$i18n.t('m.Edit_Problem')
+        this.title = 'Edit Problem'
         const funcName = { 'edit-problem': 'getProblem', 'edit-contest-problem': 'getContestProblem' }[this.routeName]
         api[funcName](this.$route.params.problemId).then(problemRes => {
           const data = problemRes.data.data
@@ -559,7 +559,7 @@ export default {
           })
         })
       } else {
-        this.title = this.$i18n.t('m.Add_Problem')
+        this.title = 'Add Problem'
         for (const item of allLanguage.languages) {
           this.problem.languages.push(item.name)
         }

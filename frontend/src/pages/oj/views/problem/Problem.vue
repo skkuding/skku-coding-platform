@@ -344,7 +344,7 @@ export default {
     // when reset button clicked
     onResetToTemplate () {
       this.$Modal.confirm({
-        content: this.$i18n.t('m.Are_you_sure_you_want_to_reset_your_code'),
+        content: "Are you sure you want to reset your code?",
         onOk: () => {
           const template = this.problem.template
           if (template && template[this.language]) {
@@ -394,7 +394,7 @@ export default {
     },
     submitCode () {
       if (this.code.trim() === '') {
-        this.$error(this.$i18n.t('m.Code_can_not_be_empty'))
+        this.$error("Code can not be empty")
         return
       }
       this.submissionId = ''
@@ -418,8 +418,8 @@ export default {
           this.submissionExists = true
           if (!detailsVisible) {
             this.$Modal.success({
-              title: this.$i18n.t('m.Success'),
-              content: this.$i18n.t('m.Submit_code_successfully')
+              title: "Success",
+              content: "Submit code successfully"
             })
             return
           }
@@ -438,7 +438,7 @@ export default {
         if (this.submissionExists) {
           this.$Modal.confirm({
             title: '',
-            content: '<h3>' + this.$i18n.t('m.You_have_submission_in_this_problem_sure_to_cover_it') + '<h3>',
+            content: '<h3>' + "You have submission in this problem, sure to cover it?" + '<h3>',
             onOk: () => {
               // Temporarily solve the conflict between the dialog box
               // and the prompt dialog box behind (otherwise it will flash by)

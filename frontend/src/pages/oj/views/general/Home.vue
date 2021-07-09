@@ -148,7 +148,7 @@ export default {
     },
     goContest (item) {
       if (item.contest_type !== CONTEST_TYPE.PUBLIC && !this.isAuthenticated) {
-        this.$error(this.$i18n.t('m.Please_login_first'))
+        this.$error('Please login first!')
         this.$store.dispatch('changeModalStatus', { visible: true })
       } else {
         this.$router.push({
