@@ -77,7 +77,7 @@ a {
 }
 
 .markdown-body {
-  @import './markdown.less';
+  @import './markdown.scss';
 }
 
 @keyframes fadeInUp {

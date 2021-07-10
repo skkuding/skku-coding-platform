@@ -18,7 +18,7 @@ import Panel from './components/Panel.vue'
 import IconBtn from './components/btn/IconBtn.vue'
 import Save from './components/btn/Save.vue'
 import Cancel from './components/btn/Cancel.vue'
-import './style.less'
+import './style.scss'
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {

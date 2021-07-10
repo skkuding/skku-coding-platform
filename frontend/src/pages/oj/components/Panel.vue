@@ -51,13 +51,13 @@ export default {
 }
 </script>
 
-<style lang="less">
-  @import (reference) '../../../styles/common.less';
+<style lang="scss">
+  @import '../../../styles/common.scss';
 
-  .panel-title {
+  /*.panel-title {
     .section-title;
     padding: 5px 15px;
-  }
+  }*/
 
   .panel-extra {
     line-height: 40px;
