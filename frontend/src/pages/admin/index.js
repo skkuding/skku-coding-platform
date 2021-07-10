@@ -12,6 +12,7 @@ import router from './router'
 import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
 import VueAnalytics from 'vue-analytics'
 import katex from '@/plugins/katex'
+import VueSimpleAlert from 'vue-simple-alert'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 
 import Panel from './components/Panel.vue'
@@ -34,6 +35,7 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 
 Vue.use(katex)
+Vue.use(VueSimpleAlert)
 Vue.use(VueDOMPurifyHTML)
 Vue.component(IconBtn.name, IconBtn)
 Vue.component(Panel.name, Panel)
@@ -42,20 +44,68 @@ Vue.component(Cancel.name, Cancel)
 
 Vue.config.devtools = true
 
-Vue.prototype.$error = (msg) => {
-  Vue.prototype.$message({ message: msg, type: 'error' })
+Vue.prototype.$info = (s) => {
+  s.length <= 15
+    ? Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 1500,
+      width: '225px',
+      type: 'info',
+      showConfirmButton: false
+    })
+    : Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 2500,
+      width: '350px',
+      type: 'info',
+      showConfirmButton: false
+    })
 }
-
-Vue.prototype.$warning = (msg) => {
-  Vue.prototype.$message({ message: msg, type: 'warning' })
+Vue.prototype.$error = (s) => {
+  s.length <= 15
+    ? Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 1500,
+      width: '225px',
+      type: 'error',
+      showConfirmButton: false
+    })
+    : Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 2500,
+      width: '350px',
+      type: 'error',
+      showConfirmButton: false
+    })
 }
-
-Vue.prototype.$success = (msg) => {
-  if (!msg) {
-    Vue.prototype.$message({ message: 'Succeeded', type: 'success' })
-  } else {
-    Vue.prototype.$message({ message: msg, type: 'success' })
-  }
+Vue.prototype.$success = (s) => {
+  s.length <= 15
+    ? Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 1500,
+      width: '225px',
+      type: 'success',
+      showConfirmButton: false
+    })
+    : Vue.prototype.$fire({
+      toast: true,
+      title: s,
+      position: 'top',
+      timer: 2500,
+      width: '350px',
+      type: 'success',
+      showConfirmButton: false
+    })
 }
 
 new Vue(Vue.util.extend({ router, store, i18n }, App)).$mount('#app')

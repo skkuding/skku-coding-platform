@@ -47,16 +47,10 @@ Vue.use(VueAnalytics, {
 })
 
 Vue.config.devtools = process.env.NODE_ENV !== 'production'
-// 注册全局消息提示
 
-Vue.prototype.$Message.config({
-  duration: 2
-})
-
-Vue.prototype.$info = (s, time = 1500) => {
-  const len = s.length
-  if (len <= 15) {
-    Vue.prototype.$fire({
+Vue.prototype.$info = (s) => {
+  s.length <= 15
+    ? Vue.prototype.$fire({
       toast: true,
       title: s,
       position: 'top',
@@ -65,22 +59,19 @@ Vue.prototype.$info = (s, time = 1500) => {
       type: 'info',
       showConfirmButton: false
     })
-  } else {
-    Vue.prototype.$fire({
+    : Vue.prototype.$fire({
       toast: true,
       title: s,
       position: 'top',
-      timer: 1500,
+      timer: 2500,
       width: '350px',
       type: 'info',
       showConfirmButton: false
     })
-  }
 }
-Vue.prototype.$error = (s, time = 1500) => {
-  const len = s.length
-  if (len <= 15) {
-    Vue.prototype.$fire({
+Vue.prototype.$error = (s) => {
+  s.length <= 15
+    ? Vue.prototype.$fire({
       toast: true,
       title: s,
       position: 'top',
@@ -89,41 +80,36 @@ Vue.prototype.$error = (s, time = 1500) => {
       type: 'error',
       showConfirmButton: false
     })
-  } else {
-    Vue.prototype.$fire({
+    : Vue.prototype.$fire({
       toast: true,
       title: s,
       position: 'top',
-      timer: 1500,
+      timer: 2500,
       width: '350px',
       type: 'error',
       showConfirmButton: false
     })
-  }
 }
-Vue.prototype.$success = (s, time = 1500) => {
-  const len = s.length
-  if (len <= 15) {
-    Vue.prototype.$fire({
+Vue.prototype.$success = (s) => {
+  s.length <= 15
+    ? Vue.prototype.$fire({
       toast: true,
       title: s,
       position: 'top',
-      timer: time,
+      timer: 1500,
       width: '225px',
       type: 'success',
       showConfirmButton: false
     })
-  } else {
-    Vue.prototype.$fire({
+    : Vue.prototype.$fire({
       toast: true,
       title: s,
       position: 'top',
-      timer: time,
+      timer: 2500,
       width: '350px',
       type: 'success',
       showConfirmButton: false
     })
-  }
 }
 
 new Vue(Vue.util.extend({ router, store, i18n }, App)).$mount('#app')
