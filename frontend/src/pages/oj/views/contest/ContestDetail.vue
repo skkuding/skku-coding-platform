@@ -168,7 +168,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
@@ -197,11 +197,13 @@ export default {
     width: 95% !important;
     margin: 0 auto;
   }
-  div.pagination{
-    margin-right: 5%;
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
+  div {
+    &.pagination{
+      margin-right: 5%;
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
   }
   .status-container {
     position: relative;
