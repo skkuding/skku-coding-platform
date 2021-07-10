@@ -57,10 +57,12 @@ body {
   position: relative;
 }
 
-a.emphasis{
-  color: #495060;
-  &:hover {
-    color: #2d8cf0;
+a {
+  &.emphasis{
+    color: #495060;
+    &:hover {
+      color: #2d8cf0;
+    }
   }
 }
 
