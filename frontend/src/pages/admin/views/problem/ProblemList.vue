@@ -221,9 +221,8 @@ export default {
       })
     },
     deleteProblem (id) {
-      this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', {
-        type: 'warning'
-      }).then(() => {
+      this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', 'warning', false
+      ).then(() => {
         const funcName = this.routeName === 'problem-list' ? 'deleteProblem' : 'deleteContestProblem'
         api[funcName](id).then(() => [
           this.getProblemList(this.currentPage - 1)

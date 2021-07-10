@@ -472,9 +472,8 @@ export default {
       })
     },
     deleteUsers (ids) {
-      this.$confirm('Sure to delete the user? The associated resources created by this user will be deleted as well, like problem, contest, announcement, etc.', 'confirm', {
-        type: 'warning'
-      }).then(() => {
+      this.$confirm('Sure to delete the user? The associated resources created by this user will be deleted as well, like problem, contest, announcement, etc.', 'confirm', 'warning', false
+      ).then(() => {
         api.deleteUsers(ids.join(',')).then(res => {
           this.getUserList(this.currentPage)
           this.selectedUserIDs = []

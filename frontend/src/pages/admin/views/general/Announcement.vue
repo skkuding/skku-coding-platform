@@ -247,11 +247,8 @@ export default {
       }).catch()
     },
     deleteAnnouncement (announcementId) {
-      this.$confirm('Are you sure you want to delete this announcement?', 'Warning', {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm('Are you sure you want to delete this announcement?', 'Warning', 'warning', false
+      ).then(() => {
         this.loading = true
         const funcName = this.contestID ? 'deleteContestAnnouncement' : 'deleteAnnouncement'
         api[funcName](announcementId).then(res => {

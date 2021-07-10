@@ -612,11 +612,8 @@ export default {
     },
     switchSpj () {
       if (this.testCaseUploaded) {
-        this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
+        this.$confirm('If you change problem judge method, you need to re-upload test cases', 'Warning', 'warning', false
+        ).then(() => {
           this.problem.spj = !this.problem.spj
           this.resetTestCase()
         }).catch(() => {
@@ -627,11 +624,8 @@ export default {
     },
     switchTestcase () {
       if (this.testCaseUploaded) {
-        this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
+        this.$confirm('If you change upload method, you need to re-upload testcases', 'Warning', 'warning', false
+        ).then(() => {
           this.testcase_file_upload = !this.testcase_file_upload
           this.resetTestCase()
         }).catch(() => {

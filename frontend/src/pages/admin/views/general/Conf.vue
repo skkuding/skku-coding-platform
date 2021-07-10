@@ -278,10 +278,17 @@ export default {
       }
     },
     testSMTPConfig () {
-      this.$prompt('Please input your email', '', {
-        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        inputErrorMessage: 'Error email format'
-      }).then(({ value }) => {
+      this.$prompt('Please input your email', '', '', 'info', {
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (/[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/.test(value)) {
+              resolve()
+            } else {
+              resolve('Error email format')
+            }
+          })
+        }
+      }).then((value) => {
         this.loadingBtnTest = true
         api.testSMTPConfig(value).then(() => {
           this.loadingBtnTest = false
