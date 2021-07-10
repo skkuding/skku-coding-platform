@@ -127,11 +127,8 @@ export default {
       })
     },
     deleteJudgeServer (hostname) {
-      this.$confirm('If you delete this judge server, it can\'t be used until next heartbeat', 'Warning', {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(() => {
+      this.$confirm('If you delete this judge server, it can\'t be used until next heartbeat', 'Warning', 'warning', false
+      ).then(() => {
         api.deleteJudgeServer(hostname).then(res =>
           this.refreshJudgeServerList()
         )
