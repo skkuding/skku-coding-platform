@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div id="container">
     <div>
       <SideMenu />
     </div>
@@ -126,7 +126,7 @@ export default {
     border-style: none
   }
 
-  .container {
+  #container {
     overflow: auto;
     font-weight: 400;
     height: 100%;
@@ -155,7 +155,7 @@ export default {
   .content-app {
     padding-top: 20px;
     padding-right: 10px;
-    padding-left: 10px;
+    padding-left: 210px;
   }
 
   .footer {

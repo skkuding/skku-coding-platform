@@ -127,7 +127,7 @@ export default {
 <style scoped lang="less">
   .vertical_menu {
     overflow: auto;
-    width: 205px;
+    width: 200px;
     height: 100%;
     position: fixed !important;
     z-index: 100;
