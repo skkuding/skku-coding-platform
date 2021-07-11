@@ -11,7 +11,7 @@
       :type="status.type"
       show-icon
     >
-      <span class="title">{{ $t('m.' + status.statusName.replace(/ /g, "_")) }}</span>
+      <span class="title">{{ status.statusName }}</span>
       <div
         slot="desc"
         class="content"
@@ -20,10 +20,10 @@
           <pre>{{ submission.statistic_info.err_info }}</pre>
         </template>
         <template v-else>
-          <span>{{ $t('m.Time') }}: {{ submission.statistic_info.time_cost | submissionTime }}</span>
-          <span>{{ $t('m.Memory') }}: {{ submission.statistic_info.memory_cost | submissionMemory }}</span>
-          <span>{{ $t('m.Lang') }}: {{ submission.language }}</span>
-          <span>{{ $t('m.Author') }}: {{ submission.username }}</span>
+          <span> Time : {{ submission.statistic_info.time_cost | submissionTime }}</span>
+          <span> Memory : {{ submission.statistic_info.memory_cost | submissionMemory }}</span>
+          <span> Lang : {{ submission.language }}</span>
+          <span> Author : {{ submission.username }}</span>
         </template>
       </div>
     </Alert>
@@ -61,7 +61,7 @@
         size="large"
         @click="shareSubmission(false)"
       >
-        {{ $t('m.UnShare') }}
+        UnShare
       </Button>
       <Button
         v-else
@@ -69,7 +69,7 @@
         size="large"
         @click="shareSubmission(true)"
       >
-        {{ $t('m.Share') }}
+        Share
       </Button>
     </div>
     </Col>
@@ -91,30 +91,30 @@ export default {
     return {
       columns: [
         {
-          title: this.$i18n.t('m.ID'),
+          title: 'ID',
           align: 'center',
           type: 'index'
         },
         {
-          title: this.$i18n.t('m.Status'),
+          title: 'Status',
           align: 'center',
           render: (h, params) => {
             return h('Tag', {
               props: {
                 color: JUDGE_STATUS[params.row.result].color
               }
-            }, this.$i18n.t('m.' + JUDGE_STATUS[params.row.result].name.replace(/ /g, '_')))
+            }, JUDGE_STATUS[params.row.result].name.replace(/ /g, '_'))
           }
         },
         {
-          title: this.$i18n.t('m.Memory'),
+          title: 'Memory',
           align: 'center',
           render: (h, params) => {
             return h('span', utils.submissionMemoryFormat(params.row.memory))
           }
         },
         {
-          title: this.$i18n.t('m.Time'),
+          title: 'Time',
           align: 'center',
           render: (h, params) => {
             return h('span', utils.submissionTimeFormat(params.row.cpu_time))
@@ -165,7 +165,7 @@ export default {
           if (data.info.data[0].score !== undefined) {
             this.isConcat = true
             const scoreColumn = {
-              title: this.$i18n.t('m.Score'),
+              title: 'Score',
               align: 'center',
               key: 'score'
             }
@@ -176,14 +176,14 @@ export default {
             this.isConcat = true
             const adminColumn = [
               {
-                title: this.$i18n.t('m.Real_Time'),
+                title: 'Real Time',
                 align: 'center',
                 render: (h, params) => {
                   return h('span', utils.submissionTimeFormat(params.row.real_time))
                 }
               },
               {
-                title: this.$i18n.t('m.Signal'),
+                title: 'Signal',
                 align: 'center',
                 key: 'signal'
               }
@@ -200,7 +200,7 @@ export default {
       const data = { id: this.submission.id, shared: shared }
       api.updateSubmission(data).then(res => {
         this.getSubmission()
-        this.$success(this.$i18n.t('m.Succeeded'))
+        this.$success('Succeeded')
       }, () => {
       })
     }
