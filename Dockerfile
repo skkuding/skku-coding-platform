@@ -1,8 +1,20 @@
-FROM python:3.7-alpine3.9
+# Build Stage
+FROM node:14-alpine AS builder
+
+ADD ./frontend /build
+WORKDIR /build
+
+RUN yarn install && \
+    yarn dll && \
+    yarn build
+
+# Deploy Stage
+FROM python:3.7-alpine3.13
 
 ENV OJ_ENV production
+ENV NODE_ENV production
 
-ADD . /app
+ADD ./backend /app
 WORKDIR /app
 
 HEALTHCHECK --interval=5s --retries=3 CMD python /app/deploy/health_check.py
@@ -11,8 +23,6 @@ RUN apk add --update --no-cache build-base nginx openssl curl unzip supervisor j
     pip install --no-cache-dir -r /app/deploy/requirements.txt && \
     apk del build-base --purge
 
-RUN curl -L  https://github.com/skku-npc/skku-coding-platform/releases/download/v0.1-alpha/dist.tar.gz -o dist.tar.gz && \
-    tar -zxf dist.tar.gz && \
-    rm dist.tar.gz
+COPY --from=builder /build/dist /app/dist
 
 ENTRYPOINT /app/deploy/entrypoint.sh
