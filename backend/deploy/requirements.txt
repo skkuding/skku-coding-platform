@@ -23,6 +23,7 @@ itypes==1.2.0
 Jinja2==2.11.3
 jsonfield==3.1.0
 jsonschema==3.2.0
+locust==1.6.0
 MarkupSafe==1.1.1
 mccabe==0.6.1
 packaging==20.9
