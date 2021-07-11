@@ -4,6 +4,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
     ? '/__STATIC_CDN_HOST__/'
     : '/',
+  productionSourceMap: false,
   pages: {
     oj: {
       entry: './src/pages/oj/index.js',
