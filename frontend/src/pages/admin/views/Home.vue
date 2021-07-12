@@ -154,7 +154,7 @@ export default {
 
   .content-app {
     padding-top: 20px;
-    padding-right: 10px;
+    padding-right: 20px;
     padding-left: 210px;
   }
 
