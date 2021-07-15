@@ -68,6 +68,16 @@ pre {
   margin-bottom: 15px;
   background: #f8f8f9;
   border: 1px dashed #e9eaec;
+
+  & > code {
+    padding: 0;
+    margin: 0;
+    font-size: 100%;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0;
+  }
 }
 
 code {
@@ -77,16 +87,6 @@ code {
   background-color: rgba(27, 31, 35, 0.05);
   border-radius: 3px;
   line-height: 1.5;
-}
-
-pre > code {
-  padding: 0;
-  margin: 0;
-  font-size: 100%;
-  word-break: normal;
-  white-space: pre;
-  background: transparent;
-  border: 0;
 }
 
 aside {
