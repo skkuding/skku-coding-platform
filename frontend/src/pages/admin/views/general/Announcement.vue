@@ -300,7 +300,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .title-input {
     margin-bottom: 20px;
   }

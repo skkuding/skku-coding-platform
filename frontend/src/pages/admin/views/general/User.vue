@@ -544,7 +544,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
   .import-user-icon {
     color: #555555;
     margin-left: 4px;
