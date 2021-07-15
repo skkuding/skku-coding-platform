@@ -62,7 +62,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 html, body {
   min-height: 100%;
   height: 100%;

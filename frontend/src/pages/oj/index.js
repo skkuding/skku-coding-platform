@@ -17,7 +17,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import '@/styles/bootstrap.scss'
-import '@/styles/index.less'
+import '@/styles/common.scss'
 
 import highlight from '@/plugins/highlight'
 import katex from '@/plugins/katex'
