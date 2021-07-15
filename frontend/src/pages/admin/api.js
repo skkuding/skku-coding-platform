@@ -170,6 +170,13 @@ export default {
       data
     })
   },
+  deleteContest (id) {
+    return ajax('admin/contest', 'delete', {
+      params: {
+        id
+      }
+    })
+  },
   getContestList (offset, limit, keyword) {
     const params = { paging: true, offset, limit }
     if (keyword) {

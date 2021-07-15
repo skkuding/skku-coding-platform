@@ -130,6 +130,29 @@ class ContestAPI(APIView):
             contests = contests.filter(title__contains=keyword)
         return self.success(self.paginate_data(request, contests, ContestAdminSerializer))
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a contest",
+                type=openapi.TYPE_INTEGER,
+            ),
+        ]
+    )
+    def delete(self, request):
+        id = request.GET.get("id")
+        if not id:
+            return self.error("Invalid parameter, id is required")
+        try:
+            contest = Contest.objects.get(id=id)
+        except Contest.DoesNotExist:
+            return self.error("Contest does not exists")
+        ensure_created_by(contest, request.user)
+
+        contest.delete()
+        return self.success()
+
 
 class ContestAnnouncementAPI(APIView):
     @swagger_auto_schema(

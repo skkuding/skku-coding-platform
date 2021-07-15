@@ -89,6 +89,11 @@
               icon="download"
               @click.native="openDownloadOptions(row.item.id)"
             />
+            <icon-btn
+              name="Delete Contest"
+              icon="trash"
+              @click.native="deleteContest(row.item.id)"
+            />
           </div>
         </template>
 
@@ -215,6 +220,14 @@ export default {
         name: 'contest-announcement',
         params: { contestId }
       })
+    },
+    async deleteContest (contestId) {
+      try {
+        await this.$confirm('Sure to delete this Contest? The associated problems will be deleted as well.', 'Delete Contest', 'warning', false)
+        await api.deleteContest(contestId)
+        await this.getContestList(this.currentPage - 1)
+      } catch (err) {
+      }
     },
     goContestProblemList (contestId) {
       this.$router.push({
