@@ -124,7 +124,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
   .vertical_menu {
     overflow: auto;
     width: 200px;

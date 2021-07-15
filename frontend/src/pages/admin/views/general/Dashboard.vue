@@ -257,7 +257,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
   .admin-info {
     margin-bottom: 20px;
     &-name {

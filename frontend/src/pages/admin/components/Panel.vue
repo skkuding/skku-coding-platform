@@ -39,7 +39,7 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
   .panel {
     margin-bottom: 20px;
     background-color: #fff;
@@ -81,7 +81,7 @@ export default {
     }
   }
 </style>
-<style lang="less">
+<style lang="scss">
   .panel-options {
     background-color: transparent;
     position: relative;

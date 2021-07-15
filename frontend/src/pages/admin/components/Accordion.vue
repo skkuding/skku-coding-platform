@@ -38,7 +38,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .accordion{
   border: 1px solid #eaeefb;
   header{

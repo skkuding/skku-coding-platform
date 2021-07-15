@@ -113,7 +113,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
   a {
     background-color: transparent;
   }
