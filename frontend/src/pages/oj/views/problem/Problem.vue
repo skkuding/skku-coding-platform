@@ -505,7 +505,7 @@ export default {
     async '$route' () {
       await this.init()
     },
-    contestEnded: () => {
+    contestEnded: function () {
       this.$error('Contest has ended :<')
     }
   },
