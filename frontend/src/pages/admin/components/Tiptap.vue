@@ -3,97 +3,97 @@
     <div v-if="editor">
       <b-button-toolbar class="mb-1">
         <b-button-group class="mr-2">
-          <b-button size="sm" title="Bold(Ctrl+B/Cmd+B)" type="button" variant="outline-dark" @click="editor.chain().focus().toggleBold().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('bold') }">
+          <b-button size="sm" title="Bold(Ctrl+B/Cmd+B)" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleBold().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('bold') }">
             <b-icon icon="type-bold"></b-icon>
           </b-button>
-          <b-button size="sm" title="Italic(Ctrl+I/Cmd+i)" type="button" variant="outline-dark" @click="editor.chain().focus().toggleItalic().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('italic') }">
+          <b-button size="sm" title="Italic(Ctrl+I/Cmd+i)" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleItalic().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('italic') }">
             <b-icon icon="type-italic"></b-icon>
           </b-button>
-          <b-button size="sm" title="Strike" type="button" variant="outline-dark" @click="editor.chain().focus().toggleStrike().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('strike') }">
+          <b-button size="sm" title="Strike" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleStrike().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('strike') }">
             <b-icon icon="type-strikethrough"></b-icon>
           </b-button>
-          <b-button size="sm" title="Code" type="button" variant="outline-dark" @click="editor.chain().focus().toggleCode().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('code') }">
+          <b-button size="sm" title="Code" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleCode().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('code') }">
             <b-icon icon="code"></b-icon>
           </b-button>
-          <b-button size="sm" title="Unset Marks" type="button" variant="outline-dark" @click="editor.chain().focus().unsetAllMarks().run()">
+          <b-button size="sm" title="Unset Marks" type="button" variant="outline-secondary" @click="editor.chain().focus().unsetAllMarks().run()">
             <b-icon icon="x-square"></b-icon>
           </b-button>
         </b-button-group>
         <div class="divider"></div>
         <b-button-group class="mx-2">
-          <b-button size="sm" title="Heading 1" type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" class="EditorButton" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
+          <b-button size="sm" title="Heading 1" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" class="EditorButton" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
             <b-icon icon="type-h1"></b-icon>
           </b-button>
-          <b-button size="sm" title="Heading 2" type="button" variant="outline-dark" @click="editor.chain().focus().toggleHeading({ level: 4 }).run()" class="EditorButton" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">
+          <b-button size="sm" title="Heading 2" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleHeading({ level: 4 }).run()" class="EditorButton" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">
             <b-icon icon="type-h2"></b-icon>
           </b-button>
-          <b-button size="sm" title="Paragraph" type="button" variant="outline-dark" @click="editor.chain().focus().setParagraph().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('paragraph') }">
+          <b-button size="sm" title="Paragraph" type="button" variant="outline-secondary" @click="editor.chain().focus().setParagraph().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('paragraph') }">
             <b-icon icon="paragraph"></b-icon>
           </b-button>
-          <b-button size="sm" title="Bullet List" type="button" variant="outline-dark" @click="editor.chain().focus().toggleBulletList().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('bulletList') }">
+          <b-button size="sm" title="Bullet List" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleBulletList().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('bulletList') }">
             <b-icon icon="list-ul"></b-icon>
           </b-button>
-          <b-button size="sm" title="Ordered List" type="button" variant="outline-dark" @click="editor.chain().focus().toggleOrderedList().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('orderedList') }">
+          <b-button size="sm" title="Ordered List" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleOrderedList().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('orderedList') }">
             <b-icon icon="list-ol"></b-icon>
           </b-button>
-          <b-button size="sm" name="Code Block" type="button" variant="outline-dark" @click="editor.chain().focus().toggleCodeBlock().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('codeBlock') }">
+          <b-button size="sm" name="Code Block" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleCodeBlock().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('codeBlock') }">
             <b-icon icon="code-square"></b-icon>
           </b-button>
         </b-button-group>
         <div class="divider"></div>
         <b-button-group class="mx-2">
-          <b-button size="sm" title="Hard Break(Ctrl+Enter/Cmd+Enter)" type="button" variant="outline-dark" @click="editor.chain().focus().setHardBreak().run()">
+          <b-button size="sm" title="Hard Break(Ctrl+Enter/Cmd+Enter)" type="button" variant="outline-secondary" @click="editor.chain().focus().setHardBreak().run()">
             <b-icon icon="arrow-return-left"></b-icon>
           </b-button>
-          <b-button size="sm" title="Block Quote" type="button" variant="outline-dark" @click="editor.chain().focus().toggleBlockquote().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('blockquote') }">
+          <b-button size="sm" title="Block Quote" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleBlockquote().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('blockquote') }">
             <b-icon icon="blockquote-left"></b-icon>
           </b-button>
-          <b-button size="sm" title="Horizontal Rule" type="button" variant="outline-dark" @click="editor.chain().focus().setHorizontalRule().run()">
+          <b-button size="sm" title="Horizontal Rule" type="button" variant="outline-secondary" @click="editor.chain().focus().setHorizontalRule().run()">
             <b-icon icon="distribute-vertical"></b-icon>
           </b-button>
         </b-button-group>
         <div class="divider"></div>
         <b-button-group class="mx-2">
-          <b-button size="sm" title="Undo" type="button" variant="outline-dark" @click="editor.chain().focus().undo().run()">
+          <b-button size="sm" title="Undo" type="button" variant="outline-secondary" @click="editor.chain().focus().undo().run()">
             <b-icon icon="arrow-counterclockwise"></b-icon>
           </b-button>
-          <b-button size="sm" title="Redo" type="button" variant="outline-dark" @click="editor.chain().focus().redo().run()">
+          <b-button size="sm" title="Redo" type="button" variant="outline-secondary" @click="editor.chain().focus().redo().run()">
             <b-icon icon="arrow-clockwise"></b-icon>
           </b-button>
         </b-button-group>
         <div class="divider"></div>
         <b-button-group class="mx-2">
-          <b-button size="sm" title="Link" type="button" variant="outline-dark" :class="{ 'is-disabled': shouldDisableButton(editor.isActive('link')), 'is-active': editor.isActive('link') }"
-                     @click.prevent="editor.isActive('link') ? editor.chain().focus().unsetLink() : addLinkDialog()">
+          <b-button size="sm" title="Link" type="button" variant="outline-secondary" :class="{ 'is-disabled': shouldDisableButton(editor.isActive('link')), 'is-active': editor.isActive('link') }"
+                    @click.prevent="editor.isActive('link') ? editor.chain().focus().unsetLink() : addLinkDialog()">
             <b-icon icon="link"></b-icon>
           </b-button>
-          <b-button size="sm" title="Upload Image" type="button" variant="outline-dark" @click='openImageModal'>
+          <b-button size="sm" title="Upload Image" type="button" variant="outline-secondary" @click='openImageModal'>
             <b-icon icon="card-image"></b-icon>
           </b-button>
-          <b-button size="sm" title="Upload File" type="button" variant="outline-dark" @click='openFileModal'>
+          <b-button size="sm" title="Upload File" type="button" variant="outline-secondary" @click='openFileModal'>
             <b-icon icon="file-earmark-arrow-up"></b-icon>
           </b-button>
         </b-button-group>
       </b-button-toolbar>
     </div>
     <bubble-menu :editor="editor" v-if="editor">
-      <b-button size="sm" title="Bold(Ctrl+B/Cmd+B)" type="button" variant="outline-dark" @click="editor.chain().focus().toggleBold().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('bold') }">
+      <b-button size="sm" title="Bold(Ctrl+B/Cmd+B)" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleBold().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('bold') }">
         <b-icon icon="type-bold"></b-icon>
       </b-button>
-      <b-button size="sm" title="Italic(Ctrl+I/Cmd+i)" type="button" variant="outline-dark" @click="editor.chain().focus().toggleItalic().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('italic') }">
+      <b-button size="sm" title="Italic(Ctrl+I/Cmd+i)" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleItalic().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('italic') }">
         <b-icon icon="type-italic"></b-icon>
       </b-button>
-      <b-button size="sm" title="Strike(Ctrl+B/Cmd+B)" type="button" variant="outline-dark" @click="editor.chain().focus().toggleStrike().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('strike') }">
+      <b-button size="sm" title="Strike(Ctrl+B/Cmd+B)" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleStrike().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('strike') }">
         <b-icon icon="type-strikethrough"></b-icon>
       </b-button>
-      <b-button size="sm" title="Code" type="button" variant="outline-dark" @click="editor.chain().focus().toggleCode().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('code') }">
+      <b-button size="sm" title="Code" type="button" variant="outline-secondary" @click="editor.chain().focus().toggleCode().run()" class="EditorButton" :class="{ 'is-active': editor.isActive('code') }">
         <b-icon icon="code"></b-icon>
       </b-button>
-      <b-button size="sm" title="Link" type="button" variant="outline-dark" :class="{ 'is-disabled': shouldDisableButton(editor.isActive('link')), 'is-active': editor.isActive('link') }"
+      <b-button size="sm" title="Link" type="button" variant="outline-secondary" :class="{ 'is-disabled': shouldDisableButton(editor.isActive('link')), 'is-active': editor.isActive('link') }"
           @click.prevent="editor.isActive('link') ? editor.chain().focus().unsetLink() : addLinkDialog()">
         <b-icon icon="link"></b-icon>
       </b-button>
-      <b-button size="sm" title="Unset Marks" type="button" variant="outline-dark" @click="editor.chain().focus().unsetAllMarks().run()" class="EditorButton">
+      <b-button size="sm" title="Unset Marks" type="button" variant="outline-secondary" @click="editor.chain().focus().unsetAllMarks().run()" class="EditorButton">
         <b-icon icon="x-square"></b-icon>
       </b-button>
     </bubble-menu>
@@ -242,11 +242,11 @@ export default {
 
 .EditorButton:not(.is-active) {
   background: white;
-  color: black;
+  color: gray;
 }
 
 .EditorButton.is-active {
-  background: black;
+  background: gray;
   color: white;
 }
 .divider {
