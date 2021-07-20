@@ -179,7 +179,7 @@ export default {
   }
   .contest-list-card{
     margin: 0 auto;
-    width: 90%;
+    width: 70%;
     font-family: Manrope;
   }
   .top-bar {
