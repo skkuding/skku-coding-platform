@@ -610,11 +610,7 @@ export default {
       }
 
       .description-io {
-        ul,
-        ol {
-          padding: 0 1rem;
-        }
-
+        @import '../../../../styles/style.scss';
         code {
           background-color: #0D0D0D;
           color: #FFF;
@@ -622,17 +618,7 @@ export default {
 
         pre {
           background: #24272D;
-          color: #FFF;
           font-family: 'Manrope', monospace;
-          padding: 0.75rem 1rem;
-          border-radius: 0.5rem;
-
-          code {
-            color: inherit;
-            padding: 0;
-            background: none;
-            font-size: 0.8rem;
-          }
         }
 
         blockquote {
@@ -641,17 +627,7 @@ export default {
         }
 
         hr {
-          border: none;
           border-top: 2px solid rgba(#fcfcfc, 0.5);
-          margin: 2rem 0;
-          &.ProseMirror-selectednode {
-            outline: 3px solid #68CEF8;
-          }
-        }
-
-        img {
-          max-width: 100%;
-          height: auto;
         }
       }
 
