@@ -201,7 +201,7 @@ export default {
   }
   .problem-list-card{
     margin:0 auto;
-    width:90%;
+    width:70%;
     font-family:Manrope;
   }
   .problem-list-card .problem-list-table{

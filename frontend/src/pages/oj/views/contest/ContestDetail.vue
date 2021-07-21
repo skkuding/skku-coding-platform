@@ -15,6 +15,9 @@
         </div>
       </div>
     </div>
+    <div class="description">
+      <p v-dompurify-html=contest.description></p>
+    </div>
     <div class="table">
       <b-table
         hover
@@ -187,11 +190,19 @@ export default {
   }
   .contest-list-card {
     margin: 0 auto;
-    width: 90%;
+    width: 70%;
     font-family: Manrope;
   }
   .contest-list-card .problem-list-table {
     margin: 0 0 0 auto;
+  }
+  .description {
+    margin-left: 68px;
+    margin-right: 68px;
+
+    p {
+      margin-top: 1rem;
+    }
   }
   .table{
     width: 95% !important;
