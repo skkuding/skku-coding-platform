@@ -382,6 +382,7 @@ export default {
 
 <style lang="scss" scoped>
   #sidebar-container {
+    overflow: auto;
     height: 100%;
     background: #24272D;
     color: white;
