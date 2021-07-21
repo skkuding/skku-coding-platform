@@ -148,9 +148,11 @@ const actions = {
     try {
       const res = await api.getContestProblemList(rootState.route.params.contestID)
       res.data.data.sort((a, b) => {
-        if (a._id === b._id) {
+        const aId = isNaN(a._id) ? a._id : a._id * 1
+        const bId = isNaN(b._id) ? b._id : b._id * 1
+        if (aId === bId) {
           return 0
-        } else if (a._id > b._id) {
+        } else if (aId > bId) {
           return 1
         }
         return -1
