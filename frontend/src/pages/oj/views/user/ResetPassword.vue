@@ -144,18 +144,22 @@ export default {
     width:140px;
     margin-left:34px;
   }
-  /deep/ .modal-md > .modal-dialog > .modal-content > .modal-header {
-    padding-bottom:0;
-    padding-top:4px;
-  }
-  /deep/ .modal-md > .modal-dialog > .modal-content > .modal-body {
-    padding-top:0;
-  }
-  /deep/ .modal-md > .modal-dialog > .modal-content {
-    position:absolute;
-    top:auto;
-    left:auto;
-    right:auto;
-    bottom:auto;
+  /deep/ .modal-md {
+    .modal-dialog {
+      .modal-content {
+        position:absolute;
+        top:auto;
+        left:auto;
+        right:auto;
+        bottom:auto;
+        .modal-header {
+          padding-bottom:0;
+          padding-top:4px;
+        }
+        .modal-body {
+          padding-top:0;
+        }
+      }
+    }
   }
 </style>

@@ -208,11 +208,13 @@ export default {
     width: 95%;
     margin: 0 auto;
   }
-  div.pagination{
-    margin-right: 5%;
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
+  div {
+    &.pagination{
+      margin-right: 5%;
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
   }
   .category-container{
     display:flex;

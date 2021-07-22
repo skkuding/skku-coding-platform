@@ -114,21 +114,29 @@ export default {
       text-decoration-color: #8dc63f;
     }
   }
-  /deep/ .modal-med > .modal-dialog > .modal-content > .modal-header {
-    padding-bottom:0;
-    padding-top:4px;
+  /deep/ .modal-med {
+    .modal-dialog {
+      .modal-content {
+        position:absolute;
+        top:auto;
+        left:auto;
+        right:auto;
+        bottom:auto;
+        .modal-header {
+          padding-bottom:0;
+          padding-top:4px;
+        }
+        .modal-body {
+          padding-top:0;
+        }
+      }
+    }
   }
-  /deep/ .modal-med > .modal-dialog > .modal-content > .modal-body {
-    padding-top:0;
-  }
-  /deep/ .modal-med > .modal-dialog > .modal-content  {
-    position:absolute;
-    top:auto;
-    left:auto;
-    right:auto;
-    bottom:auto;
-  }
-  /deep/ .modal-big > .modal-dialog > .modal-content {
-    min-width:800px;
+  /deep/ .modal-big {
+    .modal-dialog {
+      .modal-content {
+        min-width:800px;
+      }
+    }
   }
 </style>

@@ -86,7 +86,7 @@ export default {
   .icons {
     margin-top:16px;
     margin-bottom:16px;
-    > a{
+    & > a{
       margin: 16px 16px 16px 16px;
     }
   }
