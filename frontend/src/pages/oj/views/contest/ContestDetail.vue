@@ -190,9 +190,9 @@ export default {
     margin: 0 auto;
     width: 70%;
     font-family: Manrope;
-  }
-  .contest-list-card .problem-list-table {
-    margin: 0 0 0 auto;
+    .problem-list-table {
+      margin: 0 0 0 auto;
+    }
   }
   .description {
     margin-left: 68px;

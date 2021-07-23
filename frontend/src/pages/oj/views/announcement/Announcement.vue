@@ -119,42 +119,9 @@ export default {
     text-align: right;
   }
   .announcement__content{
+    @import '@/styles/tiptapview.scss';
     margin: 30px 1rem;
     color: #696969;
-
-    ul,
-    ol {
-      padding: 0 1rem;
-    }
-
-    code {
-      background-color: rgba(#616161, 0.1);
-    }
-
-    pre {
-      background: #0D0D0D;
-      color: #FFF;
-      font-family: 'JetBrainsMono', monospace;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-
-      code {
-        color: inherit;
-        padding: 0;
-        background: none;
-        font-size: 0.8rem;
-      }
-    }
-
-    blockquote {
-      border-left: 2px solid rgba(#0d0d0d, 0.1);
-      padding-left: 1rem;
-    }
-
-    img {
-      max-width: 100%;
-      height: auto;
-    }
   }
   .announcement__pagination{
     margin: 120px 0 24px;

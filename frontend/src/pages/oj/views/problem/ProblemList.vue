@@ -203,16 +203,18 @@ export default {
     margin:0 auto;
     width:70%;
     font-family:Manrope;
+    .problem-list-table{
+      width: 95%;
+      margin: 0 auto;
+    }
   }
-  .problem-list-card .problem-list-table{
-    width: 95%;
-    margin: 0 auto;
-  }
-  div.pagination{
-    margin-right: 5%;
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
+  div {
+    &.pagination{
+      margin-right: 5%;
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
   }
   .category-container{
     display:flex;

@@ -176,17 +176,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .contest {
-    &-title {
-      font-style: italic;
-      font-size: 21px;
-    }
-    &-content {
-      padding: 0 70px 40px 70px;
-      &-description {
-        margin-top: 25px;
-      }
-    }
+  .contest-title {
+    font-style: italic;
+    font-size: 21px;
+  }
+
+  .contest-content {
+    padding: 0 70px 40px 70px;
+  }
+
+  .contest-content-description {
+    margin-top: 25px;
   }
 
   .post-area {
@@ -240,7 +240,7 @@ export default {
       display: none;
     }
 
-    & .title-field {
+    .title-field {
       width: 100%;
       display: inline-block;
       text-overflow: ellipsis;
@@ -248,7 +248,7 @@ export default {
       white-space: nowrap;
     }
 
-    & .date-field {
+    .date-field {
       // width: 125px;
       text-align: right;
     }

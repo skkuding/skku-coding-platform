@@ -175,7 +175,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
@@ -184,6 +184,10 @@ export default {
     margin: 0 auto;
     width: 70%;
     font-family: Manrope;
+    .table{
+      width: 95% !important;
+      margin: 0 auto;
+    }
   }
   .top-bar {
     margin-top: 40px;
@@ -192,15 +196,13 @@ export default {
   .title{
     color: #7C7A7B;
   }
-  .contest-list-card .table{
-    width: 95% !important;
-    margin: 0 auto;
-  }
-  div.pagination{
+  div{
+    &.pagination{
     margin-right: 5%;
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
+    }
   }
   .font-bold {
     font-family: manrope_bold;
