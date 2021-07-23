@@ -8,7 +8,7 @@ export default {
   name: 'Cancel'
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .btn-cancel {
     margin: 0px 5px;
   }

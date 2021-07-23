@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: 'InforCard',
+  name: 'InfoCard',
   props: {
     value: [String, Number],
     color: String,
@@ -62,8 +62,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-  @card-height: 90px;
+<style lang="scss" scoped>
+  $card-height: 90px;
 
   .info-card {
     display: inline-block;
@@ -71,31 +71,30 @@ export default {
     width: 250px;
     text-align: center;
     vertical-align: middle;
-
-    &-container {
-      height: 90px;
-      margin: 0px;
-      align-items: stretch;
-      justify-content: center;
-    }
-    &-icon {
-      line-height: @card-height;
-      color: white;
-      margin-top: calc( @card-height / 3 );
-    }
-    &-text {
-      p {
-        margin: 0;
-        .minor-text {
-          font-weight: 300;
-          margin-top: 2px;
-          font-size: 20px;
-        }
+  }
+  .info-card-container {
+    height: 90px;
+    margin: 0px;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .info-card-icon {
+    line-height: #{$card-height};
+    color: white;
+    margin-top: calc( #{$card-height} / 3 );
+  }
+  .info-card-text {
+    p {
+      margin: 0;
+      .minor-text {
+        font-weight: 300;
+        margin-top: 2px;
+        font-size: 20px;
       }
     }
   }
 
   .p-header {
-    padding-top: calc( @card-height / 6 );
+    padding-top: calc( #{$card-height} / 6 );
   }
 </style>
