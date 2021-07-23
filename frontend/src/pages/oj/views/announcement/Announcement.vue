@@ -119,7 +119,7 @@ export default {
     text-align: right;
   }
   .announcement__content{
-    @import '../../../../styles/style.scss';
+    @import '@/styles/tiptapview.scss';
     margin: 30px 1rem;
     color: #696969;
   }

@@ -610,7 +610,7 @@ export default {
       }
 
       .description-io {
-        @import '../../../../styles/style.scss';
+        @import '@/styles/tiptapview.scss';
         code {
           background-color: #0D0D0D;
           color: #FFF;
