@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="description">
-      <p v-dompurify-html=contest.description></p>
+      <p v-dompurify-html="contest.description"></p>
     </div>
     <div class="table">
       <b-table
