@@ -203,10 +203,10 @@ export default {
     margin:0 auto;
     width:70%;
     font-family:Manrope;
-  }
-  .problem-list-card .problem-list-table{
-    width: 95%;
-    margin: 0 auto;
+    .problem-list-table{
+      width: 95%;
+      margin: 0 auto;
+    }
   }
   div {
     &.pagination{
