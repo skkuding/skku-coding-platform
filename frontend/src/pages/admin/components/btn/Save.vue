@@ -8,7 +8,7 @@ export default {
   name: 'Save'
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .btn-save {
     margin: 0px 5px;
   }
