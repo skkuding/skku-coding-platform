@@ -62,3 +62,22 @@ services:
     ports:
       - "0.0.0.0:80:8000"
       - "0.0.0.0:443:1443"
+
+  pgbouncer:
+    image: edoburu/pgbouncer
+    container_name: pgbouncer
+    depends_on:
+      - oj-postgres
+    environment:
+      - DB_USER=onlinejudge
+      - DB_PASSWORD=onlinejudge
+      - DB_HOST=oj-postgres
+      - DB_NAME=onlinejudge
+      - ADMIN_USERS=onlinejudge
+      - DB_PORT=5432
+      - LISTEN_PORT=6543 
+      - POOL_MODE=transaction
+      - SERVER_CHECK_DELAY=3000 
+      - MAX_CLIENT_CONN=3000 
+      - MIN_POOL_SIZE=100
+      - DEFAULT_POOL_SIZE=100

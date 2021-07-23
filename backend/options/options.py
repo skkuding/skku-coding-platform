@@ -117,7 +117,7 @@ class OptionDefaultValue:
     smtp_config = {}
     judge_server_token = default_token
     throttling = {"ip": {"capacity": 100, "fill_rate": 0.1, "default_capacity": 50},
-                  "user": {"capacity": 20, "fill_rate": 0.03, "default_capacity": 10}}
+                  "user": {"capacity": 20, "fill_rate": 0.2, "default_capacity": 10}}
     languages = languages
 
 
