@@ -206,35 +206,24 @@
             :theme="theme"
           />
         </b-row>
-        <b-row id="run-results">
-          <b-table :items="runResults" caption-top bordered outlined small dark hover>
-            <template #table-caption class="fs-3">Run Result</template>
-          </b-table>
-          <!-- <b-col id="run-results__input">
-            <li v-for="(input, index) in runResults.map((runResult) => (runResult.input))" :key="index">
-              {{ index }} : {{ input }}
-            </li>
-          </b-col>
-          <b-col id="run-results__output">
-            <li v-for="(output, index) in runResults.map((runResult) => (runResult.output))" :key="index">
-              {{ index }} : {{ output }}
-            </li>
-          </b-col> -->
-        </b-row>
-        <!-- <b-row id="io">
+        <b-row id="io">
           <b-row class="io-header">
+            <b-col class="io-header-cell right-border" cols="2">Number</b-col>
             <b-col class="io-header-cell right-border">Input</b-col>
             <b-col class="io-header-cell">Output</b-col>
           </b-row>
           <b-row class="io-content">
-            <b-col class="io-content-cell right-border">
-              <pre></pre>
+            <b-col class="io-content-cell right-border" cols="2">
+              <pre class="sample-io" v-for="index in runResults.length" :key="index">{{ index }}</pre>
             </b-col>
-            <b-col class="io-content-cell">
-              <pre></pre>
+            <b-col class="io-content-cell right-border">
+              <pre class="sample-io" v-for="(input, index) in runResults.map((runResult) => (runResult.input))" :key="index">{{ input }}</pre>
+            </b-col>
+            <b-col class="io-content-cell" >
+              <pre class="sample-io" v-for="(output, index) in runResults.map((runResult) => (runResult.output))" :key="index">{{ output }}</pre>
             </b-col>
           </b-row>
-        </b-row> -->
+        </b-row>
       </b-col>
     </b-row>
     <b-sidebar id="sidebar" no-header backdrop>
@@ -303,7 +292,7 @@ export default {
       tempUserTestcases: [],
       userTestcases: [],
       // CodeMirror
-      runResults: [{ input: 'input1', output: 'output1' }, { input: 'input2', output: 'output2' }],
+      runResults: [],
       code: '',
       language: 'C++',
       theme: 'material',
@@ -424,7 +413,6 @@ export default {
         try {
           const res = await api.getSubmission(id)
           this.result = res.data.data
-          console.log(this.result)
           if (Object.keys(res.data.data.statistic_info).length !== 0) {
             this.submitting = false
             this.submitted = false
@@ -510,8 +498,7 @@ export default {
       const checkStatus = () => {
         api.getRunResult(runID).then(res => {
           if (res.length !== 0) {
-            console.log(res)
-            // this.runResults = res.data.data
+            this.runResults = res.data.data
             clearTimeout(this.runRefresh)
           } else {
             this.runRefresh = setTimeout(checkStatus, 2000)
@@ -537,28 +524,20 @@ export default {
         var testcases = this.problem.samples.concat(this.userTestcases)
         data.new_testcase = testcases.map(testcase => testcase.input)
       }
-      console.log('run this data')
-      console.log(data)
       api.runCode(data).then(res => {
-        console.log(res.data.data)
         this.checkRunState(res.data.data)
       })
     },
     tempStoreUserTestcase () {
-      console.log('tempUserTestcase')
       this.tempUserTestcases = JSON.parse(JSON.stringify(this.userTestcases))
     },
     beforeHideUserTestcaseModal (bvModalEvt) {
-      console.log('beforeHide')
       if (bvModalEvt.trigger === 'ok') {
-        console.log('OK!')
       } else {
         this.userTestcases = JSON.parse(JSON.stringify(this.tempUserTestcases))
-        console.log('restore!')
       }
     },
     saveUserTestcase (bvModalEvt) {
-      console.log('handleUserTestcase')
       for (const userTestcase of this.userTestcases) {
         if (userTestcase.input === '') {
           this.$error('Testcase Should not be empty')
@@ -790,11 +769,6 @@ export default {
         padding: 0;
         flex: 1 1 auto;
       }
-      #run-results {
-        margin: 0;
-        padding: 0px 15px;
-        flex: 0 1 auto;
-      }
       #io {
         margin: 0;
         padding: 0;
@@ -830,6 +804,13 @@ export default {
 
           .io-content-cell {
             padding: 10px 15px;
+
+            .sample-io {
+              min-height: 40px;
+              border-radius: 5px;
+              background: #24272D;
+              color: white;
+            }
           }
         }
       }
