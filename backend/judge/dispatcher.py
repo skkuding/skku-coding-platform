@@ -238,8 +238,6 @@ class JudgeDispatcher(DispatcherBase):
             "spj_src": self.problem.spj_code,
             "io_mode": self.problem.io_mode
         }
-        data["output"] = True
-        data["test_case"] = [{"input": "30", "output":"31"}, {"input": "70", "output":"71"} ]
 
         with ChooseJudgeServer() as server:
             if not server:
