@@ -2,6 +2,7 @@ import ipaddress
 import logging
 import uuid
 import time
+import json
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -73,9 +74,13 @@ class CodeRunAPI(APIView):
     @login_required
     def get(self, request):
         run_id = request.GET.get("run_id")
+        if not cache.hexists("run", run_id):
+            return self.error("redis hash field error - such field doesn't exist")
+            
         time.sleep(2)
         res = cache.hget("run", run_id)
         res = res.decode("utf-8")
+        res = json.loads(res)
         cache.hdel("run", run_id)
 
         tmp = cache.hget("run", run_id) 

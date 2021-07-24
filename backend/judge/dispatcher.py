@@ -157,16 +157,19 @@ class CodeRunDispatcher(DispatcherBase):
             resp = self._request(urljoin(server.service_url, "/judge"), data=data)
 
         if not resp:
-            pass
+            cache.hset("run", run_id, json.dumps("System Error"))
 
-        if resp["err"]: # compile error.
-            pass
-        
-        output_data = resp["data"]
-        outputs = []
-        for i in range(len(output_data)):
-            outputs.append(output_data[i]["output"])
-        cache.hset("run", run_id, json.dumps(outputs))
+        elif resp["err"]:
+            cache.hset("run", run_id, json.dumps(resp))
+            
+        else:
+            output_data = resp["data"]
+            outputs = {}
+            outputs["err"] = None
+            outputs["data"] = {}
+            for i in range(len(output_data)):
+                outputs["data"]["tc"+str(i+1)] = output_data[i]["output"]
+            cache.hset("run", run_id, json.dumps(outputs))
 
         # At this point, the judgment is over, try to process the remaining tasks in the task queue
         process_pending_task_run()
