@@ -93,6 +93,29 @@
           <b-form-input v-model="captchaCode" id="captcha-code"/>
         </b-nav-item>
         <b-nav-item>
+          <b-button v-b-modal.testcase variant = "primary">Add Testcase </b-button>
+          <b-modal id="testcase" title="Add Testcase" size="lg">
+            <b-card>
+              <b-card-title> Inputs
+                <b-button class = "btn float-right" @click="add" variant="primary">
+                  Add
+                </b-button>
+              </b-card-title>
+              <hr>
+              <div class="form-group" v-for="(input,k) in inputs" :key="k">
+                <b-input-group>
+                  <b-form-input type="text" class="form-control" v-model="input.name" />
+                    <b-input-group-append>
+                      <b-button @click="remove(k)" v-show="k || ( !k && inputs.length > 1)">
+                        <b-icon icon="dash-circle-fill" />
+                      </b-button>
+                    </b-input-group-append>
+                </b-input-group>
+              </div>
+            </b-card>
+          </b-modal>
+        </b-nav-item>
+        <b-nav-item>
           <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
             <b-icon icon="arrow-clockwise" scale="1.1"/>
           </b-button>
@@ -252,7 +275,11 @@ export default {
         tags: [],
         io_mode: { io_mode: 'Standard IO' }
       },
-
+      inputs: [
+        {
+          name: ''
+        }
+      ],
       // CodeMirror
       code: '',
       language: 'C++',
@@ -491,6 +518,12 @@ export default {
         console.log(res.data.data)
         this.checkRunState(res.data.data)
       })
+    },
+    add () {
+      this.inputs.push({ name: '' })
+    },
+    remove (index) {
+      this.inputs.splice(index, 1)
     }
   },
   computed: {
