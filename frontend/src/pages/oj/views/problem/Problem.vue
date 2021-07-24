@@ -206,6 +206,21 @@
             :theme="theme"
           />
         </b-row>
+        <b-row id="run-results">
+          <b-table :items="runResults" caption-top bordered outlined small dark hover>
+            <template #table-caption class="fs-3">Run Result</template>
+          </b-table>
+          <!-- <b-col id="run-results__input">
+            <li v-for="(input, index) in runResults.map((runResult) => (runResult.input))" :key="index">
+              {{ index }} : {{ input }}
+            </li>
+          </b-col>
+          <b-col id="run-results__output">
+            <li v-for="(output, index) in runResults.map((runResult) => (runResult.output))" :key="index">
+              {{ index }} : {{ output }}
+            </li>
+          </b-col> -->
+        </b-row>
         <!-- <b-row id="io">
           <b-row class="io-header">
             <b-col class="io-header-cell right-border">Input</b-col>
@@ -288,6 +303,7 @@ export default {
       tempUserTestcases: [],
       userTestcases: [],
       // CodeMirror
+      runResults: [{ input: 'input1', output: 'output1' }, { input: 'input2', output: 'output2' }],
       code: '',
       language: 'C++',
       theme: 'material',
@@ -495,6 +511,7 @@ export default {
         api.getRunResult(runID).then(res => {
           if (res.length !== 0) {
             console.log(res)
+            // this.runResults = res.data.data
             clearTimeout(this.runRefresh)
           } else {
             this.runRefresh = setTimeout(checkStatus, 2000)
@@ -773,7 +790,11 @@ export default {
         padding: 0;
         flex: 1 1 auto;
       }
-
+      #run-results {
+        margin: 0;
+        padding: 0px 15px;
+        flex: 0 1 auto;
+      }
       #io {
         margin: 0;
         padding: 0;
