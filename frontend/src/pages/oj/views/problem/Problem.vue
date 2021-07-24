@@ -98,7 +98,7 @@
           </b-button>
         </b-nav-item>
         <b-nav-item>
-          <b-button class="btn">
+          <b-button class="btn" @click="runCode">
             <b-icon icon="play" scale="1.4"/>
             Run
           </b-button>
@@ -374,6 +374,7 @@ export default {
         try {
           const res = await api.getSubmission(id)
           this.result = res.data.data
+          console.log(this.result)
           if (Object.keys(res.data.data.statistic_info).length !== 0) {
             this.submitting = false
             this.submitted = false
@@ -454,6 +455,42 @@ export default {
       } else {
         await submitFunc(data, true)
       }
+    },
+    checkRunState (runID) {
+      const checkStatus = () => {
+        api.getRunResult(runID).then(res => {
+          if (res.length !== 0) {
+            console.log(res)
+            clearTimeout(this.runRefresh)
+          } else {
+            this.runRefresh = setTimeout(checkStatus, 2000)
+          }
+        })
+      }
+      this.runRefresh = setTimeout(checkStatus, 2000)
+    },
+    runCode () {
+      if (this.code.trim() === '') {
+        this.$error(this.$i18n.t('m.Code_can_not_be_empty'))
+        return
+      }
+      const data = {
+        problem_id: this.problem.id,
+        language: this.language,
+        code: this.code,
+        contest_id: this.contestID,
+        new_testcase: null
+      }
+      var isNewTestcase = true // for test
+      if (isNewTestcase) {
+        data.new_testcase = ['10', '11', '12', '13']
+      }
+      console.log('run this data')
+      console.log(data)
+      api.runCode(data).then(res => {
+        console.log(res.data.data)
+        this.checkRunState(res.data.data)
+      })
     }
   },
   computed: {

@@ -31,6 +31,16 @@ def process_pending_task():
             judge_task.send(**data)
 
 
+def process_pending_task_run():
+    if cache.llen(CacheKey.run_waiting_queue): 
+        # Prevent loop introduction
+        from judge.tasks import coderun_task
+        tmp_data = cache.rpop(CacheKey.run_waiting_queue)
+        if tmp_data:
+            data = json.loads(tmp_data.decode("utf-8"))
+            coderun_task.send(**data)
+
+
 class ChooseJudgeServer:
     def __init__(self):
         self.server = None
@@ -87,6 +97,79 @@ class SPJCompiler(DispatcherBase):
                 return "Failed to call judge server"
             if result["err"]:
                 return result["data"]
+
+
+class CodeRunDispatcher(DispatcherBase):
+    def __init__(self, data):
+        super().__init__()
+        self.run_data = data
+        self.contest_id = data.get("contest_id")
+        problem_id = self.run_data["problem_id"]
+
+        if self.contest_id:
+            self.problem = Problem.objects.select_related("contest").get(id=problem_id, contest_id=self.contest_id)
+            self.contest = self.problem.contest
+        else:
+            self.problem = Problem.objects.get(id=problem_id)
+
+    def judge(self):
+        language = self.run_data["language"]
+        sub_config = list(filter(lambda item: language == item["name"], SysOptions.languages))[0]
+        spj_config = {}
+        if self.problem.spj_code:
+            for lang in SysOptions.spj_languages:
+                if lang["name"] == self.problem.spj_language:
+                    spj_config = lang["spj"]
+                    break
+
+        if language in self.problem.template:
+            template = parse_problem_template(self.problem.template[language])
+            code = f"{template['prepend']}\n{self.run_data.code}\n{template['append']}"
+        else:
+            code = self.run_data["code"]
+
+        data = {
+            "language_config": sub_config["config"],
+            "src": code,
+            "max_cpu_time": self.problem.time_limit,
+            "max_memory": 1024 * 1024 * self.problem.memory_limit,
+            "test_case_id": None,
+            "test_case": self.problem.samples,
+            "output": True,
+            "spj_version": self.problem.spj_version,
+            "spj_config": spj_config.get("config"),
+            "spj_compile_config": spj_config.get("compile"),
+            "spj_src": self.problem.spj_code,
+            "io_mode": self.problem.io_mode
+        }
+
+        if self.run_data["new_testcase"]:
+            for testcases in self.run_data["new_testcase"]:
+                data["test_case"].append({"input": testcases, "output": ""})
+
+        run_id = self.run_data["run_id"] 
+
+        with ChooseJudgeServer() as server:
+            if not server:
+                cache.lpush(CacheKey.running_waiting_queue, json.dumps(self.run_data)) 
+                return
+            
+            resp = self._request(urljoin(server.service_url, "/judge"), data=data)
+
+        if not resp:
+            pass
+
+        if resp["err"]: # compile error.
+            pass
+        
+        output_data = resp["data"]
+        outputs = []
+        for i in range(len(output_data)):
+            outputs.append(output_data[i]["output"])
+        cache.hset("run", run_id, json.dumps(outputs))
+
+        # At this point, the judgment is over, try to process the remaining tasks in the task queue
+        process_pending_task_run()
 
 
 class JudgeDispatcher(DispatcherBase):
@@ -152,6 +235,8 @@ class JudgeDispatcher(DispatcherBase):
             "spj_src": self.problem.spj_code,
             "io_mode": self.problem.io_mode
         }
+        data["output"] = True
+        data["test_case"] = [{"input": "30", "output":"31"}, {"input": "70", "output":"71"} ]
 
         with ChooseJudgeServer() as server:
             if not server:

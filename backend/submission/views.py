@@ -1,11 +1,14 @@
 import ipaddress
+import logging
+import uuid
+import time
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from account.decorators import login_required, check_contest_permission
 from contest.models import ContestStatus, ContestRuleType
-from judge.tasks import judge_task
+from judge.tasks import judge_task, coderun_task
 from options.options import SysOptions
 # from judge.dispatcher import JudgeDispatcher
 from problem.models import Problem, ProblemRuleType
@@ -17,6 +20,68 @@ from .models import Submission
 from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
                           ShareSubmissionSerializer)
 from .serializers import SubmissionSafeModelSerializer, SubmissionListSerializer
+
+logger = logging.getLogger(__name__)
+
+
+class CodeRunAPI(APIView):
+    def throttling(self, request):
+        user_bucket = TokenBucket(key=str(request.user.id),
+                                  redis_conn=cache, **SysOptions.throttling["user"])
+        can_consume, wait = user_bucket.consume()
+        if not can_consume:
+            return "Please wait %d seconds" % (int(wait))
+
+    @login_required
+    def post(self, request):
+        data = request.data
+        hide_id = False
+        if data.get("contest_id"):
+            error = self.check_contest_permission(request)
+            if error:
+                return error
+            contest = self.contest
+            if not contest.problem_details_permission(request.user):
+                hide_id = True
+
+        if data.get("captcha"):
+            if not Captcha(request).check(data["captcha"]):
+                return self.error("Invalid captcha")
+        error = self.throttling(request)
+        if error:
+            return self.error(error)
+
+        try:
+            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), visible=True)
+        except Problem.DoesNotExist:
+            return self.error("Problem not exist")
+        if data["language"] not in problem.languages:
+            return self.error(f"{data['language']} is now allowed in the problem")
+
+        run_data = {}
+        run_data["language"] = data["language"]
+        run_data["code"] = data["code"] 
+        run_data["contest_id"] = data.get("contest_id")
+        run_data["new_testcase"] = data.get("new_testcase")
+        run_data["problem_id"] = problem.id
+        run_id = uuid.uuid4().hex
+        run_data["run_id"] = run_id
+        
+        coderun_task.send(run_data)
+        return self.success(run_id)
+
+    @login_required
+    def get(self, request):
+        run_id = request.GET.get("run_id")
+        time.sleep(2)
+        res = cache.hget("run", run_id)
+        res = res.decode("utf-8")
+        cache.hdel("run", run_id)
+
+        tmp = cache.hget("run", run_id) 
+        if tmp:
+            logger.warning('run data is not deleted.')
+        return self.success(res)
 
 
 class SubmissionAPI(APIView):
@@ -73,7 +138,6 @@ class SubmissionAPI(APIView):
                                                ip=request.session["ip"],
                                                contest_id=data.get("contest_id"))
         # use this for debug
-        # JudgeDispatcher(submission.id, problem.id).judge()
         judge_task.send(submission.id, problem.id)
         if hide_id:
             return self.success()
