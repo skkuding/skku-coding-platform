@@ -25,30 +25,27 @@ from .serializers import SubmissionSafeModelSerializer, SubmissionListSerializer
 logger = logging.getLogger(__name__)
 
 
-class CodeRunAPI(APIView):
-    def throttling(self, request):
-        user_bucket = TokenBucket(key=str(request.user.id),
-                                  redis_conn=cache, **SysOptions.throttling["user"])
-        can_consume, wait = user_bucket.consume()
-        if not can_consume:
-            return "Please wait %d seconds" % (int(wait))
+def throttling(request):
+    user_bucket = TokenBucket(key=str(request.user.id),
+                                redis_conn=cache, **SysOptions.throttling["user"])
+    can_consume, wait = user_bucket.consume()
+    if not can_consume:
+        return "Please wait %d seconds" % (int(wait))
 
+class CodeRunAPI(APIView):
     @login_required
     def post(self, request):
         data = request.data
-        hide_id = False
+        
         if data.get("contest_id"):
             error = self.check_contest_permission(request)
             if error:
                 return error
-            contest = self.contest
-            if not contest.problem_details_permission(request.user):
-                hide_id = True
 
         if data.get("captcha"):
             if not Captcha(request).check(data["captcha"]):
                 return self.error("Invalid captcha")
-        error = self.throttling(request)
+        error = throttling(request)
         if error:
             return self.error(error)
 
@@ -90,13 +87,6 @@ class CodeRunAPI(APIView):
 
 
 class SubmissionAPI(APIView):
-    def throttling(self, request):
-        user_bucket = TokenBucket(key=str(request.user.id),
-                                  redis_conn=cache, **SysOptions.throttling["user"])
-        can_consume, wait = user_bucket.consume()
-        if not can_consume:
-            return "Please wait %d seconds" % (int(wait))
-
     @check_contest_permission(check_type="problems")
     def check_contest_permission(self, request):
         contest = self.contest
@@ -125,7 +115,7 @@ class SubmissionAPI(APIView):
         if data.get("captcha"):
             if not Captcha(request).check(data["captcha"]):
                 return self.error("Invalid captcha")
-        error = self.throttling(request)
+        error = throttling(request)
         if error:
             return self.error(error)
 
