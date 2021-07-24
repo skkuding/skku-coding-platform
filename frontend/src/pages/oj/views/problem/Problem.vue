@@ -93,25 +93,34 @@
           <b-form-input v-model="captchaCode" id="captcha-code"/>
         </b-nav-item>
         <b-nav-item>
-          <b-button v-b-modal.testcase variant = "primary">Add Testcase </b-button>
-          <b-modal id="testcase" title="Add Testcase" size="lg">
+          <b-button v-b-modal.modal-user-testcase variant = "primary">Add Testcase </b-button>
+          <b-modal id="modal-user-testcase" ref="modal" title="Add Testcase" size="lg" cancel-disabled
+            @hidden="handleUserTestcaseInput" @ok="handleUserTestcaseInput">
             <b-card>
-              <b-card-title> Inputs
-                <b-button class = "btn float-right" @click="add" variant="primary">
+              <b-card-title>
+                Add Testcase
+                <b-button class = "btn float-right" @click="addTestcaseInput" variant="primary">
                   Add
                 </b-button>
               </b-card-title>
               <hr>
-              <div class="form-group" v-for="(input,k) in inputs" :key="k">
+              <b-form-group disabled v-for="(sample, index) in problem.samples" :key="index">
                 <b-input-group>
-                  <b-form-input type="text" class="form-control" v-model="input.name" />
-                    <b-input-group-append>
-                      <b-button @click="remove(k)" v-show="k || ( !k && inputs.length > 1)">
-                        <b-icon icon="dash-circle-fill" />
-                      </b-button>
-                    </b-input-group-append>
+                  <b-form-input type="text" class="form-control" v-model="sample.input">
+                  </b-form-input>
                 </b-input-group>
-              </div>
+              </b-form-group>
+              <b-form-group v-for="(userTestCaseInput,index) in userTestcaseInputs" :key="index" invalid-feedback="Testcase cannot be empty">
+                <b-input-group>
+                  <b-form-input type="text" class="form-control" v-model="userTestCaseInput.input">
+                  </b-form-input>
+                  <b-input-group-append>
+                    <b-button @click="removeTestcaseInput(index)">
+                      <b-icon icon="dash-circle-fill" />
+                    </b-button>
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
             </b-card>
           </b-modal>
         </b-nav-item>
@@ -265,6 +274,7 @@ export default {
       problem: {
         title: '',
         description: '',
+        samples: [],
         hint: '',
         my_status: '',
         template: {},
@@ -275,11 +285,7 @@ export default {
         tags: [],
         io_mode: { io_mode: 'Standard IO' }
       },
-      inputs: [
-        {
-          name: ''
-        }
-      ],
+      userTestcaseInputs: [],
       // CodeMirror
       code: '',
       language: 'C++',
@@ -498,7 +504,7 @@ export default {
     },
     runCode () {
       if (this.code.trim() === '') {
-        this.$error(this.$i18n.t('m.Code_can_not_be_empty'))
+        this.$error('Code can not be empty')
         return
       }
       const data = {
@@ -508,9 +514,10 @@ export default {
         contest_id: this.contestID,
         new_testcase: null
       }
-      var isNewTestcase = true // for test
+      var isNewTestcase = true
       if (isNewTestcase) {
-        data.new_testcase = ['10', '11', '12', '13']
+        var testcases = this.problem.samples.concat(this.userTestcaseInputs)
+        data.new_testcase = testcases.map(testcase => testcase.input)
       }
       console.log('run this data')
       console.log(data)
@@ -519,11 +526,26 @@ export default {
         this.checkRunState(res.data.data)
       })
     },
-    add () {
-      this.inputs.push({ name: '' })
+    handleUserTestcaseInput (bvModalEvt) {
+      bvModalEvt.preventDefault()
+      for (const userTestcaseInput of this.userTestcaseInputs) {
+        if (userTestcaseInput.input === '') {
+          this.$error('Testcase Should not be empty')
+          return
+        }
+      }
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-user-testcase')
+      })
     },
-    remove (index) {
-      this.inputs.splice(index, 1)
+    isValidTestcaseInput () {
+
+    },
+    addTestcaseInput () {
+      this.userTestcaseInputs.push({ input: '' })
+    },
+    removeTestcaseInput (index) {
+      this.userTestcaseInputs.splice(index, 1)
     }
   },
   computed: {
