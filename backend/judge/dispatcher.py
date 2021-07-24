@@ -1,6 +1,5 @@
 import hashlib
 import json
-import logging
 from urllib.parse import urljoin
 
 import requests
@@ -16,8 +15,6 @@ from problem.utils import parse_problem_template
 from submission.models import JudgeStatus, Submission
 from utils.cache import cache
 from utils.constants import CacheKey
-
-logger = logging.getLogger(__name__)
 
 
 # Continue to deal with problems in the queue
@@ -39,6 +36,15 @@ def process_pending_task_run():
         if tmp_data:
             data = json.loads(tmp_data.decode("utf-8"))
             coderun_task.send(**data)
+
+
+class ErrorType:
+    err_type = {
+        "1": "CPU Time Exceeded",
+        "2": "Time Limit Exceeded",
+        "3": "Memory Limit Exceeded",
+        "4": "Runtime Error"
+    }
 
 
 class ChooseJudgeServer:
@@ -156,19 +162,30 @@ class CodeRunDispatcher(DispatcherBase):
             
             resp = self._request(urljoin(server.service_url, "/judge"), data=data)
 
-        if not resp:
-            cache.hset("run", run_id, json.dumps("System Error"))
+        outputs = {}
+        if not resp: # System error
+            outputs["err"] = "System Error"
+            outputs["data"] = None
+            cache.hset("run", run_id, json.dumps(outputs))
 
-        elif resp["err"]:
+        elif resp["err"]: # Compile error
             cache.hset("run", run_id, json.dumps(resp))
             
-        else:
-            output_data = resp["data"]
-            outputs = {}
-            outputs["err"] = None
-            outputs["data"] = {}
-            for i in range(len(output_data)):
-                outputs["data"]["tc"+str(i+1)] = output_data[i]["output"]
+        else: # Other errors or normal operation
+            resp["data"].sort(key=lambda x: int(x["test_case"]))
+            error_test_case = list(filter(lambda case: case["result"] != 0, resp["data"]))
+
+            if self.problem.rule_type == ProblemRuleType.ACM or len(error_test_case) == len(resp["data"]):
+                err_code = str(error_test_case[0]["result"])
+                outputs["err"] = ErrorType.err_type[err_code]
+                outputs["data"] = None
+
+            elif not error_test_case:
+                output_data = resp["data"]
+                outputs["err"] = None
+                outputs["data"] = {}
+                for i in range(len(output_data)):
+                    outputs["data"]["tc"+str(i+1)] = output_data[i]["output"]
             cache.hset("run", run_id, json.dumps(outputs))
 
         # At this point, the judgment is over, try to process the remaining tasks in the task queue
