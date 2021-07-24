@@ -94,12 +94,12 @@
         </b-nav-item>
         <b-nav-item>
           <b-button v-b-modal.modal-user-testcase variant = "primary">Add Testcase </b-button>
-          <b-modal id="modal-user-testcase" ref="modal" title="Add Testcase" size="lg" cancel-disabled
-            @hidden="handleUserTestcaseInput" @ok="handleUserTestcaseInput">
+          <b-modal id="modal-user-testcase" ref="modal" title="Add Testcase" size="lg"
+                   @show="tempStoreUserTestcase" @ok="saveUserTestcase" @hide="beforeHideUserTestcaseModal" >
             <b-card>
               <b-card-title>
                 Add Testcase
-                <b-button class = "btn float-right" @click="addTestcaseInput" variant="primary">
+                <b-button class = "btn float-right" @click="addTestcase" variant="primary">
                   Add
                 </b-button>
               </b-card-title>
@@ -110,12 +110,12 @@
                   </b-form-input>
                 </b-input-group>
               </b-form-group>
-              <b-form-group v-for="(userTestCaseInput,index) in userTestcaseInputs" :key="index" invalid-feedback="Testcase cannot be empty">
+              <b-form-group v-for="(userTestcase,index) in userTestcases" :key="index" invalid-feedback="Testcase cannot be empty">
                 <b-input-group>
-                  <b-form-input type="text" class="form-control" v-model="userTestCaseInput.input">
+                  <b-form-input type="text" class="form-control" v-model="userTestcase.input">
                   </b-form-input>
                   <b-input-group-append>
-                    <b-button @click="removeTestcaseInput(index)">
+                    <b-button @click="removeTestcase(index)">
                       <b-icon icon="dash-circle-fill" />
                     </b-button>
                   </b-input-group-append>
@@ -285,7 +285,8 @@ export default {
         tags: [],
         io_mode: { io_mode: 'Standard IO' }
       },
-      userTestcaseInputs: [],
+      tempUserTestcases: [],
+      userTestcases: [],
       // CodeMirror
       code: '',
       language: 'C++',
@@ -516,7 +517,7 @@ export default {
       }
       var isNewTestcase = true
       if (isNewTestcase) {
-        var testcases = this.problem.samples.concat(this.userTestcaseInputs)
+        var testcases = this.problem.samples.concat(this.userTestcases)
         data.new_testcase = testcases.map(testcase => testcase.input)
       }
       console.log('run this data')
@@ -526,26 +527,37 @@ export default {
         this.checkRunState(res.data.data)
       })
     },
-    handleUserTestcaseInput (bvModalEvt) {
-      bvModalEvt.preventDefault()
-      for (const userTestcaseInput of this.userTestcaseInputs) {
-        if (userTestcaseInput.input === '') {
+    tempStoreUserTestcase () {
+      console.log('tempUserTestcase')
+      this.tempUserTestcases = JSON.parse(JSON.stringify(this.userTestcases))
+    },
+    beforeHideUserTestcaseModal (bvModalEvt) {
+      console.log('beforeHide')
+      if (bvModalEvt.trigger === 'ok') {
+        console.log('OK!')
+      } else {
+        this.userTestcases = JSON.parse(JSON.stringify(this.tempUserTestcases))
+        console.log('restore!')
+      }
+    },
+    saveUserTestcase (bvModalEvt) {
+      console.log('handleUserTestcase')
+      for (const userTestcase of this.userTestcases) {
+        if (userTestcase.input === '') {
           this.$error('Testcase Should not be empty')
+          bvModalEvt.preventDefault()
           return
         }
       }
-      this.$nextTick(() => {
-        this.$bvModal.hide('modal-user-testcase')
-      })
     },
-    isValidTestcaseInput () {
-
+    addTestcase () {
+      if (this.userTestcases.length > 10) {
+        return
+      }
+      this.userTestcases.push({ input: '' })
     },
-    addTestcaseInput () {
-      this.userTestcaseInputs.push({ input: '' })
-    },
-    removeTestcaseInput (index) {
-      this.userTestcaseInputs.splice(index, 1)
+    removeTestcase (index) {
+      this.userTestcases.splice(index, 1)
     }
   },
   computed: {
