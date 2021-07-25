@@ -40,11 +40,6 @@ jobs:
         working-directory: ${{ env.working-directory }}
         run: yarn install
 
-      - name: Pre-build with Dll-Plugin
-        if: steps.cache-yarn.outputs.cache-hit != 'true'
-        working-directory: ${{ env.working-directory }}
-        run: yarn dll
-
       - name: Check styles
         working-directory: ${{ env.working-directory }}
         run: yarn lint --no-fix
