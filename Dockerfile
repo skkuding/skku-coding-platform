@@ -5,7 +5,6 @@ ADD ./frontend /build
 WORKDIR /build
 
 RUN yarn install && \
-    yarn dll && \
     yarn build
 
 # Deploy Stage

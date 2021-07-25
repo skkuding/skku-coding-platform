@@ -38,7 +38,12 @@ module.exports = {
         'vuex',
         'vue-router',
         'bootstrap-vue',
-        'iview'
+        'iview',
+        'highlight.js',
+        'moment',
+        'katex',
+        'core-js',
+        '@tiptap/vue-2'
       ],
       cacheFilePath: path.resolve(__dirname, './public')
     }

@@ -201,15 +201,5 @@ typings/
 .vscode
 .idea
 
-# test_code
-test.vue
-
-# build
-vendor-manifest.json
-vendor.dll*.js
-
 # DB backup
 *.sql
-
-# vue-cli-plugin-dll
-frontend/public/
