@@ -344,18 +344,16 @@ export default {
       })
     },
     // when reset button clicked
-    onResetToTemplate () {
-      this.$Modal.confirm({
-        content: 'Are you sure you want to reset your code?',
-        onOk: () => {
-          const template = this.problem.template
-          if (template && template[this.language]) {
-            this.code = template[this.language]
-          } else {
-            this.code = ''
-          }
+    async onResetToTemplate () {
+      const isConfirmed = await this.$bvModal.msgBoxConfirm('Are you sure you want to reset your code?')
+      if (isConfirmed) {
+        const template = this.problem.template
+        if (template && template[this.language]) {
+          this.code = template[this.language]
+        } else {
+          this.code = ''
         }
-      })
+      }
     },
     // when language dropdown changed
     onChangeLang (newLang) {
@@ -420,13 +418,6 @@ export default {
           // Regularly check status
           this.submitting = false
           this.submissionExists = true
-          if (!detailsVisible) {
-            this.$Modal.success({
-              title: 'Success',
-              content: 'Submit code successfully'
-            })
-            return
-          }
           this.submitted = true
           this.checkSubmissionStatus()
         } catch (err) {
@@ -438,22 +429,14 @@ export default {
           this.statusVisible = false
         }
       }
-      if (this.contestRuleType === 'OI' && !this.OIContestRealTimePermission) {
+      if (!this.OIContestRealTimePermission) {
         if (this.submissionExists) {
-          this.$Modal.confirm({
-            title: '',
-            content: '<h3>' + 'You have submission in this problem, sure to cover it?' + '<h3>',
-            onOk: () => {
-              // Temporarily solve the conflict between the dialog box
-              // and the prompt dialog box behind (otherwise it will flash by)
-              setTimeout(async () => {
-                await submitFunc(data, false)
-              }, 1000)
-            },
-            onCancel: () => {
-              this.submitting = false
-            }
-          })
+          const isConfirmed = await this.$bvModal.msgBoxConfirm('You have submission in this problem, sure to cover it?')
+          if (isConfirmed) {
+            await submitFunc(data, false)
+          } else {
+            this.submitting = false
+          }
         } else {
           await submitFunc(data, false)
         }

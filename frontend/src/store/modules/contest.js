@@ -54,10 +54,10 @@ const getters = {
     return !state.access
   },
   OIContestRealTimePermission: (state, getters, _, rootGetters) => {
-    if (getters.contestRuleType === 'ACM' || getters.contestStatus === CONTEST_STATUS.ENDED) {
+    if (getters.contestStatus === CONTEST_STATUS.ENDED) {
       return true
     }
-    return state.contest.real_time_rank === true || getters.isContestAdmin
+    return getters.isContestAdmin
   },
   problemSubmitDisabled: (state, getters, _, rootGetters) => {
     if (getters.contestStatus === CONTEST_STATUS.ENDED) {
