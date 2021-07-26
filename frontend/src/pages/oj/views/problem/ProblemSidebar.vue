@@ -140,6 +140,9 @@
             </template>
           </b-table>
         </div>
+        <div id="submission-compile-error-message" v-if="compile_error_message_show">
+          <p class="text-danger"> Compile error message: {{ submission_detail.statistic_info.err_info }} </p>
+        </div>
         <div id="submission-source-code">
           <h3>Source Code</h3>
           <p>({{submission_detail.bytes}} Bytes)</p>
@@ -225,6 +228,7 @@ export default {
       all_submissions_page: 1,
 
       submission_detail_modal_show: false,
+      compile_error_message_show: false,
 
       // for re-rendering when codemirror content is ready
       codemirror_key: 1
@@ -335,7 +339,7 @@ export default {
         create_time: time.utcToLocal(data.create_time, 'YYYY-MM-DD HH:mm'),
         result: JUDGE_STATUS[data.result].name,
         bytes: new Blob([data.code]).size,
-        testcases: data.info.data.map(
+        testcases: data.info.data && data.info.data.map(
           tc => {
             return {
               title: tc.test_case,
@@ -346,6 +350,7 @@ export default {
           }
         )
       }
+      this.compile_error_message_show = data.result === 'Compile Error'
 
       if (data.info && data.info.data) {
         // score exist means the submission is OI problem submission
@@ -506,6 +511,10 @@ export default {
             tr td:last-child {
               padding-right: 50px;
             }
+          }
+
+          #submission-compile-error-message {
+            padding: 20px 50px;
           }
 
           #submission-source-code {
