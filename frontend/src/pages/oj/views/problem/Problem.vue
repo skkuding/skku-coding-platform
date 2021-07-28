@@ -1,206 +1,214 @@
 <template>
   <div id="container">
-    <b-navbar id="main-header" type="dark">
-      <b-navbar-brand to="/">
-        <div class="logo-img">
-          <img src="@/assets/logos/logo.svg" alt=""/>
-        </div>
-      </b-navbar-brand>
+    <b-overlay
+    :show="overlayShow"
+    bg-color="#0B232F"
+    spinner-variant="primary"
+    spinner-type="grow"
+    spinner-small
+    rounded="sm">
+      <b-navbar id="main-header" type="dark">
+        <b-navbar-brand to="/">
+          <div class="logo-img">
+            <img src="@/assets/logos/logo.svg" alt=""/>
+          </div>
+        </b-navbar-brand>
 
-      <b-navbar-nav v-if="$route.name && $route.name.indexOf('contest') != -1">
-        <b-nav-item to="#">Contests</b-nav-item>
-        <b-nav-item>
-          <b-icon icon="chevron-right"/>
-        </b-nav-item>
-        <b-nav-item to="#">{{problem.contest_name}}</b-nav-item>
-        <b-nav-item>
-          <b-icon icon="chevron-right"/>
-        </b-nav-item>
-        <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
-      </b-navbar-nav>
+        <b-navbar-nav v-if="$route.name && $route.name.indexOf('contest') != -1">
+          <b-nav-item to="#">Contests</b-nav-item>
+          <b-nav-item>
+            <b-icon icon="chevron-right"/>
+          </b-nav-item>
+          <b-nav-item to="#">{{problem.contest_name}}</b-nav-item>
+          <b-nav-item>
+            <b-icon icon="chevron-right"/>
+          </b-nav-item>
+          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+        </b-navbar-nav>
 
-      <b-navbar-nav v-else>
-        <b-nav-item>
-          <b-icon icon="chevron-right"/>
-        </b-nav-item>
-        <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
-      </b-navbar-nav>
+        <b-navbar-nav v-else>
+          <b-nav-item>
+            <b-icon icon="chevron-right"/>
+          </b-nav-item>
+          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+        </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
-          <template slot="button-content">
-            <b-icon icon="person" scale="1.5"/>
-          </template>
-          <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
-          <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item-dropdown v-else no-caret right>
-          <template slot="button-content">
-            <b-icon icon="person" scale="1.5"/>
-          </template>
-          <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
-          <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
-          <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-navbar-nav>
-    </b-navbar>
-    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
-      <component
-        :is="modalStatus.mode"
-        v-if="modalVisible"
-      />
-    </b-modal>
-    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
-      <profileSetting></profileSetting>
-    </b-modal>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
+            <template slot="button-content">
+              <b-icon icon="person" scale="1.5"/>
+            </template>
+            <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
+            <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
+          </b-nav-item-dropdown>
+          <b-nav-item-dropdown v-else no-caret right>
+            <template slot="button-content">
+              <b-icon icon="person" scale="1.5"/>
+            </template>
+            <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
+            <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
+            <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
+      </b-navbar>
+      <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
+        <component
+          :is="modalStatus.mode"
+          v-if="modalVisible"
+        />
+      </b-modal>
+      <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
+        <profileSetting></profileSetting>
+      </b-modal>
 
-    <b-navbar id="inner-header" type="dark">
-      <b-navbar-nav>
-        <b-nav-item class="menu-icon" active>
-          <b-icon icon="list" scale="1.4" v-b-toggle.sidebar/>
-        </b-nav-item>
-      </b-navbar-nav>
-      <b-navbar-nav>
-        <b-nav-item to="#" class="active-link problem-title" active>
-          {{problem.title}}
-        </b-nav-item>
-      </b-navbar-nav>
+      <b-navbar id="inner-header" type="dark">
+        <b-navbar-nav>
+          <b-nav-item class="menu-icon" active>
+            <b-icon icon="list" scale="1.4" v-b-toggle.sidebar/>
+          </b-nav-item>
+        </b-navbar-nav>
+        <b-navbar-nav>
+          <b-nav-item to="#" class="active-link problem-title" active>
+            {{problem.title}}
+          </b-nav-item>
+        </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item v-if="statusVisible">
-          <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
-            <Tag
-              type="dot"
-              :color="submissionStatus.color"
-              @click.native="()=>{$refs.sidebar.onMySubmissionClicked({ID:submissionId})}"
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item v-if="statusVisible">
+            <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
+              <Tag
+                type="dot"
+                :color="submissionStatus.color"
+                @click.native="()=>{$refs.sidebar.onMySubmissionClicked({ID:submissionId})}"
+              >
+                {{ submissionStatus.text }}
+              </Tag>
+            </template>
+            <template v-else-if="this.contestID && !OIContestRealTimePermission">
+              <Tag type="dot" color="green">Submitted Succesfully</Tag>
+            </template>
+          </b-nav-item>
+          <b-nav-item v-else-if="problem.my_status === 0">
+            <Tag type="dot" color="green">You have solved the problem</Tag>
+          </b-nav-item>
+          <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
+            <Tag type="dot" color="green">You have submitted a solution</Tag>
+          </b-nav-item>
+          <b-nav-item v-if="captchaRequired">
+            <img :src="captchaSrc" id="captcha-img">
+            <b-button @click="getCaptchaSrc">Refresh</b-button>
+            <b-form-input v-model="captchaCode" id="captcha-code"/>
+          </b-nav-item>
+          <b-nav-item>
+            <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
+              <b-icon icon="arrow-clockwise" scale="1.1"/>
+            </b-button>
+          </b-nav-item>
+          <b-nav-item>
+            <b-button class="btn">
+              <b-icon icon="play" scale="1.4"/>
+              Run
+            </b-button>
+          </b-nav-item>
+          <b-nav-item>
+            <b-button class="btn-submit"
+              :disabled="(contestID && problemSubmitDisabled) || submitted"
+              @click="submitCode"
             >
-              {{ submissionStatus.text }}
-            </Tag>
-          </template>
-          <template v-else-if="this.contestID && !OIContestRealTimePermission">
-            <Tag type="dot" color="green">Submitted Succesfully</Tag>
-          </template>
-        </b-nav-item>
-        <b-nav-item v-else-if="problem.my_status === 0">
-          <Tag type="dot" color="green">You have solved the problem</Tag>
-        </b-nav-item>
-        <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
-          <Tag type="dot" color="green">You have submitted a solution</Tag>
-        </b-nav-item>
-        <b-nav-item v-if="captchaRequired">
-          <img :src="captchaSrc" id="captcha-img">
-          <b-button @click="getCaptchaSrc">Refresh</b-button>
-          <b-form-input v-model="captchaCode" id="captcha-code"/>
-        </b-nav-item>
-        <b-nav-item>
-          <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
-            <b-icon icon="arrow-clockwise" scale="1.1"/>
-          </b-button>
-        </b-nav-item>
-        <b-nav-item>
-          <b-button class="btn">
-            <b-icon icon="play" scale="1.4"/>
-            Run
-          </b-button>
-        </b-nav-item>
-        <b-nav-item>
-          <b-button class="btn-submit"
-            :disabled="(contestID && problemSubmitDisabled) || submitted"
-            @click="submitCode"
+              <span>Submit</span>
+            </b-button>
+          </b-nav-item>
+          <b-nav-item>
+            <b-dropdown split class="dropdown" :text="language" @change="onChangeLang">
+              <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
+                @click="()=>onChangeLang(lang)">
+                {{lang}}
+              </b-dropdown-item>
+            </b-dropdown>
+          </b-nav-item>
+          <b-nav-item>
+            <b-dropdown split class="dropdown" :text="theme" @change="onChangeTheme">
+              <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
+                @click="()=>onChangeTheme(theme)">
+                {{theme}}
+              </b-dropdown-item>
+            </b-dropdown>
+          </b-nav-item>
+        </b-navbar-nav>
+      </b-navbar>
+
+      <b-row id="problem-container">
+        <b-col id="problem-description" cols="5">
+          <div class="description-io" v-katex>
+            <h2>Description</h2>
+            <p v-dompurify-html="problem.description"></p>
+            <div class="blank-line"></div>
+            <h2>Input</h2>
+            <p v-dompurify-html="problem.input_description"></p>
+            <h2>Output</h2>
+            <p v-dompurify-html="problem.output_description"></p>
+            <div class="blank-line"></div>
+          </div>
+
+          <div v-for="(sample, index) of problem.samples" :key="index">
+            <h2>
+              Sample Input {{index + 1}}
+              <a v-clipboard:copy="sample.input">
+                <b-icon id="clipboard1" icon="clipboard" class="copy-icon" scale="0.8"/>
+              </a>
+              <b-tooltip target="clipboard1" placement="top" triggers="hover">
+                Copy
+              </b-tooltip>
+            </h2>
+            <pre class="sample-io">{{sample.input}}</pre>
+            <h2>
+              Sample Output {{index + 1}}
+            </h2>
+            <pre class="sample-io">{{sample.output}}</pre>
+            <div class="blank-line"></div>
+          </div>
+
+          <div v-if="problem.hint" v-katex>
+            <h2>Hint</h2>
+            <p v-dompurify-html="problem.hint"></p>
+          </div>
+          <b-table
+            :items="[{time_limit:problem.time_limit + ' ms', memory_limit:problem.memory_limit + ' MB'}]"
+            :fields="['time_limit', 'memory_limit']"
+            class="text-light"
           >
-            <span>Submit</span>
-          </b-button>
-        </b-nav-item>
-        <b-nav-item>
-          <b-dropdown split class="dropdown" :text="language" @change="onChangeLang">
-            <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
-              @click="()=>onChangeLang(lang)">
-              {{lang}}
-            </b-dropdown-item>
-          </b-dropdown>
-        </b-nav-item>
-        <b-nav-item>
-          <b-dropdown split class="dropdown" :text="theme" @change="onChangeTheme">
-            <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
-              @click="()=>onChangeTheme(theme)">
-              {{theme}}
-            </b-dropdown-item>
-          </b-dropdown>
-        </b-nav-item>
-      </b-navbar-nav>
-    </b-navbar>
-
-    <b-row id="problem-container">
-      <b-col id="problem-description" cols="5">
-        <div class="description-io" v-katex>
-          <h2>Description</h2>
-          <p v-dompurify-html="problem.description"></p>
-          <div class="blank-line"></div>
-          <h2>Input</h2>
-          <p v-dompurify-html="problem.input_description"></p>
-          <h2>Output</h2>
-          <p v-dompurify-html="problem.output_description"></p>
-          <div class="blank-line"></div>
-        </div>
-
-        <div v-for="(sample, index) of problem.samples" :key="index">
-          <h2>
-            Sample Input {{index + 1}}
-            <a v-clipboard:copy="sample.input">
-              <b-icon id="clipboard1" icon="clipboard" class="copy-icon" scale="0.8"/>
-            </a>
-            <b-tooltip target="clipboard1" placement="top" triggers="hover">
-              Copy
-            </b-tooltip>
-          </h2>
-          <pre class="sample-io">{{sample.input}}</pre>
-          <h2>
-            Sample Output {{index + 1}}
-          </h2>
-          <pre class="sample-io">{{sample.output}}</pre>
-          <div class="blank-line"></div>
-        </div>
-
-        <div v-if="problem.hint" v-katex>
-          <h2>Hint</h2>
-          <p v-dompurify-html="problem.hint"></p>
-        </div>
-        <b-table
-          :items="[{time_limit:problem.time_limit + ' ms', memory_limit:problem.memory_limit + ' MB'}]"
-          :fields="['time_limit', 'memory_limit']"
-          class="text-light"
-          >
-        </b-table>
-      </b-col>
-      <b-col id="console" cols="7">
-        <b-row id="editor">
-          <CodeMirror
-            :value.sync="code"
-            :language="language"
-            :theme="theme"
-          />
-        </b-row>
-        <!-- <b-row id="io">
-          <b-row class="io-header">
-            <b-col class="io-header-cell right-border">Input</b-col>
-            <b-col class="io-header-cell">Output</b-col>
+          </b-table>
+        </b-col>
+        <b-col id="console" cols="7">
+          <b-row id="editor">
+            <CodeMirror
+              :value.sync="code"
+              :language="language"
+              :theme="theme"
+            />
           </b-row>
-          <b-row class="io-content">
-            <b-col class="io-content-cell right-border">
-              <pre></pre>
-            </b-col>
-            <b-col class="io-content-cell">
-              <pre></pre>
-            </b-col>
-          </b-row>
-        </b-row> -->
-      </b-col>
-    </b-row>
-    <b-sidebar id="sidebar" no-header backdrop>
-      <template #default="{ hide }">
-        <ProblemSidebar ref="sidebar" :hide="hide" :contestID="contestID" :problemID="problemID"/>
-      </template>
-    </b-sidebar>
+          <!-- <b-row id="io">
+            <b-row class="io-header">
+              <b-col class="io-header-cell right-border">Input</b-col>
+              <b-col class="io-header-cell">Output</b-col>
+            </b-row>
+            <b-row class="io-content">
+              <b-col class="io-content-cell right-border">
+                <pre></pre>
+              </b-col>
+              <b-col class="io-content-cell">
+                <pre></pre>
+              </b-col>
+            </b-row>
+          </b-row> -->
+        </b-col>
+      </b-row>
+      <b-sidebar id="sidebar" no-header backdrop>
+        <template #default="{ hide }">
+          <ProblemSidebar ref="sidebar" :hide="hide" :contestID="contestID" :problemID="problemID"/>
+        </template>
+      </b-sidebar>
+    </b-overlay>
   </div>
 </template>
 
@@ -263,12 +271,16 @@ export default {
       code: '',
       language: 'C++',
       theme: 'material',
-      theme_list: ['solarized', 'monokai', 'material']
+      theme_list: ['solarized', 'monokai', 'material'],
+
+      overlayShow: false
     }
   },
   async mounted () {
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
+    this.overlayShow = true
     await this.init()
+    this.overlayShow = false
     if (this.$route.params.contestID) {
       this.route_name = this.$route.name
       await this.getContestProblems()
@@ -286,7 +298,6 @@ export default {
   methods: {
     ...mapActions(['changeDomTitle', 'changeModalStatus']),
     async init () {
-      this.$Loading.start()
       this.contestID = this.$route.params.contestID
       this.problemID = this.$route.params.problemID
 
@@ -294,7 +305,6 @@ export default {
         ? await api.getProblem(this.problemID)
         : await api.getContestProblem(this.problemID, this.contestID)
 
-      this.$Loading.finish()
       const problem = res.data.data
       this.changeDomTitle({ title: problem.title })
 
