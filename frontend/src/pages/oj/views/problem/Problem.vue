@@ -522,6 +522,10 @@ export default {
     font-family: 'Manrope';
     src: url("../../../../fonts/Manrope-Bold.ttf");
   }
+
+  $main-header-height: 60px;
+  $inner-header-height: 58px;
+
   * {
     font-family: 'Manrope', sans-serif;
   }
@@ -534,6 +538,7 @@ export default {
 
   #main-header {
     background: #0B232F;
+    height: #{$main-header-height};
   }
 
   .logo-img {
@@ -544,7 +549,7 @@ export default {
   }
 
   #inner-header {
-    height: 58px;
+    height: #{$inner-header-height};
     padding-top: 0px;
     padding-bottom: 0px;
     padding-left: 15px;
@@ -596,6 +601,8 @@ export default {
       border-right: 1px solid #3B4F56;
       padding-left: 20px;
       color: white;
+      height: calc(100vh - #{$main-header-height} - #{$inner-header-height});
+      overflow: auto;
 
       h2 {
         font-size: 20px;
@@ -662,6 +669,7 @@ export default {
       padding: 0;
       flex-flow: column;
       background: #24272D;
+      height: calc(100vh - #{$main-header-height} - #{$inner-header-height});
 
       #editor {
         margin: 0;
