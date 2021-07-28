@@ -22,7 +22,6 @@ const router = new VueRouter({
 
 // 全局身份确认
 router.beforeEach((to, from, next) => {
-  Vue.prototype.$Loading.start()
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!storage.get(STORAGE_KEY.AUTHED)) {
       Vue.prototype.$error('Please login first')
@@ -36,10 +35,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
-})
-
-router.afterEach((to, from, next) => {
-  Vue.prototype.$Loading.finish()
 })
 
 sync(store, router)
