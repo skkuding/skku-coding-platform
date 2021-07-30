@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 from urllib.parse import urljoin
 
 import requests
@@ -15,6 +16,8 @@ from problem.utils import parse_problem_template
 from submission.models import JudgeStatus, Submission
 from utils.cache import cache
 from utils.constants import CacheKey
+
+logger = logging.getLogger(__name__)
 
 
 # Continue to deal with problems in the queue
@@ -173,19 +176,19 @@ class CodeRunDispatcher(DispatcherBase):
             
         else: # Other errors or normal operation
             resp["data"].sort(key=lambda x: int(x["test_case"]))
-            error_test_case = list(filter(lambda case: case["result"] != 0, resp["data"]))
-
-            if self.problem.rule_type == ProblemRuleType.ACM or len(error_test_case) == len(resp["data"]):
-                err_code = str(error_test_case[0]["result"])
-                outputs["err"] = ErrorType.err_type[err_code]
-                outputs["data"] = None
-
-            elif not error_test_case:
-                output_data = resp["data"]
-                outputs["err"] = None
-                outputs["data"] = {}
-                for i in range(len(output_data)):
+            output_data = resp["data"]
+            outputs["err"] = {}
+            outputs["data"] = {}
+            tc_num = len(output_data)
+            for i in range(tc_num):
+                if output_data[i]["result"] == -1 or output_data[i]["result"] == 0:
+                    outputs["err"]["tc"+str(i+1)] = None
                     outputs["data"]["tc"+str(i+1)] = output_data[i]["output"]
+                else:
+                    err_code = str(output_data[i]["result"])
+                    outputs["err"]["tc"+str(i+1)] = ErrorType.err_type[err_code] 
+                    outputs["data"]["tc"+str(i+1)] = None
+
             cache.hset("run", run_id, json.dumps(outputs))
 
         # At this point, the judgment is over, try to process the remaining tasks in the task queue
