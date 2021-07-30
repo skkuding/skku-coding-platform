@@ -136,14 +136,14 @@ class CodeRunDispatcher(DispatcherBase):
             code = f"{template['prepend']}\n{self.run_data.code}\n{template['append']}"
         else:
             code = self.run_data["code"]
-
+        
         data = {
             "language_config": sub_config["config"],
             "src": code,
             "max_cpu_time": self.problem.time_limit,
             "max_memory": 1024 * 1024 * self.problem.memory_limit,
             "test_case_id": None,
-            "test_case": self.problem.samples,
+            "test_case": [],
             "output": True,
             "spj_version": self.problem.spj_version,
             "spj_config": spj_config.get("config"),
@@ -152,9 +152,8 @@ class CodeRunDispatcher(DispatcherBase):
             "io_mode": self.problem.io_mode
         }
 
-        if self.run_data["new_testcase"]:
-            for testcases in self.run_data["new_testcase"]:
-                data["test_case"].append({"input": testcases, "output": ""})
+        for testcases in self.run_data["new_testcase"]:
+            data["test_case"].append({"input": testcases, "output": ""})
 
         run_id = self.run_data["run_id"] 
 
@@ -165,7 +164,8 @@ class CodeRunDispatcher(DispatcherBase):
             
             resp = self._request(urljoin(server.service_url, "/judge"), data=data)
 
-        outputs = {}
+        outputs = []
+        
         if not resp: # System error
             outputs["err"] = "System Error"
             outputs["data"] = None
@@ -177,17 +177,21 @@ class CodeRunDispatcher(DispatcherBase):
         else: # Other errors or normal operation
             resp["data"].sort(key=lambda x: int(x["test_case"]))
             output_data = resp["data"]
-            outputs["err"] = {}
-            outputs["data"] = {}
             tc_num = len(output_data)
             for i in range(tc_num):
+                output_ele = {}
+                output_ele["output"] = {}
+                output_ele["input"] = data["test_case"][i]["input"]
                 if output_data[i]["result"] == -1 or output_data[i]["result"] == 0:
-                    outputs["err"]["tc"+str(i+1)] = None
-                    outputs["data"]["tc"+str(i+1)] = output_data[i]["output"]
+                    output_ele["output"]["err"] = None
+                    output_ele["output"]["data"] = output_data[i]["output"]
+                    
                 else:
                     err_code = str(output_data[i]["result"])
-                    outputs["err"]["tc"+str(i+1)] = ErrorType.err_type[err_code] 
-                    outputs["data"]["tc"+str(i+1)] = None
+                    output_ele["output"]["err"] = ErrorType.err_type[err_code] 
+                    output_ele["output"]["data"] = None
+                    
+                outputs.append(output_ele)
 
             cache.hset("run", run_id, json.dumps(outputs))
 
