@@ -1,7 +1,6 @@
 import ipaddress
 import logging
 import uuid
-import time
 import json
 
 from drf_yasg.utils import swagger_auto_schema
@@ -27,16 +26,17 @@ logger = logging.getLogger(__name__)
 
 def throttling(request):
     user_bucket = TokenBucket(key=str(request.user.id),
-                                redis_conn=cache, **SysOptions.throttling["user"])
+                              redis_conn=cache, **SysOptions.throttling["user"])
     can_consume, wait = user_bucket.consume()
     if not can_consume:
         return "Please wait %d seconds" % (int(wait))
+
 
 class CodeRunAPI(APIView):
     @login_required
     def post(self, request):
         data = request.data
-        
+
         if data.get("contest_id"):
             error = self.check_contest_permission(request)
             if error:
@@ -58,13 +58,13 @@ class CodeRunAPI(APIView):
 
         run_data = {}
         run_data["language"] = data["language"]
-        run_data["code"] = data["code"] 
+        run_data["code"] = data["code"]
         run_data["contest_id"] = data.get("contest_id")
         run_data["new_testcase"] = data.get("new_testcase")
         run_data["problem_id"] = problem.id
         run_id = uuid.uuid4().hex
         run_data["run_id"] = run_id
-        
+
         coderun_task.send(run_data)
         return self.success(run_id)
 
@@ -73,16 +73,15 @@ class CodeRunAPI(APIView):
         run_id = request.GET.get("run_id")
         if not cache.hexists("run", run_id):
             return self.error("redis hash field error - such field doesn't exist")
-            
-        time.sleep(2)
+
         res = cache.hget("run", run_id)
         res = res.decode("utf-8")
         res = json.loads(res)
         cache.hdel("run", run_id)
 
-        tmp = cache.hget("run", run_id) 
+        tmp = cache.hget("run", run_id)
         if tmp:
-            logger.warning('run data is not deleted.')
+            logger.warning("run data is not deleted.")
         return self.success(res)
 
 

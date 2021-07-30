@@ -32,7 +32,7 @@ def process_pending_task():
 
 
 def process_pending_task_run():
-    if cache.llen(CacheKey.run_waiting_queue): 
+    if cache.llen(CacheKey.run_waiting_queue):
         # Prevent loop introduction
         from judge.tasks import coderun_task
         tmp_data = cache.rpop(CacheKey.run_waiting_queue)
@@ -136,7 +136,7 @@ class CodeRunDispatcher(DispatcherBase):
             code = f"{template['prepend']}\n{self.run_data.code}\n{template['append']}"
         else:
             code = self.run_data["code"]
-        
+
         data = {
             "language_config": sub_config["config"],
             "src": code,
@@ -155,26 +155,26 @@ class CodeRunDispatcher(DispatcherBase):
         for testcases in self.run_data["new_testcase"]:
             data["test_case"].append({"input": testcases, "output": ""})
 
-        run_id = self.run_data["run_id"] 
+        run_id = self.run_data["run_id"]
 
         with ChooseJudgeServer() as server:
             if not server:
-                cache.lpush(CacheKey.running_waiting_queue, json.dumps(self.run_data)) 
+                cache.lpush(CacheKey.running_waiting_queue, json.dumps(self.run_data))
                 return
-            
+
             resp = self._request(urljoin(server.service_url, "/judge"), data=data)
 
         outputs = []
-        
-        if not resp: # System error
+
+        if not resp:  # System error
             outputs["err"] = "System Error"
             outputs["data"] = None
             cache.hset("run", run_id, json.dumps(outputs))
 
-        elif resp["err"]: # Compile error
+        elif resp["err"]:  # Compile error
             cache.hset("run", run_id, json.dumps(resp))
-            
-        else: # Other errors or normal operation
+
+        else:  # Other errors or normal operation
             resp["data"].sort(key=lambda x: int(x["test_case"]))
             output_data = resp["data"]
             tc_num = len(output_data)
@@ -185,12 +185,12 @@ class CodeRunDispatcher(DispatcherBase):
                 if output_data[i]["result"] == -1 or output_data[i]["result"] == 0:
                     output_ele["output"]["err"] = None
                     output_ele["output"]["data"] = output_data[i]["output"]
-                    
+
                 else:
                     err_code = str(output_data[i]["result"])
-                    output_ele["output"]["err"] = ErrorType.err_type[err_code] 
+                    output_ele["output"]["err"] = ErrorType.err_type[err_code]
                     output_ele["output"]["data"] = None
-                    
+
                 outputs.append(output_ele)
 
             cache.hset("run", run_id, json.dumps(outputs))
