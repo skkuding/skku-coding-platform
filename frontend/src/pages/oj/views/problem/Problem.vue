@@ -208,18 +208,18 @@
         </b-row>
         <b-row id="io">
           <b-row class="io-header">
-            <b-col class="io-header-cell right-border" cols="2">Number</b-col>
-            <b-col class="io-header-cell right-border">Input</b-col>
-            <b-col class="io-header-cell">Output</b-col>
+            <b-col class="io-header-cell right-border" cols="1">#</b-col>
+            <b-col class="io-header-cell right-border" cols="5">Input</b-col>
+            <b-col class="io-header-cell" cols="6">Output</b-col>
           </b-row>
           <b-row class="io-content">
-            <b-col class="io-content-cell right-border" cols="2">
+            <b-col class="io-content-cell right-border" cols="1">
               <pre class="sample-io" v-for="index in runResults.length" :key="index">{{ index }}</pre>
             </b-col>
-            <b-col class="io-content-cell right-border">
+            <b-col class="io-content-cell right-border" cols="5">
               <pre class="sample-io" v-for="(input, index) in runResults.map((runResult) => (runResult.input))" :key="index">{{ input }}</pre>
             </b-col>
-            <b-col class="io-content-cell" >
+            <b-col class="io-content-cell" cols="6">
               <pre class="sample-io" v-for="(output, index) in runResults.map((runResult) => (runResult.output))" :key="index">{{ output }}</pre>
             </b-col>
           </b-row>
@@ -494,11 +494,29 @@ export default {
         await submitFunc(data, true)
       }
     },
+    saveRunResult (data) {
+      console.log('1')
+      console.log(data)
+      if (data.data.err === 'CompileError') {
+        this.runResults = [{ input: 'Compile Error\n' + data.data.data, output: '' }]
+      } else {
+        this.runResults = []
+        for (const runResult of data.data) {
+          console.log('2')
+          console.log(runResult)
+          if (runResult.output.err) {
+            this.runResults.push({ input: runResult.input, output: runResult.output.err })
+          } else {
+            this.runResults.push({ input: runResult.input, output: runResult.output.data })
+          }
+        }
+      }
+    },
     checkRunState (runID) {
       const checkStatus = () => {
         api.getRunResult(runID).then(res => {
-          if (res.length !== 0) {
-            this.runResults = res.data.data
+          if (res.length !== 0 && res.error !== null) {
+            this.saveRunResult(res.data)
             clearTimeout(this.runRefresh)
           } else {
             this.runRefresh = setTimeout(checkStatus, 2000)
