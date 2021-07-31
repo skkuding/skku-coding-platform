@@ -6,7 +6,7 @@ from contest.models import Contest
 from utils.models import RichTextField
 from utils.constants import Choices
 
-
+from assignment.models import Assignment
 class ProblemTag(models.Model):
     name = models.TextField()
 
@@ -41,6 +41,8 @@ def _default_io_mode():
 class Problem(models.Model):
     # display ID
     _id = models.TextField(db_index=True)
+    # assignment ID
+    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE)
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
     # for contest problem
     is_public = models.BooleanField(default=False)
@@ -85,6 +87,8 @@ class Problem(models.Model):
     # {JudgeStatus.ACCEPTED: 3, JudgeStaus.WRONG_ANSWER: 11}, the number means count
     statistic_info = JSONField(default=dict)
     share_submission = models.BooleanField(default=False)
+    # Submission type
+    type = models.TextField(default="Problem")
 
     class Meta:
         db_table = "problem"

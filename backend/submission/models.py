@@ -7,7 +7,7 @@ from contest.models import Contest
 
 from utils.shortcuts import rand_str
 
-
+from assignment.models import Assignment
 class JudgeStatus:
     COMPILE_ERROR = -2
     WRONG_ANSWER = -1
@@ -26,6 +26,7 @@ class Submission(models.Model):
     id = models.TextField(default=rand_str, primary_key=True, db_index=True)
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     user_id = models.IntegerField(db_index=True)
     username = models.TextField()
@@ -39,6 +40,7 @@ class Submission(models.Model):
     # {time_cost: "", memory_cost: "", err_info: "", score: 0}
     statistic_info = JSONField(default=dict)
     ip = models.TextField(null=True)
+    score = models.IntegerField(null=True)
 
     def check_user_permission(self, user, check_share=True):
         if self.user_id == user.id or user.is_super_admin() or user.can_mgmt_all_problem() or self.problem.created_by_id == user.id:
