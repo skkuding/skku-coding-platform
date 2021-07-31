@@ -9,7 +9,7 @@ class Course(models.Model):
     title = models.TextField()
     course_code = models.TextField()
     class_number = models.IntegerField()
-    registered_year = models.DateField(default=date.today)
+    registered_year = models.IntegerField()
     semester = models.IntegerField()
 
 
