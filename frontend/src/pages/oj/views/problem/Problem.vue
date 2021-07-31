@@ -495,15 +495,11 @@ export default {
       }
     },
     saveRunResult (data) {
-      console.log('1')
-      console.log(data)
       if (data.data.err === 'CompileError') {
         this.runResults = [{ input: 'Error Message: \n' + data.data.data, output: '' }]
       } else {
         this.runResults = []
         for (const runResult of data.data) {
-          console.log('2')
-          console.log(runResult)
           if (runResult.output.err) {
             this.runResults.push({ input: runResult.input, output: runResult.output.err })
           } else {
@@ -513,19 +509,18 @@ export default {
       }
     },
     checkRunState (runID) {
-      const checkStatus = () => {
-        api.getRunResult(runID).then(res => {
-          if (res.length !== 0 && res.error !== null) {
-            this.saveRunResult(res.data)
-            clearTimeout(this.runRefresh)
-          } else {
-            this.runRefresh = setTimeout(checkStatus, 2000)
-          }
-        })
+      const checkStatus = async () => {
+        const res = await api.getRunResult(runID)
+        if (res.length !== 0 && res.error !== null) {
+          this.saveRunResult(res.data)
+          clearTimeout(this.runRefresh)
+        } else {
+          this.runRefresh = setTimeout(checkStatus, 2000)
+        }
       }
       this.runRefresh = setTimeout(checkStatus, 2000)
     },
-    runCode () {
+    async runCode () {
       if (this.code.trim() === '') {
         this.$error('Code can not be empty')
         return
@@ -537,14 +532,10 @@ export default {
         contest_id: this.contestID,
         new_testcase: null
       }
-      var isNewTestcase = true
-      if (isNewTestcase) {
-        var testcases = this.problem.samples.concat(this.userTestcases)
-        data.new_testcase = testcases.map(testcase => testcase.input)
-      }
-      api.runCode(data).then(res => {
-        this.checkRunState(res.data.data)
-      })
+      const testcases = this.problem.samples.concat(this.userTestcases)
+      data.new_testcase = testcases.map(testcase => testcase.input)
+      const res = await api.runCode(data)
+      this.checkRunState(res.data.data)
     },
     tempStoreUserTestcase () {
       this.tempUserTestcases = JSON.parse(JSON.stringify(this.userTestcases))
