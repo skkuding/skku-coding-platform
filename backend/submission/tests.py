@@ -13,7 +13,7 @@ DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test
                         "test_case_score": [{"output_name": "1.out", "input_name": "1.in", "output_size": 0,
                                              "stripped_output_md5": "d41d8cd98f00b204e9800998ecf8427e",
                                              "input_size": 0, "score": 0}],
-                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
+                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test", "locked_data": "locked"}
 
 DEFAULT_SUBMISSION_DATA = {
     "problem_id": "1",

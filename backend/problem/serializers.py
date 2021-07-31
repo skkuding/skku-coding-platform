@@ -69,6 +69,7 @@ class CreateOrEditProblemSerializer(serializers.Serializer):
     hint = serializers.CharField(allow_blank=True, allow_null=True)
     source = serializers.CharField(max_length=256, allow_blank=True, allow_null=True)
     share_submission = serializers.BooleanField()
+    locked_data = serializers.CharField(allow_blank=True, allow_null=True)
 
 
 class TestCaseTextSerializer(serializers.Serializer):

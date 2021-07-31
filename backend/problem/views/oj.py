@@ -163,3 +163,20 @@ class ContestProblemAPI(APIView):
         else:
             data = ProblemSafeSerializer(contest_problems, many=True).data
         return self.success(data)
+
+
+class LockedCodeAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem",
+            )
+        ]
+    )
+    def get(self, request):
+        if not request.GET.get("problem_id"):
+            return self.error("Paramater error, problem_id is required")
+        problem = Problem.objects.filter(problem_id=request.GET.get("problem_id"))
+        return self.success(problem.locked_data)
