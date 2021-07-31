@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('title', models.TextField()),
                 ('course_code', models.TextField()),
                 ('class_number', models.IntegerField()),
-                ('registered_year', models.DateField(default=datetime.date.today)),
+                ('registered_year', models.IntegerField()),
                 ('semester', models.IntegerField()),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
