@@ -212,15 +212,15 @@
             <b-col class="io-header-cell right-border" cols="5">Input</b-col>
             <b-col class="io-header-cell" cols="6">Output</b-col>
           </b-row>
-          <b-row class="io-content">
-            <b-col class="io-content-cell right-border" cols="1">
-              <pre class="sample-io" v-for="index in runResults.length" :key="index">{{ index }}</pre>
+          <b-row class="io-content" v-for="(runResult, index) in runResults" :key="index">
+            <b-col class="io-content-cell right-border" cols="1" v-show="runResult.output">
+              <pre class="sample-io">{{ index + 1 }}</pre>
             </b-col>
-            <b-col class="io-content-cell right-border" cols="5">
-              <pre class="sample-io" v-for="(input, index) in runResults.map((runResult) => (runResult.input))" :key="index">{{ input }}</pre>
+            <b-col class="io-content-cell right-border">
+              <pre class="sample-io">{{ runResult.input }}</pre>
             </b-col>
-            <b-col class="io-content-cell" cols="6">
-              <pre class="sample-io" v-for="(output, index) in runResults.map((runResult) => (runResult.output))" :key="index">{{ output }}</pre>
+            <b-col class="io-content-cell" cols="6" v-show="runResult.output">
+              <pre class="sample-io">{{ runResult.output }}</pre>
             </b-col>
           </b-row>
         </b-row>
@@ -498,7 +498,7 @@ export default {
       console.log('1')
       console.log(data)
       if (data.data.err === 'CompileError') {
-        this.runResults = [{ input: 'Compile Error\n' + data.data.data, output: '' }]
+        this.runResults = [{ input: 'Error Message: \n' + data.data.data, output: '' }]
       } else {
         this.runResults = []
         for (const runResult of data.data) {
