@@ -9,7 +9,6 @@ from ..serializers import CourseSerializer, CreateCourseSerializer, CourseListSe
 class CourseAPI(APIView):
     def get(self, request):
         cousre_id = request.GET.get("id")
-        user_id = request.GET.get("user_id")
         if cousre_id:
             try:
                 course = Course.objects.get(id=cousre_id)
@@ -17,7 +16,7 @@ class CourseAPI(APIView):
             except Course.DoesNotExist:
                 return self.error("Course does not exist")
 
-        courses = Course.objects.filter(created_by=user_id)
+        courses = Course.objects.filter(created_by=request.user)
         return self.success(self.paginate_data(request, courses, CourseSerializer))
 
     @validate_serializer(CreateCourseSerializer)
@@ -32,11 +31,12 @@ class CourseAPI(APIView):
         return self.success(CourseSerializer(course).data)
 
 
-class StudentManagementAPI(APIView):
+class StudentManagementAPI(APIView): # params? data? 
     @validate_serializer(RegisterStudentSerializer)
     def post(self, request):
-        course_id = request.GET.get('id')
-        user_id = request.GET.get('user_id')
+        data = request.data
+        course_id = data["course_id"]# request.GET.get('course_id')
+        user_id = data["user_id"]# request.GET.get('user_id')
 
         try:
             Course.objects.get(id=course_id)
