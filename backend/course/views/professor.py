@@ -13,7 +13,7 @@ class CourseAPI(APIView):
                 course = Course.objects.get(id=cousre_id)
                 return self.success(CourseSerializer(course).data)
             except Course.DoesNotExist:
-                return self.error("Contest does not exist")
+                return self.error("Course does not exist")
 
         courses = Takes.objects.filter(user_id=user_id)
         return self.success(self.paginate_data(request, courses, CourseListSerializer))
@@ -35,5 +35,5 @@ class StudentManagementAPI(APIView):
     def post(self, request):
         data = request.data
         takes = Takes.objects.create(user_id=data['user_id'],
-                                        course_id=data['course_id'])
+                                    course_id=data['course_id'])
         return self.success(TakesSerializer(takes).data)
