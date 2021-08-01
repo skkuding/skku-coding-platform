@@ -42,7 +42,7 @@ class Problem(models.Model):
     # display ID
     _id = models.TextField(db_index=True)
     # assignment ID
-    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, related_name='problems', null=True, on_delete=models.CASCADE)
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
     # for contest problem
     is_public = models.BooleanField(default=False)
