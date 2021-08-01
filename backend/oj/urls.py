@@ -29,4 +29,6 @@ urlpatterns = [
     url(r"^api/admin/", include("contest.urls.admin")),
     url(r"^api/", include("submission.urls")),
     url(r"^api/admin/", include("utils.urls")),
+    url(r"^api/lecture/", include("course.urls.student")),
+    url(r"^api/lecture/professor/", include("course.urls.professor")),
 ]
