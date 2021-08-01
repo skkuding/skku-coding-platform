@@ -159,7 +159,7 @@
 
       <b-row id="problem-container">
         <b-col id="problem-description" cols="5">
-          <div class="description-io" v-katex>
+          <div class="description-io" v-katex:auto>
             <h2>Description</h2>
             <p v-dompurify-html="problem.description"></p>
             <div class="blank-line"></div>
@@ -188,7 +188,7 @@
             <div class="blank-line"></div>
           </div>
 
-          <div v-if="problem.hint" v-katex>
+          <div v-if="problem.hint" v-katex:auto>
             <h2>Hint</h2>
             <p v-dompurify-html="problem.hint"></p>
           </div>

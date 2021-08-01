@@ -1,5 +1,8 @@
 <template>
   <b-form-gorup>
+    에디터에서 LaTeX를 사용하시려면 \( \pm\sqrt{a^2 + b^2}  \) 과 같이 \( 와  \) 사이에 넣어주세요.
+    To use LaTeX in our editor, put LaTeX text between \( and \).
+    For example, \( \pm\sqrt{a^2 + b^2}  \)
     <p class="labels">
       Input
     </p>

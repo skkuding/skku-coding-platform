@@ -20,6 +20,7 @@ import '@/styles/common.scss'
 
 import highlight from '@/plugins/highlight'
 import katex from '@/plugins/katex'
+import VueKatex from 'vue-katex'
 import filters from '@/utils/filters.js'
 
 // register global utility filters.
@@ -36,6 +37,7 @@ Vue.use(BootstrapVueIcons)
 Vue.use(VueClipboard)
 Vue.use(highlight)
 Vue.use(katex)
+Vue.use(VueKatex)
 Vue.use(VueSimpleAlert)
 Vue.use(VueDOMPurifyHTML)
 Vue.use(VueAnalytics, {
