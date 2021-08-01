@@ -42,7 +42,7 @@ class Problem(models.Model):
     # display ID
     _id = models.TextField(db_index=True)
     # assignment ID
-    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE, related_name='problems')
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
     # for contest problem
     is_public = models.BooleanField(default=False)
@@ -88,7 +88,7 @@ class Problem(models.Model):
     statistic_info = JSONField(default=dict)
     share_submission = models.BooleanField(default=False)
     # Submission type
-    type = models.TextField(default="Problem")
+    type = models.TextField(default="Problem", null=True)
 
     class Meta:
         db_table = "problem"
