@@ -31,7 +31,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
 class CreateAssignmentSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
-    # course = serializers.IntegerField()
+    course = serializers.IntegerField()
     content = serializers.CharField()
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
