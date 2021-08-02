@@ -44,8 +44,14 @@
         <b-col>
           <p class="labels">
             <span class="text-danger">*</span> Description
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.despreview>Preview</b-button>
           </p>
-          <tiptap v-model="problem.description"></tiptap>
+          <tiptap v-model="problem.description" ></tiptap>
+          <b-modal id="despreview" title="Description Preview" hide-footer>
+            <div v-katex:auto>
+              <p v-html="problem.description"></p>
+            </div>
+          </b-modal>
         </b-col>
       </b-row>
 
@@ -236,8 +242,14 @@
         <b-col>
           <p class="labels">
             Hint
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.hintpreview>Preview</b-button>
           </p>
           <tiptap v-model="problem.hint" placeholder=""></tiptap>
+          <b-modal id="hintpreview" title="Hint Preview" hide-footer>
+            <div v-katex:auto>
+              <p v-html="problem.hint"></p>
+            </div>
+          </b-modal>
         </b-col>
       </b-row>
 
