@@ -31,4 +31,6 @@ urlpatterns = [
     url(r"^api/admin/", include("utils.urls")),
     url(r"^api/lecture/", include("course.urls.student")),
     url(r"^api/lecture/professor/", include("course.urls.professor")),
+    url(r"^api/lecture/", include("assignment.urls.student")),
+    url(r"^api/lecture/professor/", include("assignment.urls.professor")),
 ]
