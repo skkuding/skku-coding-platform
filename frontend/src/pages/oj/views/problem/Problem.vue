@@ -76,23 +76,43 @@
         <b-navbar-nav class="ml-auto">
           <b-nav-item v-if="statusVisible">
             <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
-              <Tag
-                type="dot"
-                :color="submissionStatus.color"
-                @click.native="()=>{$refs.sidebar.onMySubmissionClicked({ID:submissionId})}"
-              >
-                {{ submissionStatus.text }}
-              </Tag>
+              <div @click.stop="$refs.sidebar.onMySubmissionClicked({ID:submissionId})">
+                <b-badge
+                  class="statusBadge"
+                  variant="light"
+                >
+                  <b-icon id="badgeIcon" icon="circle-fill" :class="[submissionStatus.color]" scale="0.9"/>
+                  {{ submissionStatus.text }}
+                </b-badge>
+              </div>
             </template>
             <template v-else-if="this.contestID && !OIContestRealTimePermission">
-              <Tag type="dot" color="green">Submitted Succesfully</Tag>
+              <b-badge
+                class="statusBadge"
+                variant="light"
+              >
+                <b-icon id="badgeIcon" icon="circle-fill" class="green" scale="0.9"/>
+                Submitted Succesfully
+              </b-badge>
             </template>
           </b-nav-item>
           <b-nav-item v-else-if="problem.my_status === 0">
-            <Tag type="dot" color="green">You have solved the problem</Tag>
+            <b-badge
+              class="statusBadge"
+              variant="light"
+            >
+              <b-icon id="badgeIcon" icon="circle-fill" class="green" scale="0.9"/>
+              You have solved the problem
+            </b-badge>
           </b-nav-item>
           <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
-            <Tag type="dot" color="green">You have submitted a solution</Tag>
+            <b-badge
+              class="statusBadge"
+              variant="light"
+            >
+              <b-icon id="badgeIcon" icon="circle-fill" class="green" scale="0.9"/>
+              You have submitted a solution
+            </b-badge>
           </b-nav-item>
           <b-nav-item v-if="captchaRequired">
             <img :src="captchaSrc" id="captcha-img">
@@ -568,6 +588,29 @@ export default {
       height: 58px;
       border-bottom: 2px solid white;
       font-size: 18px;
+    }
+
+    .statusBadge {
+      font-size: 12px;
+      padding: 6px 10px;
+      color: #4F4F4F;
+    }
+
+    #badgeIcon {
+      margin-right: 8px;
+    }
+
+    .yellow {
+      color: #FEB144;
+    }
+    .red {
+      color: #ff6663;
+    }
+    .green {
+      color: #9EE09E;
+    }
+    .blue {
+      color: #9EC1CF;
     }
 
     .dropdown {
