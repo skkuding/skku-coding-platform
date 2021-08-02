@@ -9,6 +9,68 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 axios.defaults.xsrfCookieName = 'csrftoken'
 
 export default {
+  // API test
+  getCourse (id) {
+    return ajax('lecture/course', 'get', {
+      params: {
+        id
+      }
+    })
+  },
+  getCourseList (offset, limit) {
+    return ajax('lecture/course', 'get', {
+      params: {
+        offset,
+        limit
+      }
+    })
+  },
+  getProfessorCourse (id) {
+    return ajax('lecture/professor/course', 'get', {
+      params: {
+        id
+      }
+    })
+  },
+  getProfessorCourseList (offset, limit) {
+    return ajax('lecture/professor/course', 'get', {
+      params: {
+        offset,
+        limit
+      }
+    })
+  },
+  addProfessorCourse (data) {
+    return ajax('lecture/professor/course', 'post', {
+      data
+    })
+  },
+  registerStudent (data) {
+    return ajax('lecture/professor/course/students', 'post', {
+      data
+    })
+  },
+  getProfessorAssignment (id) {
+    return ajax('lecture/professor/course/assignment', 'get', {
+      params: {
+        id
+      }
+    })
+  },
+  getProfessorAssignmentList (id, offset, limit) {
+    return ajax('lecture/professor/course/assignment', 'get', {
+      params: {
+        course_id: id,
+        offset,
+        limit
+      }
+    })
+  },
+  addAssignment (data) {
+    return ajax('lecture/professor/course/assignment', 'post', {
+      data
+    })
+  },
   // 登录
   login (username, password) {
     return ajax('login', 'post', {
