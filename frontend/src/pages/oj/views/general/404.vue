@@ -9,22 +9,20 @@
           YOU&nbsp;&nbsp;LOOK&nbsp;&nbsp;LOST
         </p>
         <div class="error404-btn-con">
-          <Button
-            size="large"
+          <b-button
+            size="lg"
             style="width: 200px;"
-            type="ghost"
             @click="goHome"
           >
             Go Home
-          </Button>
-          <Button
-            size="large"
+          </b-button>
+          <b-button
+            size="lg"
             style="width: 200px;margin-left: 40px;"
-            type="primary"
             @click="backPage"
           >
             Back
-          </Button>
+          </b-button>
         </div>
       </Card>
     </div>
