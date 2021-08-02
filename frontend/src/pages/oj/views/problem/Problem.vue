@@ -159,6 +159,12 @@
           </h2>
           <pre class="sample-io">{{sample.output}}</pre>
           <div class="blank-line"></div>
+          <b-table
+            :items="[{time_limit:problem.time_limit, memory_limit:problem.memory_limit}]"
+            :fields="['time_limit', 'memory_limit']"
+            class="text-light"
+            >
+          </b-table>
         </div>
 
         <div v-if="problem.hint" v-katex>
@@ -250,9 +256,10 @@ export default {
           username: ''
         },
         tags: [],
-        io_mode: { io_mode: 'Standard IO' }
+        io_mode: { io_mode: 'Standard IO' },
+        memory_limit: '',
+        time_limit: ''
       },
-
       // CodeMirror
       code: '',
       language: 'C++',
