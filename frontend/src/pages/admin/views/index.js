@@ -10,8 +10,9 @@ import ContestList from './contest/ContestList.vue'
 import Contest from './contest/Contest.vue'
 import Login from './general/Login.vue'
 import Home from './Home.vue'
+import APITest from './APITest.vue'
 
 export {
   Announcement, User, Conf, JudgeServer, Problem, ProblemList, Contest,
-  ContestList, Login, Home, PruneTestCase, Dashboard
+  ContestList, Login, Home, PruneTestCase, Dashboard, APITest
 }

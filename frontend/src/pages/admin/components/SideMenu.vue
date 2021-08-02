@@ -102,6 +102,14 @@
         Create Contest
       </b-list-group-item>
     </b-collapse>
+    <b-list-group-item to="/api">
+      <b-icon
+        icon="journal-text"
+        font-scale="1.25"
+        style="margin-right: 8px"
+      />
+      API Test
+    </b-list-group-item>
   </b-list-group>
 </template>
 
