@@ -3,7 +3,7 @@ from utils.api import APIView, validate_serializer
 
 from ..models import Assignment
 from course.models import Course
-from ..serializers import AssginmentProfessorSerializer, CreateAssignmentSeriaizer
+from ..serializers import AssginmentProfessorSerializer, CreateAssignmentSerializer
 
 from account.decorators import ensure_created_by
 import dateutil.parser
@@ -23,18 +23,14 @@ class AssignmentAPI(APIView):
         assignments = Assignment.objects.filter(course_id=course_id)
         return self.success(self.paginate_data(request, assignments, AssginmentProfessorSerializer))
     
-    @validate_serializer(CreateAssignmentSeriaizer)
+    @validate_serializer(CreateAssignmentSerializer)
     def post(self, request):
-        course_id = request.GET.get("id")
-        if course_id:
-            try:
-                Course.objects.get(id=course_id)
-            except Course.DoesNotExist:
-                return self.error("Course does not exists")
-        else:
-            return self.error("Parameter error, Course_id is required")
-
         data = request.data
+        course_id = request.data["course_id"]
+        try:
+            Course.objects.get(id=course_id)
+        except Course.DoesNotExist:
+            return self.error("Course does not exists")
         data["start_time"] = dateutil.parser.parse(data["start_time"])
         data["end_time"] = dateutil.parser.parse(data["end_time"])
         data["created_by"] = request.user
