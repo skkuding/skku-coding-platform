@@ -275,9 +275,10 @@ export default {
           username: ''
         },
         tags: [],
-        io_mode: { io_mode: 'Standard IO' }
+        io_mode: { io_mode: 'Standard IO' },
+        memory_limit: '',
+        time_limit: ''
       },
-
       // CodeMirror
       code: '',
       language: 'C++',
