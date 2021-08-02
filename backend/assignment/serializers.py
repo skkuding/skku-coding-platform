@@ -2,6 +2,7 @@ from django.db.models import fields
 from utils.api import UsernameSerializer, serializers
 
 from .models import Assignment
+from submission.models import Submission
 from problem.serializers import BaseProblemSerializer
 from problem.serializers import ProblemSerializer
 class AssginmentProfessorSerializer(serializers.ModelSerializer):
@@ -13,7 +14,16 @@ class AssginmentProfessorSerializer(serializers.ModelSerializer):
 
 class AssignmentSerializer(serializers.ModelSerializer):
     status = serializers.CharField()
-    problems = ProblemSerializer(read_only=True, many=True) # 테스트 필요, 되면 개수 count
+    total_problem = serializers.SerializerMethodField(read_only=True)
+    submitted_problem = serializers.SerializerMethodField(read_only=True)
+
+    def get_total_problem(self, obj):
+        return obj.problems.count()
+
+    def get_submitted_problem(self, obj):
+        return Submission.objects.filter(assignment=obj, user_id=obj.created_by).count()
+        # return obj.submissions.filter(user_id=obj.creatd_by).count()
+
     class Meta:
         model = Assignment
         fields = "__all__"
