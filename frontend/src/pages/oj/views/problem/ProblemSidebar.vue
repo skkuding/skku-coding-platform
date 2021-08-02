@@ -157,7 +157,8 @@
           <b-table class="align-center"
             :items="submission_detail.testcases"
             :per-page="submission_detail_table_rows"
-            :fields="submission_detail_table_fields">
+            :fields="submission_detail_table_fields"
+            v-show="submission_detail.testcases">
             <template #cell(result)="data">
               <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
             </template>
@@ -339,7 +340,7 @@ export default {
         create_time: time.utcToLocal(data.create_time, 'YYYY-MM-DD HH:mm'),
         result: JUDGE_STATUS[data.result].name,
         bytes: new Blob([data.code]).size,
-        testcases: data.info.data && data.info.data.map(
+        testcases: data.info && data.info.data && data.info.data.map(
           tc => {
             return {
               title: tc.test_case,
