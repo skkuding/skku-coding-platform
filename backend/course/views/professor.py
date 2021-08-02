@@ -1,6 +1,8 @@
 from django.http import request
 from utils.api import APIView, validate_serializer
 
+from account.models import User
+
 from ..models import Course, Takes
 from ..serializers import CourseSerializer, CreateCourseSerializer, CourseListSerializer, RegisterStudentSerializer, TakesSerializer
 
@@ -15,8 +17,8 @@ class CourseAPI(APIView):
             except Course.DoesNotExist:
                 return self.error("Course does not exist")
 
-        courses = Takes.objects.filter(user_id=user_id)
-        return self.success(self.paginate_data(request, courses, CourseListSerializer))
+        courses = Course.objects.filter(created_by=user_id)
+        return self.success(self.paginate_data(request, courses, CourseSerializer))
 
     @validate_serializer(CreateCourseSerializer)
     def post(self, request):
@@ -33,7 +35,17 @@ class CourseAPI(APIView):
 class StudentManagementAPI(APIView):
     @validate_serializer(RegisterStudentSerializer)
     def post(self, request):
-        data = request.data
-        takes = Takes.objects.create(user_id=data['user_id'],
-                                    course_id=data['course_id'])
+        course_id = request.GET.get('id')
+        user_id = request.GET.get('user_id')
+
+        try:
+            Course.objects.get(id=course_id)
+            User.objects.get(id=user_id)
+        except Course.DoesNotExist:
+            return self.error("Course does not exist")
+        except User.DoesNotExist:
+            return self.error("User does not exist")
+
+        takes = Takes.objects.create(user_id=user_id,
+                                    course_id=course_id)
         return self.success(TakesSerializer(takes).data)
