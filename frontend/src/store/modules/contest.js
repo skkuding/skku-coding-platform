@@ -17,11 +17,15 @@ const state = {
     menu: true,
     chart: true,
     realName: false
-  }
+  },
+  new_announcement: false
 }
 
 const getters = {
   // contest 是否加载完成
+  contestAnnouncement: (state) => {
+    return state.new_announcement
+  },
   contestLoaded: (state) => {
     return !!state.contest.status
   },
@@ -130,6 +134,9 @@ const mutations = {
   },
   [types.NOW_ADD_1S] (state) {
     state.now = moment(state.now.add(1, 's'))
+  },
+  addNewAnnouncement (state, payload) {
+    state.new_announcement = payload
   }
 }
 

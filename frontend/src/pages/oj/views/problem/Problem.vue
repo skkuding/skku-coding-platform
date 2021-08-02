@@ -279,6 +279,7 @@ export default {
   },
   methods: {
     ...mapActions(['changeDomTitle', 'changeModalStatus']),
+    
     async init () {
       this.$Loading.start()
       this.contestID = this.$route.params.contestID
@@ -458,7 +459,7 @@ export default {
   },
   computed: {
     ...mapGetters(['isAuthenticated', 'contestRuleType', 'OIContestRealTimePermission']),
-    ...mapGetters(['problemSubmitDisabled', 'contestRuleType', 'OIContestRealTimePermission', 'contestStatus']),
+    ...mapGetters(['problemSubmitDisabled', 'contestRuleType', 'OIContestRealTimePermission', 'contestStatus', 'contestAnnouncement']),
     // for header user dropdown
     ...mapGetters(['website', 'modalStatus', 'user', 'isAdminRole']),
 
@@ -488,6 +489,9 @@ export default {
       set (value) {
         this.changeModalStatus({ visible: value })
       }
+    },
+    checkNewAnnouncement () {
+      return this.contestAnnouncement === true
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -507,6 +511,12 @@ export default {
     },
     contestEnded: function () {
       this.$error('Contest has ended :<')
+    },
+    checkNewAnnouncement: function () {
+      if (this.checkNewAnnouncement === true) {
+        this.$success('A new announcement has been registered! \n Check it now :>')
+        this.$store.commit('addNewAnnouncement', false)
+      }
     }
   },
   beforeDestroy () {

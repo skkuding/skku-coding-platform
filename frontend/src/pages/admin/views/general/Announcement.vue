@@ -247,6 +247,9 @@ export default {
       }
       try {
         await api[funcName](data)
+        if (funcName === 'createContestAnnouncement') {
+          this.$store.commit('addNewAnnouncement', true)
+        }
         this.showEditAnnouncementDialog = false
         await this.init()
       } catch (err) {
