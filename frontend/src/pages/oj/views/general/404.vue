@@ -1,9 +1,9 @@
 <template>
   <div class="error404">
     <div class="error404-body-con">
-      <Card>
+      <b-card>
         <div class="error404-body-con-title">
-          4<span><Icon type="ios-navigate-outline" /></span>4
+          4<span><b-icon icon="arrow-down-right-circle" scale="0.8"/></span>4
         </div>
         <p class="error404-body-con-message">
           YOU&nbsp;&nbsp;LOOK&nbsp;&nbsp;LOST
@@ -24,7 +24,7 @@
             Back
           </b-button>
         </div>
-      </Card>
+      </b-card>
     </div>
   </div>
 </template>
@@ -68,14 +68,13 @@ export default {
   }
 
   .error404-body-con {
-    width: 700px;
     height: 500px;
     margin: 0 auto;
   }
 
   .error404-body-con-title {
     text-align: center;
-    font-size: 240px;
+    font-size: 180px;
     font-weight: 700;
     color: #2d8cf0;
     height: 260px;
@@ -84,7 +83,7 @@ export default {
     span {
       display: inline-block;
       color: #19be6b;
-      font-size: 230px;
+      font-size: 180px;
       animation: error404animation 3s ease 0s infinite alternate;
     }
   }
