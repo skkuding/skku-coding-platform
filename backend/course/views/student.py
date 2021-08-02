@@ -6,13 +6,13 @@ from ..serializers import CourseSerializer, CourseListSerializer, TakesSerialize
 class CourseAPI(APIView):
     def get(self, request):
         cousre_id = request.GET.get("id")
-        user_id = request.GET.get("user_id")
+        user_id = request.user.id
         if cousre_id:
             try:
                 course = Course.objects.get(id=cousre_id)
                 return self.success(CourseSerializer(course).data)
             except Course.DoesNotExist:
-                return self.error("Contest does not exist")
+                return self.error("Course does not exist")
 
         courses = Takes.objects.filter(user_id=user_id)
 
