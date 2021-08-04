@@ -160,7 +160,7 @@
           <pre class="sample-io">{{sample.output}}</pre>
           <div class="blank-line"></div>
           <b-table
-            :items="[{time_limit:problem.time_limit, memory_limit:problem.memory_limit}]"
+            :items="[{time_limit:problem.time_limit + ' 초', memory_limit:problem.memory_limit + ' MB'}]"
             :fields="['time_limit', 'memory_limit']"
             class="text-light"
             >
