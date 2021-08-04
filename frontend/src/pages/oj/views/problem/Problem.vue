@@ -159,18 +159,18 @@
           </h2>
           <pre class="sample-io">{{sample.output}}</pre>
           <div class="blank-line"></div>
-          <b-table
-            :items="[{time_limit:problem.time_limit + ' sec.', memory_limit:problem.memory_limit + ' MB'}]"
-            :fields="['time_limit', 'memory_limit']"
-            class="text-light"
-            >
-          </b-table>
         </div>
 
         <div v-if="problem.hint" v-katex>
           <h2>Hint</h2>
           <p v-dompurify-html="problem.hint"></p>
         </div>
+        <b-table
+          :items="[{time_limit:problem.time_limit + ' ms', memory_limit:problem.memory_limit + ' MB'}]"
+          :fields="['time_limit', 'memory_limit']"
+          class="text-light"
+          >
+        </b-table>
       </b-col>
       <b-col id="console" cols="7">
         <b-row id="editor">
