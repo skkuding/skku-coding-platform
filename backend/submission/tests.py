@@ -13,13 +13,14 @@ DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test
                         "test_case_score": [{"output_name": "1.out", "input_name": "1.in", "output_size": 0,
                                              "stripped_output_md5": "d41d8cd98f00b204e9800998ecf8427e",
                                              "input_size": 0, "score": 0}],
-                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test", "locked_data": "locked"}
+                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test",
+                        "template_code": [{"code_id": 1, "code": "awefasdf", "locked": True}, {"code_id": 2, "code": "qwerasdf", "locked": False}]}
 
 DEFAULT_SUBMISSION_DATA = {
     "problem_id": "1",
     "user_id": 1,
     "username": "test",
-    "code": "xxxxxxxxxxxxxx",
+    "code": [{"code_id": 2, "code": "xxxxxxxxxxxxxx", "locked": False}],
     "result": -2,
     "info": {},
     "language": "C",
@@ -75,4 +76,19 @@ class SubmissionAPITest(SubmissionPrepare):
         self.assertFailed(resp)
         self.assertDictEqual(resp.data, {"error": "error",
                                          "data": "Python3 is now allowed in the problem"})
+        judge_task.assert_not_called()
+
+    def test_create_submission_with_wrong_code_format(self, judge_task):
+        self.submission_data.update({"language": "C", "code": [{"code_id": 1, "code": "xxxxxxxxxxxxxx", "locked": False}]})
+        resp = self.client.post(self.url, self.submission_data)
+        self.assertFailed(resp)
+        self.assertDictEqual(resp.data, {'error': 'error', 'data': 'Invalid Code : Code id is not matched'})
+        judge_task.assert_not_called()
+
+    def test_create_submission_with_wrong_code_format2(self, judge_task):
+        self.submission_data.update({"code": [{"code_id": 2, "code": "xxxxxxxxxxxxxx", "locked": False},
+                                              {"code_id": 3, "code": "xxxxxxxxxxxxxx", "locked": False}]})
+        resp = self.client.post(self.url, self.submission_data)
+        self.assertFailed(resp)
+        self.assertDictEqual(resp.data, {'error': 'error', 'data': 'Invalid Code : Length of code is not matched'})
         judge_task.assert_not_called()

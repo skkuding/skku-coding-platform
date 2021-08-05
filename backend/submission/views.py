@@ -65,10 +65,27 @@ class SubmissionAPI(APIView):
             return self.error("Problem not exist")
         if data["language"] not in problem.languages:
             return self.error(f"{data['language']} is now allowed in the problem")
+
+        code = ""
+        usercode_idx = 0
+        for code_block in problem.template_code:
+            if code_block['locked']:
+                code += code_block['code']
+            else:
+                if len(data["code"]) == usercode_idx:
+                    return self.error("Invalid Code : Length of code is not matched")
+                user_code_block = data["code"][usercode_idx]
+                if user_code_block['code_id'] != code_block['code_id']:
+                    return self.error("Invalid Code : Code id is not matched")
+                code += user_code_block['code']
+                usercode_idx += 1
+        if len(data["code"]) > usercode_idx:
+            return self.error("Invalid Code : Length of code is not matched")
+
         submission = Submission.objects.create(user_id=request.user.id,
                                                username=request.user.username,
                                                language=data["language"],
-                                               code=data["code"],
+                                               code=code,
                                                problem_id=problem.id,
                                                ip=request.session["ip"],
                                                contest_id=data.get("contest_id"))

@@ -3,10 +3,17 @@ from utils.api import serializers
 from utils.serializers import LanguageNameChoiceField
 
 
+class CreateCodeSerializer(serializers.Serializer):
+    # [{"code_id": 1, "locked": False, "code": ""}]
+    code_id = serializers.IntegerField(min_value=1)
+    locked = serializers.BooleanField()
+    code = serializers.CharField(max_length=1024*1024, allow_blank=True, allow_null=True)
+
+
 class CreateSubmissionSerializer(serializers.Serializer):
     problem_id = serializers.IntegerField()
     language = LanguageNameChoiceField()
-    code = serializers.CharField(max_length=1024 * 1024)
+    code = serializers.ListField(child=CreateCodeSerializer(), required=False, allow_empty=True)
     contest_id = serializers.IntegerField(required=False)
     captcha = serializers.CharField(required=False)
 

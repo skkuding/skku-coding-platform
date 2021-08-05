@@ -29,7 +29,7 @@ class Submission(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     user_id = models.IntegerField(db_index=True)
     username = models.TextField()
-    code = models.TextField()
+    code = JSONField()
     result = models.IntegerField(db_index=True, default=JudgeStatus.PENDING)
     # Judgment details returned from JudgeServer
     info = JSONField(default=dict)
