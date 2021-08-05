@@ -28,6 +28,14 @@
         head-variant="light"
         @row-clicked="goContestProblem"
       >
+        <template #cell(title)="data">
+          {{data.value}}
+          <b-icon
+            icon="check2-circle"
+            style="color: #8DC63F;"
+            font-scale="1.2"
+            v-if="data.item.my_status===0"></b-icon>
+        </template>
       </b-table>
     </div>
     <div class="pagination">
