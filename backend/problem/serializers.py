@@ -44,6 +44,13 @@ class ProblemIOModeSerializer(serializers.Serializer):
         return attrs
 
 
+class CreateTemplateCodeSerializer(serializers.Serializer):
+    # [{"code_id": 1, "locked": False, "code": ""}]
+    code_id = serializers.IntegerField(min_value=1)
+    locked = serializers.BooleanField()
+    code = serializers.CharField(max_length=1024*1024, allow_blank=True, allow_null=True)
+
+
 class CreateOrEditProblemSerializer(serializers.Serializer):
     _id = serializers.CharField(max_length=32, allow_blank=True, allow_null=True)
     title = serializers.CharField(max_length=1024)
@@ -69,7 +76,7 @@ class CreateOrEditProblemSerializer(serializers.Serializer):
     hint = serializers.CharField(allow_blank=True, allow_null=True)
     source = serializers.CharField(max_length=256, allow_blank=True, allow_null=True)
     share_submission = serializers.BooleanField()
-    locked_data = serializers.CharField(allow_blank=True, allow_null=True)
+    template_code = serializers.ListField(child=CreateTemplateCodeSerializer(), required=False, allow_empty=True)
 
 
 class TestCaseTextSerializer(serializers.Serializer):

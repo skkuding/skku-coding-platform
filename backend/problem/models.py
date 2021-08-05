@@ -38,6 +38,10 @@ def _default_io_mode():
     return {"io_mode": ProblemIOMode.standard, "input": "input.txt", "output": "output.txt"}
 
 
+def _default_template_code():
+    return [{"code_id": 1, "locked": False, "code": ""}]
+
+
 class Problem(models.Model):
     # display ID
     _id = models.TextField(db_index=True)
@@ -85,7 +89,7 @@ class Problem(models.Model):
     # {JudgeStatus.ACCEPTED: 3, JudgeStaus.WRONG_ANSWER: 11}, the number means count
     statistic_info = JSONField(default=dict)
     share_submission = models.BooleanField(default=False)
-    locked_data= models.TextField(null=True)
+    template_code = JSONField(default=_default_template_code, blank=True, null=False)
 
     class Meta:
         db_table = "problem"
