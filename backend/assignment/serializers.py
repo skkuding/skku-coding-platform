@@ -1,13 +1,12 @@
-from django.db.models import fields
 from utils.api import UsernameSerializer, serializers
 
 from .models import Assignment
 from submission.models import Submission
-from problem.serializers import BaseProblemSerializer
-from problem.serializers import ProblemSerializer
+
 class AssginmentProfessorSerializer(serializers.ModelSerializer):
     created_by = UsernameSerializer()
     status = serializers.CharField()
+
     class Meta:
         model = Assignment
         fields = "__all__"
@@ -21,17 +20,26 @@ class AssignmentSerializer(serializers.ModelSerializer):
         return obj.problems.count()
 
     def get_submitted_problem(self, obj):
-        return Submission.objects.filter(assignment=obj, user_id=obj.created_by).count()
-        # return obj.submissions.filter(user_id=obj.creatd_by).count()
+        user = self.context['request'].user
+        return Submission.objects.filter(assignment=obj, user_id=user.id).values("problem").distinct().count()
 
     class Meta:
         model = Assignment
-        fields = "__all__"
+        exclude = ("created_by", "visible", "create_time", "last_update_time", "course")
 
 
 class CreateAssignmentSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
-    course = serializers.IntegerField()
-    content = serializers.CharField()
+    course_id = serializers.IntegerField()
+    content = serializers.CharField(max_length=1024 * 1024 * 8)
+    start_time = serializers.DateTimeField()
+    end_time = serializers.DateTimeField()
+
+
+class EditAssignmentSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField(max_length=128)
+    course_id = serializers.IntegerField()
+    content = serializers.CharField(max_length=1024 * 1024 * 8)
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
