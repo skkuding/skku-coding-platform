@@ -1,7 +1,7 @@
 from utils.api import APIView
 from account.decorators import login_required
 
-from ..models import Course, Takes
+from ..models import Course, Registration
 from ..serializers import CourseSerializer, CourseStudentSerializer
 
 class CourseAPI(APIView):
@@ -16,13 +16,13 @@ class CourseAPI(APIView):
         if course_id:
             try:
                 course = Course.objects.get(id=course_id)
-                Takes.objects.get(user_id=user_id, course_id=course_id)
+                Registration.objects.get(user_id=user_id, course_id=course_id)
                 return self.success(CourseSerializer(course).data)
             except Course.DoesNotExist:
                 return self.error("Course does not exist")
-            except Takes.DoesNotExist:
+            except Registration.DoesNotExist:
                 return self.error("Invalid access, not registered user")
 
-        courses = Takes.objects.filter(user_id=user_id)
+        courses = Registration.objects.filter(user_id=user_id)
 
         return self.success(self.paginate_data(request, courses, CourseStudentSerializer))

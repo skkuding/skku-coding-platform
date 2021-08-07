@@ -18,10 +18,10 @@ class Course(models.Model):
         ordering = ("-registered_year",)
 
 
-class Takes(models.Model):
+class Registration(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     class Meta:
-        db_table = "takes"
+        db_table = "registration"
