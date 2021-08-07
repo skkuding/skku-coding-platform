@@ -1,7 +1,7 @@
 from utils.api import APIView
 from account.decorators import login_required
 
-from course.models import Course, Takes
+from course.models import Course, Registration
 
 from ..models import Assignment
 from ..serializers import AssignmentSerializer
@@ -17,10 +17,10 @@ class AssignmentAPI(APIView):
 
         try:
             Course.objects.get(id=course_id)
-            Takes.objects.get(user_id=request.user.id, course_id=course_id)
+            Registration.objects.get(user_id=request.user.id, course_id=course_id)
         except Course.DoesNotExist:
             return self.error("Course does not exist")
-        except Takes.DoesNotExist:
+        except Registration.DoesNotExist:
             return self.error("Invalid access, not registered user")
 
         context = {"request": request}
