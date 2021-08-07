@@ -21,6 +21,12 @@ class ContestRuleType(Choices):
     OI = "OI"
 
 
+class AssignmentStatus:
+    ASSIGNMENT_NOT_START = "1"
+    ASSIGNMENT_ENDED = "-1"
+    ASSIGNMENT_UNDERWAY = "0"
+
+
 class CacheKey:
     waiting_queue = "waiting_queue"
     contest_rank_cache = "contest_rank_cache"
