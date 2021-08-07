@@ -2,12 +2,14 @@ import functools
 import hashlib
 import time
 
+from assignment.models import Assignment
 from problem.models import Problem
 from contest.models import Contest, ContestType, ContestStatus, ContestRuleType
 from .api import JSONResponse, APIError
 from .constants import CONTEST_PASSWORD_SESSION_KEY
 from account.models import ProblemPermission
 
+from utils.constants import AssignmentStatus
 
 class BasePermissionDecorator(object):
     def __init__(self, func):
@@ -138,6 +140,36 @@ def check_contest_permission(check_type="details"):
         return _check_permission
     return decorator
 
+def check_assignment_permission(check_type="details"):
+    def decorator(func):
+        def _check_permission(*args, **kwargs):
+            self = args[0]
+            request = args[1]
+            user = request.user
+            if request.data.get("assignment_id"):
+                assignment_id = request.data["assignment_id"]
+            else:
+                assignment_id = request.GET.get("assignment_id")
+            if not assignment_id:
+                return self.error("Parameter error, assignment_id is required")
+            
+            try:
+                self.assignment = Assignment.objects.select_related("created_by").get(id=assignment_id, visible=True)
+            except Assignment.DoesNotExist:
+                return self.error("Assignment %s doesn't exist" % assignment_id)
+
+            if not user.is_authenticated:
+                return self.error("Please login first.")
+
+            if user.is_assignment_admin(self.assignment): #???
+                return func(*args, **kwargs)
+
+            if self.assignment.status == AssignmentStatus.ASSIGNMENT_NOT_START and check_type != "details":
+                return self.error("Assignment has not started yet.")
+
+            return func(*args, **kwargs)
+        return _check_permission
+    return decorator
 
 def ensure_created_by(obj, user):
     e = APIError(msg=f"{obj.__class__.__name__} does not exist")
