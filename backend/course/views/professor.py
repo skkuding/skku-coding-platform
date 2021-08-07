@@ -4,9 +4,9 @@ from utils.api import APIView, validate_serializer
 from account.models import User
 from account.decorators import ensure_created_by, admin_role_required
 
-from ..models import Course, Takes
+from ..models import Course, Registration
 from ..serializers import (CourseProfessorSerializer, CreateCourseSerializer, EditCourseSerializer,
-                            RegisterSerializer, EditRegisterSerializer, TakesSerializer, UserListSerializer)
+                            RegisterSerializer, EditRegisterSerializer, RegistrationSerializer, UserListSerializer)
 
 class CourseAPI(APIView):
     @admin_role_required
@@ -87,12 +87,12 @@ class StudentManagementAPI(APIView):
             return self.error("Course does not exist")
 
         try:
-            Takes.objects.get(user_id=user_id, course_id=course_id)
+            Registration.objects.get(user_id=user_id, course_id=course_id)
             return self.error("User has been already registered to the course")
-        except Takes.DoesNotExist:
-            takes = Takes.objects.create(user_id=user_id,
+        except Registration.DoesNotExist:
+            registration = Registration.objects.create(user_id=user_id,
                                         course_id=course_id)
-        return self.success(TakesSerializer(takes).data)
+        return self.success(RegistrationSerializer(registration).data)
 
     @admin_role_required
     def get(self, request):
@@ -108,13 +108,13 @@ class StudentManagementAPI(APIView):
         except Course.DoesNotExist:
             return self.error("Course does not exist")
 
-        takes = Takes.objects.filter(course_id=course_id)
+        registration = Registration.objects.filter(course_id=course_id)
 
         # Return number of total registered students
         if get_students_count:
-            return self.success({ 'total_students': takes.count() })
+            return self.success({ 'total_students': registration.count() })
 
-        return self.success(self.paginate_data(request, takes, UserListSerializer))
+        return self.success(self.paginate_data(request, registration, UserListSerializer))
 
     @validate_serializer(EditRegisterSerializer)
     @admin_role_required
@@ -123,27 +123,27 @@ class StudentManagementAPI(APIView):
         course_id = data["course_id"]
 
         try:
-            takes = Takes.objects.get(id=data.pop("registration_id"))
-        except Takes.DoesNotExist:
+            registration = Registration.objects.get(id=data.pop("registration_id"))
+        except Registration.DoesNotExist:
             return self.error("Register information does not exist")
 
         try:
             course = Course.objects.get(id=course_id)
             ensure_created_by(course, request.user)
-            course = Course.objects.get(id=takes.course_id)
+            course = Course.objects.get(id=registration.course_id)
             ensure_created_by(course, request.user)
         except Course.DoesNotExist:
             return self.error("Course does not exist")
 
         try:
-            Takes.objects.get(user_id=takes.user_id, course_id=course_id)
+            Registration.objects.get(user_id=registration.user_id, course_id=course_id)
             return self.error("User has been already registered to the course")
-        except Takes.DoesNotExist:
+        except Registration.DoesNotExist:
             for k, v in data.items():
-                setattr(takes, k, v)
-            takes.save()
+                setattr(registration, k, v)
+            registration.save()
 
-        return self.success(TakesSerializer(takes).data)
+        return self.success(RegistrationSerializer(registration).data)
 
     @admin_role_required
     def delete(self, request):
@@ -152,11 +152,11 @@ class StudentManagementAPI(APIView):
             return self.error("Invalid parameter, registration_id is required")
 
         try:
-            takes = Takes.objects.get(id=id)
-            course = Course.objects.get(id=takes.course_id)
+            registration = Registration.objects.get(id=id)
+            course = Course.objects.get(id=registration.course_id)
             ensure_created_by(course, request.user)
-        except Takes.DoesNotExist:
+        except Registration.DoesNotExist:
             return self.error("Register information does not exists")
 
-        takes.delete()
+        registration.delete()
         return self.success()
