@@ -2,24 +2,34 @@ from django.http import request
 from utils.api import APIView, validate_serializer
 
 from account.models import User
+from account.decorators import ensure_created_by, admin_role_required
 
-from ..models import Course, Takes
-from ..serializers import CourseSerializer, CreateCourseSerializer, CourseListSerializer, RegisterStudentSerializer, TakesSerializer
+from ..models import Course, Registration
+from ..serializers import (CourseProfessorSerializer, CreateCourseSerializer, EditCourseSerializer,
+                           RegisterSerializer, EditRegisterSerializer, RegisterErrorSerializer,  UserListSerializer)
+
 
 class CourseAPI(APIView):
+    @admin_role_required
     def get(self, request):
         cousre_id = request.GET.get("id")
+
+        if not id:
+            return self.error("Invalid parameter, id is required")
+
         if cousre_id:
             try:
                 course = Course.objects.get(id=cousre_id)
-                return self.success(CourseSerializer(course).data)
+                ensure_created_by(course, request.user)
+                return self.success(CourseProfessorSerializer(course).data)
             except Course.DoesNotExist:
                 return self.error("Course does not exist")
 
         courses = Course.objects.filter(created_by=request.user)
-        return self.success(self.paginate_data(request, courses, CourseSerializer))
+        return self.success(self.paginate_data(request, courses, CourseProfessorSerializer))
 
     @validate_serializer(CreateCourseSerializer)
+    @admin_role_required
     def post(self, request):
         data = request.data
         course = Course.objects.create(title=data["title"],
@@ -28,23 +38,146 @@ class CourseAPI(APIView):
                                         created_by=request.user,
                                         registered_year=data["registered_year"],
                                         semester=data["semester"])
-        return self.success(CourseSerializer(course).data)
+        return self.success(CourseProfessorSerializer(course).data)
 
-
-class StudentManagementAPI(APIView): # params? data? 
-    @validate_serializer(RegisterStudentSerializer)
-    def post(self, request):
+    @validate_serializer(EditCourseSerializer)
+    @admin_role_required
+    def put(self, request):
         data = request.data
-        course_id = data["course_id"]# request.GET.get('course_id')
-        user_id = data["user_id"]# request.GET.get('user_id')
-
         try:
-            Course.objects.get(id=course_id)
-            User.objects.get(id=user_id)
+            course = Course.objects.get(id=data.pop("id"))
+            ensure_created_by(course, request.user)
         except Course.DoesNotExist:
             return self.error("Course does not exist")
-        except User.DoesNotExist:
-            return self.error("User does not exist")
+
+        for k, v in data.items():
+            setattr(course, k, v)
+        course.save()
+        return self.success(CourseProfessorSerializer(course).data)
+
+    @admin_role_required
+    def delete(self, request):
+        id = request.GET.get("id")
+        if not id:
+            return self.error("Invalid parameter, id is required")
+        try:
+            course = Course.objects.get(id=id)
+            ensure_created_by(course, request.user)
+        except Course.DoesNotExist:
+            return self.error("Course does not exists")
+
+        course.delete()
+        return self.success()
+
+
+class StudentManagementAPI(APIView):
+    @swagger_auto_schema(
+        request_body=RegisterSerializer,
+        operation_description="Register user to a course"
+    )
+    @validate_serializer(RegisterSerializer)
+    @admin_role_required
+    def post(self, request):
+        data = request.data
+        course_id = data["course_id"]
+        username = data["username"]
+
+        try:
+            course = Course.objects.get(id=course_id)
+            ensure_created_by(course, request.user)
+        except Course.DoesNotExist:
+            return self.error("Course does not exist")
+
+        user_not_exist = []
+        already_registered_user = []
+
+        for user in username:
+            try:
+                user_id = User.objects.get(username=user).id
+            except User.DoesNotExist:
+                user_not_exist.append(user)
+                continue
+
+            try:
+                Registration.objects.get(user_id=user_id, course_id=course_id)
+                already_registered_user.append(user)
+            except Registration.DoesNotExist:
+                continue
+
+        if user_not_exist or already_registered_user:
+            data = {"user_not_exist": user_not_exist, "already_registered_user": already_registered_user}
+            serialized_data = RegisterErrorSerializer(data).data
+            serialized_data["error"] = "User does not exist or has been already registered"
+            return self.success(serialized_data)
+
+        for user in username:
+            user_id = User.objects.get(username=user).id
+            Registration.objects.create(user_id=user_id, course_id=course_id)
+        return self.success()
+
+    @admin_role_required
+    def get(self, request):
+        course_id = request.GET.get("course_id")
+        get_students_count = request.GET.get("count")
+
+        if not course_id:
+            return self.error("Invalid parameter, course_id is required")
+
+        try: 
+            course = Course.objects.get(id=course_id)
+            ensure_created_by(course, request.user)
+        except Course.DoesNotExist:
+            return self.error("Course does not exist")
+
+        registration = Registration.objects.filter(course_id=course_id)
+
+        # Return number of total registered students
+        if get_students_count:
+            return self.success({ 'total_students': registration.count() })
+
+        return self.success(self.paginate_data(request, registration, UserListSerializer))
+
+    @validate_serializer(EditRegisterSerializer)
+    @admin_role_required
+    def put(self, request):
+        data = request.data
+        course_id = data["course_id"]
+
+        try:
+            registration = Registration.objects.get(id=data.pop("registration_id"))
+        except Registration.DoesNotExist:
+            return self.error("Register information does not exist")
+
+        try:
+            course = Course.objects.get(id=course_id)
+            ensure_created_by(course, request.user)
+            course = Course.objects.get(id=registration.course_id)
+            ensure_created_by(course, request.user)
+        except Course.DoesNotExist:
+            return self.error("Course does not exist")
+
+        try:
+            Registration.objects.get(user_id=registration.user_id, course_id=course_id)
+            return self.error("User has been already registered to the course")
+        except Registration.DoesNotExist:
+            for k, v in data.items():
+                setattr(registration, k, v)
+            registration.save()
+
+        return self.success(RegistrationSerializer(registration).data)
+
+    @admin_role_required
+    def delete(self, request):
+        id = request.GET.get("registration_id")
+        if not id:
+            return self.error("Invalid parameter, registration_id is required")
+
+        try:
+            registration = Registration.objects.get(id=id)
+            course = Course.objects.get(id=registration.course_id)
+            ensure_created_by(course, request.user)
+        except Registration.DoesNotExist:
+            return self.error("Register information does not exists")
 
         try:
             Registration.objects.get(user_id=user_id, course_id=course_id)
@@ -111,7 +244,7 @@ class StudentManagementAPI(APIView): # params? data?
     @swagger_auto_schema(
         request_body=EditRegisterSerializer,
         operation_description="Change registered course of a user",
-        responses={200: RegistrationSerializer},
+        responses={200: UserListSerializer},
     )
     @validate_serializer(EditRegisterSerializer)
     @admin_role_required
@@ -139,7 +272,7 @@ class StudentManagementAPI(APIView): # params? data?
             for k, v in data.items():
                 setattr(registration, k, v)
             registration.save()
-        return self.success(RegistrationSerializer(registration).data)
+        return self.success(UserListSerializer(registration).data)
 
     @swagger_auto_schema(
         manual_parameters=[
