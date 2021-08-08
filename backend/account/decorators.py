@@ -160,7 +160,7 @@ def check_assignment_permission(check_type="details"):
             if not user.is_authenticated:
                 return self.error("Please login first.")
 
-            if user.is_assignment_admin(self.assignment): #???
+            if user.is_assignment_admin(self.assignment):
                 return func(*args, **kwargs)
 
             if self.assignment.status == AssignmentStatus.ASSIGNMENT_NOT_START and check_type != "details":
