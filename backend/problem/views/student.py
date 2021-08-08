@@ -5,7 +5,24 @@ from ..serializers import ProblemSafeSerializer
 
 
 class AssignmentProblemAPI(APIView):
-    @check_assignment_permission(check_type="problems")
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="assignment_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of assignment",
+                required=True
+            ),
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem",
+            )
+        ],
+        operation_description="Get problem of specific assignment. If \'problem_id\' is not set, whole problems of the assignment would be returned.",
+        responses={200: ProblemSafeSerializer},
+    )
+    @check_assignment_permission()
     def get(self, request):
         problem_id = request.GET.get("problem_id")
         if problem_id:

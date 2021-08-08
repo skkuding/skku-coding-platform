@@ -3,6 +3,7 @@ import ipaddress
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from account.decorators import login_required, check_contest_permission, check_assignment_permission
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
 from options.options import SysOptions
@@ -10,6 +11,7 @@ from options.options import SysOptions
 from problem.models import Problem, ProblemRuleType
 from account.models import User, AdminType
 from utils.api import APIView, validate_serializer
+from utils.constants import AssignmentStatus
 from utils.cache import cache
 from utils.captcha import Captcha
 from utils.decorators import login_required, check_contest_permission
@@ -39,6 +41,12 @@ class SubmissionAPI(APIView):
                 if not any(user_ip in ipaddress.ip_network(cidr, strict=False) for cidr in contest.allowed_ip_ranges):
                     return self.error("Your IP is not allowed in this contest")
 
+    @check_assignment_permission()
+    def check_assignment_permission(self, request):
+        assignment = self.assignment
+        if assignment.status == AssignmentStatus.ASSIGNMENT_ENDED:
+            return self.error("The Assignment deadline has expired")
+
     @swagger_auto_schema(request_body=CreateSubmissionSerializer)
     @validate_serializer(CreateSubmissionSerializer)
     @login_required
@@ -46,11 +54,19 @@ class SubmissionAPI(APIView):
         data = request.data
         hide_id = False
         if data.get("contest_id"):
-            error = self.check_contest_permission(request)
+            error = self.check_contest_permission()
             if error:
                 return error
             contest = self.contest
             if not contest.problem_details_permission(request.user):
+                hide_id = True
+
+        if data.get("assignment_id"):
+            error = self.check_assignment_permission(request)
+            if error:
+                return error
+            assignment = self.assignment
+            if not assignment.problem_details_permission(request.user):
                 hide_id = True
 
         if data.get("captcha"):
@@ -61,7 +77,7 @@ class SubmissionAPI(APIView):
             return self.error(error)
 
         try:
-            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), visible=True)
+            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), assignment_id=data.get("assignment_id"), visible=True)
         except Problem.DoesNotExist:
             return self.error("Problem not exist")
         if data["language"] not in problem.languages:
@@ -72,7 +88,8 @@ class SubmissionAPI(APIView):
                                                code=data["code"],
                                                problem_id=problem.id,
                                                ip=request.session["ip"],
-                                               contest_id=data.get("contest_id"))
+                                               contest_id=data.get("contest_id"),
+                                               assignment_id=data.get("assignment_id"))
         # use this for debug
         # JudgeDispatcher(submission.id, problem.id).judge()
         judge_task.send(submission.id, problem.id)
