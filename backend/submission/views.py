@@ -3,7 +3,7 @@ import ipaddress
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from account.decorators import login_required, check_contest_permission
+from account.decorators import login_required, check_contest_permission, check_assignment_permission
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
 from options.options import SysOptions
@@ -11,6 +11,7 @@ from options.options import SysOptions
 from problem.models import Problem, ProblemRuleType
 from account.models import User, AdminType
 from utils.api import APIView, validate_serializer
+from utils.constants import AssignmentStatus
 from utils.cache import cache
 from utils.captcha import Captcha
 from utils.throttling import TokenBucket
@@ -39,6 +40,12 @@ class SubmissionAPI(APIView):
                 if not any(user_ip in ipaddress.ip_network(cidr, strict=False) for cidr in contest.allowed_ip_ranges):
                     return self.error("Your IP is not allowed in this contest")
 
+    @check_assignment_permission(check_type="problems")
+    def check_assignment_permission(self):
+        assignment = self.assignment
+        if assignment.status == AssignmentStatus.ASSIGNMENT_ENDED:
+            return self.error("The Assignment deadline has expired")
+
     @swagger_auto_schema(request_body=CreateSubmissionSerializer)
     @validate_serializer(CreateSubmissionSerializer)
     @login_required
@@ -46,11 +53,19 @@ class SubmissionAPI(APIView):
         data = request.data
         hide_id = False
         if data.get("contest_id"):
-            error = self.check_contest_permission(request)
+            error = self.check_contest_permission()
             if error:
                 return error
             contest = self.contest
             if not contest.problem_details_permission(request.user):
+                hide_id = True
+
+        if data.get("assignment_id"):
+            error = self.check_assignment_permission(request)
+            if error:
+                return error
+            assignment = self.assignment
+            if not assignment.problem_details_permission(request.user):
                 hide_id = True
 
         if data.get("captcha"):
@@ -61,7 +76,7 @@ class SubmissionAPI(APIView):
             return self.error(error)
 
         try:
-            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), visible=True)
+            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), assignment_id=data.get("assignment_id"), visible=True)
         except Problem.DoesNotExist:
             return self.error("Problem not exist")
         if data["language"] not in problem.languages:
@@ -72,7 +87,8 @@ class SubmissionAPI(APIView):
                                                code=data["code"],
                                                problem_id=problem.id,
                                                ip=request.session["ip"],
-                                               contest_id=data.get("contest_id"))
+                                               contest_id=data.get("contest_id"),
+                                               assignment_id=data.get("assignment_id"))
         # use this for debug
         # JudgeDispatcher(submission.id, problem.id).judge()
         judge_task.send(submission.id, problem.id)
@@ -292,6 +308,76 @@ class ContestSubmissionListAPI(APIView):
         if contest.rule_type == ContestRuleType.ACM:
             if not contest.real_time_rank and not request.user.is_contest_admin(contest):
                 submissions = submissions.filter(user_id=request.user.id)
+
+        data = self.paginate_data(request, submissions)
+        data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
+        return self.success(data)
+
+
+class AssignmentSubmissionListAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="limit",
+                in_=openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="offset",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="result", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="username", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                name="page", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            )
+        ]
+    )
+    @check_assignment_permission(check_type="submissions")
+    def get(self, request):
+        assignment = self.assignment
+        submissions = Submission.objects.filter(assignment_id=assignment.id).select_related("problem__created_by")
+        problem_id = request.GET.get("problem_id")
+        result = request.GET.get("result")
+        username = request.GET.get("username")
+        if problem_id:
+            try:
+                problem = Problem.objects.get(_id=problem_id, assignment_id=assignment.id, visible=True)
+            except Problem.DoesNotExist:
+                return self.error("Problem doesn't exist")
+            submissions = submissions.filter(problem=problem)
+
+        if username:
+            submissions = submissions.filter(username__icontains=username)
+        if result:
+            submissions = submissions.filter(result=result)
+
+        # students can only see their own submissions
+        if not request.user.is_assignment_admin:
+            submissions = submissions.filter(user_id=request.user.id)
+
+        # filter the test submissions submitted before contest start
+        if assignment.status != ContestStatus.CONTEST_NOT_START:
+            submissions = submissions.filter(create_time__gte=assignment.start_time)
 
         data = self.paginate_data(request, submissions)
         data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
