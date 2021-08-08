@@ -19,6 +19,13 @@ module.exports = {
       filename: 'admin/index.html',
       title: 'SKKU Coding Platform Admin',
       chunks: ['chunk-vendors', 'chunk-common', 'admin']
+    },
+    prof: {
+      entry: './src/pages/prof/index.js',
+      template: './src/pages/prof/index.html',
+      filename: 'prof/index.html',
+      title: 'SKKU Coding Platform Professor',
+      chunks: ['chunk-vendors', 'chunk-common', 'prof']
     }
   },
   configureWebpack: {
@@ -27,7 +34,8 @@ module.exports = {
       alias: {
         '@': path.join(__dirname, 'src'),
         '@oj': path.join(__dirname, 'src/pages/oj'),
-        '@admin': path.join(__dirname, 'src/pages/admin')
+        '@admin': path.join(__dirname, 'src/pages/admin'),
+        '@prof': path.join(__dirname, 'src/pages/prof')
       }
     }
   },
