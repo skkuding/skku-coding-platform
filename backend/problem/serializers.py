@@ -6,6 +6,7 @@ from utils.api import UsernameSerializer, serializers
 from utils.constants import Difficulty
 from utils.serializers import LanguageNameMultiChoiceField, SPJLanguageNameChoiceField, LanguageNameChoiceField
 
+from submission.models import Submission
 from .models import Problem, ProblemRuleType, ProblemTag, ProblemIOMode
 from .utils import parse_problem_template
 
@@ -93,6 +94,14 @@ class EditContestProblemSerializer(CreateOrEditProblemSerializer):
     contest_id = serializers.IntegerField()
 
 
+class CreateAssignmentProblemSerializer(CreateOrEditProblemSerializer):
+    assignment_id = serializers.IntegerField()
+
+
+class EditAssignmentProblemSerializer(CreateOrEditProblemSerializer):
+    id = serializers.IntegerField()
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProblemTag
@@ -121,6 +130,17 @@ class BaseProblemSerializer(serializers.ModelSerializer):
 
 
 class ProblemAdminSerializer(BaseProblemSerializer):
+    class Meta:
+        model = Problem
+        fields = "__all__"
+
+
+class ProblemProfessorSerializer(BaseProblemSerializer):
+    total_submission_assignment = serializers.SerializerMethodField()
+
+    def get_total_submission_assignment(self, obj):
+        return Submission.objects.filter(problem=obj, assignment=obj.assignment).values("user_id").distinct().count()
+
     class Meta:
         model = Problem
         fields = "__all__"

@@ -182,14 +182,14 @@ class SubmissionListAPI(APIView):
         if request.GET.get("contest_id"):
             return self.error("Parameter error")
 
-        submissions = Submission.objects.filter(contest_id__isnull=True).select_related("problem__created_by")
+        submissions = Submission.objects.filter(contest_id__isnull=True, assignment_id__isnull=True).select_related("problem__created_by")
         problem_id = request.GET.get("problem_id")
         myself = request.GET.get("myself")
         result = request.GET.get("result")
         username = request.GET.get("username")
         if problem_id:
             try:
-                problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, visible=True)
+                problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, assignment_id__isnull=True, visible=True)
             except Problem.DoesNotExist:
                 return self.error("Problem doesn't exist")
             submissions = submissions.filter(problem=problem)
@@ -296,6 +296,150 @@ class ContestSubmissionListAPI(APIView):
         data = self.paginate_data(request, submissions)
         data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
         return self.success(data)
+
+
+class AssignmentSubmissionListAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="limit",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="offset",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="result", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="username", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
+            ),
+        ],
+        operation_description="Submission list for assignment problem page",
+        responses={200: SubmissionListSerializer}
+    )
+    @check_assignment_permission()
+    def get(self, request):
+        assignment = self.assignment
+        submissions = Submission.objects.filter(assignment_id=assignment.id).select_related("problem__created_by")
+        problem_id = request.GET.get("problem_id")
+        result = request.GET.get("result")
+        username = request.GET.get("username")
+        if problem_id:
+            try:
+                problem = Problem.objects.get(_id=problem_id, assignment_id=assignment.id, visible=True)
+            except Problem.DoesNotExist:
+                return self.error("Problem doesn't exist")
+            submissions = submissions.filter(problem=problem)
+
+        if username:
+            submissions = submissions.filter(username__icontains=username)
+        if result:
+            submissions = submissions.filter(result=result)
+
+        # students can only see their own submissions
+        if not request.user.is_assignment_admin:
+            submissions = submissions.filter(user_id=request.user.id)
+
+        # filter the test submissions submitted before contest start
+        if assignment.status != AssignmentStatus.ASSIGNMENT_NOT_START:
+            submissions = submissions.filter(create_time__gte=assignment.start_time)
+
+        data = self.paginate_data(request, submissions)
+        data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
+        return self.success(data)
+
+
+class AssignmentSubmissionListProfessorAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="limit",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="offset",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER
+            ),
+        ],
+        operation_description="Submission list for professor page",
+        responses={200: SubmissionListProfessorSerializer}
+    )
+    # @admin_role_required
+    def get(self, request):
+        assignment_id = request.GET.get("assignment_id")
+        problem_id = request.GET.get("problem_id")
+        if not assignment_id:
+            return self.error("Invalid parameter, assignment_id is required")
+        if not problem_id:
+            return self.error("Invalid parameter, problem_id is required")
+
+        try:
+            Assignment.objects.get(id=assignment_id)
+            Problem.objects.get(id=problem_id)
+        except Assignment.DoesNotExist:
+            return self.error("Assignment does not exist")
+        except Problem.DoesNotExist:
+            return self.error("Problem does not exist")
+
+        submissions = Submission.objects.filter(assignment_id=assignment_id).order_by("username", "-create_time").distinct("username")
+        return self.success(self.paginate_data(request, submissions, SubmissionListProfessorSerializer))
+
+
+class EditSubmissionScoreAPI(APIView):
+    @swagger_auto_schema(
+        request_body=EditSubmissionScoreSerializer,
+        operation_description="Edit submission score",
+        responses={200: SubmissionListSerializer},
+    )
+    @validate_serializer(EditSubmissionScoreSerializer)
+    @admin_role_required
+    def put(self, request):
+        data = request.data
+        submission_id = data["id"]
+        score = data["score"]
+
+        try:
+            submission = Submission.objects.get(id=submission_id)
+        except Submission.DoesNotExist:
+            return self.error("Submission does not exist")
+
+        submission.statistic_info["score"] = score
+        submission.save()
+        return self.success(SubmissionListSerializer(submission).data)
 
 
 class SubmissionExistsAPI(APIView):
