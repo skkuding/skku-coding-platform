@@ -18,6 +18,9 @@
         <b-nav-item class="header__menu">
           <router-link class="nav-link" active-class="active" to="/problem">Problems</router-link>
         </b-nav-item>
+        <b-nav-item class="header__menu">
+          <router-link class="nav-link" active-class="active" to="/lecture">Lectures</router-link>
+        </b-nav-item>
       </b-navbar-nav>
 
       <b-navbar-nav class="mr-5" style="width: 0">
