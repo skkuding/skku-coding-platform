@@ -2,7 +2,8 @@ from utils.api import APIView
 from account.decorators import check_assignment_permission
 from ..models import Problem
 from ..serializers import ProblemSafeSerializer
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class AssignmentProblemAPI(APIView):
     @swagger_auto_schema(

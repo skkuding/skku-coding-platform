@@ -135,8 +135,6 @@ class AssignmentProblemAPI(ProblemBase):
             problem.tags.add(tag)
         return self.success(ProblemAdminSerializer(problem).data)
 
-<<<<<<< HEAD
-=======
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
@@ -150,7 +148,6 @@ class AssignmentProblemAPI(ProblemBase):
         operation_description="Delete certain problem of assignment."
     )
     @admin_role_required
->>>>>>> f5108d5... Add admin authentication to professor problem APIs
     def delete(self, request):
         id = request.GET.get("id")
         if not id:

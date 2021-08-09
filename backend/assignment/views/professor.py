@@ -3,7 +3,8 @@ from utils.api import APIView, validate_serializer
 from ..models import Assignment
 from course.models import Course
 from ..serializers import AssginmentProfessorSerializer, CreateAssignmentSerializer, EditAssignmentSerializer
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from account.decorators import ensure_created_by, admin_role_required
 import dateutil.parser
 
@@ -14,6 +15,7 @@ class AssignmentAPI(APIView):
                 name="course_id",
                 in_=openapi.IN_QUERY,
                 description="Unique ID of a course",
+                required=True,
                 type=openapi.TYPE_INTEGER,
             ),
             openapi.Parameter(
@@ -65,6 +67,11 @@ class AssignmentAPI(APIView):
         assignments = Assignment.objects.filter(course_id=course_id)
         return self.success(self.paginate_data(request, assignments, AssginmentProfessorSerializer))
     
+    @swagger_auto_schema(
+        request_body=CreateAssignmentSerializer,
+        operation_description="Create one assignment",
+        responses={200: AssginmentProfessorSerializer},
+    )
     @validate_serializer(CreateAssignmentSerializer)
     @admin_role_required
     def post(self, request):
@@ -85,7 +92,12 @@ class AssignmentAPI(APIView):
 
         assignment = Assignment.objects.create(**data)
         return self.success(AssginmentProfessorSerializer(assignment).data)
-        
+
+    @swagger_auto_schema(
+        request_body=EditAssignmentSerializer,
+        operation_description="Update assignment",
+        responses={200: AssginmentProfessorSerializer},
+    )
     @validate_serializer(EditAssignmentSerializer)
     @admin_role_required
     def put(self, request):
@@ -107,6 +119,25 @@ class AssignmentAPI(APIView):
         assignment.save()
         return self.success(AssginmentProfessorSerializer(assignment).data)
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="course_id",
+                in_=openapi.IN_QUERY,
+                description="Id of course",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                description="Id of assignment to delete",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            )
+        ],
+        operation_description="Delete one contest announcement",
+    )
     @admin_role_required
     def delete(self, request):
         course_id = request.GET.get("course_id")
