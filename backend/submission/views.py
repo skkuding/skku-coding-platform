@@ -309,7 +309,7 @@ class AssignmentSubmissionListAPI(APIView):
             openapi.Parameter(
                 name="limit",
                 in_=openapi.IN_QUERY,
-                required=True,
+                required=False,
                 type=openapi.TYPE_INTEGER
             ),
             openapi.Parameter(
@@ -336,9 +336,6 @@ class AssignmentSubmissionListAPI(APIView):
             openapi.Parameter(
                 name="username", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
             ),
-            openapi.Parameter(
-                name="page", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_INTEGER
-            )
         ]
     )
     @check_assignment_permission(check_type="submissions")

@@ -2,9 +2,27 @@ from utils.api import APIView
 from account.decorators import check_assignment_permission
 from ..models import Problem
 from ..serializers import ProblemSafeSerializer
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class AssignmentProblemAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="assignment_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of assignment",
+                required=True
+            ),
+            openapi.Parameter(
+                name="problem_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem",
+            )
+        ],
+        operation_description="Get problem of specific assignment. If \'problem_id\' is not set, whole problems of the assignment would be returned.",
+        responses={200: ProblemSafeSerializer},
+    )
     @check_assignment_permission(check_type="problems")
     def get(self, request):
         problem_id = request.GET.get("problem_id")
