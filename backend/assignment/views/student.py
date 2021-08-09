@@ -5,8 +5,42 @@ from course.models import Course, Registration
 
 from ..models import Assignment
 from ..serializers import AssignmentSerializer
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 class AssignmentAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="course_id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a course",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a assignment",
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="limit",
+                in_=openapi.IN_QUERY,
+                description="Number of assignments to show",
+                type=openapi.TYPE_STRING,
+                default=10,
+            ),
+            openapi.Parameter(
+                name="offset",
+                in_=openapi.IN_QUERY,
+                description="ID of the first assignment of list",
+                type=openapi.TYPE_STRING,
+                default=0,
+            ),
+        ],
+        operation_description="Get assignment list of the course",
+        responses={200: AssignmentSerializer},
+    )
     @login_required
     def get(self, request):
         assignment_id = request.GET.get("assignment_id")

@@ -8,9 +8,29 @@ from .admin import ProblemBase
 from ..models import Problem, ProblemTag
 from ..serializers import (CreateAssignmentProblemSerializer, ProblemAdminSerializer, 
                             ProblemProfessorSerializer, EditAssignmentProblemSerializer)
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class AssignmentProblemAPI(ProblemBase):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem.",
+            ),
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                required=True,
+                description="Unique id of assignment.",
+            ),
+        ],
+        operation_description="Get problems of certain assignment. If problem_id is set, certain problem would be returned.",
+        responses={200: ProblemProfessorSerializer},
+    )
     def get(self, request):
         problem_id = request.GET.get("problem_id")
         assignment_id = request.GET.get("assignment_id")
@@ -34,6 +54,11 @@ class AssignmentProblemAPI(ProblemBase):
         problems = Problem.objects.filter(assignment=assignment).order_by("-create_time")
         return self.success(self.paginate_data(request, problems, ProblemProfessorSerializer))
     
+    @swagger_auto_schema(
+        request_body=(CreateAssignmentProblemSerializer),
+        operation_description="Create a problem of assignment.",
+        responses={200: ProblemAdminSerializer},
+    )
     @validate_serializer(CreateAssignmentProblemSerializer)
     def post(self, request):
         data = request.data
@@ -69,6 +94,10 @@ class AssignmentProblemAPI(ProblemBase):
             problem.tags.add(tag)
         return self.success(ProblemAdminSerializer(problem).data)
 
+    @swagger_auto_schema(
+        request_body=(EditAssignmentProblemSerializer),
+        operation_description="Edit problems of assignment.",
+    )
     @validate_serializer(EditAssignmentProblemSerializer)
     def put(self, request):
         data = request.data
@@ -113,6 +142,18 @@ class AssignmentProblemAPI(ProblemBase):
             problem.tags.add(tag)
         return self.success()
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id",
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of problem.",
+                required=True
+            ),
+        ],
+        operation_description="Delete certain problem of assignment."
+    )
     def delete(self, request):
         id = request.GET.get("id")
         if not id:
