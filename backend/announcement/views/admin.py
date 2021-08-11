@@ -4,6 +4,7 @@ from drf_yasg import openapi
 from utils.api import APIView, validate_serializer
 from utils.decorators import super_admin_required
 
+from push_notifications.models import WebPushDevice
 from announcement.models import Announcement
 from announcement.serializers import (AnnouncementSerializer, CreateAnnouncementSerializer,
                                       EditAnnouncementSerializer)
@@ -25,6 +26,9 @@ class AnnouncementAdminAPI(APIView):
                                                    content=data["content"],
                                                    created_by=request.user,
                                                    visible=data["visible"])
+
+        devices = WebPushDevice.objects.all()
+        devices.send_message("New Annoucement is posted!")
         return self.success(AnnouncementSerializer(announcement).data)
 
     @swagger_auto_schema(

@@ -34,6 +34,7 @@ VENDOR_APPS = [
     'rest_framework',
     'django_dramatiq',
     'django_dbconn_retry',
+    'push_notifications'
 ]
 
 LOCAL_APPS = [
@@ -236,3 +237,9 @@ IP_HEADER = "HTTP_X_REAL_IP"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 50242880
+
+PUSH_NOTIFICATIONS_SETTINGS = {
+    "WP_PRIVATE_KEY": os.path.join(DATA_DIR, "config", "private_key.pem"),
+    "WP_CLAIMS": {'sub': "mailto: development@skku.edu"},
+    "UPDATE_ON_DUPLICATE_REG_ID": True
+}
