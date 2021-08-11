@@ -1,0 +1,15 @@
+{
+    "name":"skku-coding-platform",
+    "short_name":"skku-coding-platform",
+    "theme_color":"#4DBA87",
+    "icons": [
+        {
+            "src":"./img/logo.4d5d9bff.png",
+            "sizes":"169x169",
+            "type":"image/png"
+        }
+    ],
+    "start_url":"/",
+    "display":"standalone",
+    "background_color":"#000000"
+}
