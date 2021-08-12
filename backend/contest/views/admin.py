@@ -1,12 +1,12 @@
-import copy
 import os
+import copy
 import zipfile
 from ipaddress import ip_network
 
 import dateutil.parser
+from drf_yasg import openapi
 from django.http import FileResponse
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 from push_notifications.models import WebPushDevice
 from account.decorators import ensure_created_by
@@ -18,11 +18,11 @@ from utils.constants import CacheKey
 from utils.decorators import ensure_created_by
 from utils.shortcuts import rand_str
 from utils.tasks import delete_files
+from utils.webpush import wp_send_message
 from ..models import Contest, ContestAnnouncement
 from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
                            CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
                            EditConetestSeriaizer, EditContestAnnouncementSerializer,)
-
 
 class ContestAPI(APIView):
     @swagger_auto_schema(
@@ -178,8 +178,7 @@ class ContestAnnouncementAPI(APIView):
         announcement = ContestAnnouncement.objects.create(**data)
 
         devices = WebPushDevice.objects.all()
-        devices.send_message("New Contest Annoucement is posted!")
-
+        wp_send_message(devices, "New Contest Annoucement is posted!")
         return self.success(ContestAnnouncementSerializer(announcement).data)
 
     @swagger_auto_schema(
