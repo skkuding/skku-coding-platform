@@ -240,6 +240,12 @@ export default {
     return ajax('submission/', 'put', {
       data
     })
+  },
+  createDevice (data) {
+    console.log('createDevice')
+    return ajax('wp_device', 'post', {
+      data
+    })
   }
 }
 

@@ -33,6 +33,8 @@
 import { mapGetters, mapActions } from 'vuex'
 import api from '@oj/api'
 import { FormMixin } from '@oj/components/mixins'
+import {register} from 'register-service-worker'
+import webpush from '../../../../../public/webpush'
 
 export default {
   mixins: [FormMixin],
@@ -58,6 +60,7 @@ export default {
       const formData = Object.assign({}, this.formLogin)
       try {
         await api.login(formData)
+        await webpush.register(formData.username)
         this.btnLoginLoading = false
         this.changeModalStatus({ visible: false })
         this.getProfile()

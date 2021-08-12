@@ -44,5 +44,11 @@ module.exports = {
       ],
       cacheFilePath: path.resolve(__dirname, './public')
     }
-  }
+  },
+  pwa: {
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      swSrc: './public/sw.js'
+    }
+  },
 }
