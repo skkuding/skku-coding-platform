@@ -198,6 +198,18 @@ export default {
       data
     })
   },
+  runCode (data) {
+    return ajax('coderun', 'post', {
+      data
+    })
+  },
+  getRunResult (runID) {
+    return ajax('coderun', 'get', {
+      params: {
+        run_id: runID
+      }
+    })
+  },
   getSubmissionList (offset, limit, params) {
     params.limit = limit
     params.offset = offset

@@ -93,12 +93,44 @@
           <b-form-input v-model="captchaCode" id="captcha-code"/>
         </b-nav-item>
         <b-nav-item>
+          <b-button v-b-modal.modal-user-testcase variant = "primary">Add Testcase </b-button>
+          <b-modal id="modal-user-testcase" ref="modal" title="Add Testcase" size="lg"
+                   @show="tempStoreUserTestcase" @ok="saveUserTestcase" @hide="beforeHideUserTestcaseModal" >
+            <b-card>
+              <b-card-title>
+                Add Testcase
+                <b-button class = "btn float-right" @click="addTestcase" variant="primary">
+                  Add
+                </b-button>
+              </b-card-title>
+              <hr>
+              <b-form-group disabled v-for="(sample, index) in problem.samples" :key="index">
+                <b-input-group>
+                  <b-form-input type="text" class="form-control" v-model="sample.input">
+                  </b-form-input>
+                </b-input-group>
+              </b-form-group>
+              <b-form-group v-for="(userTestcase,index) in userTestcases" :key="index" invalid-feedback="Testcase cannot be empty">
+                <b-input-group>
+                  <b-form-input type="text" class="form-control" v-model="userTestcase.input">
+                  </b-form-input>
+                  <b-input-group-append>
+                    <b-button @click="removeTestcase(index)">
+                      <b-icon icon="dash-circle-fill" />
+                    </b-button>
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-group>
+            </b-card>
+          </b-modal>
+        </b-nav-item>
+        <b-nav-item>
           <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
             <b-icon icon="arrow-clockwise" scale="1.1"/>
           </b-button>
         </b-nav-item>
         <b-nav-item>
-          <b-button class="btn">
+          <b-button class="btn" @click="runCode">
             <b-icon icon="play" scale="1.4"/>
             Run
           </b-button>
@@ -180,20 +212,24 @@
             :theme="theme"
           />
         </b-row>
-        <!-- <b-row id="io">
+        <b-row id="io">
           <b-row class="io-header">
-            <b-col class="io-header-cell right-border">Input</b-col>
-            <b-col class="io-header-cell">Output</b-col>
+            <b-col class="io-header-cell right-border" cols="1">#</b-col>
+            <b-col class="io-header-cell right-border" cols="5">Input</b-col>
+            <b-col class="io-header-cell" cols="6">Output</b-col>
           </b-row>
-          <b-row class="io-content">
+          <b-row class="io-content" v-for="(runResult, index) in runResults" :key="index">
+            <b-col class="io-content-cell right-border" cols="1" v-show="runResult.output">
+              <pre class="sample-io">{{ index + 1 }}</pre>
+            </b-col>
             <b-col class="io-content-cell right-border">
-              <pre></pre>
+              <pre class="sample-io">{{ runResult.input }}</pre>
             </b-col>
-            <b-col class="io-content-cell">
-              <pre></pre>
+            <b-col class="io-content-cell" cols="6" v-show="runResult.output">
+              <pre class="sample-io">{{ runResult.output }}</pre>
             </b-col>
           </b-row>
-        </b-row> -->
+        </b-row>
       </b-col>
     </b-row>
     <b-sidebar id="sidebar" no-header backdrop>
@@ -248,6 +284,7 @@ export default {
       problem: {
         title: '',
         description: '',
+        samples: [],
         hint: '',
         my_status: '',
         template: {},
@@ -258,8 +295,10 @@ export default {
         tags: [],
         io_mode: { io_mode: 'Standard IO' }
       },
-
+      tempUserTestcases: [],
+      userTestcases: [],
       // CodeMirror
+      runResults: [],
       code: '',
       language: 'C++',
       theme: 'material',
@@ -460,6 +499,76 @@ export default {
       } else {
         await submitFunc(data, true)
       }
+    },
+    saveRunResult (data) {
+      if (data.data.err === 'CompileError') {
+        this.runResults = [{ input: 'Error Message: \n' + data.data.data, output: '' }]
+      } else {
+        this.runResults = []
+        for (const runResult of data.data) {
+          if (runResult.output.err) {
+            this.runResults.push({ input: runResult.input, output: runResult.output.err })
+          } else {
+            this.runResults.push({ input: runResult.input, output: runResult.output.data })
+          }
+        }
+      }
+    },
+    checkRunState (runID) {
+      const checkStatus = async () => {
+        const res = await api.getRunResult(runID)
+        if (res.length !== 0 && res.error !== null) {
+          this.saveRunResult(res.data)
+          clearTimeout(this.runRefresh)
+        } else {
+          this.runRefresh = setTimeout(checkStatus, 2000)
+        }
+      }
+      this.runRefresh = setTimeout(checkStatus, 2000)
+    },
+    async runCode () {
+      if (this.code.trim() === '') {
+        this.$error('Code can not be empty')
+        return
+      }
+      const data = {
+        problem_id: this.problem.id,
+        language: this.language,
+        code: this.code,
+        contest_id: this.contestID,
+        new_testcase: null
+      }
+      const testcases = this.problem.samples.concat(this.userTestcases)
+      data.new_testcase = testcases.map(testcase => testcase.input)
+      const res = await api.runCode(data)
+      this.checkRunState(res.data.data)
+    },
+    tempStoreUserTestcase () {
+      this.tempUserTestcases = JSON.parse(JSON.stringify(this.userTestcases))
+    },
+    beforeHideUserTestcaseModal (bvModalEvt) {
+      if (bvModalEvt.trigger === 'ok') {
+      } else {
+        this.userTestcases = JSON.parse(JSON.stringify(this.tempUserTestcases))
+      }
+    },
+    saveUserTestcase (bvModalEvt) {
+      for (const userTestcase of this.userTestcases) {
+        if (userTestcase.input === '') {
+          this.$error('Testcase Should not be empty')
+          bvModalEvt.preventDefault()
+          return
+        }
+      }
+    },
+    addTestcase () {
+      if (this.userTestcases.length > 10) {
+        return
+      }
+      this.userTestcases.push({ input: '' })
+    },
+    removeTestcase (index) {
+      this.userTestcases.splice(index, 1)
     }
   },
   computed: {
@@ -675,7 +784,6 @@ export default {
         padding: 0;
         flex: 1 1 auto;
       }
-
       #io {
         margin: 0;
         padding: 0;
@@ -711,6 +819,13 @@ export default {
 
           .io-content-cell {
             padding: 10px 15px;
+
+            .sample-io {
+              min-height: 40px;
+              border-radius: 5px;
+              background: #24272D;
+              color: white;
+            }
           }
         }
       }
