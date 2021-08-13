@@ -19,7 +19,7 @@ import '@/styles/bootstrap.scss'
 import '@/styles/common.scss'
 
 import highlight from '@/plugins/highlight'
-import katex from '@/plugins/katex'
+import 'katex/dist/katex.min.css'
 import VueKatex from 'vue-katex'
 import filters from '@/utils/filters.js'
 
@@ -36,7 +36,6 @@ Vue.use(BootstrapVueIcons)
 
 Vue.use(VueClipboard)
 Vue.use(highlight)
-Vue.use(katex)
 Vue.use(VueKatex)
 Vue.use(VueSimpleAlert)
 Vue.use(VueDOMPurifyHTML)
