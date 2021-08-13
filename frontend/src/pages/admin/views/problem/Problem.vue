@@ -349,7 +349,6 @@
       <b-row>
         <b-col cols="6" v-if="testcase_file_upload">
           <b-form-file
-            multiple
             v-model="testcaseFile"
             :state="Boolean(testcaseFile)"
           ></b-form-file>
@@ -429,6 +428,7 @@ import tiptap from '../../components/Tiptap'
 import Accordion from '../../components/Accordion'
 import CodeMirror from '../../components/CodeMirror'
 import api from '../../api'
+import axios from 'axios'
 export default {
   name: 'Problem',
   components: {
@@ -594,7 +594,7 @@ export default {
       }).content_type
     },
     'testcaseFile' () {
-      // this.uploadTestcase()
+      this.uploadTestcase()
     }
   },
   methods: {
@@ -662,10 +662,11 @@ export default {
         return
       }
       try {
-        const response = await api.uploadTestcase({
-          file: this.testcaseFile,
-          spj: this.problem.spj
-        })
+        const formData = new FormData()
+        const blob = new Blob([this.testcaseFile])
+        formData.append('spj', this.problem.spj)
+        formData.append('file', blob, this.testcaseFile.name)
+        const response = await axios.post('admin/test_case', formData)
         this.uploadSucceeded(response)
       } catch (err) {
         this.uploadFailed()
@@ -676,7 +677,7 @@ export default {
         this.$error(response.data)
         return
       }
-      const fileList = response.data.info
+      const fileList = response.data.data.info
       for (const file of fileList) {
         file.score = (100 / fileList.length).toFixed(0)
         if (!file.output_name && this.problem.spj) {
@@ -685,7 +686,7 @@ export default {
       }
       this.problem.test_case_score = fileList
       this.testCaseUploaded = true
-      this.problem.test_case_id = response.data.id
+      this.problem.test_case_id = response.data.data.id
     },
     uploadFailed () {
       this.$error('Upload failed')
