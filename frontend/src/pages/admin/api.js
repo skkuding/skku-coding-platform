@@ -309,6 +309,11 @@ export default {
       }
     })
   },
+  uploadTestCase (data) {
+    return ajax('admin/test_case', 'post', {
+      data
+    })
+  },
   uploadImage (data) {
     return ajax('admin/upload_image', 'post', {
       data

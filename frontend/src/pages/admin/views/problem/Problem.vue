@@ -428,7 +428,7 @@ import tiptap from '../../components/Tiptap'
 import Accordion from '../../components/Accordion'
 import CodeMirror from '../../components/CodeMirror'
 import api from '../../api'
-import axios from 'axios'
+
 export default {
   name: 'Problem',
   components: {
@@ -666,17 +666,12 @@ export default {
         const blob = new Blob([this.testcaseFile])
         formData.append('spj', this.problem.spj)
         formData.append('file', blob, this.testcaseFile.name)
-        const response = await axios.post('admin/test_case', formData)
-        this.uploadSucceeded(response)
+        const res = await api.uploadTestCase(formData)
+        this.uploadSucceeded(res)
       } catch (err) {
-        this.uploadFailed()
       }
     },
     uploadSucceeded (response) {
-      if (response.error) {
-        this.$error(response.data)
-        return
-      }
       const fileList = response.data.data.info
       for (const file of fileList) {
         file.score = (100 / fileList.length).toFixed(0)
@@ -687,9 +682,6 @@ export default {
       this.problem.test_case_score = fileList
       this.testCaseUploaded = true
       this.problem.test_case_id = response.data.data.id
-    },
-    uploadFailed () {
-      this.$error('Upload failed')
     },
     async compileSPJ () {
       const data = {
