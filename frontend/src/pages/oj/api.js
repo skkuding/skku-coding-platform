@@ -235,6 +235,23 @@ export default {
     return ajax('submission', 'put', {
       data
     })
+  },
+  getLectureList (data) {
+    return ajax('lecture/course', 'get')
+  },
+  getLecture (lectureID) {
+    return ajax('lecture/course', 'get', {
+      params: {
+        id: lectureID
+      }
+    })
+  },
+  getLectureAssignmentList (lectureID) {
+    return ajax('lecture/course/assignment', 'get', {
+      params: {
+        course_id: lectureID
+      }
+    })
   }
 }
 
