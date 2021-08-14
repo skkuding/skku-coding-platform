@@ -88,7 +88,7 @@ class Problem(models.Model):
     statistic_info = JSONField(default=dict)
     share_submission = models.BooleanField(default=False)
     # Submission type
-    type = models.TextField(default="Problem")
+    type = models.TextField(default="Problem", null=True)
 
     class Meta:
         db_table = "problem"
