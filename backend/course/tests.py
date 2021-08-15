@@ -1,4 +1,5 @@
-from django.test import TestCase
+import copy
+from utils.api.tests import APITestCase
 
 from .models import Course, Registration
 

@@ -2,18 +2,14 @@ from copy import deepcopy
 from unittest import mock
 
 from problem.models import Problem, ProblemTag
+from problem.tests import DEFAULT_PROBLEM_DATA
+from course.models import Course, Registration
+from course.tests import DEFAULT_COURSE_DATA
+from assignment.models import Assignment
+from assignment.tests import DEFAULT_ASSIGNMENT_DATA
 from utils.api.tests import APITestCase
 from .models import Submission
 
-DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test</p>", "input_description": "test",
-                        "output_description": "test", "time_limit": 1000, "memory_limit": 256, "difficulty": "Level1",
-                        "visible": True, "tags": ["test"], "languages": ["C", "C++", "Java", "Python2"], "template": {},
-                        "samples": [{"input": "test", "output": "test"}], "spj": False, "spj_language": "C",
-                        "spj_code": "", "test_case_id": "499b26290cc7994e0b497212e842ea85",
-                        "test_case_score": [{"output_name": "1.out", "input_name": "1.in", "output_size": 0,
-                                             "stripped_output_md5": "d41d8cd98f00b204e9800998ecf8427e",
-                                             "input_size": 0, "score": 0}],
-                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
 
 DEFAULT_SUBMISSION_DATA = {
     "problem_id": "1",
@@ -23,7 +19,7 @@ DEFAULT_SUBMISSION_DATA = {
     "result": -2,
     "info": {},
     "language": "C",
-    "statistic_info": {}
+    "statistic_info": {"score": 0, "err_info": "test"}
 }
 
 
@@ -45,6 +41,20 @@ class SubmissionPrepare(APITestCase):
         self.submission_data["problem_id"] = self.problem.id
         self.submission = Submission.objects.create(**self.submission_data)
 
+    def _create_assignment_submission(self):
+        professor = self.create_admin()
+        self.course_id = Course.objects.create(created_by=professor, **DEFAULT_COURSE_DATA).id
+        assignment_data = deepcopy(DEFAULT_ASSIGNMENT_DATA)
+        assignment_data["course_id"] = self.course_id
+        self.assignment_id = Assignment.objects.create(created_by=professor, **assignment_data).id
+        self.problem_data = deepcopy(DEFAULT_PROBLEM_DATA)
+        self.problem_data["assignment_id"] = self.assignment_id
+        self.problem = self.client.post(self.reverse("assignment_problem_professor_api"), data=self.problem_data).data["data"]
+        self.submission_data = deepcopy(DEFAULT_SUBMISSION_DATA)
+        self.submission_data["problem_id"] = self.problem["id"]
+        self.submission_data["assignment_id"] = self.assignment_id
+        self.submission = Submission.objects.create(**self.submission_data)
+
 
 class SubmissionListTest(SubmissionPrepare):
     def setUp(self):
@@ -60,16 +70,26 @@ class SubmissionListTest(SubmissionPrepare):
 @mock.patch("judge.tasks.judge_task.send")
 class SubmissionAPITest(SubmissionPrepare):
     def setUp(self):
-        self._create_problem_and_submission()
-        self.user = self.create_user("123", "test123")
         self.url = self.reverse("submission_api")
 
     def test_create_submission(self, judge_task):
+        self._create_problem_and_submission()
+        self.create_user("123", "test123")
+        resp = self.client.post(self.url, self.submission_data)
+        self.assertSuccess(resp)
+        judge_task.assert_called()
+
+    def test_create_assignment_submission(self, judge_task):
+        self._create_assignment_submission()
+        student = self.create_user("123", "test123")
+        Registration.objects.create(user_id=student.id, course_id=self.course_id)
         resp = self.client.post(self.url, self.submission_data)
         self.assertSuccess(resp)
         judge_task.assert_called()
 
     def test_create_submission_with_wrong_language(self, judge_task):
+        self._create_problem_and_submission()
+        self.create_user("123", "test123")
         self.submission_data.update({"language": "Python3"})
         resp = self.client.post(self.url, self.submission_data)
         self.assertFailed(resp)
