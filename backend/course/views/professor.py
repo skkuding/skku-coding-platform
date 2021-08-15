@@ -160,8 +160,8 @@ class StudentManagementAPI(APIView):
             openapi.Parameter(
                 name="count",
                 in_=openapi.IN_QUERY,
-                description="Return number of total registered user if true( { 'total_students': registration count } )",
-                type=openapi.TYPE_BOOLEAN,
+                description="Return number of total registered user if 1( { 'total_students': registration count } )",
+                type=openapi.TYPE_STRING,
             ),
             openapi.Parameter(
                 name="limit",
@@ -198,7 +198,7 @@ class StudentManagementAPI(APIView):
         registration = Registration.objects.filter(course_id=course_id)
 
         # Return number of total registered students
-        if get_students_count:
+        if get_students_count == "1":
             return self.success({ 'total_students': registration.count() })
         return self.success(self.paginate_data(request, registration, UserListSerializer))
 
