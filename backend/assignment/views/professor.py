@@ -15,7 +15,6 @@ class AssignmentAPI(APIView):
                 name="course_id",
                 in_=openapi.IN_QUERY,
                 description="Unique ID of a course",
-                required=True,
                 type=openapi.TYPE_INTEGER,
             ),
             openapi.Parameter(
@@ -48,7 +47,8 @@ class AssignmentAPI(APIView):
         course_id = request.GET.get("course_id")
 
         if not course_id:
-            return self.error("Invalid parameter, course_id is required")
+            assignments = Assignment.objects.filter(created_by=request.user)
+            return self.success(self.paginate_data(request, assignments, AssginmentProfessorSerializer))
 
         try:
             course = Course.objects.get(id=course_id)

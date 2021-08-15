@@ -1,10 +1,13 @@
+from backend.course.models import Course
 from utils.api import UsernameSerializer, serializers
 
 from .models import Assignment
 from submission.models import Submission
+from course.serializers import CourseSerializer
 
 class AssginmentProfessorSerializer(serializers.ModelSerializer):
     created_by = UsernameSerializer()
+    course = CourseSerializer()
     status = serializers.CharField()
 
     class Meta:
