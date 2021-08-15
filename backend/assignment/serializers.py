@@ -1,4 +1,3 @@
-from backend.course.models import Course
 from utils.api import UsernameSerializer, serializers
 
 from .models import Assignment
