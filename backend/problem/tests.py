@@ -13,6 +13,10 @@ from .models import ProblemTag, ProblemIOMode
 from .models import Problem, ProblemRuleType
 from contest.models import Contest
 from contest.tests import DEFAULT_CONTEST_DATA
+from course.models import Course, Registration
+from course.tests import DEFAULT_COURSE_DATA
+from assignment.models import Assignment
+from assignment.tests import DEFAULT_ASSIGNMENT_DATA
 
 from .views.admin import TestCaseAPI
 from .utils import parse_problem_template
@@ -258,6 +262,71 @@ class ContestProblemTest(ProblemCreateTestBase):
         contest.save()
         resp = self.client.get(self.url + "?contest_id=" + str(self.contest["id"]))
         self.assertSuccess(resp)
+
+
+class AssignmentProblemProfessorTest(ProblemCreateTestBase):
+    def setUp(self):
+        student = self.create_user("student", "1234")
+        admin = self.create_admin()
+        course = Course.objects.create(created_by=admin, **DEFAULT_COURSE_DATA)
+        Registration.objects.create(user_id=student.id, course_id=course.id)
+        self.assignment_id = Assignment.objects.create(created_by=admin, course=course, **DEFAULT_ASSIGNMENT_DATA).id
+        self.url = self.reverse("assignment_problem_professor_api")
+
+    def test_get_assignment_problem_list(self):
+        self.test_create_assignment_problem()
+        res = self.client.get(f"{self.url}?assignment_id={self.assignment_id}")
+        self.assertSuccess(res)
+
+    def test_get_assignment_problem(self):
+        problem_id = self.test_create_assignment_problem()["id"]
+        res = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
+        self.assertSuccess(res)
+
+    def test_create_assignment_problem(self):
+        data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        data["assignment_id"] = self.assignment_id
+        res = self.client.post(self.url, data=data)
+        self.assertSuccess(res)
+        return res.data["data"]
+
+    def test_edit_assignment_problem(self):
+        problem_id = self.test_create_assignment_problem()["id"]
+        data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        data["id"] = problem_id
+        data["title"] = "edit test"
+        data["assignment"] = self.assignment_id
+        res = self.client.put(self.url, data=data)
+        self.assertSuccess(res)
+        self.assertEqual(res.data["data"]["title"], "edit test")
+
+    def test_delete_assignment_problem(self):
+        problem_id = self.test_create_assignment_problem()["id"]
+        res = self.client.delete(f"{self.url}?id={problem_id}")
+        self.assertSuccess(res)
+        self.assertFalse(Problem.objects.filter(id=problem_id).exists())
+
+
+class AssignmentProblemStudentTest(ProblemCreateTestBase):
+    def setUp(self):
+        admin = self.create_admin()
+        student = self.create_user("student", "1234")
+        course = Course.objects.create(created_by=admin, **DEFAULT_COURSE_DATA)
+        Registration.objects.create(user_id=student.id, course_id=course.id)
+        self.assignment_id = Assignment.objects.create(created_by=admin, course=course, **DEFAULT_ASSIGNMENT_DATA).id
+        self.problem = self.add_problem(DEFAULT_PROBLEM_DATA, admin)
+        self.problem.assignment_id = self.assignment_id
+        self.problem.save()
+        self.url = self.reverse("assignment_problem_student_api")
+
+    def test_get_assignment_problem_list(self):
+        res = self.client.get(f"{self.url}?assignment_id={self.assignment_id}")
+        self.assertSuccess(res)
+
+    def test_getassignment_problem(self):
+        problem_id = self.problem._id
+        res = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
+        self.assertSuccess(res)
 
 
 class AddProblemFromPublicProblemAPITest(ProblemCreateTestBase):
