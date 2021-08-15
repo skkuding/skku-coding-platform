@@ -24,7 +24,8 @@ module.exports = {
       alias: {
         '@': path.join(__dirname, 'src'),
         '@oj': path.join(__dirname, 'src/pages/oj'),
-        '@admin': path.join(__dirname, 'src/pages/admin')
+        '@admin': path.join(__dirname, 'src/pages/admin'),
+        '@public': path.join(__dirname, 'public')
       }
     }
   },
@@ -50,5 +51,5 @@ module.exports = {
     workboxOptions: {
       swSrc: './public/sw.js'
     }
-  },
+  }
 }

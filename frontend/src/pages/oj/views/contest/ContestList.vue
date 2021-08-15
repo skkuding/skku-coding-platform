@@ -46,7 +46,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import utils from '@/utils/utils'
 import time from '@/utils/time'
 import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/constants'
-
+import webpush from '@public/webpush'
 export default {
   name: 'ContestList',
   async beforeRouteEnter (to, from, next) {
@@ -136,6 +136,12 @@ export default {
         if (item.contest_type === CONTEST_TYPE.PRIVATE) {
           this.$error('This contest is locked')
         } else {
+          await webpush.subscribe(this.username) // this.username 안 읽힘.
+          if (webpush.isSubscribe()) {
+            this.$success('구독! 좋아요! 알림설정!')
+          } else {
+            this.$error('구독과 좋아요 알림설정 부탁드립니다 ㅠ.ㅠ')
+          }
           await this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
         }
       }

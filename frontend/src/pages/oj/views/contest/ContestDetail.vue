@@ -18,6 +18,12 @@
     <div class="description">
       <p v-dompurify-html="contest.description"></p>
     </div>
+    <div class="notification">
+      <p v-dompurify-html>
+        구독과 좋아요! 알림설정까지! 감사합니다!!
+      </p>
+      <b-button @click="getSubscribe(username)"> 구독! </b-button>
+    </div>
     <div class="table">
       <b-table
         hover
@@ -56,6 +62,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '@/store'
 import { CONTEST_STATUS_REVERSE } from '@/utils/constants'
 import { ProblemMixin } from '@oj/components/mixins'
+import webpush from '@public/webpush'
 // import time from '@/utils/time'
 export default {
   name: 'ContestProblemList',
@@ -142,6 +149,9 @@ export default {
       } catch (err) {
         this.btnLoading = false
       }
+    },
+    async getSubscribe (username) {
+      await webpush.subscribe(username)
     }
   },
   computed: {
