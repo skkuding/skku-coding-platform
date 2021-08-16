@@ -41,7 +41,7 @@ class SubmissionAPI(APIView):
                     return self.error("Your IP is not allowed in this contest")
 
     @check_assignment_permission()
-    def check_assignment_permission(self):
+    def check_assignment_permission(self, request):
         assignment = self.assignment
         if assignment.status == AssignmentStatus.ASSIGNMENT_ENDED:
             return self.error("The Assignment deadline has expired")
