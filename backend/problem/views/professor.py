@@ -106,13 +106,13 @@ class AssignmentProblemAPI(ProblemBase):
         data = request.data
         user = request.user
 
+        problem_id = data.pop("id")
+        assignment_id = Problem.objects.get(id=problem_id).assignment_id
         try:
-            assignment = Assignment.objects.get(id=data.pop("assignment_id"))
+            assignment = Assignment.objects.get(id=assignment_id)
             ensure_created_by(assignment, user)
         except Assignment.DoesNotExist:
             return self.error("Assignment does not exist")
-
-        problem_id = data.pop("id")
 
         try:
             problem = Problem.objects.get(id=problem_id, assignment=assignment)
@@ -122,7 +122,7 @@ class AssignmentProblemAPI(ProblemBase):
         _id = data["_id"]
         if not _id:
             return self.error("Display ID is required")
-        if Problem.objects.exclude(id=problem_id).filter(_id=_id, contest=assignment).exists():
+        if Problem.objects.exclude(id=problem_id).filter(_id=_id, assignment=assignment).exists():
             return self.error("Display ID already exists")
 
         error_info = self.common_checks(request)
@@ -143,7 +143,7 @@ class AssignmentProblemAPI(ProblemBase):
             except ProblemTag.DoesNotExist:
                 tag = ProblemTag.objects.create(name=tag)
             problem.tags.add(tag)
-        return self.success()
+        return self.success(ProblemAdminSerializer(problem).data)
 
     @swagger_auto_schema(
         manual_parameters=[

@@ -100,7 +100,6 @@ class CreateAssignmentProblemSerializer(CreateOrEditProblemSerializer):
 
 class EditAssignmentProblemSerializer(CreateOrEditProblemSerializer):
     id = serializers.IntegerField()
-    assignment_id = serializers.IntegerField()
 
 
 class TagSerializer(serializers.ModelSerializer):
