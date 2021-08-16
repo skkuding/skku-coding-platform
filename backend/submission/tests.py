@@ -41,6 +41,20 @@ class SubmissionPrepare(APITestCase):
         self.submission_data["problem_id"] = self.problem.id
         self.submission = Submission.objects.create(**self.submission_data)
 
+    def _create_assignment_submission(self):
+        professor = self.create_admin()
+        self.course_id = Course.objects.create(created_by=professor, **DEFAULT_COURSE_DATA).id
+        assignment_data = deepcopy(DEFAULT_ASSIGNMENT_DATA)
+        assignment_data["course_id"] = self.course_id
+        self.assignment_id = Assignment.objects.create(created_by=professor, **assignment_data).id
+        self.problem_data = deepcopy(DEFAULT_PROBLEM_DATA)
+        self.problem_data["assignment_id"] = self.assignment_id
+        self.problem = self.client.post(self.reverse("assignment_problem_professor_api"), data=self.problem_data).data["data"]
+        self.submission_data = deepcopy(DEFAULT_SUBMISSION_DATA)
+        self.submission_data["problem_id"] = self.problem["id"]
+        self.submission_data["assignment_id"] = self.assignment_id
+        Submission.objects.create(**self.submission_data)
+
 
 class SubmissionListTest(SubmissionPrepare):
     def setUp(self):
@@ -56,16 +70,26 @@ class SubmissionListTest(SubmissionPrepare):
 @mock.patch("judge.tasks.judge_task.send")
 class SubmissionAPITest(SubmissionPrepare):
     def setUp(self):
-        self._create_problem_and_submission()
-        self.user = self.create_user("123", "test123")
         self.url = self.reverse("submission_api")
 
     def test_create_submission(self, judge_task):
+        self._create_problem_and_submission()
+        self.create_user("123", "test123")
+        resp = self.client.post(self.url, self.submission_data)
+        self.assertSuccess(resp)
+        judge_task.assert_called()
+
+    def test_create_assignment_submission(self, judge_task):
+        self._create_assignment_submission()
+        student = self.create_user("123", "test123")
+        Registration.objects.create(user_id=student.id, course_id=self.course_id)
         resp = self.client.post(self.url, self.submission_data)
         self.assertSuccess(resp)
         judge_task.assert_called()
 
     def test_create_submission_with_wrong_language(self, judge_task):
+        self._create_problem_and_submission()
+        self.create_user("123", "test123")
         self.submission_data.update({"language": "Python3"})
         resp = self.client.post(self.url, self.submission_data)
         self.assertFailed(resp)
@@ -74,19 +98,9 @@ class SubmissionAPITest(SubmissionPrepare):
         judge_task.assert_not_called()
 
 
-class AssignmentSubmissionListTest(APITestCase):
+class AssignmentSubmissionListTest(SubmissionPrepare):
     def setUp(self):
-        professor = self.create_admin()
-        self.course_id = Course.objects.create(created_by=professor, **DEFAULT_COURSE_DATA).id
-        assignment_data = deepcopy(DEFAULT_ASSIGNMENT_DATA)
-        assignment_data["course_id"] = self.course_id
-        self.assignment_id = Assignment.objects.create(created_by=professor, **assignment_data).id
-        problem_data = deepcopy(DEFAULT_PROBLEM_DATA)
-        problem_data["assignment_id"] = self.assignment_id
-        self.problem = self.client.post(self.reverse("assignment_problem_professor_api"), data=problem_data).data["data"]
-        self.submission_data = deepcopy(DEFAULT_SUBMISSION_DATA)
-        self.submission_data["problem_id"] = self.problem["id"]
-        Submission.objects.create(**self.submission_data)
+        self._create_assignment_submission()
         self.url = self.reverse("assignment_submission_list_api")
 
     def test_get_assignment_submission_list(self):
@@ -99,6 +113,7 @@ class AssignmentSubmissionListTest(APITestCase):
         Registration.objects.create(user_id=student.id, course_id=self.course_id)
         self.submission_data["user_id"] = student.id
         self.submission_data["username"] = student.username
+        Submission.objects.create(**self.submission_data)
         problem_id = self.problem["_id"]
         resp = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
         self.assertSuccess(resp)
