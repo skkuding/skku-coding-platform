@@ -169,7 +169,7 @@ def check_assignment_permission():
 
             # check if user is registered to the course
             try:
-                Registration.objects.get(user_id=user.id, course_id=self.assignment.id)
+                Registration.objects.get(user_id=user.id, course_id=self.assignment.course_id)
             except Registration.DoesNotExist:
                 return self.error("Invalid access, not registered user")
 
