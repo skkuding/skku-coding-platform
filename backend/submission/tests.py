@@ -2,18 +2,14 @@ from copy import deepcopy
 from unittest import mock
 
 from problem.models import Problem, ProblemTag
+from problem.tests import DEFAULT_PROBLEM_DATA
+from course.models import Course, Registration
+from course.tests import DEFAULT_COURSE_DATA
+from assignment.models import Assignment
+from assignment.tests import DEFAULT_ASSIGNMENT_DATA
 from utils.api.tests import APITestCase
 from .models import Submission
 
-DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test</p>", "input_description": "test",
-                        "output_description": "test", "time_limit": 1000, "memory_limit": 256, "difficulty": "Level1",
-                        "visible": True, "tags": ["test"], "languages": ["C", "C++", "Java", "Python2"], "template": {},
-                        "samples": [{"input": "test", "output": "test"}], "spj": False, "spj_language": "C",
-                        "spj_code": "", "test_case_id": "499b26290cc7994e0b497212e842ea85",
-                        "test_case_score": [{"output_name": "1.out", "input_name": "1.in", "output_size": 0,
-                                             "stripped_output_md5": "d41d8cd98f00b204e9800998ecf8427e",
-                                             "input_size": 0, "score": 0}],
-                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
 
 DEFAULT_SUBMISSION_DATA = {
     "problem_id": "1",
@@ -76,3 +72,33 @@ class SubmissionAPITest(SubmissionPrepare):
         self.assertDictEqual(resp.data, {"error": "error",
                                          "data": "Python3 is now allowed in the problem"})
         judge_task.assert_not_called()
+
+
+class AssignmentSubmissionListTest(APITestCase):
+    def setUp(self):
+        professor = self.create_admin()
+        self.course_id = Course.objects.create(created_by=professor, **DEFAULT_COURSE_DATA).id
+        assignment_data = deepcopy(DEFAULT_ASSIGNMENT_DATA)
+        assignment_data["course_id"] = self.course_id
+        self.assignment_id = Assignment.objects.create(created_by=professor, **assignment_data).id
+        problem_data = deepcopy(DEFAULT_PROBLEM_DATA)
+        problem_data["assignment_id"] = self.assignment_id
+        self.problem = self.client.post(self.reverse("assignment_problem_professor_api"), data=problem_data).data["data"]
+        self.submission_data = deepcopy(DEFAULT_SUBMISSION_DATA)
+        self.submission_data["problem_id"] = self.problem["id"]
+        Submission.objects.create(**self.submission_data)
+        self.url = self.reverse("assignment_submission_list_api")
+
+    def test_get_assignment_submission_list(self):
+        problem_id = self.problem["_id"]
+        resp = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
+        self.assertSuccess(resp)
+
+    def test_get_student_assignment_submission_list(self):
+        student = self.create_user("2020123123", "123")
+        Registration.objects.create(user_id=student.id, course_id=self.course_id)
+        self.submission_data["user_id"] = student.id
+        self.submission_data["username"] = student.username
+        problem_id = self.problem["_id"]
+        resp = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
+        self.assertSuccess(resp)
