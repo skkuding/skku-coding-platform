@@ -40,7 +40,7 @@ class SubmissionAPI(APIView):
                 if not any(user_ip in ipaddress.ip_network(cidr, strict=False) for cidr in contest.allowed_ip_ranges):
                     return self.error("Your IP is not allowed in this contest")
 
-    @check_assignment_permission(check_type="problems")
+    @check_assignment_permission()
     def check_assignment_permission(self):
         assignment = self.assignment
         if assignment.status == AssignmentStatus.ASSIGNMENT_ENDED:
@@ -349,7 +349,7 @@ class AssignmentSubmissionListAPI(APIView):
             ),
         ]
     )
-    @check_assignment_permission(check_type="submissions")
+    @check_assignment_permission()
     def get(self, request):
         assignment = self.assignment
         submissions = Submission.objects.filter(assignment_id=assignment.id).select_related("problem__created_by")

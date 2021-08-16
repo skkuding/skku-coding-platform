@@ -4,6 +4,7 @@ import time
 
 from assignment.models import Assignment
 from problem.models import Problem
+from course.models import Registration
 from contest.models import Contest, ContestType, ContestStatus, ContestRuleType
 from utils.api import JSONResponse, APIError
 from utils.constants import AssignmentStatus, CONTEST_PASSWORD_SESSION_KEY
@@ -139,7 +140,7 @@ def check_contest_permission(check_type="details"):
         return _check_permission
     return decorator
 
-def check_assignment_permission(check_type="details"):
+def check_assignment_permission():
     def decorator(func):
         def _check_permission(*args, **kwargs):
             self = args[0]
@@ -163,8 +164,14 @@ def check_assignment_permission(check_type="details"):
             if user.is_assignment_admin(self.assignment):
                 return func(*args, **kwargs)
 
-            if self.assignment.status == AssignmentStatus.ASSIGNMENT_NOT_START and check_type != "details":
+            if self.assignment.status == AssignmentStatus.ASSIGNMENT_NOT_START:
                 return self.error("Assignment has not started yet.")
+
+            # check if user is registered to the course
+            try:
+                Registration.objects.get(user_id=user.id, course_id=self.assignment.id)
+            except Registration.DoesNotExist:
+                return self.error("Invalid access, not registered user")
 
             return func(*args, **kwargs)
         return _check_permission
