@@ -9,6 +9,11 @@ if [ ! -f "$DATA/config/secret.key" ]; then
     echo $(cat /dev/urandom | head -1 | md5sum | head -c 32) > "$DATA/config/secret.key"
 fi
 
+if [ ! -f "$DATA/config/private_key.pem" ]; then
+    vapid --gen
+    vapid --applicationServerKey | cut -f 5 -d' ' > "applicationServerKey.txt"
+fi
+
 if [ ! -f "$DATA/public/avatar/default.png" ]; then
     cp data/public/avatar/default.png $DATA/public/avatar
 fi
