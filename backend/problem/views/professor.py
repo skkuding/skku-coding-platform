@@ -1,5 +1,5 @@
 from utils.api import validate_serializer
-from account.decorators import ensure_created_by
+from account.decorators import ensure_created_by, admin_role_required
 
 from submission.models import Submission
 from assignment.models import Assignment
@@ -31,6 +31,7 @@ class AssignmentProblemAPI(ProblemBase):
         operation_description="Get problems of certain assignment. If problem_id is set, certain problem would be returned.",
         responses={200: ProblemProfessorSerializer},
     )
+    @admin_role_required
     def get(self, request):
         problem_id = request.GET.get("problem_id")
         assignment_id = request.GET.get("assignment_id")
@@ -60,6 +61,7 @@ class AssignmentProblemAPI(ProblemBase):
         responses={200: ProblemAdminSerializer},
     )
     @validate_serializer(CreateAssignmentProblemSerializer)
+    @admin_role_required
     def post(self, request):
         data = request.data
         try:
@@ -99,6 +101,7 @@ class AssignmentProblemAPI(ProblemBase):
         operation_description="Edit problems of assignment.",
     )
     @validate_serializer(EditAssignmentProblemSerializer)
+    @admin_role_required
     def put(self, request):
         data = request.data
         user = request.user
@@ -154,6 +157,7 @@ class AssignmentProblemAPI(ProblemBase):
         ],
         operation_description="Delete certain problem of assignment."
     )
+    @admin_role_required
     def delete(self, request):
         id = request.GET.get("id")
         if not id:
