@@ -23,7 +23,7 @@ class AssignmentProblemAPI(APIView):
         operation_description="Get problem of specific assignment. If \'problem_id\' is not set, whole problems of the assignment would be returned.",
         responses={200: ProblemSafeSerializer},
     )
-    @check_assignment_permission(check_type="problems")
+    @check_assignment_permission()
     def get(self, request):
         problem_id = request.GET.get("problem_id")
         if problem_id:
