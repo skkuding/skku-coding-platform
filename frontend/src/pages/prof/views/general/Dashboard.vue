@@ -10,7 +10,7 @@
       id="first-col"
     >
       <img id="coding-platform-logo" src="@/assets/logos/codingPlatformLogo.png" alt="coding-platform-logo">
-      <b-card class="admin-info" :title="'Welcome, Prof. ' + user.username">
+      <b-card class="admin-info drop-shadow-custom" :title="'Welcome, Prof. ' + user.username">
         <b-card-text>
           Last login
           <ul style="margin:10px 0 0 25px">
@@ -26,82 +26,57 @@
           color="#E9A05A"
           message="Total Students"
           icon-size="30px"
-          class="info-item"
+          class="info-item drop-shadow-custom"
           :value="infoData.user_count"
         />
         <info-card
           color="#8DC63F"
           message="Assignments Submissions Today"
-          class="info-item"
+          class="info-item drop-shadow-custom"
           :value="infoData.today_submission_count"
         />
         <info-card
           color="#28A5FF"
           message="Underway Assignments"
-          class="info-item"
+          class="info-item drop-shadow-custom"
           :value="infoData.recent_contest_count"
         />
       </div>
-      <b-card title="My Lecture - 2021 Summer">
+      <b-card title="My Lecture - 2021 Summer" class="drop-shadow-custom">
         <b-list-group>
           <b-list-group-item
             v-for="(lecture,index) in lectureList"
-            href="#"
+            :to="'lecture/'+ lecture.id +'/dashboard'"
             :key="index">{{ lecture.title + '_' + lecture.course_code + '-' + lecture.class_number }}
           </b-list-group-item>
         </b-list-group>
-        <b-button variant="dark">
-          ef
+        <b-button variant="" class="float-right">
+          New Lectures
         </b-button>
       </b-card>
     </b-col>
 
     <b-col
-      v-if="isSuperAdmin"
       :md="7"
       :lg="8"
     >
-      <b-card class="admin-info" title="Recent Questions">
-        <div class="table">
-          <b-table
-            hover
-            :items="problemList"
-            :fields="problemTableColumns"
-            :per-page="perPage"
-            :current-page="currentPage"
-            head-variant="light"
-            @row-clicked="goProblem"
-          >
-            <template #cell(title)="data">
-              {{data.value}}
-              <b-icon icon="check2-circle" style="color: #8DC63F;" font-scale="1.2" v-if="data.item.my_status===0"></b-icon>
-            </template>
-            <template #cell(difficulty)="data">
-              <b-icon
-                icon="circle-fill"
-                class="mr-2"
-                :style="'color:' + difficultyColor(data.value)"
-              />
-              {{ data.value }}
-            </template>
-            <template #cell(AC_Rate)="data">
-              {{ getACRate(data.item.accepted_number, data.item.submission_number) }}
-            </template>
-            <template v-slot:cell(tags)="data">
-              <span v-show="checked" v-for="item in data.item.tags" :key="item.id">{{ item }}  </span>
-            </template>
-            <template v-slot:head(tags)="field">
-              <div v-show="checked">{{ field.label }}</div>
-            </template>
-          </b-table>
-        </div>
-        <div class="pagination">
+      <b-card class="admin-info drop-shadow-custom" :title="'Welcome, Prof. ' + user.username">
+        <b-table
+          borderless
+          hover
+          :fields="assignmentListFields"
+          :items="assignmentList"
+          :per-page="pageSize"
+          :current-page="updateCurrentPage"
+        >
+        </b-table>
+        <div class="panel-options">
           <b-pagination
             v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            limit="3"
-          ></b-pagination>
+            :per-page="pageSize"
+            :total-rows="total"
+            style="position: absolute; right: 20px; top: 15px;"
+          />
         </div>
       </b-card>
     </b-col>
@@ -121,6 +96,8 @@ export default {
   },
   data () {
     return {
+      pageSize: 10,
+      currentPage: 1,
       infoData: {
         user_count: 0,
         recent_contest_count: 0,
@@ -156,6 +133,64 @@ export default {
           semester: 1
         }
       ],
+      assignmentListFields: [
+        {
+          key: 'title',
+          label: ''
+        },
+        {
+          key: 'course.title',
+          label: ''
+        }
+      ],
+      assignmentList: [
+        {
+          id: 1,
+          title: '1주차 과제',
+          content: '<p>1주차 과제입니다.</p>',
+          created_by: {
+            id: 2,
+            username: 'youngHoon',
+            real_name: '김영훈'
+          },
+          course: {
+            id: 1,
+            title: 'Programming Basics',
+            course_code: 'GEDT018',
+            class_number: 41,
+            registered_year: '2021',
+            semester: 1
+          },
+          start_time: '2021-08-23T18:25:43+09:00',
+          end_time: '2021-08-25T19:25:43+09:00',
+          status: '-1',
+          submitted_problem: 8,
+          total_problem: 10
+        },
+        {
+          id: 2,
+          title: '2주차 과제',
+          content: '<p>2주차 과제입니다. </p>',
+          created_by: {
+            id: 2,
+            username: 'youngHoon',
+            real_name: '김영훈'
+          },
+          course: {
+            id: 1,
+            title: 'Computer Engineering',
+            course_code: 'GEDT018',
+            class_number: 41,
+            registered_year: '2021',
+            semester: 1
+          },
+          start_time: '2021-08-17T18:25:43+09:00',
+          end_time: '2021-08-23T19:25:43+09:00',
+          status: '0',
+          submitted_problem: 8,
+          total_problem: 10
+        }
+      ],
       lectureListTotal: 2,
       session: {}
     }
@@ -174,6 +209,21 @@ export default {
     }
   },
   methods: {
+    async currentChange (page) {
+      this.currentPage = page
+      await this.getAssignmentList(page)
+    },
+    async getAssignmentList (page) {
+      this.loading = true
+      try {
+        // const res = await api.getAssignmentList((page - 1) * this.pageSize, this.pageSize, this.keyword)
+        this.total = 2 // res.data.data.total
+        // this.assignmentList = res.data.data.results
+      } catch (err) {
+      } finally {
+        this.loading = false
+      }
+    },
     parseSession (sessions) {
       let session = sessions[0]
       if (sessions.length > 1) {
@@ -185,7 +235,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['profile', 'user', 'isSuperAdmin']),
+    ...mapGetters(['profile', 'user']),
     cdn () {
       return this.infoData.env.STATIC_CDN_HOST
     },
@@ -206,12 +256,19 @@ export default {
     os () {
       const b = browserDetector(this.session.user_agent)
       return b.os ? b.os : 'Unknown'
+    },
+    updateCurrentPage () {
+      return this.currentChange(this.currentPage)
     }
   }
 }
 </script>
 
 <style lang="scss">
+  @font-face {
+    font-family: Manrope_bold;
+    src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
   #dashboard {
     margin: auto;
     flex:1 0;
@@ -228,22 +285,6 @@ export default {
   }
   .admin-info {
     margin-bottom: 20px;
-    &-name {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: #409EFF;
-    }
-    .last-info {
-      &-title {
-        font-size: 16px;
-      }
-      &-body {
-        .b-form {
-          margin-bottom: 5px;
-        }
-      }
-    }
   }
   .list-group-item {
     padding: 1rem 2rem;
@@ -263,5 +304,8 @@ export default {
       min-width: 200px;
       margin-bottom: 10px;
     }
+  }
+  .drop-shadow-custom {
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   }
 </style>
