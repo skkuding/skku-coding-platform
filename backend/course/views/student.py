@@ -3,7 +3,8 @@ from account.decorators import login_required
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration
-from ..serializers import CourseSerializer, CourseStudentSerializer
+from ..serializers import CourseStudentSerializer
+
 
 class CourseAPI(APIView):
     @swagger_auto_schema(

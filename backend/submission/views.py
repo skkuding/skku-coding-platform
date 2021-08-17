@@ -22,6 +22,7 @@ from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
                           ShareSubmissionSerializer, SubmissionSafeModelSerializer, SubmissionListSerializer,
                           SubmissionListProfessorSerializer, EditSubmissionScoreSerializer)
 
+
 class SubmissionAPI(APIView):
     def throttling(self, request):
         user_bucket = TokenBucket(key=str(request.user.id),
@@ -415,7 +416,7 @@ class AssignmentSubmissionListProfessorAPI(APIView):
         operation_description="Submission list for professor page",
         responses={200: SubmissionListProfessorSerializer}
     )
-    @admin_role_required
+    # @admin_role_required
     def get(self, request):
         assignment_id = request.GET.get("assignment_id")
         problem_id = request.GET.get("problem_id")
