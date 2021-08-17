@@ -11,7 +11,7 @@ from drf_yasg import openapi
 class ProblemTagAPI(APIView):
     @swagger_auto_schema(
         operation_description="Pick a set of problems that contain certain tag.",
-        responses=TagSerializer
+        responses={200: TagSerializer}
     )
     def get(self, request):
         tags = ProblemTag.objects.annotate(problem_count=Count("problem")).filter(problem_count__gt=0)
