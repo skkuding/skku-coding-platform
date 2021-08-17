@@ -49,7 +49,7 @@ function getCookie (cookieName) {
   return cookieValue
 };
 function requestPOSTTOServer (data) {
-  return fetch('api/wp_device', {
+  return fetch('http://localhost/api/wp_device', {
     method: 'post',
     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
     body: JSON.stringify(data),
