@@ -1,9 +1,9 @@
 <template>
   <b-form-group>
-    <p class="labels">
-      Put LaTeX in the following format to use LaTeX in our editor.&nbsp;
-    \( ... \), $$ ... $$, \[ ... \]&nbsp;
-    For example, \( \pm\sqrt{a^2 + b^2}  \) or $$ \pm\sqrt{a^2 + b^2}
+    <p class="labels text-center">
+      Put LaTeX in the following format to use LaTeX in our editor.<br/>
+    \( ... \), $$ ... $$, \[ ... \]<br/>
+    For example, \( \pm\sqrt{a^2 + b^2}  \) or $$ \pm\sqrt{a^2 + b^2} $$
     </p>
     <p class="labels">
       Input
@@ -14,7 +14,6 @@
       rows="4"
     >
     </b-form-textarea>
-
     <p class="labels">
       Output
     </p>
