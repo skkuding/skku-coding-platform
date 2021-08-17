@@ -14,24 +14,19 @@
       ></b-calendar>
     </b-col>
     <b-col>
-      <b-card style="background-color: lightgray" class = "h-100">
-      <div>
-          {{ value }}
-      </div>
-      <b-card>
-        <div>
-        Assignment 3
-        </div>
-      </b-card>
+      <b-card style="background-color: lightgray" :title= "value" class = "card h-100">
+        <b-button class ="AssignmentName w-100" variant = "outline-light">
+          Assignment 3
+        </b-button>
       </b-card>
     </b-col>
     </b-row>
     <b-row class = "mt-5">
       <b-col >
-      <b-button class = "w-100" variant = "warning">Go to Q&A page</b-button>
+      <b-button class = "w-100 QnAButton" variant = "warning" >Go to Q&A page</b-button>
       </b-col>
       <b-col>
-        <b-button class = "w-100" variant = "primary">Go to Assignments page</b-button>
+        <b-button class = "w-100 AssignmentsButton" variant = "primary">Go to Assignments page</b-button>
       </b-col>
     </b-row>
   </div>
@@ -45,6 +40,7 @@ export default {
   },
   data () {
     return {
+      value: ''
     }
   },
   async mounted () {
@@ -57,6 +53,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .card {
+    background-color: lightgray;
+    box-shadow: none;
+  }
   .font-bold {
     font-family: manrope_bold;
   }
@@ -82,5 +82,16 @@ export default {
   .calendar::v-deep .btn {
     background-color: white;
     color: #4f4f4f;
+  }
+  .QnAButton {
+    background-color: #E9A05A;
+  }
+  .AssignmentsButton {
+    background-color: #3391E5;
+  }
+  .AssignmentName {
+    background-color: white;
+    color : #4f4f4f;
+    box-shadow: 0 0 0 1px #4f4f4f;
   }
 </style>
