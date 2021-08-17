@@ -1,7 +1,6 @@
 from django.urls import path
 
 from ..views.oj import AnnouncementAPI, AnnouncementDetailAPI
-from push_notifications.api.rest_framework import WebPushDeviceViewSet
 
 urlpatterns = [
     path("announcement/", AnnouncementAPI.as_view(), name="announcement_api"),

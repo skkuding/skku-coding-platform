@@ -24,6 +24,7 @@ from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer
                            CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
                            EditConetestSeriaizer, EditContestAnnouncementSerializer,)
 
+
 class ContestAPI(APIView):
     @swagger_auto_schema(
         request_body=CreateConetestSeriaizer,
