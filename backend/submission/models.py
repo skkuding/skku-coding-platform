@@ -8,6 +8,8 @@ from contest.models import Contest
 from utils.shortcuts import rand_str
 
 from assignment.models import Assignment
+
+
 class JudgeStatus:
     COMPILE_ERROR = -2
     WRONG_ANSWER = -1
@@ -26,7 +28,7 @@ class Submission(models.Model):
     id = models.TextField(default=rand_str, primary_key=True, db_index=True)
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
-    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE, related_name='submissions')
+    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE, related_name="submissions")
     create_time = models.DateTimeField(auto_now_add=True)
     user_id = models.IntegerField(db_index=True)
     username = models.TextField()

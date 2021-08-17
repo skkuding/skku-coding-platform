@@ -3,11 +3,11 @@ from utils.api.tests import APITestCase
 
 from .models import Course, Registration
 
-DEFAULT_COURSE_DATA = {"title": "Test", 
-                        "course_code": "TESTCODE12",
-                        "class_number": 43,
-                        "registered_year": 2021,
-                        "semester": 1}
+DEFAULT_COURSE_DATA = {"title": "Test",
+                       "course_code": "TESTCODE12",
+                       "class_number": 43,
+                       "registered_year": 2021,
+                       "semester": 1}
 
 
 class CourseProfessorAPITest(APITestCase):
@@ -15,7 +15,7 @@ class CourseProfessorAPITest(APITestCase):
         self.create_admin()
         self.url = self.reverse("course_professor_api")
         self.data = copy.deepcopy(DEFAULT_COURSE_DATA)
-    
+
     def test_get_course_list(self):
         self.test_create_course()
         res = self.client.get(self.url)
@@ -34,11 +34,11 @@ class CourseProfessorAPITest(APITestCase):
     def test_edit_course(self):
         id = self.test_create_course().data["data"]["id"]
         update_data = {"id": id,
-                        "title": "update title",
-                        "course_code": "UPDATE12",
-                        "class_number": 12,
-                        "registered_year": 2022,
-                        "semester": 0}
+                       "title": "update title",
+                       "course_code": "UPDATE12",
+                       "class_number": 12,
+                       "registered_year": 2022,
+                       "semester": 0}
         res = self.client.put(self.url, data=update_data)
         self.assertSuccess(res)
         res_data = res.data["data"]

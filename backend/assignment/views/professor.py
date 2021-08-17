@@ -8,6 +8,7 @@ from drf_yasg import openapi
 from account.decorators import ensure_created_by, admin_role_required
 import dateutil.parser
 
+
 class AssignmentAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
@@ -65,7 +66,7 @@ class AssignmentAPI(APIView):
 
         assignments = Assignment.objects.filter(course_id=course_id)
         return self.success(self.paginate_data(request, assignments, AssginmentProfessorSerializer))
-    
+
     @swagger_auto_schema(
         request_body=CreateAssignmentSerializer,
         operation_description="Create one assignment",

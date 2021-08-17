@@ -6,10 +6,11 @@ from assignment.models import Assignment
 from .admin import ProblemBase
 
 from ..models import Problem, ProblemTag
-from ..serializers import (CreateAssignmentProblemSerializer, ProblemAdminSerializer, 
-                            ProblemProfessorSerializer, EditAssignmentProblemSerializer)
+from ..serializers import (CreateAssignmentProblemSerializer, ProblemAdminSerializer,
+                           ProblemProfessorSerializer, EditAssignmentProblemSerializer)
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
 
 class AssignmentProblemAPI(ProblemBase):
     @swagger_auto_schema(
@@ -54,7 +55,7 @@ class AssignmentProblemAPI(ProblemBase):
 
         problems = Problem.objects.filter(assignment=assignment).order_by("-create_time")
         return self.success(self.paginate_data(request, problems, ProblemProfessorSerializer))
-    
+
     @swagger_auto_schema(
         request_body=(CreateAssignmentProblemSerializer),
         operation_description="Create a problem of assignment.",
@@ -167,7 +168,7 @@ class AssignmentProblemAPI(ProblemBase):
             ensure_created_by(problem.assignment, request.user)
         except Problem.DoesNotExist:
             return self.error("Problem does not exists")
-        
+
         if Submission.objects.filter(problem=problem).exists():
             return self.error("Can't delete the problem as it has submissions")
 

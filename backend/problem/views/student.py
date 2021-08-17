@@ -5,6 +5,7 @@ from ..serializers import ProblemSafeSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+
 class AssignmentProblemAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
@@ -29,8 +30,8 @@ class AssignmentProblemAPI(APIView):
         if problem_id:
             try:
                 problem = Problem.objects.select_related("created_by").get(_id=problem_id,
-                                                                            assignment=self.assignment,
-                                                                            visible=True)
+                                                                           assignment=self.assignment,
+                                                                           visible=True)
             except Problem.DoesNotExist:
                 return self.error("Problem does not exist.")
             return self.success(ProblemSafeSerializer(problem).data)

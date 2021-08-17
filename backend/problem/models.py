@@ -7,6 +7,8 @@ from utils.models import RichTextField
 from utils.constants import Choices
 
 from assignment.models import Assignment
+
+
 class ProblemTag(models.Model):
     name = models.TextField()
 
@@ -42,7 +44,7 @@ class Problem(models.Model):
     # display ID
     _id = models.TextField(db_index=True)
     # assignment ID
-    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE, related_name='problems')
+    assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE, related_name="problems")
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
     # for contest problem
     is_public = models.BooleanField(default=False)
