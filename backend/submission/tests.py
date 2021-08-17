@@ -76,3 +76,50 @@ class SubmissionAPITest(SubmissionPrepare):
         self.assertDictEqual(resp.data, {"error": "error",
                                          "data": "Python3 is now allowed in the problem"})
         judge_task.assert_not_called()
+
+
+class AssignmentSubmissionListTest(SubmissionPrepare):
+    def setUp(self):
+        self._create_assignment_submission()
+        self.url = self.reverse("assignment_submission_list_api")
+
+    def test_get_assignment_submission_list(self):
+        problem_id = self.problem["_id"]
+        resp = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
+        self.assertSuccess(resp)
+
+    def test_get_student_assignment_submission_list(self):
+        student = self.create_user("2020123123", "123")
+        Registration.objects.create(user_id=student.id, course_id=self.course_id)
+        self.submission_data["user_id"] = student.id
+        self.submission_data["username"] = student.username
+        Submission.objects.create(**self.submission_data)
+        problem_id = self.problem["_id"]
+        resp = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
+        self.assertSuccess(resp)
+
+
+class AssignmentSubmissionListProfessorTest(SubmissionPrepare):
+    def setUp(self):
+        self._create_assignment_submission()
+        self.url = self.reverse("assignment_submission_list_professor_api")
+
+    def test_get_assignment_submission_list_professor(self):
+        assignment_id = self.assignment_id
+        problem_id = self.problem["id"]
+        resp = self.client.get(f"{self.url}?assignment_id={assignment_id}&problem_id={problem_id}")
+        self.assertSuccess(resp)
+
+
+class EditSubmissionScoreTest(SubmissionPrepare):
+    def setUp(self):
+        self._create_assignment_submission()
+        self.url = self.reverse("edit_submission_score_api")
+
+    def test_edit_submission_score(self):
+        submission_id = self.submission.id
+        data = {"id": submission_id, "score": 100}
+        resp = self.client.put(self.url, data=data)
+        self.assertSuccess(resp)
+        resp_data = resp.data["data"]
+        self.assertEqual(resp_data["statistic_info"]["score"], 100)

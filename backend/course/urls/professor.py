@@ -1,5 +1,4 @@
 from django.conf.urls import url
-from django.urls.resolvers import URLPattern
 
 from ..views.professor import CourseAPI, StudentManagementAPI
 
