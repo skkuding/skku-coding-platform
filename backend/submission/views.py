@@ -336,7 +336,8 @@ class AssignmentSubmissionListAPI(APIView):
             openapi.Parameter(
                 name="username", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
             ),
-        ]
+        ],
+        responses={200: SubmissionListSerializer}
     )
     @check_assignment_permission()
     def get(self, request):
