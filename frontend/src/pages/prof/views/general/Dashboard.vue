@@ -42,7 +42,7 @@
           :value="infoData.recent_contest_count"
         />
       </div>
-      <b-card title="My Lecture - 2021 Summer" class="drop-shadow-custom">
+      <b-card title="My Lecture - 2021 Summer" class="admin-info drop-shadow-custom">
         <b-list-group>
           <b-list-group-item
             v-for="(lecture,index) in lectureList"
@@ -50,17 +50,17 @@
             :key="index">{{ lecture.title + '_' + lecture.course_code + '-' + lecture.class_number }}
           </b-list-group-item>
         </b-list-group>
-        <b-button variant="" class="float-right">
-          New Lectures
+        <b-button variant="primary" class="float-right" v-b-modal.registerNew>
+          + New Lecture
         </b-button>
       </b-card>
     </b-col>
-
+    <register-new-lecture-modal></register-new-lecture-modal>
     <b-col
       :md="7"
       :lg="8"
     >
-      <b-card class="admin-info drop-shadow-custom" :title="'Welcome, Prof. ' + user.username">
+      <b-card class="admin-info drop-shadow-custom" title="Underway Assignments">
         <b-table
           borderless
           hover
@@ -87,12 +87,14 @@
 import { mapGetters } from 'vuex'
 import browserDetector from 'browser-detect'
 import InfoCard from '@prof/components/infoCard.vue'
-import api from '@prof/api'
+import api from '../../api.js'
+import RegisterNewLectureModal from './RegisterNewLecture.vue'
 
 export default {
   name: 'Dashboard',
   components: {
-    InfoCard
+    InfoCard,
+    RegisterNewLectureModal
   },
   data () {
     return {
@@ -207,6 +209,7 @@ export default {
       this.parseSession(resp.data.data)
     } catch (err) {
     }
+    await this.getAssignmentList(this.currentPage)
   },
   methods: {
     async currentChange (page) {
@@ -216,10 +219,11 @@ export default {
     async getAssignmentList (page) {
       this.loading = true
       try {
-        // const res = await api.getAssignmentList((page - 1) * this.pageSize, this.pageSize, this.keyword)
-        this.total = 2 // res.data.data.total
-        // this.assignmentList = res.data.data.results
+        const res = await api.getAssignmentList(false, (page - 1) * this.pageSize, this.pageSize)
+        this.total = res.data.data.total
+        this.assignmentList = res.data.data.results
       } catch (err) {
+        console.log(err)
       } finally {
         this.loading = false
       }
@@ -264,11 +268,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
-  @font-face {
-    font-family: Manrope_bold;
-    src: url('../../../../fonts/Manrope-Bold.ttf');
-  }
+<style lang="scss" scoped>
   #dashboard {
     margin: auto;
     flex:1 0;
@@ -284,10 +284,11 @@ export default {
     }
   }
   .admin-info {
+    margin-top: 20px;
     margin-bottom: 20px;
   }
   .list-group-item {
-    padding: 1rem 2rem;
+    padding: 1rem 0rem;
     border: 0 solid
   }
 
