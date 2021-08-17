@@ -85,13 +85,22 @@ export default {
   }
   .QnAButton {
     background-color: #E9A05A;
+    &:hover{
+      background-color: #b97f48;
+    }
   }
   .AssignmentsButton {
     background-color: #3391E5;
+    &:hover{
+      background-color: #276fad;
+    }
   }
   .AssignmentName {
     background-color: white;
     color : #4f4f4f;
     box-shadow: 0 0 0 1px #4f4f4f;
+    &:hover{
+      background-color: #c4c4c4;
+    }
   }
 </style>
