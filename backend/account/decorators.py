@@ -140,6 +140,7 @@ def check_contest_permission(check_type="details"):
         return _check_permission
     return decorator
 
+
 def check_assignment_permission():
     def decorator(func):
         def _check_permission(*args, **kwargs):
@@ -152,7 +153,7 @@ def check_assignment_permission():
                 assignment_id = request.GET.get("assignment_id")
             if not assignment_id:
                 return self.error("Parameter error, assignment_id is required")
-            
+
             try:
                 self.assignment = Assignment.objects.select_related("created_by").get(id=assignment_id, visible=True)
             except Assignment.DoesNotExist:
@@ -176,6 +177,7 @@ def check_assignment_permission():
             return func(*args, **kwargs)
         return _check_permission
     return decorator
+
 
 def ensure_created_by(obj, user):
     e = APIError(msg=f"{obj.__class__.__name__} does not exist")

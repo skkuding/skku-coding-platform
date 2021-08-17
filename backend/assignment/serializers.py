@@ -4,6 +4,7 @@ from .models import Assignment
 from submission.models import Submission
 from course.serializers import CourseSerializer
 
+
 class AssginmentProfessorSerializer(serializers.ModelSerializer):
     created_by = UsernameSerializer()
     course = CourseSerializer()
@@ -12,6 +13,7 @@ class AssginmentProfessorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
         fields = "__all__"
+
 
 class AssignmentSerializer(serializers.ModelSerializer):
     status = serializers.CharField()
@@ -22,7 +24,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
         return obj.problems.count()
 
     def get_submitted_problem(self, obj):
-        user = self.context['request'].user
+        user = self.context["request"].user
         return Submission.objects.filter(assignment=obj, user_id=user.id).values("problem").distinct().count()
 
     class Meta:

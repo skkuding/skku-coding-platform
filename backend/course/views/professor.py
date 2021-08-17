@@ -1,4 +1,3 @@
-from django.http import request
 from utils.api import APIView, validate_serializer
 
 from account.models import User
@@ -7,7 +6,8 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration
 from ..serializers import (CourseProfessorSerializer, CreateCourseSerializer, EditCourseSerializer,
-                            RegisterSerializer, EditRegisterSerializer, RegistrationSerializer, UserListSerializer)
+                           RegisterSerializer, EditRegisterSerializer, RegistrationSerializer, UserListSerializer)
+
 
 class CourseAPI(APIView):
     @swagger_auto_schema(
@@ -65,11 +65,11 @@ class CourseAPI(APIView):
     def post(self, request):
         data = request.data
         course = Course.objects.create(title=data["title"],
-                                        course_code=data["course_code"],
-                                        class_number=data["class_number"],
-                                        created_by=request.user,
-                                        registered_year=data["registered_year"],
-                                        semester=data["semester"])
+                                       course_code=data["course_code"],
+                                       class_number=data["class_number"],
+                                       created_by=request.user,
+                                       registered_year=data["registered_year"],
+                                       semester=data["semester"])
         return self.success(CourseProfessorSerializer(course).data)
 
     @swagger_auto_schema(
@@ -144,8 +144,7 @@ class StudentManagementAPI(APIView):
             Registration.objects.get(user_id=user_id, course_id=course_id)
             return self.error("User has been already registered to the course")
         except Registration.DoesNotExist:
-            registration = Registration.objects.create(user_id=user_id,
-                                        course_id=course_id)
+            registration = Registration.objects.create(user_id=user_id, course_id=course_id)
         return self.success(RegistrationSerializer(registration).data)
 
     @swagger_auto_schema(
@@ -189,7 +188,7 @@ class StudentManagementAPI(APIView):
         if not course_id:
             return self.error("Invalid parameter, course_id is required")
 
-        try: 
+        try:
             course = Course.objects.get(id=course_id)
             ensure_created_by(course, request.user)
         except Course.DoesNotExist:
@@ -199,7 +198,7 @@ class StudentManagementAPI(APIView):
 
         # Return number of total registered students
         if get_students_count == "1":
-            return self.success({ 'total_students': registration.count() })
+            return self.success({"total_students": registration.count()})
         return self.success(self.paginate_data(request, registration, UserListSerializer))
 
     @swagger_auto_schema(
