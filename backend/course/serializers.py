@@ -1,7 +1,7 @@
-from django.db.models import fields
 from utils.api import UsernameSerializer, serializers
 from account.serializers import UserAdminSerializer
 from .models import Course, Registration
+
 
 class CreateCourseSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=64)
@@ -36,7 +36,7 @@ class RegisterErrorSerializer(serializers.Serializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Course
         fields = "__all__"
@@ -55,7 +55,7 @@ class CourseStudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Registration
-        fields = ('course',)
+        fields = ("course",)
 
 
 class UserListSerializer(serializers.ModelSerializer):

@@ -5,7 +5,8 @@ from course.models import Course
 from account.models import User
 from utils.models import RichTextField
 from utils.constants import AssignmentStatus
-# Create your models here.
+
+
 class Assignment(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
