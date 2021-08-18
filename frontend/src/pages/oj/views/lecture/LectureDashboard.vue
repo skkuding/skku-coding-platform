@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-list-card font-bold">
-    <div class="top-bar mb-5">
-    <h3 class = "title">프로그래밍 기초와 실습</h3>
+    <div class="mb-5">
+      <h3 class = "title">프로그래밍 기초와 실습</h3>
     </div>
     <b-row>
     <b-col cols = "8">

@@ -1,6 +1,6 @@
 <template>
   <div class="lecture-list-card font-bold">
-    <div class="top-bar mb-5" style="margin-top:4px;">
+    <div class="mb-5" style="margin-top:4px;">
       <h2 class = "title">Lectures</h2>
     </div>
     <div class = "table lecture-list-table mt-4" >
