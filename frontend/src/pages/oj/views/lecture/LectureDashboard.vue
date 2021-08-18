@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-list-card font-bold">
-    <div class="top-bar mb-5" style="margin-top:4px;">
+    <div class="top-bar mb-5">
     <h3 class = "title">프로그래밍 기초와 실습</h3>
     </div>
     <b-row>
@@ -14,8 +14,8 @@
       ></b-calendar>
     </b-col>
     <b-col>
-      <b-card style="background-color: lightgray" :title= "value" class = "card h-100">
-        <b-button class ="AssignmentName w-100" variant = "outline-light">
+      <b-card :title= "value" class = "card h-100">
+        <b-button class ="AssignmentName w-100" @click="goAssignmentDetail" variant = "outline-light">
           Assignment 3
         </b-button>
       </b-card>
@@ -23,10 +23,10 @@
     </b-row>
     <b-row class = "mt-5">
       <b-col >
-      <b-button class = "w-100 QnAButton" variant = "warning" >Go to Q&A page</b-button>
+      <b-button class = "w-100 QnAButton" @click="goQnA">Go to Q&A page</b-button>
       </b-col>
       <b-col>
-        <b-button class = "w-100 AssignmentsButton" variant = "primary">Go to Assignments page</b-button>
+        <b-button class = "w-100 AssignmentsButton" @click="goAssignments" >Go to Assignments page</b-button>
       </b-col>
     </b-row>
   </div>
@@ -46,6 +46,21 @@ export default {
   async mounted () {
   },
   methods: {
+    async goQnA () {
+      await this.$router.push({
+        name: 'lecture-qna'
+      })
+    },
+    async goAssignments () {
+      await this.$router.push({
+        name: 'lecture-assignment'
+      })
+    },
+    async goAssignmentDetail () {
+      await this.$router.push({
+        name: 'lecture-assignment-detail'
+      })
+    }
   },
   computed: {
   }
@@ -103,4 +118,5 @@ export default {
       background-color: #c4c4c4;
     }
   }
+
 </style>
