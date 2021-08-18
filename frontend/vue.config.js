@@ -27,6 +27,21 @@ module.exports = {
         '@admin': path.join(__dirname, 'src/pages/admin'),
         '@public': path.join(__dirname, 'public')
       }
+    },
+    module: {
+      rules: [
+        {
+          test: /\.txt$/i,
+          use: [
+            {
+              loader: 'raw-loader',
+              options: {
+                esModule: false
+              }
+            }
+          ]
+        }
+      ]
     }
   },
   pluginOptions: {
