@@ -20,11 +20,13 @@
     </div>
     <div class="notification">
       <p v-dompurify-html>
-        구독과 좋아요! 알림설정까지! 감사합니다!!
+        구독 안 하면 어쩌구 저쩌구. . .
+        브라우저에서 알림 어쩌구 저쩌구 . . .
+        윈도우 기본 설정 어쩌구 저쩌구 . . .
       </p>
       <b-button @click="getSubscribe(this.user.username)"> 구독! </b-button>
-    </div>
-    <div class="table">
+      </div>
+      <div class="table">
       <b-table
         hover
         :items="contestProblems"
@@ -150,8 +152,8 @@ export default {
         this.btnLoading = false
       }
     },
-    async getSubscribe (username) {
-      await webpush.subscribe(username)
+    async getSubscribe () {
+      await webpush.subscribe(this.user.username)
     }
   },
   computed: {
@@ -163,8 +165,9 @@ export default {
       now: state => state.contest.now
     }),
     ...mapGetters(
-      ['contestMenuDisabled', 'contestRuleType', 'contestStatus', 'countdown', 'isContestAdmin', 'user',
-        'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated', 'contestRuleType', 'OIContestRealTimePermission']
+      ['contestMenuDisabled', 'contestRuleType', 'contestStatus', 'countdown', 'isContestAdmin',
+        'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated', 'contestRuleType',
+        'OIContestRealTimePermission', 'user']
     ),
     contestStatus () {
       return {

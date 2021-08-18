@@ -136,7 +136,7 @@ export default {
         if (item.contest_type === CONTEST_TYPE.PRIVATE) {
           this.$error('This contest is locked')
         } else {
-          await webpush.subscribe(this.user.username) // this.username 안 읽힘.
+          await webpush.subscribe(this.user.username)
           if (webpush.isSubscribe()) {
             this.$success('구독! 좋아요! 알림설정!')
           } else {

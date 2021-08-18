@@ -1,5 +1,5 @@
 import { register, unregister } from 'register-service-worker'
-
+import applicationServerPublicKey from '../../data/backend/config/applicationServerPublicKey.txt'
 function loadVersionBrowser (userAgent) {
   const ua = userAgent
   let tem
@@ -56,10 +56,10 @@ function requestPOSTTOServer (data) {
     credentials: 'include'
   })
 };
-const applicationServerPublicKey = 'BGF1mrCiiWOYNa2v0vOm4H0GqXTjnJLLxDo4ZFC55FDI0zop58HRrV1e1_Bz3-2eQ6YbG6QSKiXOVz8p2chqL3M'
 let isSubscribe = false
 export default {
   async subscribe (username) {
+    console.log('key: ', applicationServerPublicKey)
     const applicationServerKey = urlBase64ToUint8Array(applicationServerPublicKey)
     register(`${process.env.BASE_URL}sw.js`, {
       async ready (registration) {
@@ -79,11 +79,13 @@ export default {
             registration_id: registrationId
           }
           const res = await requestPOSTTOServer(data)
+          console.log(res)
           isSubscribe = res.ok // res.data.error가 안 돼있어서, 상태코드로 대충 처리해놓았다.
         } catch (err) {
         }
       }
     })
+    console.log('subscribe: ', isSubscribe)
   },
   async unregister () {
     unregister()
