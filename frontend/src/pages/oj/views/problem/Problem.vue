@@ -15,11 +15,11 @@
         </b-navbar-brand>
 
         <b-navbar-nav v-if="$route.name && $route.name.indexOf('contest') != -1">
-          <b-nav-item to="#">Contests</b-nav-item>
+          <b-nav-item to="/contest">Contests</b-nav-item>
           <b-nav-item>
             <b-icon icon="chevron-right"/>
           </b-nav-item>
-          <b-nav-item to="#">{{problem.contest_name}}</b-nav-item>
+          <b-nav-item :to="'/contest/' + this.contestID">{{problem.contest_name}}</b-nav-item>
           <b-nav-item>
             <b-icon icon="chevron-right"/>
           </b-nav-item>
