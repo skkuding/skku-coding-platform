@@ -58,7 +58,7 @@ export default {
     try {
       const resp = await api.getLectureList()
       const data = resp.data.data
-      this.temp = data.results
+      this.lectureList = data.results
     } catch (err) {
     }
   },
