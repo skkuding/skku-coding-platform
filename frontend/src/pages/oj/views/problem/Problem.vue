@@ -339,7 +339,7 @@ export default {
         let preferredLanguage = problem.languages[0]
         const res3 = await api.getUserInfo(userId)
 
-        const lang = res3.data.data.language
+        const lang = res3.data.data && res3.data.data.language
         if (lang !== null) {
           if (problem.languages.includes(lang)) {
             preferredLanguage = lang
