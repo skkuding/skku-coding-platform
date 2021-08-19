@@ -118,10 +118,10 @@ export default {
     width: 100%;
     height: 100%;
   }
-  .CodeMirror {
+  #codemirror::v-deep .CodeMirror {
     height: 100% !important;
   }
-  .CodeMirror-scroll {
+  #codemirror::v-deep .CodeMirror-scroll {
     min-height: 300px;
     max-height: 100%;
   }

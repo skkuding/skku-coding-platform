@@ -720,6 +720,7 @@ export default {
         margin: 0;
         padding: 0;
         flex: 1 1 auto;
+        overflow: auto;
       }
 
       #io {
