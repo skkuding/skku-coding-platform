@@ -230,6 +230,9 @@ export default {
     return ajax('submission', 'put', {
       data
     })
+  },
+  getLectureList (data) {
+    return ajax('lecture/course', 'get')
   }
 }
 
