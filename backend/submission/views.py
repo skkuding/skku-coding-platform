@@ -3,7 +3,8 @@ import ipaddress
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from account.decorators import login_required, check_contest_permission, check_assignment_permission
+from account.decorators import admin_role_required, login_required, check_contest_permission, check_assignment_permission
+from assignment.models import Assignment
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
 from options.options import SysOptions
@@ -18,9 +19,8 @@ from utils.decorators import login_required, check_contest_permission
 from utils.throttling import TokenBucket
 from .models import Submission
 from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
-                          ShareSubmissionSerializer)
-from .serializers import SubmissionSafeModelSerializer, SubmissionListSerializer
-
+                          ShareSubmissionSerializer, SubmissionSafeModelSerializer, SubmissionListSerializer,
+                          SubmissionListProfessorSerializer)
 
 class SubmissionAPI(APIView):
     def throttling(self, request):
@@ -415,7 +415,7 @@ class AssignmentSubmissionListProfessorAPI(APIView):
         operation_description="Submission list for professor page",
         responses={200: SubmissionListProfessorSerializer}
     )
-    # @admin_role_required
+    @admin_role_required
     def get(self, request):
         assignment_id = request.GET.get("assignment_id")
         problem_id = request.GET.get("problem_id")
