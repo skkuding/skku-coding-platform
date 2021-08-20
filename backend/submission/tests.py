@@ -19,7 +19,7 @@ DEFAULT_SUBMISSION_DATA = {
     "result": -2,
     "info": {},
     "language": "C",
-    "statistic_info": {}
+    "statistic_info": {"score": 0, "err_info": "test"}
 }
 
 
@@ -53,7 +53,7 @@ class SubmissionPrepare(APITestCase):
         self.submission_data = deepcopy(DEFAULT_SUBMISSION_DATA)
         self.submission_data["problem_id"] = self.problem["id"]
         self.submission_data["assignment_id"] = self.assignment_id
-        Submission.objects.create(**self.submission_data)
+        self.submission = Submission.objects.create(**self.submission_data)
 
 
 class SubmissionListTest(SubmissionPrepare):
@@ -117,3 +117,29 @@ class AssignmentSubmissionListTest(SubmissionPrepare):
         problem_id = self.problem["_id"]
         resp = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
         self.assertSuccess(resp)
+
+
+class AssignmentSubmissionListProfessorTest(SubmissionPrepare):
+    def setUp(self):
+        self._create_assignment_submission()
+        self.url = self.reverse("assignment_submission_list_professor_api")
+
+    def test_get_assignment_submission_list_professor(self):
+        assignment_id = self.assignment_id
+        problem_id = self.problem["id"]
+        resp = self.client.get(f"{self.url}?assignment_id={assignment_id}&problem_id={problem_id}")
+        self.assertSuccess(resp)
+
+
+class EditSubmissionScoreTest(SubmissionPrepare):
+    def setUp(self):
+        self._create_assignment_submission()
+        self.url = self.reverse("edit_submission_score_api")
+
+    def test_edit_submission_score(self):
+        submission_id = self.submission.id
+        data = {"id": submission_id, "score": 100}
+        resp = self.client.put(self.url, data=data)
+        self.assertSuccess(resp)
+        resp_data = resp.data["data"]
+        self.assertEqual(resp_data["statistic_info"]["score"], 100)
