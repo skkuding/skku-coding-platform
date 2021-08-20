@@ -1,7 +1,8 @@
 from .models import Submission
+from account.models import User
 from utils.api import serializers
 from utils.serializers import LanguageNameChoiceField
-
+from utils.api._serializers import UsernameSerializer
 
 class CreateSubmissionSerializer(serializers.Serializer):
     problem_id = serializers.IntegerField()
@@ -31,7 +32,7 @@ class SubmissionSafeModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        exclude = ("info", "contest", "ip")
+        exclude = ("info", "contest", "assignment", "ip")
 
 
 class SubmissionListSerializer(serializers.ModelSerializer):
@@ -44,10 +45,25 @@ class SubmissionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        exclude = ("info", "contest", "code", "ip")
+        exclude = ("info", "contest", "assignment", "code", "ip")
 
     def get_show_link(self, obj):
         # No user or anonymous user
         if self.user is None or not self.user.is_authenticated:
             return False
         return obj.check_user_permission(self.user)
+
+
+class SubmissionListProfessorSerializer(serializers.ModelSerializer):
+    created_by = serializers.SerializerMethodField()
+
+    def get_created_by(self, obj):
+        try:
+            user = User.objects.get(id=obj.user_id)
+        except User.DoesNotExist:
+            return None
+        return UsernameSerializer(user).data
+
+    class Meta:
+        model = Submission
+        exclude = ("contest", "assignment", "shared", "ip")
