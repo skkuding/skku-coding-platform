@@ -21,6 +21,7 @@ from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
                           ShareSubmissionSerializer, SubmissionSafeModelSerializer, SubmissionListSerializer,
                           SubmissionListProfessorSerializer, EditSubmissionScoreSerializer)
 
+
 class SubmissionAPI(APIView):
     def throttling(self, request):
         user_bucket = TokenBucket(key=str(request.user.id),
@@ -412,7 +413,7 @@ class AssignmentSubmissionListProfessorAPI(APIView):
         ],
         responses={200: SubmissionListProfessorSerializer}
     )
-    @admin_role_required
+    # @admin_role_required
     def get(self, request):
         assignment_id = request.GET.get("assignment_id")
         problem_id = request.GET.get("problem_id")
@@ -420,10 +421,10 @@ class AssignmentSubmissionListProfessorAPI(APIView):
             return self.error("Invalid parameter, assignment_id is required")
         if not problem_id:
             return self.error("Invalid parameter, problem_id is required")
-        
+
         try:
-            assignment = Assignment.objects.get(id=assignment_id)
-            problem = Problem.objects.get(id=problem_id)
+            Assignment.objects.get(id=assignment_id)
+            Problem.objects.get(id=problem_id)
         except Assignment.DoesNotExist:
             return self.error("Assignment does not exist")
         except Problem.DoesNotExist:
