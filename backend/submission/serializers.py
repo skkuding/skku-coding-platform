@@ -18,6 +18,11 @@ class ShareSubmissionSerializer(serializers.Serializer):
     shared = serializers.BooleanField()
 
 
+class EditSubmissionScoreSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    score = serializers.IntegerField()
+
+
 class SubmissionModelSerializer(serializers.ModelSerializer):
     problem_name = serializers.CharField(source="problem.title")
 

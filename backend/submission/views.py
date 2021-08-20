@@ -20,7 +20,7 @@ from utils.throttling import TokenBucket
 from .models import Submission
 from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
                           ShareSubmissionSerializer, SubmissionSafeModelSerializer, SubmissionListSerializer,
-                          SubmissionListProfessorSerializer)
+                          SubmissionListProfessorSerializer, EditSubmissionScoreSerializer)
 
 class SubmissionAPI(APIView):
     def throttling(self, request):
