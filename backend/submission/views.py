@@ -3,7 +3,8 @@ import ipaddress
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from account.decorators import login_required, check_contest_permission, check_assignment_permission
+from account.decorators import admin_role_required, login_required, check_contest_permission, check_assignment_permission
+from assignment.models import Assignment
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
 from options.options import SysOptions
@@ -16,9 +17,8 @@ from utils.captcha import Captcha
 from utils.throttling import TokenBucket
 from .models import Submission
 from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
-                          ShareSubmissionSerializer)
-from .serializers import SubmissionSafeModelSerializer, SubmissionListSerializer
-
+                          ShareSubmissionSerializer, SubmissionSafeModelSerializer, SubmissionListSerializer,
+                          SubmissionListProfessorSerializer)
 
 class SubmissionAPI(APIView):
     def throttling(self, request):
@@ -370,6 +370,56 @@ class AssignmentSubmissionListAPI(APIView):
         data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
         return self.success(data)
 
+
+class AssignmentSubmissionListProfessorAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="limit",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="offset",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER
+            ),
+        ],
+        responses={200: SubmissionListProfessorSerializer}
+    )
+    @admin_role_required
+    def get(self, request):
+        assignment_id = request.GET.get("assignment_id")
+        problem_id = request.GET.get("problem_id")
+        if not assignment_id:
+            return self.error("Invalid parameter, assignment_id is required")
+        if not problem_id:
+            return self.error("Invalid parameter, problem_id is required")
+        
+        try:
+            assignment = Assignment.objects.get(id=assignment_id)
+            problem = Problem.objects.get(id=problem_id)
+        except Assignment.DoesNotExist:
+            return self.error("Assignment does not exist")
+        except Problem.DoesNotExist:
+            return self.error("Problem does not exist")
+
+        submissions = Submission.objects.filter(assignment_id=assignment_id).order_by("-create_time").distinct("user_id").order_by("username")
+        return self.success(self.paginate_data(request, submissions, SubmissionListProfessorSerializer))
 
 class SubmissionExistsAPI(APIView):
     @swagger_auto_schema(
