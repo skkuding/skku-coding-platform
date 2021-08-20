@@ -19,7 +19,7 @@ from utils.throttling import TokenBucket
 from .models import Submission
 from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
                           ShareSubmissionSerializer, SubmissionSafeModelSerializer, SubmissionListSerializer,
-                          SubmissionListProfessorSerializer)
+                          SubmissionListProfessorSerializer, EditSubmissionScoreSerializer)
 
 class SubmissionAPI(APIView):
     def throttling(self, request):
@@ -429,8 +429,32 @@ class AssignmentSubmissionListProfessorAPI(APIView):
         except Problem.DoesNotExist:
             return self.error("Problem does not exist")
 
-        submissions = Submission.objects.filter(assignment_id=assignment_id).order_by("-create_time").distinct("user_id").order_by("username")
+        submissions = Submission.objects.filter(assignment_id=assignment_id).order_by("username", "-create_time").distinct("username")
         return self.success(self.paginate_data(request, submissions, SubmissionListProfessorSerializer))
+
+
+class EditSubmissionScoreAPI(APIView):
+    @swagger_auto_schema(
+        request_body=EditSubmissionScoreSerializer,
+        operation_description="Edit submission score",
+        responses={200: SubmissionListSerializer},
+    )
+    @validate_serializer(EditSubmissionScoreSerializer)
+    @admin_role_required
+    def put(self, request):
+        data = request.data
+        submission_id = data["id"]
+        score = data["score"]
+
+        try:
+            submission = Submission.objects.get(id=submission_id)
+        except Submission.DoesNotExist:
+            return self.error("Submission does not exist")
+
+        submission.statistic_info["score"] = score
+        submission.save()
+        return self.success(SubmissionListSerializer(submission).data)
+
 
 class SubmissionExistsAPI(APIView):
     @swagger_auto_schema(
