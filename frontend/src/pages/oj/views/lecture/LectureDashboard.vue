@@ -1,13 +1,14 @@
 <template>
   <div class="dashboard-list-card font-bold">
     <div class="mb-5">
-      <h3 class = "title">프로그래밍 기초와 실습</h3>
+      <h3 class = "title"> {{ lecture.title }} </h3>
     </div>
     <b-row>
     <b-col cols = "8">
     <b-calendar block
       v-model="value"
       class="border rounded p-2 calendar"
+      :date-info-fn="dateClass"
       selected-variant="success"
       nav-button-variant="secondary"
       locale="en"
@@ -21,11 +22,8 @@
       </b-card>
     </b-col>
     </b-row>
-    <b-row class = "mt-5">
-      <b-col >
-      <b-button class = "w-100 QnAButton" @click="goQnA">Go to Q&A page</b-button>
-      </b-col>
-      <b-col>
+    <b-row class = "mt-5 justify-content-center">
+      <b-col cols = "6">
         <b-button class = "w-100 AssignmentsButton" @click="goAssignments" >Go to Assignments page</b-button>
       </b-col>
     </b-row>
@@ -33,6 +31,7 @@
 </template>
 
 <script>
+import api from '@oj/api'
 export default {
   name: 'LectureDashboardOj',
   components: {
@@ -40,17 +39,30 @@ export default {
   },
   data () {
     return {
-      value: ''
+      value: '',
+      lectureList: [],
+      lecture: {
+        title: '',
+        status: '',
+        start_time: '',
+        end_time: ''
+      },
+      temp: []
     }
   },
   async mounted () {
+    try {
+      const resp1 = await api.getLectureList()
+      const lecturelist = resp1.data.data
+      this.lectureList = lecturelist
+      const resp2 = await api.getLecture(1)
+      this.lecture = resp2.data.data
+      const resp3 = await api.getLectureAssignmentList(1)
+      this.temp = resp3.data.data
+    } catch (err) {
+    }
   },
   methods: {
-    async goQnA () {
-      await this.$router.push({
-        name: 'lecture-qna'
-      })
-    },
     async goAssignments () {
       await this.$router.push({
         name: 'lecture-assignment'
@@ -60,6 +72,10 @@ export default {
       await this.$router.push({
         name: 'lecture-assignment-detail'
       })
+    },
+    dateClass (ymd, date) {
+      const day = date.getDate()
+      return day >= 10 && day <= 20 ? 'AssignmentDates' : ''
     }
   },
   computed: {
@@ -117,6 +133,12 @@ export default {
     &:hover{
       background-color: #c4c4c4;
     }
+  }
+  .calendar::v-deep .AssignmentDates{
+    border-bottom-width: 5px;
+    border-bottom-style: solid;
+    position: relative;
+    border-bottom-color: #8DC63F;
   }
 
 </style>
