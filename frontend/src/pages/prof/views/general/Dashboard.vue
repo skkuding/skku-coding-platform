@@ -55,7 +55,7 @@
         </b-button>
       </b-card>
     </b-col>
-    <register-new-lecture-modal></register-new-lecture-modal>
+    <register-new-lecture-modal @newLectureCreated="updateLectureList"></register-new-lecture-modal>
     <b-col
       :md="7"
       :lg="8"
@@ -248,6 +248,14 @@ export default {
         })[0]
       }
       this.session = session
+    },
+    async updateLectureList () {
+      try {
+        const res = await api.getCourseList()
+        this.lectureList = res.data.data.results
+      } catch (err) {
+        console.log(err)
+      }
     }
   },
   computed: {

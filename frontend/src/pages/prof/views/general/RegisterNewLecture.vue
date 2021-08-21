@@ -93,7 +93,7 @@
             label="Semester"
             label-for="input-semester"
             required
-            :state="form.semester > 2020"
+            :state="form.semester !== null"
             valid-feedback="Checked"
             invalid-feedback="Registered Semester is required"
           >
@@ -101,7 +101,7 @@
               id="input-semester"
               v-model="form.semester"
               :options="semesters"
-              :state="form.semester > 2020"
+              :state="form.semester !== null"
             ></b-form-select>
           </b-form-group>
         </b-col>
@@ -135,9 +135,30 @@ export default {
     }
   },
   methods: {
-    async submitNewLecture () {
-      await api.createCourse(this.form)
-      alert(this.form)
+    init () {
+      this.form = {
+        lectureTitle: '',
+        courseCode: '',
+        classNumber: null,
+        year: null,
+        semester: null
+      }
+    },
+    async submitNewLecture (bvModalEvt) {
+      bvModalEvt.preventDefault()
+      const data = {
+        title: this.form.lectureTitle,
+        course_code: this.form.courseCode,
+        class_number: this.form.classNumber,
+        registered_year: this.form.year,
+        semester: this.form.semester
+      }
+      await api.createCourse(data)
+      this.$emit('newLectureCreated')
+      this.$nextTick(() => {
+        this.$bvModal.hide('registerNew')
+      })
+      this.init()
     }
   },
   computed: {
