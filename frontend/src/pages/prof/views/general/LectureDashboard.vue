@@ -6,7 +6,7 @@
       id="dashboard"
     >
       <b-col>
-        <user-list></user-list>
+        <user-list :lecture-id="lectureId"></user-list>
       </b-col>
     </b-row>
     <b-row
@@ -59,9 +59,12 @@ export default {
   },
   data () {
     return {
+      lectureId: null
     }
   },
   async mounted () {
+    this.lectureId = this.$route.params.lectureId
+    console.log(this.lectureId)
   },
   methods: {
   },

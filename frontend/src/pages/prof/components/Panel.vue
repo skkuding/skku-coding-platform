@@ -59,8 +59,8 @@ export default {
         margin: 0;
         color: #333;
         border-color: #ddd;
-        font-size: 18px;
-        font-weight: 300;
+        font-size: 1.5rem;
+        font-weight: bold;
         letter-spacing: 0.025em;
         height: 60px;
         line-height: 45px;

@@ -9,44 +9,38 @@
     scrollable
   >
     <p style="font-size: 22px;">
-      <b>Lecture Title: 공학컴퓨터 프로그래밍</b>
+      <b> lecture id: {{ lectureId }}</b>
     </p>
     <div style="font-size: 22px;" class="mb-3">
       <b>Student ID </b>
       <div class="float-right">
-        <b-button type="button" @click="registerByCSVFile" variant="outline-info" title="" sqaured >
+        <label class="students-button" for="input-file">
           <b-icon-cloud-arrow-up></b-icon-cloud-arrow-up>
-        </b-button>
-        <b-button type="button" variant="outline-info" sqaured>
+        </label>
+        <input ref="uploadStudentsInput" @change="uploadStudentsFromCSV" type="file" id="input-file" accept=".csv" style="display: none;"/>
+        <button type="button" @click="addStudent" class="students-button">
           <b-icon-person-plus></b-icon-person-plus>
-        </b-button>
+        </button>
       </div>
     </div>
     <b-form>
-      <!-- <b-form-group
-        id="input-group-student-id"
-        label="Student ID"
-        label-for="input-student-id"
-        required
-        :state="form.lectureTitle !== ''"
-      >
-      valid-feedback="Checked"
-        invalid-feedback="Invalid Student Id" -->
-        <b-form-input
-          v-for="studentId in form.studentIds" :key="studentId.id"
-          id="input-student-id"
-          v-model="studentId.value"
-          required
-          :state="studentId.value !== '' "
-          class="mb-2"
-        ></b-form-input>
-      <!-- </b-form-group> -->
+      <b-form-input
+        v-for="(studentId, index) in form.studentIds" :key="index"
+        v-model="studentId.value"
+        class="mb-2"
+        type="number"
+      ></b-form-input>
     </b-form>
+    <template #modal-footer="{ ok }">
+      <b-button size="sm" variant="success" @click="ok()">
+        Register all
+      </b-button>
+    </template>
   </b-modal>
 </template>
 
 <script>
-// import api from '../../api.js'
+import api from '../../api.js'
 import papa from 'papaparse'
 
 export default {
@@ -56,15 +50,10 @@ export default {
   data () {
     return {
       form: {
-        lectureId: 1,
-        studentIds: [{
-          id: 1,
-          value: '2020311666'
-        },
-        {
-          id: 2,
-          value: '2020311667'
-        }
+        studentIds: [
+          {
+            value: null
+          }
         ]
       },
       semesters: [
@@ -73,43 +62,72 @@ export default {
         { text: 'Summer', value: 1 },
         { text: 'Fall', value: 2 },
         { text: 'Winter', value: 3 }
-      ]
+      ],
+      lectureId: null
     }
   },
+  mounted () {
+    this.lectureId = this.$route.params.lectureId
+  },
   methods: {
-    submitRegistration () {
-      // await api.registerNewLecture(this.form)
-      alert(this.form)
+    async submitRegistration (bvModalEvt) {
+      bvModalEvt.preventDefault()
+      console.log(this.lectureId)
+      for (const studentId of this.form.studentIds) {
+        if (studentId.value === null) {
+          continue
+        }
+        const data = {
+          course_id: this.lectureId,
+          user_id: studentId.value
+        }
+        try {
+          await api.registerStudent(data)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      this.$emit('update')
+      this.$nextTick(() => {
+        this.$bvModal.hide('register-new-user')
+      })
     },
     cancelRegistration () {
       // await api.registerNewLecture(this.form)
     },
-    handleUsersCSV (file) {
+    handleStudentsCSV (file) {
       papa.parse(file, {
         complete: (results) => {
-          const data = results.data.filter(user => {
-            return user[0] && user[1] && user[2]
-          })
-          const delta = results.data.length - data.length
-          if (delta > 0) {
-            this.$warning(delta + ' users have been filtered due to empty value')
+          try {
+            this.form.studentIds = results.data.flat().map(studentId => Object({ value: studentId }))
+          } catch (error) {
+            this.$error(error)
           }
-          this.uploadUsersCurrentPage = 1
-          this.uploadUsers = data
-          this.uploadUsersPage = data.slice(0, this.uploadUsersPageSize)
         },
         error: (error) => {
           this.$error(error)
         }
       })
     },
-    registerStudentsByFile () {
-      if (this.form.studentIds.length !== 0) {
-        const sure = this.$bvModal.msgBoxConfirm('Are you sure?')
+    async uploadStudentsFromCSV (evt) {
+      if (evt.target.files.length !== 0 && this.form.studentIds.length !== 1 && this.form.studentIds[1] !== null) {
+        const sure = await this.$bvModal.msgBoxConfirm('Sure to upload student ID by csv file? It will override current student ID inputs', {
+          title: 'Are you sure?',
+          size: 'md',
+          centered: true
+        })
         if (sure === true) {
-          this.handleStudentsCSV()
+          this.handleStudentsCSV(evt.target.files[0])
         }
+      } else {
+        this.handleStudentsCSV(evt.target.files[0])
       }
+      this.$refs.uploadStudentsInput.value = null
+    },
+    addStudent () {
+      this.form.studentIds.push({
+        value: null
+      })
     }
   },
   computed: {
@@ -117,6 +135,19 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   // Be careful of common css selector in admin/oj
+  .students-button {
+    all: unset;
+    border-radius: 4px;
+    color: #212529;
+    cursor: pointer;
+    height: 33px;
+    padding: 0px 9px 0px 9px;
+  }
+  .students-button:hover {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
 </style>

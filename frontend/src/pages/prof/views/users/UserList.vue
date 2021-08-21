@@ -2,7 +2,7 @@
   <Panel title="Users">
     <div slot="header">
       <b-row align-v="center" align-h="center" style="margin: 0px">
-        <b-col cols="3" style="padding: 0px">
+        <b-col cols="6" style="padding: 0px">
           <b-button
             :disabled="!selectedUserIDs.length"
             variant="danger"
@@ -12,7 +12,7 @@
             <b-icon icon="trash-fill"></b-icon> Delete
           </b-button>
         </b-col>
-        <b-col cols="3" style="padding: 0px">
+        <b-col cols="6" style="padding: 0px">
           <b-button
             variant="outline-primary"
             size="sm"
@@ -20,12 +20,6 @@
           >
             Select All
           </b-button>
-        </b-col>
-        <b-col cols="6" style="padding: 0px">
-          <b-form-input
-            v-model="keyword"
-            placeholder="Keywords"
-          />
         </b-col>
       </b-row>
     </div>
@@ -71,7 +65,7 @@
     <b-row cols="2" h-align="around">
       <b-col col="3">
         <b-button v-b-modal.register-new-user>+ Register New User</b-button>
-        <register-new-user-modal></register-new-user-modal>
+        <register-new-user-modal @update="currentChange"></register-new-user-modal>
       </b-col>
       <b-col class="panel-options" col="5">
         <b-pagination
@@ -107,27 +101,15 @@ export default {
         { key: 'create_time', label: 'Create Time' },
         { key: 'last_login', label: 'Last Login' },
         { key: 'real_name', label: 'Real Name' },
-        { key: 'email', label: 'Eamil' },
+        { key: 'email', label: 'Email' },
         { key: 'admin_type', label: 'User Type' },
         { key: 'major', label: 'User Major' },
         { key: 'Option', label: 'Option', thClass: 'userTable' }
       ],
       usersPerPage: [],
-      uploadUsersFile: null,
-      uploadUsers: [],
-      uploadUsersPage: [],
-      uploadUsersPageFields: [
-        { key: 'Username', label: 'Username', thClass: 'uploadUserTable' },
-        { key: 'Password', label: 'Password', thClass: 'uploadUserTable' },
-        { key: 'Email', label: 'Email', thClass: 'uploadUserTable' }
-      ],
-      uploadUsersCurrentPage: 1,
-      uploadUsersPageSize: 15,
-      keyword: '',
-      showUserDialog: false,
       user: {},
       loadingTable: false,
-      currentPage: 0,
+      currentPage: 1,
       adminTypeOptions: [
         { value: 'Regular User', text: 'Regular User' },
         { value: 'Admin', text: 'Admin' },
@@ -143,38 +125,36 @@ export default {
         { value: 'Own', text: 'Own' },
         { value: 'All', text: 'All' }
       ],
-      selectedUserIDs: []
+      selectedUserIDs: [],
+      lectureId: null,
+      mounted: false
     }
   },
   async mounted () {
+    this.mounted = true
+    this.lectureId = this.$route.params.lectureId
     await this.getUserList(1)
   },
   methods: {
-    async currentChange (page) {
-      this.currentPage = page
-      await this.getUserList(page)
-    },
-    // 사용자 정보 수정을 위해 제출
-    async saveUser () {
-      try {
-        await api.editUser(this.user)
-        // 업데이트 목록
-        await this.getUserList(this.currentPage)
-        this.showUserDialog = false
-      } catch (err) {
+    currentChange (page) {
+      if (!this.mounted) {
+        return
       }
-    },
-    // 사용자 대화 상자 열기
-    async openUserDialog (id) {
-      this.showUserDialog = true
-      const res = await api.getUser(id)
-      this.user = res.data.data
+      this.currentPage = page
+      this.getUserList(page)
     },
     // 사용자 목록 가져 오기
     async getUserList (page) {
       this.loadingTable = true
       try {
-        const res = await api.getUserList((page - 1) * this.pageSize, this.pageSize, this.keyword)
+        const data = {
+          course_id: this.lectureId,
+          offset: (page - 1) * this.pageSize,
+          limit: this.pageSize
+        }
+        console.log(data)
+        const res = await api.getCourseStudents(this.lectureId, this.pageSize, (page - 1) * this.pageSize)
+        console.log(res)
         this.total = res.data.data.total
         this.userList = res.data.data.results
       } catch (err) {
@@ -195,22 +175,6 @@ export default {
         this.selectedUserIDs = []
       }
     },
-    compareNumber (start, end) {
-      start *= 1
-      end *= 1
-      return end - start
-    },
-    async handleUsersUpload () {
-      try {
-        await api.importUsers(this.uploadUsers)
-        await this.getUserList(1)
-        this.handleResetData()
-      } catch (err) {
-      }
-    },
-    handleResetData () {
-      this.uploadUsers = []
-    },
     selectAll () {
       if (this.selectedUserIDs.length === this.usersPerPage.length) {
         this.selectedUserIDs = []
@@ -226,24 +190,6 @@ export default {
   computed: {
     updateCurrentPage () {
       return this.currentChange(this.currentPage)
-    }
-  },
-  watch: {
-    'keyword' () {
-      this.currentChange(1)
-    },
-    'user.admin_type' () {
-      if (this.user.admin_type === 'Super Admin') {
-        this.user.problem_permission = 'All'
-      } else if (this.user.admin_type === 'Regular User') {
-        this.user.problem_permission = 'None'
-      }
-    },
-    'uploadUsersCurrentPage' (page) {
-      this.uploadUsersPage = this.uploadUsers.slice((page - 1) * this.uploadUsersPageSize, page * this.uploadUsersPageSize)
-    },
-    'uploadUsersFile' () {
-      this.handleUsersCSV(this.uploadUsersFile)
     }
   }
 }

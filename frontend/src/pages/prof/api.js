@@ -333,6 +333,27 @@ export default {
     return ajax('/lecture/professor/course/assignment', 'get', {
       data
     })
+  },
+  getCourseStudents (courseId, limit, offset) {
+    const params = { course_id: courseId, limit, offset }
+    return ajax('/lecture/professor/course/students', 'get', {
+      params: params
+    })
+  },
+  registerStudent (data) {
+    return ajax('/lecture/professor/course/students', 'post', {
+      data
+    })
+  },
+  deleteStudent (data) {
+    return ajax('/lecture/professor/course/students', 'delete', {
+      ...data
+    })
+  },
+  editStudent (data) {
+    return ajax('/lecture/professor/course/students', 'delete', {
+      data
+    })
   }
 }
 

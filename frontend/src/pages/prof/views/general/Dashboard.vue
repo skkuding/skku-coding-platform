@@ -108,32 +108,6 @@ export default {
         env: {}
       },
       lectureList: [
-        {
-          id: 1,
-          title: 'Programming Basics',
-          course_code: 'GEDT018',
-          class_number: 41,
-          created_by: {
-            id: 1,
-            username: 'youngHoon',
-            real_name: '김영훈'
-          },
-          registered_year: '2021',
-          semester: 1
-        },
-        {
-          id: 2,
-          title: 'Programming Advanced',
-          course_code: 'GEDT019',
-          class_number: 41,
-          created_by: {
-            id: 1,
-            username: 'youngHoon',
-            real_name: '김영훈'
-          },
-          registered_year: '2021',
-          semester: 1
-        }
       ],
       assignmentListFields: [
         {
@@ -146,54 +120,7 @@ export default {
         }
       ],
       assignmentList: [
-        {
-          id: 1,
-          title: '1주차 과제',
-          content: '<p>1주차 과제입니다.</p>',
-          created_by: {
-            id: 2,
-            username: 'youngHoon',
-            real_name: '김영훈'
-          },
-          course: {
-            id: 1,
-            title: 'Programming Basics',
-            course_code: 'GEDT018',
-            class_number: 41,
-            registered_year: '2021',
-            semester: 1
-          },
-          start_time: '2021-08-23T18:25:43+09:00',
-          end_time: '2021-08-25T19:25:43+09:00',
-          status: '-1',
-          submitted_problem: 8,
-          total_problem: 10
-        },
-        {
-          id: 2,
-          title: '2주차 과제',
-          content: '<p>2주차 과제입니다. </p>',
-          created_by: {
-            id: 2,
-            username: 'youngHoon',
-            real_name: '김영훈'
-          },
-          course: {
-            id: 1,
-            title: 'Computer Engineering',
-            course_code: 'GEDT018',
-            class_number: 41,
-            registered_year: '2021',
-            semester: 1
-          },
-          start_time: '2021-08-17T18:25:43+09:00',
-          end_time: '2021-08-23T19:25:43+09:00',
-          status: '0',
-          submitted_problem: 8,
-          total_problem: 10
-        }
       ],
-      lectureListTotal: 2,
       session: {}
     }
   },
