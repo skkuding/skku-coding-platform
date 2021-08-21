@@ -209,7 +209,19 @@ export default {
       this.parseSession(resp.data.data)
     } catch (err) {
     }
-    await this.getAssignmentList(this.currentPage)
+
+    try {
+      const res = await api.getCourseList()
+      this.lectureList = res.data.data.results
+    } catch (err) {
+      console.log(err)
+    }
+    // try {
+    //   const res = await api.getAssignmentList()
+    //   this.assignmentList = res.data.data.results
+    // } catch (err) {
+    //   console.log(err)
+    // }
   },
   methods: {
     async currentChange (page) {

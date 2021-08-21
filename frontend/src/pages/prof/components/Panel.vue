@@ -4,14 +4,14 @@
     :class="{'small': small}"
   >
     <header>
-      <div class="title">
+      <h4 class="title">
         <template v-if="$slots.title">
           <slot name="title" />
         </template>
         <template v-else>
           {{ title }}
         </template>
-      </div>
+      </h4>
 
       <div class="header_right">
         <slot name="header" />

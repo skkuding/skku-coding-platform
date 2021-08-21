@@ -319,13 +319,19 @@ export default {
       data
     })
   },
-  getAssignmentList (courseId, offset, limit) {
-    const params = { paging: true, offset, limit }
-    if (courseId) {
-      params.keyword = courseId
-    }
-    return ajax('lecture/professor/course/assignment', 'get', {
-      params: params
+  getCourseList (data) {
+    return ajax('/lecture/professor/course/', 'get', {
+      data
+    })
+  },
+  createCourse (data) {
+    return ajax('/lecture/professor/course/', 'post', {
+      data
+    })
+  },
+  getAssignmentList (data) {
+    return ajax('/lecture/professor/course/assignment', 'get', {
+      data
     })
   }
 }

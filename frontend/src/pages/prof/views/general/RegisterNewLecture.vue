@@ -111,7 +111,7 @@
 </template>
 
 <script>
-// import api from '../../api.js'
+import api from '../../api.js'
 export default {
   name: 'RegisterNewLectureModal',
   components: {
@@ -136,7 +136,7 @@ export default {
   },
   methods: {
     async submitNewLecture () {
-      // await api.registerNewLecture(this.form)
+      await api.createCourse(this.form)
       alert(this.form)
     }
   },

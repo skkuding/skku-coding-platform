@@ -97,7 +97,7 @@ export default {
   },
   data () {
     return {
-      pageSize: 10,
+      pageSize: 5,
       total: 0,
       userList: [],
       userListFields: [

@@ -6,7 +6,7 @@
       id="dashboard"
     >
       <b-col>
-      <user-list></user-list>
+        <user-list></user-list>
       </b-col>
     </b-row>
     <b-row
@@ -15,18 +15,35 @@
       id="dashboard"
     >
       <b-col
-        :md="5"
-        :lg="4"
+        :md="6"
+        :lg="6"
         id="first-col"
       >
-
+        <b-card class="admin-info drop-shadow-custom" title="Underway Assignments">
+          <b-table
+            borderless
+            hover
+            :fields="assignmentListFields"
+            :items="assignmentList"
+            :per-page="pageSize"
+            :current-page="updateCurrentPage"
+          >
+          </b-table>
+          <div class="panel-options">
+            <b-pagination
+              v-model="currentPage"
+              :per-page="pageSize"
+              :total-rows="total"
+              style="position: absolute; right: 20px; top: 15px;"
+            />
+          </div>
+        </b-card>
       </b-col>
       <b-col
-        :md="5"
-        :lg="4"
+        :md="6"
+        :lg="6"
         id="first-col"
       >
-
       </b-col>
     </b-row>
   </div>

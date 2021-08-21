@@ -40,11 +40,6 @@
           :state="studentId.value !== '' "
           class="mb-2"
         ></b-form-input>
-        <b-form-file
-          v-if="!uploadUsers.length"
-          v-model="uploadUsersFile"
-          accept=".csv"
-        ></b-form-file>
       <!-- </b-form-group> -->
     </b-form>
   </b-modal>
