@@ -38,10 +38,7 @@ export default {
     return {
       perPage: 10,
       currentPage: 1,
-      lectureList: [
-        { subject: '프로그래밍 기초와 실습', semester: '2021 spring' },
-        { subject: '공학 컴퓨터 프로그래밍', semester: '2021 fall' } //test
-      ],
+      lectureList: [],
       lectureTableColumns: [
         {
           label: 'Subject',
