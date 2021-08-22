@@ -118,6 +118,9 @@ export default {
     width: 100%;
     height: 100%;
   }
+  #codemirror::v-deep * {
+    font-family: Menlo, Monaco, Consolas,"Courier New", monospace
+  }
   #codemirror::v-deep .CodeMirror {
     height: 100% !important;
   }

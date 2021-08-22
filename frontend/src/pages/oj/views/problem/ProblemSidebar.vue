@@ -292,7 +292,7 @@ export default {
       const func = this.contestID ? 'getContestSubmissionList' : 'getSubmissionList'
 
       // offset, limit, params
-      const result = await api[func](0, 1000, params)
+      const result = await api[func](0, 100, params)
       const data = result.data.data
       const submissions = data.results.map(v => {
         var info = {
