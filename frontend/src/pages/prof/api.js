@@ -319,9 +319,10 @@ export default {
       data
     })
   },
-  getCourseList (data) {
+  getCourseList (courseId, limit, offset) {
+    const params = { id: courseId, limit, offset }
     return ajax('/lecture/professor/course/', 'get', {
-      data
+      params
     })
   },
   createCourse (data) {
@@ -329,13 +330,20 @@ export default {
       data
     })
   },
-  getAssignmentList (data) {
+  getAssignmentList (courseId, assignmentId, limit, offset) {
+    const params = { course_id: courseId, assignment_id: assignmentId, limit, offset }
     return ajax('/lecture/professor/course/assignment', 'get', {
-      data
+      params: params
     })
   },
   getCourseStudents (courseId, limit, offset) {
     const params = { course_id: courseId, limit, offset }
+    return ajax('/lecture/professor/course/students', 'get', {
+      params: params
+    })
+  },
+  getCourseStudentTotal (courseId, count) {
+    const params = { course_id: courseId, count }
     return ajax('/lecture/professor/course/students', 'get', {
       params: params
     })
@@ -345,13 +353,19 @@ export default {
       data
     })
   },
-  deleteStudent (data) {
+  deleteStudent (registrationId) {
+    const params = { registration_id: registrationId }
     return ajax('/lecture/professor/course/students', 'delete', {
-      ...data
+      params: params
     })
   },
   editStudent (data) {
     return ajax('/lecture/professor/course/students', 'delete', {
+      data
+    })
+  },
+  postAssignment (data) { // 테스트용 api
+    return ajax('/lecture/professor/course/assignment', 'post', {
       data
     })
   }

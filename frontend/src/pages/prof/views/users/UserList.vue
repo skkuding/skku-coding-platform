@@ -1,18 +1,19 @@
 <template>
   <Panel title="Users">
     <div slot="header">
-      <b-row align-v="center" align-h="center" style="margin: 0px">
-        <b-col cols="6" style="padding: 0px">
+      <b-row align-v="center"  style="margin: 0px">
+        <b-col cols="6" >
           <b-button
             :disabled="!selectedUserIDs.length"
             variant="danger"
             size="sm"
+            style="min-width:90px"
             @click="deleteUsers(selectedUserIDs)"
           >
             <b-icon icon="trash-fill"></b-icon> Delete
           </b-button>
         </b-col>
-        <b-col cols="6" style="padding: 0px">
+        <b-col cols="6" >
           <b-button
             variant="outline-primary"
             size="sm"
@@ -51,11 +52,6 @@
 
       <template #cell(Option)="row">
         <icon-btn
-          name="Edit"
-          icon="clipboard-plus"
-          @click.native="openUserDialog(row.item.id)"
-        />
-        <icon-btn
           name="Delete"
           icon="trash"
           @click.native="deleteUsers([row.item.id])"
@@ -65,7 +61,7 @@
     <b-row cols="2" h-align="around">
       <b-col col="3">
         <b-button v-b-modal.register-new-user>+ Register New User</b-button>
-        <register-new-user-modal @update="currentChange"></register-new-user-modal>
+        <register-new-user-modal :lecture-title="lectureTitle" @update="currentChange"></register-new-user-modal>
       </b-col>
       <b-col class="panel-options" col="5">
         <b-pagination
@@ -89,6 +85,9 @@ export default {
   components: {
     RegisterNewUserModal
   },
+  props: [
+    'lecture-title'
+  ],
   data () {
     return {
       pageSize: 5,
@@ -96,7 +95,7 @@ export default {
       userList: [],
       userListFields: [
         { key: 'selection', label: '' },
-        { key: 'id', label: 'ID' },
+        { key: 'id', label: 'registration ID' },
         { key: 'username', label: 'Username' },
         { key: 'create_time', label: 'Create Time' },
         { key: 'last_login', label: 'Last Login' },
@@ -162,15 +161,21 @@ export default {
         this.loadingTable = false
       }
     },
-    async deleteUsers (ids) {
-      try {
-        await this.$confirm('Sure to delete the user? The associated resources created by this user will be deleted as well, like problem, contest, announcement, etc.', 'confirm', 'warning', false)
-      } catch (err) {
-      }
-      try {
-        await api.deleteUsers(ids.join(','))
-      } catch (err) {
-      } finally {
+    async deleteUsers (registrationIds) {
+      console.log(registrationIds)
+      const sure = await this.$bvModal.msgBoxConfirm('Sure to delete Users? All Associated submissions and informations will be deleted', {
+        title: 'Are you sure?',
+        size: 'md',
+        centered: true
+      })
+      if (sure === true) {
+        for (const registrationId of registrationIds) {
+          try {
+            await api.deleteStudent(registrationId)
+          } catch (error) {
+            this.$error(error)
+          }
+        }
         await this.getUserList(this.currentPage)
         this.selectedUserIDs = []
       }

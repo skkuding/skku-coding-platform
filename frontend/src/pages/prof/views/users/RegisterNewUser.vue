@@ -8,10 +8,10 @@
     @cancel="cancelRegistration"
     scrollable
   >
-    <p style="font-size: 22px;">
-      <b> lecture id: {{ lectureId }}</b>
+    <p style="font-size: 20px;">
+      <b> lecture Title: {{ lectureTitle }} </b>
     </p>
-    <div style="font-size: 22px;" class="mb-3">
+    <div style="font-size: 20px;" class="mb-3">
       <b>Student ID </b>
       <div class="float-right">
         <label class="students-button" for="input-file">
@@ -47,6 +47,9 @@ export default {
   name: 'RegisterNewUserModal',
   components: {
   },
+  props: [
+    'lecture-title'
+  ],
   data () {
     return {
       form: {
@@ -134,7 +137,11 @@ export default {
   }
 }
 </script>
-
+<style>
+  #register-new-user___BV_modal_title_{
+    font-size: 24px
+  }
+</style>
 <style lang="scss" scoped>
   // Be careful of common css selector in admin/oj
   .students-button {
