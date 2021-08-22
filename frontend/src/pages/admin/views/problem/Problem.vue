@@ -48,9 +48,11 @@
           </p>
           <tiptap v-model="problem.description" ></tiptap>
           <b-modal id="description_preview" title="Description Preview" hide-footer>
-            <div v-katex:auto>
-              <p v-html="problem.description"></p>
-            </div>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.description"></p>
+              </div>
+            </template>
           </b-modal>
         </b-col>
       </b-row>
@@ -63,9 +65,11 @@
           </p>
           <tiptap v-model="problem.input_description"></tiptap>
           <b-modal id="input_description_preview" title="Input Description Preview" hide-footer>
-            <div v-katex:auto>
-              <p v-html="problem.input_description"></p>
-            </div>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.input_description"></p>
+              </div>
+            </template>
           </b-modal>
         </b-col>
       </b-row>
@@ -78,9 +82,11 @@
           </p>
           <tiptap v-model="problem.output_description"></tiptap>
           <b-modal id="output_description_preview" title="Output Description Preview" hide-footer>
-            <div v-katex:auto>
-              <p v-html="problem.output_description"></p>
-            </div>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.output_description"></p>
+              </div>
+            </template>
           </b-modal>
         </b-col>
       </b-row>
@@ -258,9 +264,11 @@
           </p>
           <tiptap v-model="problem.hint" placeholder=""></tiptap>
           <b-modal id="hintpreview" title="Hint Preview" hide-footer>
-            <div v-katex:auto>
-              <p v-html="problem.hint"></p>
-            </div>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.hint"></p>
+              </div>
+            </template>
           </b-modal>
         </b-col>
       </b-row>
