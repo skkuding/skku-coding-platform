@@ -75,7 +75,7 @@
 
         <b-navbar-nav class="ml-auto">
           <b-nav-item v-if="statusVisible">
-            <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
+            <template>
               <div @click.stop="$refs.sidebar.onMySubmissionClicked({ID:submissionId})">
                 <b-badge
                   class="statusBadge"
@@ -85,15 +85,6 @@
                   {{ submissionStatus.text }}
                 </b-badge>
               </div>
-            </template>
-            <template v-else-if="this.contestID && !OIContestRealTimePermission">
-              <b-badge
-                class="statusBadge"
-                variant="light"
-              >
-                <b-icon id="badgeIcon" icon="circle-fill" class="green" scale="0.9"/>
-                Submitted Succesfully
-              </b-badge>
             </template>
           </b-nav-item>
           <b-nav-item v-else-if="problem.my_status === 0">
@@ -124,12 +115,12 @@
               <b-icon icon="arrow-clockwise" scale="1.1"/>
             </b-button>
           </b-nav-item>
-          <b-nav-item>
+          <!-- <b-nav-item>
             <b-button class="btn">
               <b-icon icon="play" scale="1.4"/>
               Run
             </b-button>
-          </b-nav-item>
+          </b-nav-item> -->
           <b-nav-item>
             <b-button class="btn-submit"
               :disabled="(contestID && problemSubmitDisabled) || submitted"
@@ -657,7 +648,7 @@ export default {
 
       p {
         font-size: 15px;
-        margin-bottom: 40px;
+        // margin-bottom: 40px;
       }
 
       .description-io {
