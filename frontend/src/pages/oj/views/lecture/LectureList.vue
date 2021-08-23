@@ -12,7 +12,11 @@
       :per-page="perPage"
       head-variant="light"
       :current-page="currentPage"
-      @row-clicked = "goLectureDashboard"></b-table>
+      @row-clicked = "goLectureDashboard">
+        <template #cell(Semester)="{ item }">
+          {{ item.course.registered_year }} {{ getSemester(item.course.semester) }}
+        </template>
+      </b-table>
     </div>
     <div class="pagination">
     <b-pagination
@@ -42,13 +46,11 @@ export default {
       lectureTableColumns: [
         {
           label: 'Subject',
-          key: 'title'
+          key: 'course.title'
         },
-        {
-          label: 'Semester',
-          key: 'semester'
-        }
-      ]
+        'Semester'
+      ],
+      semesters: ['Spring', 'Summer', 'Fall', 'Winter']
     }
   },
   async mounted () {
@@ -63,8 +65,11 @@ export default {
     async goLectureDashboard (item) {
       await this.$router.push({
         name: 'lecture-dashboard',
-        params: { courseID: item.id }
+        params: { courseID: item.course.id }
       })
+    },
+    getSemester (semesterno) {
+      return this.semesters[semesterno]
     }
   },
   computed: {
