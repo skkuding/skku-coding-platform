@@ -71,36 +71,48 @@ class CourseStudentAPITest(APITestCase):
 
 class StudentManagementAPITest(APITestCase):
     def setUp(self):
-        self.student = self.create_user("user", "password")
+        self.student = self.create_user("2016313683", "password")
+        self.create_user("2011111111", "password")
+        self.create_user("2011111112", "password")
         self.professor = self.create_admin()
         self.course = Course.objects.create(created_by=self.professor, title="title", course_code="code", class_number=12, registered_year=2021, semester=0)
+        self.registration = Registration.objects.create(user_id=self.student.id, course_id=self.course.id)
         self.url = self.reverse("student_management_api")
 
     def test_get_registraion_list(self):
-        self.test_create_registration()
         res = self.client.get(f"{self.url}?course_id={self.course.id}")
         self.assertSuccess(res)
 
     def test_get_regitstration_count(self):
-        self.test_create_registration()
         res = self.client.get(f"{self.url}?course_id={self.course.id}&count=1")
         self.assertTrue("total_students" in res.data["data"])
         res = self.client.get(f"{self.url}?course_id={self.course.id}&count=0")
         self.assertFalse("total_students" in res.data["data"])
 
     def test_create_registration(self):
-        res = self.client.post(self.url, data={"user_id": self.student.id, "course_id": self.course.id})
+        res = self.client.post(self.url, data = { "username": ["2011111111"], "course_id": self.course.id })
         self.assertSuccess(res)
-        return res
+
+    def test_create_multiple_registration(self):
+        res = self.client.post(self.url, data = { "username": ["2011111111", "2011111112"], "course_id": self.course.id })
+        self.assertSuccess(res)
+
+    def test_create_registration_user_not_exist(self):
+        res = self.client.post(self.url, data = { "username": ["123123"], "course_id": self.course.id })
+        self.assertFailed(res)
+
+    def test_create_registration_already_registered_user(self):
+        res = self.client.post(self.url, data = { "username": ["2016313683"], "course_id": self.course.id })
+        self.assertFailed(res)
 
     def test_edit_registration(self):
-        id = self.test_create_registration().data["data"]["id"]
+        id = self.registration.id
         course = Course.objects.create(created_by=self.professor, title="title2", course_code="code2", class_number=12, registered_year=2021, semester=1)
         res = self.client.put(self.url, data={"registration_id": id, "course_id": course.id})
         self.assertSuccess(res)
 
     def test_delete_registration(self):
-        id = self.test_create_registration().data["data"]["id"]
+        id = self.registration.id
         res = self.client.delete(f"{self.url}?registration_id={id}")
         self.assertSuccess(res)
         self.assertFalse(Registration.objects.filter(id=id).exists())

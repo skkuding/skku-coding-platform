@@ -6,7 +6,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration
 from ..serializers import (CourseProfessorSerializer, CreateCourseSerializer, EditCourseSerializer,
-                           RegisterSerializer, EditRegisterSerializer, RegistrationSerializer, UserListSerializer)
+                           RegisterSerializer, EditRegisterSerializer, RegisterErrorSerializer,  UserListSerializer)
 
 
 class CourseAPI(APIView):
@@ -121,31 +121,45 @@ class CourseAPI(APIView):
 class StudentManagementAPI(APIView):
     @swagger_auto_schema(
         request_body=RegisterSerializer,
-        operation_description="Register user to a course",
-        responses={200: RegistrationSerializer},
+        operation_description="Register user to a course"
     )
     @validate_serializer(RegisterSerializer)
     @admin_role_required
     def post(self, request):
         data = request.data
         course_id = data["course_id"]
-        user_id = data["user_id"]
+        username = data["username"]
 
         try:
-            User.objects.get(id=user_id)
             course = Course.objects.get(id=course_id)
             ensure_created_by(course, request.user)
-        except User.DoesNotExist:
-            return self.error("User does not exist")
         except Course.DoesNotExist:
             return self.error("Course does not exist")
 
-        try:
-            Registration.objects.get(user_id=user_id, course_id=course_id)
-            return self.error("User has been already registered to the course")
-        except Registration.DoesNotExist:
-            registration = Registration.objects.create(user_id=user_id, course_id=course_id)
-        return self.success(RegistrationSerializer(registration).data)
+        user_not_exist = []
+        already_registered_user = []
+        
+        for user in username:
+            try:
+                user_id = User.objects.get(username=user).id
+            except User.DoesNotExist:
+                user_not_exist.append(user)
+                continue
+
+            try:
+                Registration.objects.get(user_id=user_id, course_id=course_id)
+                already_registered_user.append(user)
+            except Registration.DoesNotExist:
+                continue
+
+        if user_not_exist or already_registered_user:
+            data = {"user_not_exist": user_not_exist, "already_registered_user": already_registered_user}
+            return self.error(RegisterErrorSerializer(data).data)
+        
+        for user in username:
+            user_id = User.objects.get(username=user).id
+            Registration.objects.create(user_id=user_id, course_id=course_id)
+        return self.success()
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -204,7 +218,7 @@ class StudentManagementAPI(APIView):
     @swagger_auto_schema(
         request_body=EditRegisterSerializer,
         operation_description="Change registered course of a user",
-        responses={200: RegistrationSerializer},
+        responses={200: UserListSerializer},
     )
     @validate_serializer(EditRegisterSerializer)
     @admin_role_required
@@ -232,7 +246,7 @@ class StudentManagementAPI(APIView):
             for k, v in data.items():
                 setattr(registration, k, v)
             registration.save()
-        return self.success(RegistrationSerializer(registration).data)
+        return self.success(UserListSerializer(registration).data)
 
     @swagger_auto_schema(
         manual_parameters=[

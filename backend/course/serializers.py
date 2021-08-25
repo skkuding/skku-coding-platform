@@ -21,13 +21,18 @@ class EditCourseSerializer(serializers.Serializer):
 
 
 class RegisterSerializer(serializers.Serializer):
-    user_id = serializers.IntegerField()
+    username = serializers.ListField(child=serializers.CharField(), allow_empty=False, min_length=1, max_length=None)
     course_id = serializers.IntegerField()
 
 
 class EditRegisterSerializer(serializers.Serializer):
     registration_id = serializers.IntegerField()
     course_id = serializers.IntegerField()
+
+
+class RegisterErrorSerializer(serializers.Serializer):
+    user_not_exist = serializers.ListField(child=serializers.CharField(), allow_empty=True)
+    already_registered_user = serializers.ListField(child=serializers.CharField(), allow_empty=True)
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -51,14 +56,6 @@ class CourseStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = ("course",)
-
-
-class RegistrationSerializer(serializers.ModelSerializer):
-    user = UsernameSerializer()
-
-    class Meta:
-        model = Registration
-        fields = "__all__"
 
 
 class UserListSerializer(serializers.ModelSerializer):
