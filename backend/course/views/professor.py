@@ -154,7 +154,9 @@ class StudentManagementAPI(APIView):
 
         if user_not_exist or already_registered_user:
             data = {"user_not_exist": user_not_exist, "already_registered_user": already_registered_user}
-            return self.error(RegisterErrorSerializer(data).data)
+            serialized_data = RegisterErrorSerializer(data).data
+            serialized_data["data"] = "User does not exist or has been already registered"
+            return self.error(serialized_data)
         
         for user in username:
             user_id = User.objects.get(username=user).id
