@@ -21,11 +21,11 @@
           <b-spinner v-if="btnLoginLoading" small></b-spinner> Sign In
         </b-button>
       </b-container>
-      </b-form>
-      <div class="modal-low mt-5 font-bold">
-        <a v-if="website.allow_register" @click.stop="handleBtnClick('register')" style="float:left;">Register now</a>
-        <a @click.stop="handleBtnClick('ApplyResetPassword')" style="float: right;">Forgot Password</a>
-      </div>
+    </b-form>
+    <div class="modal-low mt-5 font-bold">
+      <a v-if="website.allow_register" @click.stop="handleBtnClick('register')" style="float:left;">Register now</a>
+      <a @click.stop="handleBtnClick('ApplyResetPassword')" style="float: right;">Forgot Password</a>
+    </div>
   </div>
 </template>
 

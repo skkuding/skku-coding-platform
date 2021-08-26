@@ -61,6 +61,9 @@
         </b-form>
       </div>
     </div>
+    <div class="modal-low mt-5 font-bold">
+      <a @click.stop="handleBtnClick('DeleteAccount')" style="float: right;">Delete Account</a>
+    </div>
   </div>
 </template>
 
@@ -68,6 +71,7 @@
 import api from '@oj/api'
 import utils from '@/utils/utils'
 import { types } from '@/store'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'ProfileSetting',
@@ -140,6 +144,14 @@ export default {
     this.formProfile.language = infoRes.data.data.language
   },
   methods: {
+    ...mapActions(['changeModalStatus']),
+    handleBtnClick (mode) {
+      this.$bvModal.hide('setting')
+      this.changeModalStatus({
+        mode,
+        visible: true
+      })
+    },
     async updateLanguage () {
       this.loading.btnLanguage = true
       const updateData = utils.filterEmptyValue(Object.assign({}, this.formProfile))
@@ -290,5 +302,9 @@ export default {
     display:block;
     margin-left:auto !important;
     margin-right:auto !important;
+  }
+  .modal-low {
+    color:#808080;
+    font-size:14px;
   }
 </style>
