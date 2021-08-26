@@ -37,6 +37,12 @@ class UserChangeEmailSerializer(serializers.Serializer):
     new_email = serializers.EmailField(max_length=64)
 
 
+class UserChangeEmailForAuthSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=32)
+    password = serializers.CharField()
+    email = serializers.EmailField(max_length=64)
+
+
 class GenerateUserSerializer(serializers.Serializer):
     prefix = serializers.CharField(max_length=16, allow_blank=True)
     suffix = serializers.CharField(max_length=16, allow_blank=True)

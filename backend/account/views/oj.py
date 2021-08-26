@@ -18,7 +18,7 @@ from utils.captcha import Captcha
 from utils.shortcuts import rand_str
 from ..decorators import login_required
 from ..models import User, UserProfile
-from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
+from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer, UserChangeEmailForAuthSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
                            UserChangeEmailSerializer)
@@ -281,6 +281,43 @@ class UserChangeEmailAPI(APIView):
             return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
         user.email = data["new_email"]
         user.save()
+        return self.success("Succeeded")
+
+
+class UserChangeEmailForAuthAPI(APIView):
+    @swagger_auto_schema(
+        request_body=UserChangeEmailForAuthSerializer,
+        operation_description="Change user email for authentication",
+    )
+    @validate_serializer(UserChangeEmailForAuthSerializer)
+    def post(self, request):
+        data = request.data
+        user = auth.authenticate(username=data["username"], password=data["password"])
+        if not user:
+            return self.error("Wrong password")
+        if user.has_email_auth:
+            return self.error("You already have email authenticated")
+        data["email"] = data["email"].lower()
+        if User.objects.filter(email=data["email"]).exists():
+            return self.error("The email is owned by other account")
+        if data["email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
+            return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
+        user.email = data["email"]
+        user.email_auth_token = rand_str()
+        user.save()
+
+        render_data = {
+            "username": user.username,
+            "website_name": SysOptions.website_name,
+            "link": f"{SysOptions.website_base_url}/email-auth/{user.email_auth_token}"
+        }
+        email_html = render_to_string("email_auth.html", render_data)
+        send_email_async.send(from_name=SysOptions.website_name_shortcut,
+                              to_email=user.email,
+                              to_name=user.username,
+                              subject="Email Authentication",
+                              content=email_html)
+
         return self.success("Succeeded")
 
 
