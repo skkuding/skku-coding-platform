@@ -18,7 +18,7 @@ from utils.captcha import Captcha
 from utils.shortcuts import rand_str
 from ..decorators import login_required
 from ..models import User, UserProfile
-from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
+from ..serializers import (ApplyResetPasswordSerializer, DeleteAccountSerializer, ResetPasswordSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
                            UserChangeEmailSerializer)
@@ -242,6 +242,26 @@ class UserRegisterAPI(APIView):
                               content=email_html)
 
         return self.success("Succeeded")
+
+
+class DeleteAccountAPI(APIView):
+    @swagger_auto_schema(
+        request_body=DeleteAccountSerializer,
+        operation_description="Check user password",
+    )
+    @validate_serializer(DeleteAccountSerializer)
+    @login_required
+    def post(self, request):
+        data = request.data
+        user = auth.authenticate(username=request.user.username,
+                                 email=data["email"],
+                                 password=data["password"])
+        if not user:
+            return self.error("Invalid email or password")
+        if request.user.is_super_admin():
+            return self.error("super admin account cannot be deleted")
+        User.objects.filter(id=request.user.id).delete()
+        return self.success()
 
 
 class EmailAuthAPI(APIView):
