@@ -23,6 +23,11 @@ class UserRegisterSerializer(serializers.Serializer):
     captcha = serializers.CharField()
 
 
+class DeleteAccountSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=64)
+    password = serializers.CharField(min_length=6)
+
+
 class EmailAuthSerializer(serializers.Serializer):
     token = serializers.CharField()
 

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from ..views.oj import (ApplyResetPasswordAPI, ResetPasswordAPI,
+from ..views.oj import (ApplyResetPasswordAPI, DeleteAccountAPI, ResetPasswordAPI,
                         UserChangePasswordAPI, UserRegisterAPI, EmailAuthAPI, UserChangeEmailAPI,
                         UserLoginAPI, UserLogoutAPI, UsernameOrEmailCheck,
                         AvatarUploadAPI, UserProfileAPI, UserSettingAPI)
@@ -11,6 +11,7 @@ urlpatterns = [
     url(r"^login/?$", UserLoginAPI.as_view(), name="user_login_api"),
     url(r"^logout/?$", UserLogoutAPI.as_view(), name="user_logout_api"),
     url(r"^register/?$", UserRegisterAPI.as_view(), name="user_register_api"),
+    url(r"^delete_account/?$", DeleteAccountAPI.as_view(), name="delete_account_api"),
     url(r"^email_auth/?$", EmailAuthAPI.as_view(), name="email_auth_api"),
     url(r"^change_password/?$", UserChangePasswordAPI.as_view(), name="user_change_password_api"),
     url(r"^change_email/?$", UserChangeEmailAPI.as_view(), name="user_change_email_api"),
