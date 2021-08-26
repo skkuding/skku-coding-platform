@@ -90,20 +90,22 @@ class StudentManagementAPITest(APITestCase):
         self.assertFalse("total_students" in res.data["data"])
 
     def test_create_registration(self):
-        res = self.client.post(self.url, data = { "username": ["2011111111"], "course_id": self.course.id })
+        res = self.client.post(self.url, data={"username": ["2011111111"], "course_id": self.course.id})
         self.assertSuccess(res)
 
     def test_create_multiple_registration(self):
-        res = self.client.post(self.url, data = { "username": ["2011111111", "2011111112"], "course_id": self.course.id })
+        res = self.client.post(self.url, data={"username": ["2011111111", "2011111112"], "course_id": self.course.id})
         self.assertSuccess(res)
 
     def test_create_registration_user_not_exist(self):
-        res = self.client.post(self.url, data = { "username": ["123123"], "course_id": self.course.id })
-        self.assertFailed(res)
+        res = self.client.post(self.url, data={"username": ["123123"], "course_id": self.course.id})
+        self.assertTrue(res.data["data"]["error"] is not None)
+        self.assertSuccess(res)
 
     def test_create_registration_already_registered_user(self):
-        res = self.client.post(self.url, data = { "username": ["2016313683"], "course_id": self.course.id })
-        self.assertFailed(res)
+        res = self.client.post(self.url, data={"username": ["2016313683"], "course_id": self.course.id})
+        self.assertTrue(res.data["data"]["error"] is not None)
+        self.assertSuccess(res)
 
     def test_edit_registration(self):
         id = self.registration.id

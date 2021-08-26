@@ -138,7 +138,7 @@ class StudentManagementAPI(APIView):
 
         user_not_exist = []
         already_registered_user = []
-        
+
         for user in username:
             try:
                 user_id = User.objects.get(username=user).id
@@ -155,9 +155,9 @@ class StudentManagementAPI(APIView):
         if user_not_exist or already_registered_user:
             data = {"user_not_exist": user_not_exist, "already_registered_user": already_registered_user}
             serialized_data = RegisterErrorSerializer(data).data
-            serialized_data["data"] = "User does not exist or has been already registered"
-            return self.error(serialized_data)
-        
+            serialized_data["error"] = "User does not exist or has been already registered"
+            return self.success(serialized_data)
+
         for user in username:
             user_id = User.objects.get(username=user).id
             Registration.objects.create(user_id=user_id, course_id=course_id)
