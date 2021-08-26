@@ -105,6 +105,11 @@ export default {
       data
     })
   },
+  changeEmailForAuth (data) {
+    return ajax('change_email_for_auth', 'post', {
+      data
+    })
+  },
   getLanguages () {
     return ajax('languages', 'get')
   },

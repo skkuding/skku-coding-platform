@@ -24,6 +24,7 @@
       </b-form>
       <div class="modal-low mt-5 font-bold">
         <a v-if="website.allow_register" @click.stop="handleBtnClick('register')" style="float:left;">Register now</a>
+        <a @click.stop="handleBtnClick('ChangeEmailForAuth')" style="margin-left: 30px;">Change Email</a>
         <a @click.stop="handleBtnClick('ApplyResetPassword')" style="float: right;">Forgot Password</a>
       </div>
   </div>
