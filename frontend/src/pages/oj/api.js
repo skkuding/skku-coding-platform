@@ -47,6 +47,11 @@ export default {
       data
     })
   },
+  deleteAccount (data) {
+    return ajax('delete_account', 'post', {
+      data
+    })
+  },
   logout () {
     return ajax('logout', 'get')
   },

@@ -57,13 +57,15 @@ import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
 import profileSetting from '@oj/views/user/ProfileSetting'
 import ApplyResetPassword from '@oj/views/user/ApplyResetPassword'
+import DeleteAccount from '@oj/views/user/DeleteAccount'
 
 export default {
   components: {
     login,
     register,
     profileSetting,
-    ApplyResetPassword
+    ApplyResetPassword,
+    DeleteAccount
   },
   mounted () {
     this.getProfile()
