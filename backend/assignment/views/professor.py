@@ -1,12 +1,21 @@
-from utils.api import APIView, validate_serializer
+import os
+import zipfile
 
-from ..models import Assignment
-from course.models import Course
-from ..serializers import AssginmentProfessorSerializer, CreateAssignmentSerializer, EditAssignmentSerializer
+import dateutil.parser
+from utils.api import APIView, validate_serializer
+from utils.shortcuts import rand_str
+from utils.tasks import delete_files
+from django.http import FileResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from account.decorators import ensure_created_by, admin_role_required
-import dateutil.parser
+
+from ..models import Assignment
+from account.models import User
+from course.models import Course
+from problem.models import Problem
+from submission.models import Submission
+from ..serializers import AssginmentProfessorSerializer, CreateAssignmentSerializer, EditAssignmentSerializer
 
 
 class AssignmentAPI(APIView):
@@ -163,3 +172,86 @@ class AssignmentAPI(APIView):
 
         assignment.delete()
         return self.success()
+
+
+class DownloadAssignmentSubmissions(APIView):
+    def _dump_submissions(self, assignment, problem, exclude_admin=True, last_submission=True):
+        submissions = Submission.objects.filter(assignment=assignment, problem=problem).order_by("-create_time")
+        if last_submission:
+            submissions = submissions.order_by("username", "-create_time").distinct("username")
+        user_ids = submissions.values_list("user_id", flat=True)
+        users = User.objects.filter(id__in=user_ids)
+        path = f"/tmp/{rand_str()}.zip"
+        with zipfile.ZipFile(path, "w") as zip_file:
+            for user in users:
+                if user.is_admin_role() and exclude_admin:
+                    continue
+                user_submissions = submissions.filter(user_id=user.id)
+                index = 1
+                for submission in user_submissions:
+                    file_name = f"{user.username}_{problem._id}_{index}.txt"
+                    compression = zipfile.ZIP_DEFLATED
+                    zip_file.writestr(zinfo_or_arcname=f"{file_name}",
+                                      data=submission.code,
+                                      compress_type=compression)
+                    index += 1
+        return path
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                description="ID of contest",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of problem",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="exclude_admin",
+                in_=openapi.IN_QUERY,
+                description="Set value '1' to exclude admin",
+                type=openapi.TYPE_STRING,
+            ),
+            openapi.Parameter(
+                name="last_submission",
+                in_=openapi.IN_QUERY,
+                description="Set value '1' to get only last submissions",
+                type=openapi.TYPE_STRING,
+            ),
+        ],
+        operation_description="Download submissions of single contest",
+    )
+    def get(self, request):
+        assignment_id = request.GET.get("assignment_id")
+        problem_id = request.GET.get("problem_id")
+        if not assignment_id:
+            return self.error("Invalid parameter, assignment_id is required")
+        if not problem_id:
+            return self.error("Invalid parameter, problem_id is required")
+
+        try:
+            assignment = Assignment.objects.get(id=assignment_id)
+            ensure_created_by(assignment, request.user)
+        except Assignment.DoesNotExist:
+            return self.error("Assignment does not exist")
+
+        try:
+            problem = Problem.objects.get(id=problem_id)
+        except Problem.DoesNotExist:
+            return self.error("Problem does not exist")
+
+        exclude_admin = request.GET.get("exclude_admin") == "1"
+        last_submission = request.GET.get("last_submission") == "1"
+        zip_path = self._dump_submissions(assignment, problem, exclude_admin, last_submission)
+        delete_files.send_with_options(args=(zip_path,), delay=300_000)
+        res = FileResponse(open(zip_path, "rb"))
+        res["Content-Type"] = "application/zip"
+        res["Content-Disposition"] = f"attatchment;filename={os.path.basename(zip_path)}"
+        return res
