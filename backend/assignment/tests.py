@@ -16,7 +16,8 @@ DEFAULT_COURSE_DATA = {"title": "test course",
 DEFAULT_ASSIGNMENT_DATA = {"title": "test assignment",
                            "content": "test content",
                            "start_time": timezone.localtime(timezone.now()),
-                           "end_time": timezone.localtime(timezone.now()) + timedelta(days=1)}
+                           "end_time": timezone.localtime(timezone.now()) + timedelta(days=1),
+                           "visible": True}
 
 
 class AssignmentProfessorAPITest(APITestCase):

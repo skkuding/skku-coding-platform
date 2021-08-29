@@ -38,6 +38,7 @@ class CreateAssignmentSerializer(serializers.Serializer):
     content = serializers.CharField(max_length=1024 * 1024 * 8)
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
+    visible = serializers.BooleanField()
 
 
 class EditAssignmentSerializer(serializers.Serializer):
@@ -47,3 +48,4 @@ class EditAssignmentSerializer(serializers.Serializer):
     content = serializers.CharField(max_length=1024 * 1024 * 8)
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
+    visible = serializers.BooleanField()
