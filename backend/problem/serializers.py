@@ -76,7 +76,7 @@ class CreateOrEditProblemSerializer(serializers.Serializer):
     hint = serializers.CharField(allow_blank=True, allow_null=True)
     source = serializers.CharField(max_length=256, allow_blank=True, allow_null=True)
     share_submission = serializers.BooleanField()
-    template_code = serializers.ListField(child=CreateTemplateCodeSerializer(), required=False, allow_empty=True)
+    template_code = serializers.DictField(child=serializers.ListField(child=CreateTemplateCodeSerializer(), required=False, allow_empty=True))
 
 
 class TestCaseTextSerializer(serializers.Serializer):

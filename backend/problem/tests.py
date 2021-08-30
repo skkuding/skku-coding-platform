@@ -28,7 +28,8 @@ DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test
                         "io_mode": {"io_mode": ProblemIOMode.standard, "input": "input.txt", "output": "output.txt"},
                         "share_submission": False,
                         "rule_type": "ACM", "hint": "<p>test</p>", "source": "test",
-                        "template_code": [{"code_id": 1, "code": "awefasdf", "locked": True}, {"code_id": 2, "code": "qwerasdf", "locked": False}]}
+                        "template_code": {"C": [{"code_id": 1, "code": "awefasdf", "locked": True}, {"code_id": 2, "code": "qwerasdf", "locked": False}],
+                                          "C++": [{"code_id": 1, "code": "awefasdf", "locked": True}, {"code_id": 2, "code": "qwerasdf", "locked": False}]}}
 
 
 class ProblemCreateTestBase(APITestCase):
