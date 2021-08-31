@@ -168,7 +168,7 @@ class AssignmentAPI(APIView):
             assignment = Assignment.objects.get(id=assignment_id)
             ensure_created_by(assignment, request.user)
         except Assignment.DoesNotExist:
-            return self.error("Assignment does not exists")
+            return self.error("Assignment does not exist")
 
         assignment.delete()
         return self.success()

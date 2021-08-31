@@ -1,4 +1,6 @@
+from utils.api import APIView
 from utils.api import validate_serializer
+from utils.constants import AssignmentStatus
 from account.decorators import ensure_created_by, admin_role_required
 
 from submission.models import Submission
@@ -6,7 +8,7 @@ from assignment.models import Assignment
 from .admin import ProblemBase
 
 from ..models import Problem, ProblemTag
-from ..serializers import (CreateAssignmentProblemSerializer, ProblemAdminSerializer,
+from ..serializers import (CreateAssignmentProblemSerializer, ProblemAdminSerializer, AddAssignmentProblemSerializer,
                            ProblemProfessorSerializer, EditAssignmentProblemSerializer)
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -169,4 +171,39 @@ class AssignmentProblemAPI(ProblemBase):
             return self.error("Can't delete the problem as it has submissions")
 
         problem.delete()
+        return self.success()
+
+
+class AddAssignmentProblemAPI(APIView):
+    @validate_serializer(AddAssignmentProblemSerializer)
+    @swagger_auto_schema(
+        request_body=AddAssignmentProblemSerializer,
+        operation_description="Add problems from public problems into the assignment."
+    )
+    def post(self, request):
+        data = request.data
+        try:
+            assignment = Assignment.objects.get(id=data["assignment_id"])
+            ensure_created_by(assignment, request.user)
+            problem = Problem.objects.get(id=data["problem_id"])
+        except Assignment.DoesNotExist:
+            return self.error("Assignment does not exist")
+        except Problem.DoesNotExist:
+            return self.error("Problem does not exist")
+
+        if assignment.status == AssignmentStatus.ASSIGNMENT_ENDED:
+            return self.error("Assignment deadline has expired")
+        if Problem.objects.filter(assignment=assignment, _id=data["display_id"]).exists():
+            return self.error("Duplicate display id in this assignment")
+
+        tags = problem.tags.all()
+        problem.pk = None
+        problem.assignment = assignment
+        problem.is_public = True
+        problem.visible = True
+        problem._id = request.data["display_id"]
+        problem.submission_number = problem.accepted_number = 0
+        problem.statistic_info = {}
+        problem.save()
+        problem.tags.set(tags)
         return self.success()
