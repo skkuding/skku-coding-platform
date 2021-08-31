@@ -352,6 +352,26 @@ class AddProblemFromPublicProblemAPITest(ProblemCreateTestBase):
         self.assertTrue(Problem.objects.filter(contest_id=self.contest["id"]).exists())
 
 
+class AddAssignmentProblemFromPublicProblemAPITest(ProblemCreateTestBase):
+    def setUp(self):
+        admin = self.create_admin()
+        course = Course.objects.create(created_by=admin, **DEFAULT_COURSE_DATA)
+        self.assignment_id = Assignment.objects.create(created_by=admin, course=course, **DEFAULT_ASSIGNMENT_DATA).id
+        self.problem = self.add_problem(DEFAULT_PROBLEM_DATA, admin)
+        self.url = self.reverse("add_assignment_problem_from_public_api")
+        self.data = {
+            "display_id": "1000",
+            "assignment_id": self.assignment_id,
+            "problem_id": self.problem.id
+        }
+
+    def test_add_assignment_problem(self):
+        resp = self.client.post(self.url, data=self.data)
+        self.assertSuccess(resp)
+        self.assertTrue(Problem.objects.all().exists())
+        self.assertTrue(Problem.objects.filter(assignment_id=self.assignment_id).exists())
+
+
 class ParseProblemTemplateTest(APITestCase):
     def test_parse(self):
         template_str = """

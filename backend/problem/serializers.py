@@ -175,6 +175,12 @@ class AddContestProblemSerializer(serializers.Serializer):
     display_id = serializers.CharField()
 
 
+class AddAssignmentProblemSerializer(serializers.Serializer):
+    assignment_id = serializers.IntegerField()
+    problem_id = serializers.IntegerField()
+    display_id = serializers.CharField()
+
+
 class ExportProblemRequestSerialzier(serializers.Serializer):
     problem_id = serializers.ListField(child=serializers.IntegerField(), allow_empty=False)
 
