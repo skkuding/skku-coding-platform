@@ -462,6 +462,7 @@ export default {
       tagInput: '',
       problemTagList: [],
       template: {},
+      template_code: {},
       title: '',
       spjMode: '',
       disableRuleType: false,
@@ -513,6 +514,7 @@ export default {
       tags: [],
       languages: [],
       template: {},
+      template_code: {},
       samples: [{ input: '', output: '' }],
       testcases: [{ input: '', output: '' }],
       spj: false,
@@ -776,10 +778,15 @@ export default {
         }
       }
       this.problem.languages = this.problem.languages.sort()
-      this.problem.template = {}
+      this.problem.template_code = {}
       for (const k in this.template) {
         if (this.template[k].checked) {
-          this.problem.template[k] = this.template[k].code
+          var tempcode = (this.template[k].code).split('\n')
+          var temp = []
+          for (var t in tempcode) {
+            temp.push({ code_id: parseInt(t) + 1, locked: false, code: tempcode[t] })
+          }
+          this.problem.template_code[k] = temp
         }
       }
       const funcName = {
