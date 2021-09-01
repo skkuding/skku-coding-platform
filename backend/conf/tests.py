@@ -1,3 +1,4 @@
+import copy
 import hashlib
 from unittest import mock
 
@@ -7,6 +8,10 @@ from django.utils import timezone
 from options.options import SysOptions
 from utils.api.tests import APITestCase
 from .models import JudgeServer
+
+from course.models import Course, Registration
+from assignment.models import Assignment
+from assignment.tests import DEFAULT_COURSE_DATA, DEFAULT_ASSIGNMENT_DATA
 
 
 class SMTPConfigTest(APITestCase):
@@ -193,3 +198,21 @@ class IpAddressInfoAPITest(APITestCase):
     def test_get_ip(self):
         resp = self.client.get(self.url)
         self.assertSuccess(resp)
+
+
+class ProfessorDashboardInfoAPI(APITestCase):
+    def setUp(self):
+        self.url = self.reverse("professor_dashboard_info_api")
+        student_id = self.create_user("2020123123", "123").id
+        professor = self.create_admin()
+        course_id = Course.objects.create(created_by=professor, **DEFAULT_COURSE_DATA).id
+        assignment_data = copy.deepcopy(DEFAULT_ASSIGNMENT_DATA)
+        assignment_data["course_id"] = course_id
+        Assignment.objects.create(created_by=professor, **assignment_data).id
+        Registration.objects.create(user_id=student_id, course_id=course_id)
+
+    def test_get_info(self):
+        resp = self.client.get(self.url)
+        self.assertSuccess(resp)
+        self.assertEqual(resp.data["data"]["student_count"], 1)
+        self.assertTrue(resp.data["data"]["underway_assignments"]["total"], 1)
