@@ -32,6 +32,14 @@ class AssignmentSerializer(serializers.ModelSerializer):
         exclude = ("created_by", "visible", "create_time", "last_update_time", "course")
 
 
+class AssignmentCourseSerializer(serializers.ModelSerializer):
+    course = CourseSerializer()
+
+    class Meta:
+        model = Assignment
+        exclude = ("created_by", "content", "start_time", "end_time", "create_time", "last_update_time", "visible")
+
+
 class CreateAssignmentSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
     course_id = serializers.IntegerField()
