@@ -24,7 +24,7 @@ from problem.models import Problem
 from submission.models import Submission
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer
 from utils.decorators import super_admin_required
-from utils.shortcuts import send_email, get_env
+from utils.shortcuts import send_email
 from utils.xss_filter import XSSHtml
 from .models import JudgeServer
 from .serializers import (CreateEditWebsiteConfigSerializer,
@@ -287,8 +287,5 @@ class DashboardInfoAPI(APIView):
             "user_count": User.objects.count(),
             "recent_contest_count": recent_contest_count,
             "today_submission_count": today_submission_count,
-            "judge_server_count": judge_server_count,
-            "env": {
-                "FORCE_HTTPS": get_env("FORCE_HTTPS", default=False),
-            }
+            "judge_server_count": judge_server_count
         })

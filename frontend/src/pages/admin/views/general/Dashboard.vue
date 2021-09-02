@@ -62,15 +62,6 @@
             {{ https ? 'Enabled' : 'Disabled' }}
           </b-badge>
         </p>
-        <p>
-          force HTTPS:
-          <b-badge
-            :variant="forceHttps ? 'success' : 'danger'"
-            size="small"
-          >
-            {{ forceHttps ? 'Enabled' : 'Disabled' }}
-          </b-badge>
-        </p>
       </panel>
     </b-col>
 
@@ -230,9 +221,6 @@ export default {
     ...mapGetters(['profile', 'user', 'isSuperAdmin']),
     https () {
       return document.URL.slice(0, 5) === 'https'
-    },
-    forceHttps () {
-      return this.infoData.env.FORCE_HTTPS
     },
     browser () {
       const b = browserDetector(this.session.user_agent)
