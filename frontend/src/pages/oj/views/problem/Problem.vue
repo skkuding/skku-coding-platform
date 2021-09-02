@@ -244,7 +244,7 @@ export default {
         description: '',
         hint: '',
         my_status: '',
-        template: {},
+        template_code: {},
         languages: [],
         created_by: {
           username: ''
@@ -310,9 +310,14 @@ export default {
           }
         }
         this.language = preferredLanguage
-        const template = this.problem.template
+        const template = this.problem.template_code
         if (template && template[this.language]) {
-          this.code = template[this.language]
+          var templateCode = ''
+          for (var t in template[this.language]) {
+            templateCode += template[this.language][t].code
+            templateCode += '\n'
+          }
+          this.code = templateCode
         }
       }
     },
@@ -342,9 +347,14 @@ export default {
       this.$Modal.confirm({
         content: 'Are you sure you want to reset your code?',
         onOk: () => {
-          const template = this.problem.template
+          const template = this.problem.template_code
           if (template && template[this.language]) {
-            this.code = template[this.language]
+            var templateCode = ''
+            for (var t in template[this.language]) {
+              templateCode += template[this.language][t].code
+              templateCode += '\n'
+            }
+            this.code = templateCode
           } else {
             this.code = ''
           }
@@ -353,8 +363,16 @@ export default {
     },
     // when language dropdown changed
     onChangeLang (newLang) {
-      if (this.problem.template[newLang] && this.code.trim() === '') {
-        this.code = this.problem.template[newLang]
+      const template = this.problem.template_code
+      if ((this.problem.template_code[newLang] && this.code.trim() === '') || (template && template[newLang])) {
+        var templateCode = ''
+        for (var t in template[newLang]) {
+          templateCode += template[newLang][t].code
+          templateCode += '\n'
+        }
+        this.code = templateCode
+      } else {
+        this.code = ''
       }
       this.language = newLang
     },
