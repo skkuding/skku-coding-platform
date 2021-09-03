@@ -16,11 +16,13 @@ from options.options import SysOptions
 from utils.api import APIView, validate_serializer
 from utils.captcha import Captcha
 from utils.shortcuts import rand_str
+from utils.cache import cache
+from utils.throttling import TokenBucket
 from ..decorators import login_required
 from ..models import User, UserProfile
 from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer, UserChangeEmailForAuthSerializer,
-                           UserChangePasswordSerializer, UserLoginSerializer,
-                           UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
+                           UserChangePasswordSerializer, UserEmailSerializer, UserLoginSerializer,
+                           UserRegisterSerializer, EmailAuthSerializer, UserResendEmailForAuthSerializer, UsernameOrEmailCheckSerializer,
                            UserChangeEmailSerializer)
 from ..serializers import (UserProfileSerializer,
                            EditUserProfileSerializer, ImageUploadForm, EditUserSettingSerializer, UserSerializer)
@@ -159,7 +161,7 @@ class UserLoginAPI(APIView):
         if user.is_disabled:
             return self.error("Your account has been disabled")
         if not user.has_email_auth:
-            return self.error("Your need to authenticate your email")
+            return self.error("You need to authenticate your email")
         auth.login(request, user)
         return self.success("Succeeded")
 
@@ -319,6 +321,61 @@ class UserChangeEmailForAuthAPI(APIView):
                               content=email_html)
 
         return self.success("Succeeded")
+
+
+class UserResendEmailForAuthAPI(APIView):
+    def throttling(self, user):
+        user_bucket = TokenBucket(key=str(user.id),
+                                  capacity=1,
+                                  fill_rate=1/60,
+                                  default_capacity=1,
+                                  redis_conn=cache)
+        can_consume, wait = user_bucket.consume()
+        if not can_consume:
+            return "Please wait %d seconds" % (int(wait))
+
+    @swagger_auto_schema(
+        request_body=UserResendEmailForAuthSerializer,
+        operation_description="Resend authentication email",
+    )
+    @validate_serializer(UserResendEmailForAuthSerializer)
+    def post(self, request):
+        data = request.data
+        user = auth.authenticate(username=data["username"], password=data["password"])
+        error = self.throttling(user)
+        if error:
+            return self.error(error)
+        render_data = {
+            "username": user.username,
+            "website_name": SysOptions.website_name,
+            "link": f"{SysOptions.website_base_url}/email-auth/{user.email_auth_token}"
+        }
+        email_html = render_to_string("email_auth.html", render_data)
+        send_email_async.send(from_name=SysOptions.website_name_shortcut,
+                              to_email=user.email,
+                              to_name=user.username,
+                              subject="Email Authentication",
+                              content=email_html)
+
+        return self.success()
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="username",
+                in_=openapi.IN_QUERY,
+                description="Unique username of login request user",
+                required=True,
+                type=openapi.TYPE_STRING,
+            ),
+        ],
+        opearation_description="Get email of login request user",
+    )
+    def get(self, request):
+        username = request.GET.get("username")
+        if username:
+            user = User.objects.get(username=username)
+            return self.success(UserEmailSerializer(user).data)
 
 
 class UserChangePasswordAPI(APIView):
