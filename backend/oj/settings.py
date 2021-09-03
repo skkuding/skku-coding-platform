@@ -230,4 +230,9 @@ DRAMATIQ_RESULT_BACKEND = {
 
 IP_HEADER = "HTTP_X_REAL_IP"
 
+# Default primary key field type
+# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = 50242880
