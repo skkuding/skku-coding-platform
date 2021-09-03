@@ -21,12 +21,28 @@
           <b-spinner v-if="btnLoginLoading" small></b-spinner> Sign In
         </b-button>
       </b-container>
-      </b-form>
-      <div class="modal-low mt-5 font-bold">
-        <a v-if="website.allow_register" @click.stop="handleBtnClick('register')" style="float:left;">Register now</a>
-        <a @click.stop="handleBtnClick('ChangeEmailForAuth')" style="margin-left: 30px;">Change Email</a>
-        <a @click.stop="handleBtnClick('ApplyResetPassword')" style="float: right;">Forgot Password</a>
+    </b-form>
+    <div class="modal-low mt-5 font-bold">
+      <a v-if="website.allow_register" @click.stop="handleBtnClick('register')" style="float:left;">Register now</a>
+      <a @click.stop="handleBtnClick('ApplyResetPassword')" style="float: right;">Forgot Password</a>
+    </div>
+
+    <b-modal
+      v-model="askEmailAuthVisible"
+      hide-footer
+      title="authenticate email"
+      centered
+    >
+      <div>
+        <p>Your email is "{{ this.email }}"</p>
+        <p>Please check your mailbox.</p>
+        <p>If there's no mail, then resend or change email</p>
       </div>
+      <div>
+        <b-button class="email-btn" @click="resendEmail">Resend email</b-button>
+        <b-button class="email-btn" @click="handleBtnClick('ChangeEmailForAuth')">Change email</b-button>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -40,10 +56,12 @@ export default {
   data () {
     return {
       btnLoginLoading: false,
+      askEmailAuthVisible: false,
       formLogin: {
         username: '',
         password: ''
-      }
+      },
+      email: ''
     }
   },
   methods: {
@@ -65,6 +83,20 @@ export default {
         this.$success('Welcome back!')
       } catch (err) {
         this.btnLoginLoading = false
+        if (err.data.data === 'You need to authenticate your email') {
+          const res = await api.getUserEmail(this.formLogin.username)
+          this.email = res.data.data.email
+          this.askEmailAuthVisible = true
+        }
+      }
+    },
+    async resendEmail () {
+      const formData = Object.assign({}, this.formLogin)
+      try {
+        await api.resendEmailForAuth(formData)
+        this.$success('Please check your mailbox.', 2500)
+        this.changeModalStatus({ visible: false })
+      } catch (err) {
       }
     }
   },
@@ -131,6 +163,10 @@ export default {
   .modal-low {
     color:#808080;
     font-size:14px;
+  }
+  .email-btn {
+    margin-top: 16px;
+    margin-left:30px;
   }
   .font-bold {
     font-family: manrope_bold;

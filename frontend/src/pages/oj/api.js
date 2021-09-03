@@ -110,6 +110,18 @@ export default {
       data
     })
   },
+  resendEmailForAuth (data) {
+    return ajax('resend_email_for_auth', 'post', {
+      data
+    })
+  },
+  getUserEmail (username = undefined) {
+    return ajax('resend_email_for_auth', 'get', {
+      params: {
+        username
+      }
+    })
+  },
   getLanguages () {
     return ajax('languages', 'get')
   },
