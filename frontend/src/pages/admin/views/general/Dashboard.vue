@@ -71,15 +71,6 @@
             {{ forceHttps ? 'Enabled' : 'Disabled' }}
           </b-badge>
         </p>
-        <p>
-          CDN HOST:
-          <b-badge
-            :variant="cdn ? 'success' : 'warning'"
-            size="small"
-          >
-            {{ cdn ? cdn : 'Not Use' }}
-          </b-badge>
-        </p>
       </panel>
     </b-col>
 
@@ -237,9 +228,6 @@ export default {
   },
   computed: {
     ...mapGetters(['profile', 'user', 'isSuperAdmin']),
-    cdn () {
-      return this.infoData.env.STATIC_CDN_HOST
-    },
     https () {
       return document.URL.slice(0, 5) === 'https'
     },

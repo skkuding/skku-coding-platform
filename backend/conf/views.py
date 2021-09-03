@@ -290,6 +290,5 @@ class DashboardInfoAPI(APIView):
             "judge_server_count": judge_server_count,
             "env": {
                 "FORCE_HTTPS": get_env("FORCE_HTTPS", default=False),
-                "STATIC_CDN_HOST": get_env("STATIC_CDN_HOST", default="")
             }
         })
