@@ -387,7 +387,7 @@
         </b-col>
       </b-row>
 
-      <div v-if="!testcase_file_upload">
+      <div v-if="!testcase_file_upload && testcaseRender">
         <b-form-group v-for="(testcase, index) in problem.testcases" :key="'testcase'+index">
           <Accordion :title="'Testcase' + (index + 1)">
             <b-button variant="danger" size="sm" slot="header" @click="deleteTestCase(index)">
@@ -489,6 +489,9 @@ export default {
       },
       testCaseUploaded: false,
       testcase_file_upload: false,
+      testcaseLoaded: true,
+      textsizeOver50mb: false,
+      testcaseRender: true,
       allLanguage: {},
       inputVisible: false,
       tagInput: '',
@@ -583,11 +586,19 @@ export default {
       data.testcases = []
       this.problem = data
       this.testCaseUploaded = true
+      this.testcaseRender = false
+      this.testcaseLoaded = false
       const testcaseRes = await api.getTestCase(this.$route.params.problemId)
       const testcaseData = testcaseRes.data.data
-      this.problem.testcases = this.problem.testcases.concat(testcaseData.testcases)
+      if (testcaseRes.headers['content-length'] > 50000000) {
+        this.textsizeOver50mb = true
+      } else {
+        this.problem.testcases = this.problem.testcases.concat(testcaseData.testcases)
+        this.testcaseRender = true
+      }
       if (testcaseData.spj === 'True') this.problem.spj = true
       else this.problem.spj = testcaseData.spj === 'True'
+      this.testcaseLoaded = true
     } else {
       this.title = 'Add Problem'
       for (const item of allLanguage.languages) {
@@ -742,6 +753,10 @@ export default {
       }
     },
     async submit () {
+      if (!this.testcaseLoaded) {
+        this.$error('Test case is not loaded yet')
+        return
+      }
       if (!this.problem.samples.length) {
         this.$error('Sample is required')
         return
@@ -774,7 +789,7 @@ export default {
         this.$error(this.error.languages)
         return
       }
-      if (!this.testcase_file_upload) {
+      if (!this.testcase_file_upload && !this.textsizeOver50mb) {
         for (const testcase of this.problem.testcases) {
           if (!testcase.input || !testcase.output) {
             this.$error('Testcase input and output is required')
@@ -817,7 +832,7 @@ export default {
       if (funcName === 'editContestProblem') {
         this.problem.contest_id = this.contest.id
       }
-      if (!this.testcase_file_upload) {
+      if (!this.testcase_file_upload && !this.textsizeOver50mb) {
         try {
           const response = await api.createTestCase({
             testcases: this.problem.testcases,
@@ -844,6 +859,7 @@ export default {
         }
       } else {
         try {
+          this.problem.testcases = null
           await api[funcName](this.problem)
           if (['create-contest-problem', 'edit-contest-problem'].includes(this.routeName)) {
             this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })
