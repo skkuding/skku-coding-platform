@@ -479,9 +479,6 @@ export default {
     async deleteUsers (ids) {
       try {
         await this.$confirm('Sure to delete the user? The associated resources created by this user will be deleted as well, like problem, contest, announcement, etc.', 'confirm', 'warning', false)
-      } catch (err) {
-      }
-      try {
         await api.deleteUsers(ids.join(','))
       } catch (err) {
       } finally {
