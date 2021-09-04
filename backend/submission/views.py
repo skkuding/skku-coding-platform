@@ -66,9 +66,9 @@ class SubmissionAPI(APIView):
             error = self.check_assignment_permission(request)
             if error:
                 return error
-            assignment = self.assignment
-            if not assignment.problem_details_permission(request.user):
-                hide_id = True
+            # assignment = self.assignment
+            # if not assignment.problem_details_permission(request.user):
+            #     hide_id = True
 
         if data.get("captcha"):
             if not Captcha(request).check(data["captcha"]):
