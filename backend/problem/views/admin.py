@@ -321,7 +321,7 @@ class ProblemAPI(ProblemBase):
     def post(self, request):
         data = request.data
         _id = data["_id"]
-        if Problem.objects.filter(_id=_id, contest_id__isnull=True).exists():
+        if Problem.objects.filter(_id=_id, contest_id__isnull=True, assignment_id__isnull=True).exists():
             return self.error("Display ID already exists")
 
         error_info = self.common_checks(request)
@@ -378,7 +378,7 @@ class ProblemAPI(ProblemBase):
             except Problem.DoesNotExist:
                 return self.error("Problem does not exist")
 
-        problems = Problem.objects.filter(contest_id__isnull=True).order_by("-create_time")
+        problems = Problem.objects.filter(contest_id__isnull=True, assignment_id__isnull=True).order_by("-create_time")
         if rule_type:
             if rule_type not in ProblemRuleType.choices():
                 return self.error("Invalid rule_type")
@@ -411,7 +411,7 @@ class ProblemAPI(ProblemBase):
         _id = data["_id"]
         if not _id:
             return self.error("Display ID is required")
-        if Problem.objects.exclude(id=problem_id).filter(_id=_id, contest_id__isnull=True).exists():
+        if Problem.objects.exclude(id=problem_id).filter(_id=_id, contest_id__isnull=True, assignment_id__isnull=True).exists():
             return self.error("Display ID already exists")
 
         error_info = self.common_checks(request)
@@ -452,7 +452,7 @@ class ProblemAPI(ProblemBase):
         if not id:
             return self.error("Invalid parameter, id is required")
         try:
-            problem = Problem.objects.get(id=id, contest_id__isnull=True)
+            problem = Problem.objects.get(id=id, contest_id__isnull=True, assignment_id__isnull=True)
         except Problem.DoesNotExist:
             return self.error("Problem does not exists")
         ensure_created_by(problem, request.user)
@@ -645,7 +645,7 @@ class MakeContestProblemPublicAPIView(APIView):
     def post(self, request):
         data = request.data
         display_id = data.get("display_id")
-        if Problem.objects.filter(_id=display_id, contest_id__isnull=True).exists():
+        if Problem.objects.filter(_id=display_id, contest_id__isnull=True, assignment_id__isnull=True).exists():
             return self.error("Duplicate display ID")
 
         try:

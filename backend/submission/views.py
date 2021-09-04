@@ -199,14 +199,14 @@ class SubmissionListAPI(APIView):
         if request.GET.get("contest_id"):
             return self.error("Parameter error")
 
-        submissions = Submission.objects.filter(contest_id__isnull=True).select_related("problem__created_by")
+        submissions = Submission.objects.filter(contest_id__isnull=True, assignment_id__isnull=True).select_related("problem__created_by")
         problem_id = request.GET.get("problem_id")
         myself = request.GET.get("myself")
         result = request.GET.get("result")
         username = request.GET.get("username")
         if problem_id:
             try:
-                problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, visible=True)
+                problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, assignment_id__isnull=True, visible=True)
             except Problem.DoesNotExist:
                 return self.error("Problem doesn't exist")
             submissions = submissions.filter(problem=problem)
@@ -349,6 +349,7 @@ class AssignmentSubmissionListAPI(APIView):
                 name="username", in_=openapi.IN_QUERY, required=False, type=openapi.TYPE_STRING
             ),
         ],
+        operation_description="Submission list for assignment problem page",
         responses={200: SubmissionListSerializer}
     )
     @check_assignment_permission()
@@ -375,7 +376,7 @@ class AssignmentSubmissionListAPI(APIView):
             submissions = submissions.filter(user_id=request.user.id)
 
         # filter the test submissions submitted before contest start
-        if assignment.status != ContestStatus.CONTEST_NOT_START:
+        if assignment.status != AssignmentStatus.ASSIGNMENT_NOT_START:
             submissions = submissions.filter(create_time__gte=assignment.start_time)
 
         data = self.paginate_data(request, submissions)
@@ -411,6 +412,7 @@ class AssignmentSubmissionListProfessorAPI(APIView):
                 type=openapi.TYPE_INTEGER
             ),
         ],
+        operation_description="Submission list for professor page",
         responses={200: SubmissionListProfessorSerializer}
     )
     # @admin_role_required
