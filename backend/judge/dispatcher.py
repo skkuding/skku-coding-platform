@@ -123,6 +123,28 @@ class JudgeDispatcher(DispatcherBase):
                 return
             self.submission.statistic_info["score"] = score
 
+    def _change_time(self, lang, time):
+        table = {
+            "C": lambda x: x,
+            "C++": lambda x: x,
+            "Java": lambda x: x * 2 + 1000,
+            "Python2": lambda x: x * 3 + 2000,
+            "Python3": lambda x: x * 3 + 2000,
+            "Go": lambda x: x + 2000
+        }
+        return table[lang](time)
+
+    def _change_memory(self, lang, memory):
+        table = {
+            "C": lambda x: 1024*1024*x,
+            "C++": lambda x: 1024*1024*x,
+            "Java": lambda x: 1024*1024*(x * 2 + 16),
+            "Python2": lambda x: 1024*1024*(x * 2 + 32),
+            "Python3": lambda x: 1024*1024*(x * 2 + 32),
+            "Go": lambda x: 1024*1024*(x * 2 + 512)
+        }
+        return table[lang](memory)
+
     def judge(self):
         language = self.submission.language
         sub_config = list(filter(lambda item: language == item["name"], SysOptions.languages))[0]
@@ -142,8 +164,8 @@ class JudgeDispatcher(DispatcherBase):
         data = {
             "language_config": sub_config["config"],
             "src": code,
-            "max_cpu_time": self.problem.time_limit,
-            "max_memory": 1024 * 1024 * self.problem.memory_limit,
+            "max_cpu_time": self._change_time(language, self.problem.time_limit),
+            "max_memory": self._change_memory(language, self.problem.memory_limit),
             "test_case_id": self.problem.test_case_id,
             "output": False,
             "spj_version": self.problem.spj_version,
