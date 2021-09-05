@@ -55,7 +55,7 @@ class SubmissionAPI(APIView):
         data = request.data
         hide_id = False
         if data.get("contest_id"):
-            error = self.check_contest_permission()
+            error = self.check_contest_permission(request)
             if error:
                 return error
             contest = self.contest
