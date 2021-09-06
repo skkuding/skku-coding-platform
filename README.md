@@ -25,6 +25,31 @@ Docker를 설치하고, docker compose를 실행합니다.
 Wiki를 참고해주세요.  
 https://github.com/skku-npc/skku-coding-platform/wiki
 
+### 운영진
+박민서 [@minseo999](https://github.com/minseo999)  
+하솔비 [@SOLBI1028](https://github.com/SOLBI1028)  
+
+백엔드 팀장: 김학산 [@cranemont](https://github.com/cranemont)  
+프론트엔드 팀장: 하지민 [@jimin9038](https://github.com/jimin9038)  
+
+### 백엔드 팀
+- 김학산 [@cranemont](https://github.com/cranemont)
+- 박민서 [@minseo999](https://github.com/minseo999)
+- 이윤성 [@Anzanda](https://github.com/Anzanda)
+- 조재훈 [@joft-ware](https://github.com/joft-ware)
+- 최영우 [@cyw320712](https://github.com/cyw320712)
+- 최재민 [@dotoleeoak](https://github.com/dotoleeoak)
+
+### 프론트엔드 팀
+- 하지민 [@jimin9038](https://github.com/jimin9038) 
+- 고민채 [@Kohminchae](https://github.com/Kohminchae)
+- 민경환 [@DailyPS](https://github.com/DailyPS)
+- 최영주 [@y-jiu](https://github.com/y-jiu)
+- 하솔비 [@SOLBI1028](https://github.com/SOLBI1028)
+
+<details>
+<summary>🔥 2021.03 - 2021.08 Contributors 🔥</summary>
+
 ### 팀장
 책임: 한채정 [@Jeongcc](https://github.com/Jeongcc)  
 부책임: 이병현 [@22222bh](https://github.com/22222bh)  
@@ -47,6 +72,7 @@ https://github.com/skku-npc/skku-coding-platform/wiki
 - 민경환 [@DailyPS](https://github.com/DailyPS)
 - 최영주 [@y-jiu](https://github.com/y-jiu)
 - 하솔비 [@SOLBI1028](https://github.com/SOLBI1028)
+</details>
 
 <details>
 <summary>🔥 2020.12 - 2021.02 Contributors 🔥</summary>
