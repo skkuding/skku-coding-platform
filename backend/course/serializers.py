@@ -42,6 +42,14 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CourseUsernameSerializer(serializers.ModelSerializer):
+    created_by = UsernameSerializer()
+
+    class Meta:
+        model = Course
+        fields = "__all__"
+
+
 class CourseProfessorSerializer(serializers.ModelSerializer):
     created_by = UsernameSerializer()
 
@@ -51,7 +59,7 @@ class CourseProfessorSerializer(serializers.ModelSerializer):
 
 
 class CourseStudentSerializer(serializers.ModelSerializer):
-    course = CourseSerializer()
+    course = CourseUsernameSerializer()
 
     class Meta:
         model = Registration

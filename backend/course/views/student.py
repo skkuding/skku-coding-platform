@@ -39,9 +39,6 @@ class CourseAPI(APIView):
         course_id = request.GET.get("id")
         user_id = request.user.id
 
-        if not id:
-            return self.error("Invalid parameter, id is required")
-
         if course_id:
             try:
                 Course.objects.get(id=course_id)
