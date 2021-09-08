@@ -26,7 +26,7 @@ jsonschema==3.2.0
 MarkupSafe==1.1.1
 mccabe==0.6.1
 packaging==20.9
-Pillow==8.2.0
+Pillow==8.3.2
 prometheus-client==0.9.0
 psycopg2-binary==2.8.6
 pycodestyle==2.6.0
