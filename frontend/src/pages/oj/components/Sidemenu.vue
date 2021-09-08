@@ -2,9 +2,9 @@
   <div class="Sidemenu">
     <b-card>
       <b-list-group class="menu-container">
-        <b-list-group-item class="menu-item" @click="goDashboard">
+        <b-list-group-item class="menu-item" @click="goLectureList">
           <b-icon class="icon" icon="calendar2-check"/>
-          <p>Dashboard</p>
+          <p>Lecture</p>
         </b-list-group-item>
         <b-list-group-item class="menu-item" @click="goAssignmentList">
           <b-icon class="icon" icon="journal-text"/>
@@ -30,12 +30,9 @@ export default {
     this.courseID = this.$route.params.courseID
   },
   methods: {
-    async goDashboard () {
+    async goLectureList () {
       await this.$router.push({
-        name: 'lecture-dashboard',
-        params: {
-          courseID: this.$route.params.courseID
-        }
+        name: 'lecture-list'
       })
     },
     async goAssignmentList () {
