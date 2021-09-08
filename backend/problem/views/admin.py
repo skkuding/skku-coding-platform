@@ -300,7 +300,7 @@ class ProblemBase(APIView):
         else:
             data["spj_language"] = None
             data["spj_code"] = None
-        if data["rule_type"] == ProblemRuleType.OI:
+        if data["rule_type"] in (ProblemRuleType.OI, ProblemRuleType.ASSIGNMENT):
             total_score = 0
             for item in data["test_case_score"]:
                 if item["score"] <= 0:

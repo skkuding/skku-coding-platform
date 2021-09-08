@@ -94,6 +94,7 @@ class JudgeDispatcher(DispatcherBase):
         super().__init__()
         self.submission = Submission.objects.get(id=submission_id)
         self.contest_id = self.submission.contest_id
+        self.assignment_id = self.submission.assignment_id
         self.last_result = self.submission.result if self.submission.info else None
 
         if self.contest_id:
@@ -107,8 +108,8 @@ class JudgeDispatcher(DispatcherBase):
         self.submission.statistic_info["time_cost"] = max([x["cpu_time"] for x in resp_data])
         self.submission.statistic_info["memory_cost"] = max([x["memory"] for x in resp_data])
 
-        # sum up the score in OI mode
-        if self.problem.rule_type == ProblemRuleType.OI:
+        # sum up the score in OI or ASSIGNMENT mode
+        if self.problem.rule_type in (ProblemRuleType.OI, ProblemRuleType.ASSIGNMENT):
             score = 0
             try:
                 for i in range(len(resp_data)):
@@ -219,7 +220,7 @@ class JudgeDispatcher(DispatcherBase):
             with transaction.atomic():
                 self.update_contest_problem_status()
                 self.update_contest_rank()
-        else:
+        elif not self.assignment_id:
             if self.last_result:
                 self.update_problem_status_rejudge()
             else:
