@@ -522,6 +522,8 @@ export default {
   },
   watch: {
     async '$route' () {
+      this.statusVisible = false
+      this.code = ''
       await this.init()
     },
     contestEnded: function () {
