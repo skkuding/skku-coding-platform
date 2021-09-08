@@ -43,7 +43,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class CourseUsernameSerializer(serializers.ModelSerializer):
-    created_by = UsernameSerializer()
+    created_by = UsernameSerializer(need_real_name=True)
 
     class Meta:
         model = Course
