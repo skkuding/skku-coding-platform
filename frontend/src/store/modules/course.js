@@ -42,7 +42,7 @@ const actions = {
   },
   async getLectureAssignmentProblems ({ commit, rootState }) {
     try {
-      const res = await api.getLectureAssignmentProblems(rootState.route.params.courseID, rootState.route.params.assignmentID, rootState.route.params.problemID)
+      const res = await api.getLectureAssignmentProblems(rootState.route.params.courseID, rootState.route.params.assignmentID)
       commit(types.CHANGE_ASSIGNMENT_PROBLEMS, { assignmentProblems: res.data.data })
       return res
     } catch (err) {

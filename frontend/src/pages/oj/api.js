@@ -246,10 +246,13 @@ export default {
       }
     })
   },
-  getLectureAssignmentList (courseID) {
+  getLectureAssignmentList (courseID, offset, limit) {
     return ajax('lecture/course/assignment', 'get', {
       params: {
-        course_id: courseID
+        course_id: courseID,
+        paging: true,
+        offset,
+        limit
       }
     })
   },
@@ -261,13 +264,27 @@ export default {
       }
     })
   },
-  getLectureAssignmentProblems (courseID, assignmentID, problemID) {
+  getLectureAssignmentProblems (courseID, assignmentID) {
     return ajax('lecture/course/assignment/problem', 'get', {
       params: {
         course_id: courseID,
+        assignment_id: assignmentID
+      }
+    })
+  },
+  getLectureAssignmentProblem (assignmentID, problemID) {
+    return ajax('lecture/course/assignment/problem', 'get', {
+      params: {
         assignment_id: assignmentID,
         problem_id: problemID
       }
+    })
+  },
+  getAssignmentSubmissionList (offset, limit, params) {
+    params.limit = limit
+    params.offset = offset
+    return ajax('assignment_submissions', 'get', {
+      params
     })
   }
 }
