@@ -1,31 +1,54 @@
 <template>
   <div class="lecture-list-card font-bold">
-    <div class="mb-5" style="margin-top:4px;">
-      <h2 class = "title">Lectures</h2>
+    <div class="top-bar mb-2">
+      <h2 class="title">Lectures</h2>
     </div>
-    <div class = "table lecture-list-table mt-4" >
-      <b-table
-      hover
-      id="lecturelist"
-      :items="lectureList"
-      :fields="lectureTableColumns"
-      :per-page="perPage"
-      head-variant="light"
-      :current-page="currentPage"
-      @row-clicked = "goLectureDashboard">
-        <template #cell(Semester)="{ item }">
-          {{ item.course.registered_year }} {{ getSemester(item.course.semester) }}
-        </template>
-      </b-table>
-    </div>
-    <div class="pagination">
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="lecturelist"
-      align="right"
-    ></b-pagination>
+    <div class="lecture-card-list">
+      <b-card
+        v-for="(lecture,index) in lectureList"
+        :key="index"
+        style="width: 300px; margin: 35px 35px 0 0;"
+      >
+        <b-card-text class="lecture-card__card">
+          <div
+            class="lecture-card__cardcolor"
+            :style="'background-color:' + backcolor[index % 7]"
+          ></div>
+          <div class="lecture-card__lectureInfo">
+            <div class="lecture-card__title">
+              {{ lecture.course.title }}
+              <b-buttons
+                class="lecture-card__btn"
+                @click="changeVisibleState"
+              >
+                <b-icon icon="bookmark-fill"/>
+              </b-button>
+              <!-- <b-button v-else><b-icon icon="heart"/></b-button> -->
+            </div>
+            <div class="lecture-card__info">
+              {{ lecture.course.course_code + '-' + lecture.course.class_number }}
+              <span v-if="lecture.course.created_by.real_name">{{ '(' + lecture.course.created_by.real_name + ')' }} </span><br/>
+              {{ lecture.course.registered_year + ' ' + getSemester(lecture.course.semester) }} <br/>
+            </div>
+            <div>
+              <b-button
+                class="lecture-card__btn mr-3"
+                size="sm"
+                v-b-tooltip.hover.bottomright="'Assignment'"
+                :to="'lecture/' + lecture.course.id + '/assignment'">
+                <b-icon icon="journal-text"/>
+              </b-button>
+              <b-button
+                class="lecture-card__btn"
+                size="sm"
+                v-b-tooltip.hover.bottomright="'QnA'"
+                :to="'lecture/' + lecture.course.id + '/question'">
+                <b-icon icon="patch-question"/>
+              </b-button>
+            </div>
+          </div>
+        </b-card-text>
+      </b-card>
     </div>
   </div>
 </template>
@@ -50,7 +73,11 @@ export default {
         },
         'Semester'
       ],
-      semesters: ['Spring', 'Summer', 'Fall', 'Winter']
+      semesters: ['Spring', 'Summer', 'Fall', 'Winter'],
+      visible: '',
+      backcolor: [ //
+        '#8DC63F', '#9EC1CF', '#CC99C9', '#FEB144', '#FF6663', '#7C7A7B', '#E2E2E2'
+      ]
     }
   },
   async mounted () {
@@ -58,6 +85,8 @@ export default {
       const resp = await api.getLectureList()
       const data = resp.data.data
       this.lectureList = data.results
+      // 백엔드에서 구현하면 lecture visible 가져다 쓰기
+      this.visible = 'true'
     } catch (err) {
     }
   },
@@ -70,12 +99,12 @@ export default {
     },
     getSemester (semesterno) {
       return this.semesters[semesterno]
+    },
+    changeVisibleState () {
+      return this.visible === 'true' ? 'false' : 'true'
     }
   },
   computed: {
-    rows () {
-      return this.lectureList.length
-    }
   }
 }
 </script>
@@ -87,30 +116,50 @@ export default {
   .lecture-list-card{
     margin:0 auto;
     width:70%;
-    .lecture-list-table{
-      width: 95%;
-      margin: 0 auto;
-    }
-  }
-  .table {
-    width:95% !important;
-    margin-left:auto;
-    margin-right:auto;
   }
   .title {
-    margin-bottom:0;
     color: #7C7A7B;
-    display:inline;
-    position:relative;
-    top:36px;
+  }
+  .top-bar {
+    margin-top: 40px;
+    margin-left: 68px;
+  }
+  .lecture-card-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 68px;
+  }
+  .card-body {
+    padding: 0 !important;
+  }
+  .lecture-card {
+    &__card ::v-deep{
+      color: #7C7A7B;
     }
-  div {
-    &.pagination{
-      margin-right: 5%;
-      margin-top: 20px;
+    &__cardcolor {
+      /* background-color: #9EC1CF; */
+      height: 150px;
+      border-radius: 8px 8px 0 0;
+    }
+    &__lectureInfo {
+      padding: 30px;
+    }
+    &__title {
+      font-size: 22px;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+    }
+    &__info {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    &__btn ::v-deep {
+      background-color: transparent;
+      color: #7A7C7B;
+    }
+    &__btn:hover, __btn:active ::v-deep{
+      background-color: transparent;
+      color: #AAAAAA;
     }
   }
-  // Be careful of common css selector in admin/oj
 </style>
