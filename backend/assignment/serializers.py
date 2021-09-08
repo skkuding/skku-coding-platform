@@ -5,7 +5,7 @@ from submission.models import Submission
 from course.serializers import CourseSerializer
 
 
-class AssginmentProfessorSerializer(serializers.ModelSerializer):
+class AssignmentProfessorSerializer(serializers.ModelSerializer):
     created_by = UsernameSerializer()
     course = CourseSerializer()
     status = serializers.CharField()

@@ -21,7 +21,7 @@ class ShareSubmissionSerializer(serializers.Serializer):
 
 class EditSubmissionScoreSerializer(serializers.Serializer):
     id = serializers.CharField()
-    score = serializers.IntegerField()
+    score = serializers.IntegerField(min_value=0, max_value=100)
 
 
 class SubmissionModelSerializer(serializers.ModelSerializer):

@@ -304,14 +304,14 @@ class ProfessorDashboardInfoAPI(APIView):
             openapi.Parameter(
                 name="limit",
                 in_=openapi.IN_QUERY,
-                description="Number of assginments to show",
+                description="Number of assignments to show",
                 type=openapi.TYPE_STRING,
                 default=10,
             ),
             openapi.Parameter(
                 name="offset",
                 in_=openapi.IN_QUERY,
-                description="ID of the first assginment of list",
+                description="ID of the first assignment of list",
                 type=openapi.TYPE_STRING,
                 default=0,
             ),
@@ -322,12 +322,12 @@ class ProfessorDashboardInfoAPI(APIView):
     def get(self, request):
         today = datetime.today()
         student_count = Registration.objects.filter(course__created_by=request.user).count()
-        totay_submission_count = Submission.objects.filter(
+        today_submission_count = Submission.objects.filter(
             assignment__created_by=request.user,
             create_time__gte=datetime(today.year, today.month, today.day, 0, 0, tzinfo=pytz.UTC)).count()
-        underway_assignments = Assignment.objects.filter(created_by=request.user, end_time__gte=timezone.now())
+        underway_assignments = Assignment.objects.filter(created_by=request.user, end_time__gte=timezone.now(), start_time__lte=timezone.now())
         return self.success({
             "student_count": student_count,
-            "today_submission_count": totay_submission_count,
+            "today_submission_count": today_submission_count,
             "underway_assignments": self.paginate_data(request, underway_assignments, AssignmentCourseSerializer)
         })
