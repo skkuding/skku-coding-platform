@@ -27,15 +27,15 @@
         </b-navbar-nav>
 
         <b-navbar-nav v-else-if="$route.name && $route.name.indexOf('assignment') != -1">
-          <b-nav-item to="#">Assignment</b-nav-item>
+          <b-nav-item @click="goAssignmentList">Assignment</b-nav-item>
           <b-nav-item>
             <b-icon icon="chevron-right"/>
           </b-nav-item>
-          <b-nav-item to="#">{{this.assignment_name}}</b-nav-item>
+          <b-nav-item @click="goAssignmentDetail">{{this.assignment_name}}</b-nav-item>
           <b-nav-item>
             <b-icon icon="chevron-right"/>
           </b-nav-item>
-          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+          <b-nav-item active>{{problem.title}}</b-nav-item>
         </b-navbar-nav>
 
         <b-navbar-nav v-else>
@@ -353,7 +353,7 @@ export default {
       } else if (route === 'contest-problem-details') {
         res = await api.getContestProblem(this.problemID, this.contestID)
       } else {
-        res = await api.getLectureAssignmentProblems(this.courseID, this.assignmentID, this.problemID)
+        res = await api.getLectureAssignmentProblem(this.assignmentID, this.problemID)
       }
 
       const problem = res.data.data
@@ -441,7 +441,6 @@ export default {
         const id = this.submissionId
         try {
           const res = await api.getSubmission(id)
-          console.log(res.data.data)
           this.result = res.data.data
           if (Object.keys(res.data.data.statistic_info).length !== 0) {
             this.submitting = false
@@ -509,6 +508,23 @@ export default {
       } else {
         await submitFunc(data, true)
       }
+    },
+    async goAssignmentList () {
+      await this.$router.push({
+        name: 'lecture-assignment',
+        params: {
+          courseID: this.$route.params.courseID
+        }
+      })
+    },
+    async goAssignmentDetail () {
+      await this.$router.push({
+        name: 'lecture-assignment-detail',
+        params: {
+          courseID: this.$route.params.courseID,
+          assignmentID: this.$route.params.assignmentID
+        }
+      })
     }
   },
   computed: {
