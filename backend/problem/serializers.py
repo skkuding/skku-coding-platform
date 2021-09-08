@@ -58,7 +58,7 @@ class CreateOrEditProblemSerializer(serializers.Serializer):
     memory_limit = serializers.IntegerField(min_value=1, max_value=1024)
     languages = LanguageNameMultiChoiceField()
     template = serializers.DictField(child=serializers.CharField(min_length=1))
-    rule_type = serializers.ChoiceField(choices=[ProblemRuleType.ACM, ProblemRuleType.OI])
+    rule_type = serializers.ChoiceField(choices=[ProblemRuleType.ACM, ProblemRuleType.OI, ProblemRuleType.ASSIGNMENT])
     io_mode = ProblemIOModeSerializer()
     spj = serializers.BooleanField()
     spj_language = SPJLanguageNameChoiceField(allow_blank=True, allow_null=True)
