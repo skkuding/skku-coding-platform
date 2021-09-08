@@ -41,15 +41,6 @@ def process_pending_task_run():
             coderun_task.send(**data)
 
 
-class ErrorType:
-    err_type = {
-        "1": "CPU Time Exceeded",
-        "2": "Time Limit Exceeded",
-        "3": "Memory Limit Exceeded",
-        "4": "Runtime Error"
-    }
-
-
 class ChooseJudgeServer:
     def __init__(self):
         self.server = None
@@ -108,104 +99,20 @@ class SPJCompiler(DispatcherBase):
                 return result["data"]
 
 
-class CodeRunDispatcher(DispatcherBase):
+class JudgeDispatcher(DispatcherBase):
     def __init__(self, data):
         super().__init__()
-        self.run_data = data
-        self.contest_id = data.get("contest_id")
-        problem_id = self.run_data["problem_id"]
-
-        if self.contest_id:
-            self.problem = Problem.objects.select_related("contest").get(id=problem_id, contest_id=self.contest_id)
-            self.contest = self.problem.contest
+        if data["submission_id"]:
+            self.submission = Submission.objects.get(id=data["submission_id"])
+            self.contest_id = self.submission.contest_id
+            self.last_result = self.submission.result if self.submission.info else None
+            self.language = self.submission.language
         else:
-            self.problem = Problem.objects.get(id=problem_id)
+            self.run_data = data
+            self.contest_id = data.get("contest_id")
+            self.language = self.run_data["language"]
 
-    def judge(self):
-        language = self.run_data["language"]
-        sub_config = list(filter(lambda item: language == item["name"], SysOptions.languages))[0]
-        spj_config = {}
-        if self.problem.spj_code:
-            for lang in SysOptions.spj_languages:
-                if lang["name"] == self.problem.spj_language:
-                    spj_config = lang["spj"]
-                    break
-
-        if language in self.problem.template:
-            template = parse_problem_template(self.problem.template[language])
-            code = f"{template['prepend']}\n{self.run_data.code}\n{template['append']}"
-        else:
-            code = self.run_data["code"]
-
-        data = {
-            "language_config": sub_config["config"],
-            "src": code,
-            "max_cpu_time": self.problem.time_limit,
-            "max_memory": 1024 * 1024 * self.problem.memory_limit,
-            "test_case_id": None,
-            "test_case": [],
-            "output": True,
-            "spj_version": self.problem.spj_version,
-            "spj_config": spj_config.get("config"),
-            "spj_compile_config": spj_config.get("compile"),
-            "spj_src": self.problem.spj_code,
-            "io_mode": self.problem.io_mode
-        }
-
-        for testcases in self.run_data["new_testcase"]:
-            data["test_case"].append({"input": testcases, "output": ""})
-
-        run_id = self.run_data["run_id"]
-
-        with ChooseJudgeServer() as server:
-            if not server:
-                cache.lpush(CacheKey.running_waiting_queue, json.dumps(self.run_data))
-                return
-
-            resp = self._request(urljoin(server.service_url, "/judge"), data=data)
-
-        outputs = []
-
-        if not resp:  # System error
-            outputs["err"] = "System Error"
-            outputs["data"] = None
-            cache.hset("run", run_id, json.dumps(outputs))
-
-        elif resp["err"]:  # Compile error
-            cache.hset("run", run_id, json.dumps(resp))
-
-        else:  # Other errors or normal operation
-            resp["data"].sort(key=lambda x: int(x["test_case"]))
-            output_data = resp["data"]
-            tc_num = len(output_data)
-            for i in range(tc_num):
-                output_ele = {}
-                output_ele["output"] = {}
-                output_ele["input"] = data["test_case"][i]["input"]
-                if output_data[i]["result"] == -1 or output_data[i]["result"] == 0:
-                    output_ele["output"]["err"] = None
-                    output_ele["output"]["data"] = output_data[i]["output"]
-
-                else:
-                    err_code = str(output_data[i]["result"])
-                    output_ele["output"]["err"] = ErrorType.err_type[err_code]
-                    output_ele["output"]["data"] = None
-
-                outputs.append(output_ele)
-
-            cache.hset("run", run_id, json.dumps(outputs))
-
-        # At this point, the judgment is over, try to process the remaining tasks in the task queue
-        process_pending_task_run()
-
-
-class JudgeDispatcher(DispatcherBase):
-    def __init__(self, submission_id, problem_id):
-        super().__init__()
-        self.submission = Submission.objects.get(id=submission_id)
-        self.contest_id = self.submission.contest_id
-        self.last_result = self.submission.result if self.submission.info else None
-
+        problem_id = data["problem_id"]
         if self.contest_id:
             self.problem = Problem.objects.select_related("contest").get(id=problem_id, contest_id=self.contest_id)
             self.contest = self.problem.contest
@@ -234,8 +141,7 @@ class JudgeDispatcher(DispatcherBase):
             self.submission.statistic_info["score"] = score
 
     def judge(self):
-        language = self.submission.language
-        sub_config = list(filter(lambda item: language == item["name"], SysOptions.languages))[0]
+        sub_config = list(filter(lambda item: self.language == item["name"], SysOptions.languages))[0]
         spj_config = {}
         if self.problem.spj_code:
             for lang in SysOptions.spj_languages:
@@ -243,11 +149,13 @@ class JudgeDispatcher(DispatcherBase):
                     spj_config = lang["spj"]
                     break
 
-        if language in self.problem.template:
-            template = parse_problem_template(self.problem.template[language])
+        if self.language in self.problem.template:
+            template = parse_problem_template(self.problem.template[self.language])
             code = f"{template['prepend']}\n{self.submission.code}\n{template['append']}"
-        else:
+        elif self.data.submission_id:
             code = self.submission.code
+        else:
+            code = self.run_data["code"]
 
         data = {
             "language_config": sub_config["config"],
@@ -263,57 +171,108 @@ class JudgeDispatcher(DispatcherBase):
             "io_mode": self.problem.io_mode
         }
 
-        with ChooseJudgeServer() as server:
-            if not server:
-                data = {"submission_id": self.submission.id, "problem_id": self.problem.id}
-                cache.lpush(CacheKey.waiting_queue, json.dumps(data))
+        if not self.data.submission_id:
+            data["test_case_id"] = None
+            data["output"] = True
+            data["test_case"] = []
+            for testcases in self.run_data["new_testcase"]:
+                data["test_case"].append({"input": testcases, "output": ""})
+            run_id = self.run_data["run_id"]
+
+        if self.data.submission_id:
+            with ChooseJudgeServer() as server:
+                if not server:
+                    data = {"submission_id": self.submission.id, "problem_id": self.problem.id}
+                    cache.lpush(CacheKey.waiting_queue, json.dumps(data))
+                    return
+                Submission.objects.filter(id=self.submission.id).update(result=JudgeStatus.JUDGING)
+                resp = self._request(urljoin(server.service_url, "/judge"), data=data)
+
+            if not resp:
+                Submission.objects.filter(id=self.submission.id).update(result=JudgeStatus.SYSTEM_ERROR)
                 return
-            Submission.objects.filter(id=self.submission.id).update(result=JudgeStatus.JUDGING)
-            resp = self._request(urljoin(server.service_url, "/judge"), data=data)
 
-        if not resp:
-            Submission.objects.filter(id=self.submission.id).update(result=JudgeStatus.SYSTEM_ERROR)
-            return
-
-        if resp["err"]:
-            self.submission.result = JudgeStatus.COMPILE_ERROR
-            self.submission.statistic_info["err_info"] = resp["data"]
-            self.submission.statistic_info["score"] = 0
-        else:
-            resp["data"].sort(key=lambda x: int(x["test_case"]))
-            self.submission.info = resp
-            self._compute_statistic_info(resp["data"])
-            error_test_case = list(filter(lambda case: case["result"] != 0, resp["data"]))
-            # In ACM mode, if multiple test points are all correct, then AC,
-            # otherwise, take the status of the first wrong test point
-            # In OI mode, if multiple test points are all correct, AC is used,
-            # if all test points are wrong, the first test point state is taken as the first error,
-            # otherwise it is partially correct
-            if not error_test_case:
-                self.submission.result = JudgeStatus.ACCEPTED
-            elif self.problem.rule_type == ProblemRuleType.ACM or len(error_test_case) == len(resp["data"]):
-                self.submission.result = error_test_case[0]["result"]
+            if resp["err"]:
+                self.submission.result = JudgeStatus.COMPILE_ERROR
+                self.submission.statistic_info["err_info"] = resp["data"]
+                self.submission.statistic_info["score"] = 0
             else:
-                self.submission.result = JudgeStatus.PARTIALLY_ACCEPTED
-        self.submission.save()
+                resp["data"].sort(key=lambda x: int(x["test_case"]))
+                self.submission.info = resp
+                self._compute_statistic_info(resp["data"])
+                error_test_case = list(filter(lambda case: case["result"] != 0, resp["data"]))
+                # In ACM mode, if multiple test points are all correct, then AC,
+                # otherwise, take the status of the first wrong test point
+                # In OI mode, if multiple test points are all correct, AC is used,
+                # if all test points are wrong, the first test point state is taken as the first error,
+                # otherwise it is partially correct
+                if not error_test_case:
+                    self.submission.result = JudgeStatus.ACCEPTED
+                elif self.problem.rule_type == ProblemRuleType.ACM or len(error_test_case) == len(resp["data"]):
+                    self.submission.result = error_test_case[0]["result"]
+                else:
+                    self.submission.result = JudgeStatus.PARTIALLY_ACCEPTED
+            self.submission.save()
 
-        if self.contest_id:
-            if self.contest.status != ContestStatus.CONTEST_UNDERWAY or \
-                    User.objects.get(id=self.submission.user_id).is_contest_admin(self.contest):
-                logger.info(
-                    "Contest debug mode, id: " + str(self.contest_id) + ", submission id: " + self.submission.id)
-                return
-            with transaction.atomic():
-                self.update_contest_problem_status()
-                self.update_contest_rank()
-        else:
-            if self.last_result:
-                self.update_problem_status_rejudge()
+            if self.contest_id:
+                if self.contest.status != ContestStatus.CONTEST_UNDERWAY or \
+                        User.objects.get(id=self.submission.user_id).is_contest_admin(self.contest):
+                    logger.info(
+                        "Contest debug mode, id: " + str(self.contest_id) + ", submission id: " + self.submission.id)
+                    return
+                with transaction.atomic():
+                    self.update_contest_problem_status()
+                    self.update_contest_rank()
             else:
-                self.update_problem_status()
+                if self.last_result:
+                    self.update_problem_status_rejudge()
+                else:
+                    self.update_problem_status()
 
-        # At this point, the judgment is over, try to process the remaining tasks in the task queue
-        process_pending_task()
+            # At this point, the judgment is over, try to process the remaining tasks in the task queue
+            process_pending_task()
+        else:
+            with ChooseJudgeServer() as server:
+                if not server:
+                    cache.lpush(CacheKey.running_waiting_queue, json.dumps(self.run_data))
+                    return
+
+                resp = self._request(urljoin(server.service_url, "/judge"), data=data)
+
+            outputs = []
+
+            if not resp:  # System error
+                outputs["err"] = "System Error"
+                outputs["data"] = None
+                cache.hset("run", run_id, json.dumps(outputs))
+
+            elif resp["err"]:  # Compile error
+                cache.hset("run", run_id, json.dumps(resp))
+
+            else:  # Other errors or normal operation
+                resp["data"].sort(key=lambda x: int(x["test_case"]))
+                output_data = resp["data"]
+                tc_num = len(output_data)
+                for i in range(tc_num):
+                    output_ele = {}
+                    output_ele["output"] = {}
+                    output_ele["input"] = data["test_case"][i]["input"]
+                    if output_data[i]["result"] in (-1, 0):
+                        output_ele["output"]["err"] = None
+                        output_ele["output"]["data"] = output_data[i]["output"]
+
+                    else:
+                        err_code = output_data[i]["result"]
+                        err_type = ["CPU Time Exceeded", "Time Limit Exceeded", "Memory Limit Exceeded", "Runtime Error"]
+                        output_ele["output"]["err"] = err_type[err_code]
+                        output_ele["output"]["data"] = None
+
+                    outputs.append(output_ele)
+
+                cache.hset("run", run_id, json.dumps(outputs))
+
+            # At this point, the judgment is over, try to process the remaining tasks in the task queue
+            process_pending_task_run()
 
     def update_problem_status_rejudge(self):
         result = str(self.submission.result)

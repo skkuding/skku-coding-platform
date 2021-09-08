@@ -1,6 +1,4 @@
 import ipaddress
-import logging
-import uuid
 import json
 
 from drf_yasg.utils import swagger_auto_schema
@@ -14,14 +12,13 @@ from options.options import SysOptions
 from problem.models import Problem, ProblemRuleType
 from utils.api import APIView, validate_serializer
 from utils.cache import cache
+from utils.shortcuts import rand_str
 from utils.captcha import Captcha
 from utils.throttling import TokenBucket
 from .models import Submission
 from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
                           ShareSubmissionSerializer)
 from .serializers import SubmissionSafeModelSerializer, SubmissionListSerializer
-
-logger = logging.getLogger(__name__)
 
 
 def throttling(request):
@@ -62,7 +59,7 @@ class CodeRunAPI(APIView):
         run_data["contest_id"] = data.get("contest_id")
         run_data["new_testcase"] = data.get("new_testcase")
         run_data["problem_id"] = problem.id
-        run_id = uuid.uuid4().hex
+        run_id = rand_str()
         run_data["run_id"] = run_id
 
         coderun_task.send(run_data)
@@ -79,9 +76,6 @@ class CodeRunAPI(APIView):
         res = json.loads(res)
         cache.hdel("run", run_id)
 
-        tmp = cache.hget("run", run_id)
-        if tmp:
-            logger.warning("run data is not deleted.")
         return self.success(res)
 
 
@@ -132,7 +126,8 @@ class SubmissionAPI(APIView):
                                                ip=request.session["ip"],
                                                contest_id=data.get("contest_id"))
         # use this for debug
-        judge_task.send(submission.id, problem.id)
+        temp_data = {"submission_id": submission.id, "problem_id": problem.id}
+        judge_task.send(temp_data)
         if hide_id:
             return self.success()
         else:
