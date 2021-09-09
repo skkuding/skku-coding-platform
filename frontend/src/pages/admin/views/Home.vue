@@ -14,19 +14,6 @@
         >
           <b-icon icon="fonts"></b-icon>
         </b-button>
-        <b-button
-          variant="outline-secondary"
-          size="sm"
-          v-b-tooltip.hover
-          title="FullScrean"
-        >
-          <screen-full
-            :width="14"
-            :height="14"
-            class="screen-full"
-            style="margin: 0;"
-          />
-        </b-button>
         <b-dropdown
           variant="outline-secondary"
           size="sm"
@@ -68,7 +55,6 @@
 import { types } from '@/store'
 import { mapGetters } from 'vuex'
 import SideMenu from '../components/SideMenu.vue'
-import ScreenFull from '@admin/components/ScreenFull.vue'
 import KatexEditor from '@admin/components/KatexEditor.vue'
 import api from '../api'
 
@@ -76,8 +62,7 @@ export default {
   name: 'App',
   components: {
     SideMenu,
-    KatexEditor,
-    ScreenFull
+    KatexEditor
   },
   async beforeRouteEnter (to, from, next) {
     const res = await api.getProfile()
@@ -145,9 +130,6 @@ export default {
     line-height: 50px;
     height: 50px;
     background: #F9FAFC;
-    .screen-full {
-      margin-right: 8px;
-    }
   }
 
   .content-app {
