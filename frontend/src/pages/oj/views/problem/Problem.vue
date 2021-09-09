@@ -537,7 +537,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @font-face {
     font-family: 'Manrope';
     src: url("../../../../fonts/Manrope-Bold.ttf");
@@ -617,11 +617,11 @@ export default {
       min-width: 125px;
     }
 
-    /deep/ .dropdown button{
+    .dropdown::v-deep button{
       background: #45576C;
     }
 
-    /deep/ .dropdown ul {
+    .dropdown::v-deep ul {
       background: #45576C;
 
       li a {

@@ -144,7 +144,7 @@ export default {
     width:140px;
     margin-left:34px;
   }
-  /deep/ .modal-md {
+  ::v-deep .modal-md {
     .modal-dialog {
       .modal-content {
         position:absolute;
