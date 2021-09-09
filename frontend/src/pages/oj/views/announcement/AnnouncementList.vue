@@ -40,7 +40,6 @@ export default {
     return {
       perPage: 10,
       currentPage: 1,
-      limit: 10,
       total: 10,
       btnLoading: false,
       announcements: [],
@@ -85,7 +84,7 @@ export default {
     async getAnnouncementList (page = 1) {
       this.btnLoading = true
       try {
-        const res = await api.getAnnouncementList((page - 1) * this.limit, this.limit)
+        const res = await api.getAnnouncementList((page - 1) * this.limit, 250)
         this.btnLoading = false
         this.announcements = res.data.data.results
         this.total = res.data.data.total
