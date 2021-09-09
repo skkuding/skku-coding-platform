@@ -230,7 +230,7 @@ export default {
     }
   }
 
-  /deep/ .table {
+  ::v-deep .table {
     tr {
       outline: none;
       font-size: 16px;

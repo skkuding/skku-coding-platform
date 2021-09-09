@@ -425,7 +425,7 @@ export default {
     }
   }
 
-  /deep/ .modal {
+  ::v-deep .modal {
     .modal-dialog {
       min-width: 1200px;
 
@@ -533,11 +533,11 @@ export default {
           }
 
           // occasional code indent css fix
-          /deep/ #submission-source-code .CodeMirror-sizer {
+          #submission-source-code::v-deep .CodeMirror-sizer {
             margin-left: 38px !important;
           }
 
-          /deep/ #submission-source-code .CodeMirror-gutter-wrapper {
+          #submission-source-code::v-deep .CodeMirror-gutter-wrapper {
             left: -38px !important;
           }
 
@@ -571,7 +571,7 @@ export default {
     }
   }
 
-  /deep/ .pagination {
+  ::v-deep .pagination {
     margin-left: 25px;
 
     .page-link {

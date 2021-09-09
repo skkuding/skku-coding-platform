@@ -116,7 +116,7 @@ export default {
       text-decoration-color: #8dc63f;
     }
   }
-  /deep/ .modal-med {
+  ::v-deep .modal-med {
     .modal-dialog {
       .modal-content {
         position:absolute;
@@ -134,7 +134,7 @@ export default {
       }
     }
   }
-  /deep/ .modal-big {
+  ::v-deep .modal-big {
     .modal-dialog {
       .modal-content {
         min-width:800px;
