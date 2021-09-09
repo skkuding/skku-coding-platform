@@ -3,6 +3,7 @@
     <div class="top-bar mb-2">
       <h2 class="title">Lectures</h2>
     </div>
+    <div class="no-lecture" v-if="!lectureList.length">No Lecture</div>
     <div class="lecture-card-list">
       <b-card
         v-for="(lecture,index) in lectureList"
@@ -23,6 +24,7 @@
               >
                 <b-icon icon="bookmark-fill"/>
               </b-button>
+              <!-- 북마크 기능 구현되면 변경 -->
               <!-- <b-button v-else><b-icon icon="heart"/></b-button> -->
             </div>
             <div class="lecture-card__info">
@@ -59,7 +61,6 @@ import api from '@oj/api'
 export default {
   name: 'LectureList',
   components: {
-    // Split into many components
   },
   data () {
     return {
@@ -124,6 +125,9 @@ export default {
     margin-top: 40px;
     margin-left: 68px;
   }
+  .no-lecture {
+    text-align: center;
+  }
   .lecture-card-list {
     display: flex;
     flex-wrap: wrap;
@@ -137,7 +141,6 @@ export default {
       color: #7C7A7B;
     }
     &__cardcolor {
-      /* background-color: #9EC1CF; */
       height: 150px;
       border-radius: 8px 8px 0 0;
     }

@@ -5,7 +5,16 @@
       <div class="top-bar mb-4">
         <h2 class="title">Lecture Assignments</h2>
       </div>
-      <div class="table">
+      <div
+        v-if="!assignments.length"
+        class="no-assignment"
+      >
+        <p>No Lecture Assignment</p>
+      </div>
+      <div
+        class="table"
+        v-else
+      >
         <b-table
           hover
           :items="assignments"
@@ -48,7 +57,6 @@
 import Sidemenu from '@oj/components/Sidemenu.vue'
 import { ASSIGNMENT_STATUS_REVERSE, ASSIGNMENT_STATUS, ASSIGNMENT_SUBMISSION_STATUS, ASSIGNMENT_SUBMISSION_STATUS_REVERSE } from '@/utils/constants'
 import api from '@oj/api'
-// import utils from '@/utils/utils'
 import moment from 'moment'
 
 export default {
@@ -82,11 +90,11 @@ export default {
       ],
       assignments: [],
       assignment: '',
+      submission: '',
       ASSIGNMENT_STATUS: ASSIGNMENT_STATUS,
       ASSIGNMENT_STATUS_REVERSE: ASSIGNMENT_STATUS_REVERSE,
       ASSIGNMENT_SUBMISSION_STATUS: ASSIGNMENT_SUBMISSION_STATUS,
-      ASSIGNMENT_SUBMISSION_STATUS_REVERSE: ASSIGNMENT_SUBMISSION_STATUS_REVERSE,
-      submission: ''
+      ASSIGNMENT_SUBMISSION_STATUS_REVERSE: ASSIGNMENT_SUBMISSION_STATUS_REVERSE
     }
   },
   async mounted () {
@@ -101,13 +109,19 @@ export default {
     async goAssignment (assignment) {
       this.assignment = assignment
       this.listVisible = false
-      await this.$router.push({ name: 'lecture-assignment-detail', params: { assignmentID: assignment.id } })
+      await this.$router.push({
+        name: 'lecture-assignment-detail',
+        params: { assignmentID: assignment.id }
+      })
     },
     async getLectureAssignmentList (page) {
       try {
         const res = await api.getLectureAssignmentList(this.courseID, (page - 1) * this.perPage, 250)
-        this.assignments = res.data.data.results
+        const assignments = res.data.data.results
         this.total = res.data.data.total
+        const underwayAssignment = assignments.filter(assignment => assignment.status === '0')
+        const notUnderwayAssignment = assignments.filter(assignment => assignment.status !== '0')
+        this.assignments = underwayAssignment.concat(notUnderwayAssignment)
       } catch (err) {
       }
     },
@@ -131,11 +145,11 @@ export default {
     submissionStatus (accept, total) {
       var _accept = accept * 1
       var _total = total * 1
-      if (_accept === 0) { // 빨강
+      if (_accept === 0) {
         return '1'
-      } else if (_accept === _total) { // 연두
+      } else if (_accept === _total) {
         return '0'
-      } else { // 주황
+      } else {
         return '-1'
       }
     }
@@ -156,6 +170,11 @@ export default {
   .top-bar {
     margin-top: 40px;
     margin-left: 68px;
+  }
+  .no-assignment {
+    text-align: center;
+    font-size: 16px;
+    margin: 10px 0;
   }
   .lecture-assignment-card{
     margin: 0 auto;
