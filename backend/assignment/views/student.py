@@ -68,5 +68,5 @@ class AssignmentAPI(APIView):
             except Assignment.DoesNotExist:
                 return self.error("Assignment does not exists")
 
-        assignments = Assignment.objects.filter(course_id=course_id)
+        assignments = Assignment.objects.filter(course_id=course_id, visible=True)
         return self.success(self.paginate_data(request, assignments, AssignmentSerializer, context))
