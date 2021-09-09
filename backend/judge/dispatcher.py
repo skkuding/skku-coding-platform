@@ -262,8 +262,8 @@ class JudgeDispatcher(DispatcherBase):
 
                     else:
                         err_code = output_data[i]["result"]
-                        err_type = ["CPU Time Exceeded", "Time Limit Exceeded", "Memory Limit Exceeded", "Runtime Error"]
-                        output_ele["output"]["err"] = err_type[err_code-1]
+                        err_type = ["1": "CPU Time Exceeded", "2": "Time Limit Exceeded", "3": "Memory Limit Exceeded", "4": "Runtime Error"]
+                        output_ele["output"]["err"] = err_type[err_code]
                         output_ele["output"]["data"] = None
 
                     outputs.append(output_ele)
