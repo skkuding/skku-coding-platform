@@ -239,10 +239,10 @@ export default {
   getLectureList (data) {
     return ajax('lecture/course', 'get')
   },
-  getLecture (lectureID) {
+  getLecture (courseID) {
     return ajax('lecture/course', 'get', {
       params: {
-        id: lectureID
+        course_id: courseID
       }
     })
   },
