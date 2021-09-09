@@ -61,7 +61,7 @@ class CodeRunAPI(APIView):
         run_data["problem_id"] = problem.id
         run_id = rand_str()
         run_data["run_id"] = run_id
-
+        cache.hset("run", run_id, json.dumps("Judging"))
         coderun_task.send(run_data)
         return self.success(run_id)
 

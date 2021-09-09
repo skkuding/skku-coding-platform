@@ -495,7 +495,7 @@ export default {
       }
     },
     saveRunResult (data) {
-      if (data.data.err === 'CompileError') {
+      if (data.data.err != null) {
         this.runResults = [{ input: 'Error Message: \n' + data.data.data, output: '' }]
       } else {
         this.runResults = []
@@ -511,7 +511,7 @@ export default {
     checkRunState (runID) {
       const checkStatus = async () => {
         const res = await api.getRunResult(runID)
-        if (res.length !== 0 && res.error !== null) {
+        if (res.length !== 0 && res.error !== null && res.data.data !== 'Judging') {
           this.saveRunResult(res.data)
           clearTimeout(this.runRefresh)
         } else {

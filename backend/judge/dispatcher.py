@@ -102,8 +102,10 @@ class SPJCompiler(DispatcherBase):
 class JudgeDispatcher(DispatcherBase):
     def __init__(self, data):
         super().__init__()
-        if data["submission_id"]:
-            self.submission = Submission.objects.get(id=data["submission_id"])
+        self.submission_id = data.get("submission_id")
+        problem_id = data.get("problem_id")
+        if self.submission_id:
+            self.submission = Submission.objects.get(id=self.submission_id)
             self.contest_id = self.submission.contest_id
             self.last_result = self.submission.result if self.submission.info else None
             self.language = self.submission.language
@@ -112,7 +114,6 @@ class JudgeDispatcher(DispatcherBase):
             self.contest_id = data.get("contest_id")
             self.language = self.run_data["language"]
 
-        problem_id = data["problem_id"]
         if self.contest_id:
             self.problem = Problem.objects.select_related("contest").get(id=problem_id, contest_id=self.contest_id)
             self.contest = self.problem.contest
@@ -152,7 +153,7 @@ class JudgeDispatcher(DispatcherBase):
         if self.language in self.problem.template:
             template = parse_problem_template(self.problem.template[self.language])
             code = f"{template['prepend']}\n{self.submission.code}\n{template['append']}"
-        elif self.data.submission_id:
+        elif self.submission_id:
             code = self.submission.code
         else:
             code = self.run_data["code"]
@@ -171,7 +172,7 @@ class JudgeDispatcher(DispatcherBase):
             "io_mode": self.problem.io_mode
         }
 
-        if not self.data.submission_id:
+        if not self.submission_id:
             data["test_case_id"] = None
             data["output"] = True
             data["test_case"] = []
@@ -179,7 +180,7 @@ class JudgeDispatcher(DispatcherBase):
                 data["test_case"].append({"input": testcases, "output": ""})
             run_id = self.run_data["run_id"]
 
-        if self.data.submission_id:
+        if self.submission_id:
             with ChooseJudgeServer() as server:
                 if not server:
                     data = {"submission_id": self.submission.id, "problem_id": self.problem.id}
@@ -234,16 +235,14 @@ class JudgeDispatcher(DispatcherBase):
         else:
             with ChooseJudgeServer() as server:
                 if not server:
-                    cache.lpush(CacheKey.running_waiting_queue, json.dumps(self.run_data))
+                    cache.lpush(CacheKey.run_waiting_queue, json.dumps(self.run_data))
                     return
-
                 resp = self._request(urljoin(server.service_url, "/judge"), data=data)
 
             outputs = []
 
             if not resp:  # System error
-                outputs["err"] = "System Error"
-                outputs["data"] = None
+                outputs.append({"err": "System Error", "data": "System Error"})
                 cache.hset("run", run_id, json.dumps(outputs))
 
             elif resp["err"]:  # Compile error
@@ -264,7 +263,7 @@ class JudgeDispatcher(DispatcherBase):
                     else:
                         err_code = output_data[i]["result"]
                         err_type = ["CPU Time Exceeded", "Time Limit Exceeded", "Memory Limit Exceeded", "Runtime Error"]
-                        output_ele["output"]["err"] = err_type[err_code]
+                        output_ele["output"]["err"] = err_type[err_code-1]
                         output_ele["output"]["data"] = None
 
                     outputs.append(output_ele)
