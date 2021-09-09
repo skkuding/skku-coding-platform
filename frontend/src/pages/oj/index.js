@@ -3,10 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from '@/store'
 import VueClipboard from 'vue-clipboard2'
-import VueAnalytics from 'vue-analytics'
 import VueSimpleAlert from 'vue-simple-alert'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
-import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
@@ -39,10 +37,6 @@ Vue.use(highlight)
 Vue.use(VueKatex)
 Vue.use(VueSimpleAlert)
 Vue.use(VueDOMPurifyHTML)
-Vue.use(VueAnalytics, {
-  id: GOOGLE_ANALYTICS_ID,
-  router
-})
 
 Vue.config.devtools = process.env.NODE_ENV !== 'production'
 
