@@ -69,7 +69,7 @@ class CodeRunAPI(APIView):
     def get(self, request):
         run_id = request.GET.get("run_id")
         if not cache.hexists("run", run_id):
-            return self.error("redis hash field error - such field doesn't exist")
+            return self.error("run_id does not exist")
 
         res = cache.hget("run", run_id)
         res = res.decode("utf-8")
@@ -126,8 +126,8 @@ class SubmissionAPI(APIView):
                                                ip=request.session["ip"],
                                                contest_id=data.get("contest_id"))
         # use this for debug
-        temp_data = {"submission_id": submission.id, "problem_id": problem.id}
-        judge_task.send(temp_data)
+        submission_info = {"submission_id": submission.id, "problem_id": problem.id}
+        judge_task.send(submission_info)
         if hide_id:
             return self.success()
         else:

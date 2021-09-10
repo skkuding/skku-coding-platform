@@ -501,7 +501,7 @@ export default {
         this.runResults = []
         for (const runResult of data.data) {
           if (runResult.output.err) {
-            this.runResults.push({ input: runResult.input, output: runResult.output.err })
+            this.runResults.push({ input: runResult.input, output: JUDGE_STATUS[runResult.output.err].name })
           } else {
             this.runResults.push({ input: runResult.input, output: runResult.output.data })
           }

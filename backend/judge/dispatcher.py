@@ -103,7 +103,6 @@ class JudgeDispatcher(DispatcherBase):
     def __init__(self, data):
         super().__init__()
         self.submission_id = data.get("submission_id")
-        problem_id = data.get("problem_id")
         if self.submission_id:
             self.submission = Submission.objects.get(id=self.submission_id)
             self.contest_id = self.submission.contest_id
@@ -114,6 +113,7 @@ class JudgeDispatcher(DispatcherBase):
             self.contest_id = data.get("contest_id")
             self.language = self.run_data["language"]
 
+        problem_id = data.get("problem_id")
         if self.contest_id:
             self.problem = Problem.objects.select_related("contest").get(id=problem_id, contest_id=self.contest_id)
             self.contest = self.problem.contest
@@ -172,14 +172,6 @@ class JudgeDispatcher(DispatcherBase):
             "io_mode": self.problem.io_mode
         }
 
-        if not self.submission_id:
-            data["test_case_id"] = None
-            data["output"] = True
-            data["test_case"] = []
-            for testcases in self.run_data["new_testcase"]:
-                data["test_case"].append({"input": testcases, "output": ""})
-            run_id = self.run_data["run_id"]
-
         if self.submission_id:
             with ChooseJudgeServer() as server:
                 if not server:
@@ -233,42 +225,43 @@ class JudgeDispatcher(DispatcherBase):
             # At this point, the judgment is over, try to process the remaining tasks in the task queue
             process_pending_task()
         else:
+            data["test_case_id"] = None
+            data["output"] = True
+            data["test_case"] = []
+            for testcases in self.run_data["new_testcase"]:
+                data["test_case"].append({"input": testcases, "output": ""})
+            run_id = self.run_data["run_id"]
+
             with ChooseJudgeServer() as server:
                 if not server:
                     cache.lpush(CacheKey.run_waiting_queue, json.dumps(self.run_data))
                     return
                 resp = self._request(urljoin(server.service_url, "/judge"), data=data)
 
-            outputs = []
-
             if not resp:  # System error
-                outputs.append({"err": "System Error", "data": "System Error"})
-                cache.hset("run", run_id, json.dumps(outputs))
+                cache.hset("run", run_id, json.dumps([{"err": "System Error", "data": "System Error"}]))
 
             elif resp["err"]:  # Compile error
                 cache.hset("run", run_id, json.dumps(resp))
 
             else:  # Other errors or normal operation
                 resp["data"].sort(key=lambda x: int(x["test_case"]))
-                output_data = resp["data"]
-                tc_num = len(output_data)
-                for i in range(tc_num):
-                    output_ele = {}
-                    output_ele["output"] = {}
-                    output_ele["input"] = data["test_case"][i]["input"]
-                    if output_data[i]["result"] in (-1, 0):
-                        output_ele["output"]["err"] = None
-                        output_ele["output"]["data"] = output_data[i]["output"]
-
+                resp_data = resp["data"]
+                testcase_num = len(resp_data)
+                run_result = []
+                for i in range(testcase_num):
+                    result = {}
+                    result["output"] = {}
+                    result["input"] = data["test_case"][i]["input"]
+                    if resp_data[i]["result"] in (-1, 0):
+                        result["output"]["err"] = None
+                        result["output"]["data"] = resp_data[i]["output"]
                     else:
-                        err_code = output_data[i]["result"]
-                        err_type = ["1": "CPU Time Exceeded", "2": "Time Limit Exceeded", "3": "Memory Limit Exceeded", "4": "Runtime Error"]
-                        output_ele["output"]["err"] = err_type[err_code]
-                        output_ele["output"]["data"] = None
-
-                    outputs.append(output_ele)
-
-                cache.hset("run", run_id, json.dumps(outputs))
+                        err_code = resp_data[i]["result"]
+                        result["output"]["err"] = err_code
+                        result["output"]["data"] = None
+                    run_result.append(result)
+                cache.hset("run", run_id, json.dumps(run_result))
 
             # At this point, the judgment is over, try to process the remaining tasks in the task queue
             process_pending_task_run()
