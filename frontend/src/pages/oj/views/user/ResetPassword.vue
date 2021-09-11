@@ -1,52 +1,52 @@
 <template>
   <div>
     <b-modal ref="modal" centered hide-footer modal-class="modal-md">
-    <template>
-      <div class="font-bold">
-      <div class="logo-title font-bold">
-          <h4>Password Reset</h4>
-      </div>
-        <b-form
-          ref="formResetPassword"
-          :model="formResetPassword"
-          @keydown.enter.native="resetPassword"
-        >
-        <b-container fluid="xl">
-          <b-row class="mb-4">
-            <b-form-input
-              v-model="formResetPassword.password"
-              type="password"
-              placeholder="Password"
-              @keydown.enter.native="resetPassword"
-            >
-            </b-form-input>
-          </b-row>
-          <b-row class="mb-4">
-            <b-form-input
-              v-model="formResetPassword.passwordAgain"
-              type="password"
-              placeholder="Password Again"
-              @keydown.enter.native="resetPassword"
-            >
-            </b-form-input>
-          </b-row>
-          <b-row class="mb-4">
-              <div class="oj-captcha">
-                <div class="oj-captcha-code">
-                  <b-form-input class="captcha-input" v-model="formResetPassword.captcha" placeholder="Captcha" @keydown.enter.native="resetPassword"></b-form-input>
-                </div>
-                <div class="oj-captcha-img">
-                  <img class="captcha-img" :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
-                </div>
-              </div>
+      <template>
+        <div class="font-bold">
+        <div class="logo-title font-bold">
+            <h4>Password Reset</h4>
+        </div>
+          <b-form
+            ref="formResetPassword"
+            :model="formResetPassword"
+            @keydown.enter.native="resetPassword"
+          >
+          <b-container fluid="xl">
+            <b-row class="mb-4">
+              <b-form-input
+                v-model="formResetPassword.password"
+                type="password"
+                placeholder="Password"
+                @keydown.enter.native="resetPassword"
+              >
+              </b-form-input>
             </b-row>
-          </b-container>
-        </b-form>
-        <b-button class="sign-btn" variant="primary" @click="resetPassword" style="margin-left:32px;">
-          <b-spinner v-if="btnLoading" small></b-spinner> Reset Password
-        </b-button>
-      </div>
-    </template>
+            <b-row class="mb-4">
+              <b-form-input
+                v-model="formResetPassword.passwordAgain"
+                type="password"
+                placeholder="Password Again"
+                @keydown.enter.native="resetPassword"
+              >
+              </b-form-input>
+            </b-row>
+            <b-row class="mb-4">
+                <div class="oj-captcha">
+                  <div class="oj-captcha-code">
+                    <b-form-input class="captcha-input" v-model="formResetPassword.captcha" placeholder="Captcha" @keydown.enter.native="resetPassword"></b-form-input>
+                  </div>
+                  <div class="oj-captcha-img">
+                    <img class="captcha-img" :src="captchaSrc" @click="getCaptchaSrc" v-b-tooltip.hover title="Click to refresh"/>
+                  </div>
+                </div>
+              </b-row>
+            </b-container>
+          </b-form>
+          <b-button class="sign-btn" variant="primary" @click="resetPassword" style="margin-left:32px;">
+            <b-spinner v-if="btnLoading" small></b-spinner> Reset Password
+          </b-button>
+        </div>
+      </template>
     </b-modal>
   </div>
 </template>

@@ -100,6 +100,11 @@ export default {
       data
     })
   },
+  sendEmailAuth (data) {
+    return ajax('send_email_auth/', 'post', {
+      data
+    })
+  },
   changePassword (data) {
     return ajax('change_password/', 'post', {
       data
