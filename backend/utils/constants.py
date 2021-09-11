@@ -25,6 +25,8 @@ class CacheKey:
     waiting_queue = "waiting_queue"
     contest_rank_cache = "contest_rank_cache"
     website_config = "website_config"
+    auth_token_cache = "email_auth/token"
+    auth_email_cache = "email_auth/email"
 
 
 class Difficulty(Choices):
