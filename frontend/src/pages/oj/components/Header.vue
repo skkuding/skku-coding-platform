@@ -26,7 +26,7 @@
             <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
           </template>
           <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
-          <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
+          <b-dropdown-item @click="handleBtnClick('SendEmailAuth')">Register</b-dropdown-item>
         </b-nav-item-dropdown>
 
         <b-nav-item-dropdown v-else no-caret right>
@@ -58,6 +58,7 @@ import login from '@oj/views/user/Login'
 import profileSetting from '@oj/views/user/ProfileSetting'
 import ApplyResetPassword from '@oj/views/user/ApplyResetPassword'
 import DeleteAccount from '@oj/views/user/DeleteAccount'
+import SendEmailAuth from '@oj/views/user/SendEmailAuth'
 
 export default {
   components: {
@@ -65,7 +66,8 @@ export default {
     register,
     profileSetting,
     ApplyResetPassword,
-    DeleteAccount
+    DeleteAccount,
+    SendEmailAuth
   },
   mounted () {
     this.getProfile()

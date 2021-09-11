@@ -6,6 +6,7 @@ import {
   ContestList,
   ApplyResetPassword,
   EmailAuth,
+  Register,
   Home,
   Logout,
   NotFound,
@@ -57,6 +58,12 @@ export default [
     path: '/email-auth/:token',
     meta: { title: 'Email Authentication' },
     component: EmailAuth
+  },
+  {
+    name: 'register',
+    path: '/register/:token',
+    meta: { title: 'Register' },
+    component: Register
   },
   {
     name: 'problem-list',
