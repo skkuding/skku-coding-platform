@@ -9,6 +9,8 @@ from django.utils.timezone import now
 
 from utils.api.tests import APIClient, APITestCase
 from utils.shortcuts import rand_str
+from utils.cache import cache
+from utils.constants import CacheKey
 from options.options import SysOptions
 
 from .models import AdminType, ProblemPermission, User
@@ -127,52 +129,59 @@ class CaptchaTest(APITestCase):
         return captcha
 
 
-class UserRegisterAPITest(CaptchaTest):
+class TokenTest(APITestCase):
+    def _set_token_and_email(self, email):
+        self.email_auth_token = rand_str()
+        self.token_cache_key = f"{CacheKey.auth_token_cache}:{self.email_auth_token}"
+        self.email_cache_key = f"{CacheKey.auth_email_cache}:{self.email_auth_token}"
+        cache.set(self.token_cache_key, self.email_auth_token, 1200)
+        cache.set(self.email_cache_key, email, 1200)
+        return self.email_auth_token
+
+    def _delete_token_and_email(self):
+        cache.delete(self.token_cache_key)
+        cache.delete(self.email_cache_key)
+
+
+class UserRegisterAPITest(TokenTest):
     def setUp(self):
         self.client = APIClient()
         self.register_url = self.reverse("user_register_api")
-        self.captcha = rand_str(4)
 
         self.data = {"username": "2020111111", "password": "testuserpassword",
                      "real_name": "real_name", "email": "test@skku.edu",
                      "major": "Computer Science (컴퓨터공학과)",
-                     "captcha": self._set_captcha(self.client.session)}
+                     "token": self._set_token_and_email("test@skku.edu")}
 
     def test_website_config_limit(self):
         SysOptions.allow_register = False
         resp = self.client.post(self.register_url, data=self.data)
         self.assertDictEqual(resp.data, {"error": "error", "data": "Register function has been disabled by admin"})
 
-    def test_invalid_captcha(self):
-        self.data["captcha"] = "****"
-        response = self.client.post(self.register_url, data=self.data)
-        self.assertDictEqual(response.data, {"error": "error", "data": "Invalid captcha"})
-
-        self.data.pop("captcha")
-        response = self.client.post(self.register_url, data=self.data)
-        self.assertTrue(response.data["error"] is not None)
-
-    @mock.patch("account.views.oj.send_email_async.send")
-    def test_register_with_correct_info(self, mock):
+    def test_register_with_correct_info(self):
         response = self.client.post(self.register_url, data=self.data)
         self.assertDictEqual(response.data, {"error": None, "data": "Succeeded"})
-        mock.assert_called()
 
     def test_username_already_exists(self):
         self.test_register_with_correct_info()
 
-        self.data["captcha"] = self._set_captcha(self.client.session)
         self.data["email"] = "test1@skku.edu"
+        self.data["token"] = self._set_token_and_email(self.data["email"])
         response = self.client.post(self.register_url, data=self.data)
+        self._delete_token_and_email()
         self.assertDictEqual(response.data, {"error": "error", "data": "Username already exists"})
 
-    def test_email_already_exists(self):
-        self.test_register_with_correct_info()
+    def test_register_with_invalid_token(self):
+        self.data["token"] = "abcde"
+        resp = self.client.post(self.register_url, data=self.data)
+        self._delete_token_and_email()
+        self.assertDictEqual(resp.data, {"error": "error", "data": "Token does not exist"})
 
-        self.data["captcha"] = self._set_captcha(self.client.session)
-        self.data["username"] = "2020111222"
-        response = self.client.post(self.register_url, data=self.data)
-        self.assertDictEqual(response.data, {"error": "error", "data": "Email already exists"})
+    def test_register_with_invalid_email(self):
+        self.data["email"] = "invalid@skku.edu"
+        resp = self.client.post(self.register_url, data=self.data)
+        self._delete_token_and_email()
+        self.assertDictEqual(resp.data, {"error": "error", "data": "It is not authenticated email"})
 
 
 class UserProfileAPITest(APITestCase):
