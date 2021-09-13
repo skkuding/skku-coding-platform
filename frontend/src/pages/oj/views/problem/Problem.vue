@@ -93,27 +93,28 @@
           <b-form-input v-model="captchaCode" id="captcha-code"/>
         </b-nav-item>
         <b-nav-item>
-          <b-button v-b-modal.modal-user-testcase variant = "primary">Add Testcase </b-button>
-          <b-modal id="modal-user-testcase" ref="modal" title="Add Testcase" size="lg"
-                   @show="tempStoreUserTestcase" @ok="saveUserTestcase" @hide="beforeHideUserTestcaseModal" >
-            <b-card>
+          <b-button v-b-modal.modal-user-testcase variant = "primary">Manage Testcase </b-button>
+          <b-modal id="modal-user-testcase" ref="modal" title="Manage Testcase" size="lg" scrollable
+                   @show="tempStoreUserTestcase" @ok="saveUserTestcase" @hide="beforeHideUserTestcaseModal"
+          >
+            <b-card style="box-shadow: none; max-width:650px;">
               <b-card-title>
-                Add Testcase
-                <b-button class = "btn float-right" @click="addTestcase" variant="primary">
+                Testcase Input
+                <b-button class = "btn float-right" @click="addTestcase" size="sm" variant="primary">
                   Add
                 </b-button>
               </b-card-title>
               <hr>
               <b-form-group disabled v-for="(sample, index) in problem.samples" :key="index">
                 <b-input-group>
-                  <b-form-input type="text" class="form-control" v-model="sample.input">
-                  </b-form-input>
+                  <b-form-textarea type="text" style="white-space: pre;" v-model="sample.input" max-rows="10" no-resize>
+                  </b-form-textarea>
                 </b-input-group>
               </b-form-group>
               <b-form-group v-for="(userTestcase,index) in userTestcases" :key="index" invalid-feedback="Testcase cannot be empty">
                 <b-input-group>
-                  <b-form-input type="text" class="form-control" v-model="userTestcase.input">
-                  </b-form-input>
+                  <b-form-textarea type="text" style="white-space: pre;" v-model="userTestcase.input" max-rows="10" no-resize>
+                  </b-form-textarea>
                   <b-input-group-append>
                     <b-button @click="removeTestcase(index)">
                       <b-icon icon="dash-circle-fill" />
@@ -787,6 +788,7 @@ export default {
         border-top: 1px solid #3B4F56;
         display: flex;
         flex-flow: column;
+        overflow-y: scroll;
 
         * {
           margin: 0;
@@ -813,12 +815,13 @@ export default {
 
           .io-content-cell {
             padding: 10px 15px;
-
+            overflow: auto;
             .sample-io {
               min-height: 40px;
               border-radius: 5px;
               background: #24272D;
               color: white;
+              white-space: pre;
             }
           }
         }
