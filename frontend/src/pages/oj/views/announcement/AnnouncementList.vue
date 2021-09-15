@@ -81,10 +81,10 @@ export default {
         await this.getAnnouncementList()
       }
     },
-    async getAnnouncementList (page = 1) {
+    async getAnnouncementList () {
       this.btnLoading = true
       try {
-        const res = await api.getAnnouncementList((page - 1) * this.limit, 250)
+        const res = await api.getAnnouncementList(0, 250)
         this.btnLoading = false
         this.announcements = res.data.data.results
         this.total = res.data.data.total
