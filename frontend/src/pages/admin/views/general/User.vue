@@ -513,7 +513,7 @@ export default {
           })
           const delta = results.data.length - data.length
           if (delta > 0) {
-            this.$warning(delta + ' users have been filtered due to empty value')
+            this.$error(delta + ' users have been filtered due to empty value')
           }
           this.uploadUsersCurrentPage = 1
           this.uploadUsers = data

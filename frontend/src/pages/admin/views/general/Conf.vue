@@ -256,7 +256,7 @@ export default {
         this.smtp = resSMTP.data.data
       } else {
         this.init = true
-        this.$warning('Please setup SMTP config at first')
+        this.$error('Please setup SMTP config at first')
       }
       this.websiteConfig = resWeb.data.data
     } catch (err) {
