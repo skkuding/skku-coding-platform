@@ -113,18 +113,18 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   #codemirror {
     width: 100%;
     height: 100%;
   }
-  #codemirror::v-deep * {
+  .CodeMirror * {
     font-family: Menlo, Monaco, Consolas,"Courier New", monospace
   }
-  #codemirror::v-deep .CodeMirror {
+  .CodeMirror {
     height: 100% !important;
   }
-  #codemirror::v-deep .CodeMirror-scroll {
+  .CodeMirror-scroll {
     min-height: 300px;
     max-height: 100%;
   }
