@@ -270,7 +270,7 @@ export default {
       if (id !== null) {
         if (this.contestID) {
           this.currentAnnouncementId = id
-          this.announcementDialogTitle = 'Edit Announcement'
+          this.announcementDialogTitle = 'Edit Clarification'
           this.contestAnnouncementList.find(item => {
             if (item.id === this.currentAnnouncementId) {
               this.announcement.title = item.title
