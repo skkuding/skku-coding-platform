@@ -16,7 +16,6 @@ from drf_yasg import openapi
 from requests.exceptions import RequestException
 from rest_framework.parsers import MultiPartParser, JSONParser
 
-from account.decorators import admin_role_required, super_admin_required
 from account.models import User
 from assignment.models import Assignment
 from assignment.serializers import AssignmentCourseSerializer

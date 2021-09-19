@@ -1,7 +1,7 @@
 from utils.api import APIView, validate_serializer
+from utils.decorators import ensure_created_by, admin_role_required
 
 from account.models import User
-from account.decorators import ensure_created_by, admin_role_required
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration
