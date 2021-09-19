@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
 from ..views.student import AssignmentProblemAPI
 
 urlpatterns = [
-    url(r"^course/assignment/problem/?$", AssignmentProblemAPI.as_view(), name="assignment_problem_student_api"),
+    path("course/assignment/problem/", AssignmentProblemAPI.as_view(), name="assignment_problem_student_api"),
 ]
