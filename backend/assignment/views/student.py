@@ -1,5 +1,5 @@
 from utils.api import APIView
-from account.decorators import login_required
+from utils.decorators import login_required
 
 from course.models import Course, Registration
 
