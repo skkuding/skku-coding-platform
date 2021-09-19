@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import path
 
 from ..views.professor import CourseAPI, StudentManagementAPI
 
 urlpatterns = [
-    url(r"^course/?$", CourseAPI.as_view(), name="course_professor_api"),
-    url(r"^course/students/?$", StudentManagementAPI.as_view(), name="student_management_api")
+    path("course/", CourseAPI.as_view(), name="course_professor_api"),
+    path("course/students/", StudentManagementAPI.as_view(), name="student_management_api")
 ]
