@@ -1,5 +1,5 @@
 from utils.api import APIView
-from account.decorators import login_required
+from utils.decorators import login_required
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration

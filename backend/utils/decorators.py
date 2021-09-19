@@ -7,10 +7,9 @@ from problem.models import Problem
 from course.models import Registration
 from contest.models import Contest, ContestType, ContestStatus, ContestRuleType
 from .api import JSONResponse, APIError
-from .constants import CONTEST_PASSWORD_SESSION_KEY
+from .constants import CONTEST_PASSWORD_SESSION_KEY, AssignmentStatus
 from account.models import ProblemPermission
 
-from utils.constants import AssignmentStatus
 
 class BasePermissionDecorator(object):
     def __init__(self, func):

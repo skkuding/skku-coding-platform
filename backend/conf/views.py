@@ -16,7 +16,6 @@ from drf_yasg import openapi
 from requests.exceptions import RequestException
 from rest_framework.parsers import MultiPartParser, JSONParser
 
-from account.decorators import admin_role_required, super_admin_required
 from account.models import User
 from assignment.models import Assignment
 from assignment.serializers import AssignmentCourseSerializer
@@ -27,7 +26,7 @@ from options.options import SysOptions
 from problem.models import Problem
 from submission.models import Submission
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer
-from utils.decorators import super_admin_required
+from utils.decorators import super_admin_required, admin_role_required
 from utils.shortcuts import send_email, get_env
 from utils.xss_filter import XSSHtml
 from .models import JudgeServer

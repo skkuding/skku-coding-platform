@@ -1,7 +1,7 @@
 from utils.api import APIView
 from utils.api import validate_serializer
 from utils.constants import AssignmentStatus
-from account.decorators import ensure_created_by, admin_role_required
+from utils.decorators import ensure_created_by, admin_role_required
 
 from submission.models import Submission
 from assignment.models import Assignment
