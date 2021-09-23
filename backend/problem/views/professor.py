@@ -7,7 +7,7 @@ from submission.models import Submission
 from assignment.models import Assignment
 from .admin import ProblemBase
 
-from ..models import Problem, ProblemTag
+from ..models import Problem, ProblemRuleType, ProblemTag
 from ..serializers import (CreateAssignmentProblemSerializer, ProblemAdminSerializer, AddAssignmentProblemSerializer,
                            ProblemProfessorSerializer, EditAssignmentProblemSerializer)
 from drf_yasg.utils import swagger_auto_schema
@@ -55,7 +55,7 @@ class AssignmentProblemAPI(ProblemBase):
         except Assignment.DoesNotExist:
             return self.error("Assignment does not exist")
 
-        problems = Problem.objects.filter(assignment=assignment).order_by("-create_time")
+        problems = Problem.objects.filter(assignment=assignment).order_by("create_time")
         return self.success(self.paginate_data(request, problems, ProblemProfessorSerializer))
 
     @swagger_auto_schema(
@@ -72,6 +72,8 @@ class AssignmentProblemAPI(ProblemBase):
             ensure_created_by(assignment, request.user)
         except Assignment.DoesNotExist:
             return self.error("Assignment does not exist")
+        if assignment.status == AssignmentStatus.ASSIGNMENT_ENDED:
+            return self.error("Assignment deadline has expired")
 
         _id = data["_id"]
 
@@ -196,9 +198,14 @@ class AddAssignmentProblemAPI(APIView):
         if Problem.objects.filter(assignment=assignment, _id=data["display_id"]).exists():
             return self.error("Duplicate display id in this assignment")
 
+        total_score = 0
+        for item in problem.test_case_score:
+            total_score += item["score"]
+        problem.total_score = total_score
         tags = problem.tags.all()
         problem.pk = None
         problem.assignment = assignment
+        problem.rule_type = ProblemRuleType.ASSIGNMENT
         problem.is_public = True
         problem.visible = True
         problem._id = request.data["display_id"]

@@ -170,6 +170,9 @@ class AssignmentAPI(APIView):
         except Assignment.DoesNotExist:
             return self.error("Assignment does not exist")
 
+        if Submission.objects.filter(assignment_id=assignment_id).exists():
+            return self.error("Can't delete the assignment as it has submissions")
+
         assignment.delete()
         return self.success()
 
