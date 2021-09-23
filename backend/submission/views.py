@@ -372,7 +372,7 @@ class AssignmentSubmissionListAPI(APIView):
             submissions = submissions.filter(result=result)
 
         # students can only see their own submissions
-        if not request.user.is_assignment_admin:
+        if not request.user.is_assignment_admin(assignment):
             submissions = submissions.filter(user_id=request.user.id)
 
         # filter the test submissions submitted before contest start
