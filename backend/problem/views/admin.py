@@ -243,6 +243,8 @@ class TestCaseTextAPI(CSRFExemptAPIView, TestCaseZipProcessor):
 
         if problem.contest:
             ensure_created_by(problem.contest, request.user)
+        elif problem.assignment:
+            ensure_created_by(problem.assignment, request.user)
         else:
             ensure_created_by(problem, request.user)
 
