@@ -16,6 +16,9 @@ from problem.utils import parse_problem_template
 from submission.models import JudgeStatus, Submission
 from utils.cache import cache
 from utils.constants import CacheKey
+from django.utils.timezone import now
+import dateutil.parser
+from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -369,29 +372,21 @@ class JudgeDispatcher(DispatcherBase):
             if self.submission.result == JudgeStatus.ACCEPTED:
                 rank.accepted_number += 1
                 info["is_ac"] = True
-                info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds()
-                rank.total_time += info["ac_time"] + info["error_number"] * 20 * 60
-
-                if problem.accepted_number == 1:
-                    info["is_first_ac"] = True
-            elif self.submission.result != JudgeStatus.COMPILE_ERROR:
-                info["error_number"] += 1
+                info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds() / 60
+                rank.total_time += info["ac_time"]
+                info["score"] = problem.total_score - (info["ac_time"] + 20*(rank.submission_number-1)) # -1: to consider correct answer
 
         # First submission
         else:
             rank.submission_number += 1
-            info = {"is_ac": False, "ac_time": 0, "error_number": 0, "is_first_ac": False}
+            info = {"is_ac": False, "ac_time": 0, "score": 0}
             if self.submission.result == JudgeStatus.ACCEPTED:
                 rank.accepted_number += 1
                 info["is_ac"] = True
-                info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds()
+                info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds() / 60
                 rank.total_time += info["ac_time"]
+                info["score"] = problem.total_score - info["ac_time"]
 
-                if problem.accepted_number == 1:
-                    info["is_first_ac"] = True
-
-            elif self.submission.result != JudgeStatus.COMPILE_ERROR:
-                info["error_number"] = 1
         rank.submission_info[str(self.submission.problem_id)] = info
         rank.save()
 

@@ -1,16 +1,19 @@
 from django.utils.timezone import now
+from django.core.cache import cache
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from utils.api import APIView, validate_serializer
-from utils.constants import CONTEST_PASSWORD_SESSION_KEY
+from utils.constants import CacheKey, CONTEST_PASSWORD_SESSION_KEY
 from utils.shortcuts import datetime2str, check_is_id
+from account.models import AdminType
 from utils.decorators import login_required, check_contest_permission, check_contest_password
 
 from utils.constants import ContestStatus
-from ..models import ContestAnnouncement, Contest
+from ..models import ContestAnnouncement, Contest, ACMContestRank
 from ..serializers import ContestAnnouncementSerializer
 from ..serializers import ContestSerializer, ContestPasswordVerifySerializer
+from ..serializers import ACMContestRankSerializer
 
 
 class ContestAnnouncementListAPI(APIView):
@@ -178,3 +181,51 @@ class ContestAccessAPI(APIView):
             return self.error("Contest does not exist")
         session_pass = request.session.get(CONTEST_PASSWORD_SESSION_KEY, {}).get(contest.id)
         return self.success({"access": check_contest_password(session_pass, contest.password)})
+
+
+class ContestRankAPI(APIView):
+    def get_rank(self):
+        return ACMContestRank.objects.filter(contest=self.contest, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).\
+            select_related("user").order_by("-accepted_number", "-total_score", "total_time")
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="contest_id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a contest",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+        ],
+        operation_description="Check access permission to a contest",
+    )
+    @login_required
+    @check_contest_permission(check_type="ranks")
+    def get(self, request):
+        contest_id = request.GET.get("contest_id")
+        try:
+            contest = Contest.objects.get(id=contest_id, visible=True, password__isnull=False)
+        except Contest.DoesNotExist:
+            return self.error("Contest does not exist")
+        self.contest = contest
+        force_refresh = request.GET.get("force_refresh")
+        is_contest_admin = request.user.is_authenticated and request.user.is_contest_admin(contest)
+        serializer = ACMContestRankSerializer
+
+        if force_refresh == "1":
+            qs = self.get_rank()
+        else:
+            cache_key = f"{CacheKey.contest_rank_cache}:{contest_id}"
+            qs = cache.get(cache_key)
+            if not qs:
+                qs = self.get_rank()
+                cache.set(cache_key, qs)
+
+        page_qs = self.paginate_data(request, qs)
+        if(len(page_qs["results"]) != 0):
+            page_qs["results"] = serializer(page_qs["results"], many=True, is_contest_admin=is_contest_admin).data
+        else:
+            page_qs["results"] = serializer(page_qs["results"], many=True, is_contest_admin=is_contest_admin).data
+            page_qs["results"].append(self.contest.id)
+        return self.success(page_qs)

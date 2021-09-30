@@ -16,10 +16,10 @@ from utils.constants import CacheKey
 from utils.decorators import ensure_created_by
 from utils.shortcuts import rand_str
 from utils.tasks import delete_files
-from ..models import Contest, ContestAnnouncement
+from ..models import Contest, ContestAnnouncement, ACMContestRank
 from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
                            CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
-                           EditConetestSeriaizer, EditContestAnnouncementSerializer,)
+                           EditConetestSeriaizer, EditContestAnnouncementSerializer, ACMContesHelperSerializer,)
 
 
 class ContestAPI(APIView):
