@@ -68,7 +68,7 @@ class ACMContestRank(AbstractContestRank):
     accepted_number = models.IntegerField(default=0)
     # total_time is only for ACM contest, total_time =  ac time + none-ac times * 20 * 60
     total_time = models.IntegerField(default=0)
-    # {"23": {"is_ac": True, "ac_time": 8999, "error_number": 2, "is_first_ac": True}}
+    # {"23": {"is_ac": True, "ac_time": 8999, "error_number": 2, "score": 496}}
     # key is problem id
     submission_info = JSONField(default=dict)
 
