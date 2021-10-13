@@ -511,12 +511,17 @@ export default {
     },
     checkRunState (runID) {
       const checkStatus = async () => {
-        const res = await api.getRunResult(runID)
-        if (res.length !== 0 && res.error !== null && res.data.data !== 'Judging') {
-          this.saveRunResult(res.data)
+        try {
+          const res = await api.getRunResult(runID)
+          if (res.length !== 0 && res.error !== null && res.data.data !== 'Judging') {
+            this.saveRunResult(res.data)
+            clearTimeout(this.runRefresh)
+          } else {
+            this.runRefresh = setTimeout(checkStatus, 2000)
+          }
+        } catch (err) {
+          this.submitting = false
           clearTimeout(this.runRefresh)
-        } else {
-          this.runRefresh = setTimeout(checkStatus, 2000)
         }
       }
       this.runRefresh = setTimeout(checkStatus, 2000)

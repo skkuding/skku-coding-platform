@@ -74,7 +74,8 @@ class CodeRunAPI(APIView):
         res = cache.hget("run", run_id)
         res = res.decode("utf-8")
         res = json.loads(res)
-        cache.hdel("run", run_id)
+        if res != "Judging":
+            cache.hdel("run", run_id)
 
         return self.success(res)
 
