@@ -369,23 +369,27 @@ class JudgeDispatcher(DispatcherBase):
                 return
 
             rank.submission_number += 1
+            info["problem_submission"] += 1
             if self.submission.result == JudgeStatus.ACCEPTED:
                 rank.accepted_number += 1
                 info["is_ac"] = True
                 info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds() / 60
                 rank.total_time += info["ac_time"]
-                info["score"] = problem.total_score - (info["ac_time"] + 20*(rank.submission_number-1)) # -1: to consider correct answer
+                info["score"] = problem.total_score - (info["ac_time"] + 20*(info["problem_submission"]-1)) # -1: to consider correct answer
+                rank.total_score += info["score"]
 
         # First submission
         else:
             rank.submission_number += 1
-            info = {"is_ac": False, "ac_time": 0, "score": 0}
+            info = {"is_ac": False, "ac_time": 0, "problem_submission": 0, "score": 0}
+            info["problem_submission"] += 1
             if self.submission.result == JudgeStatus.ACCEPTED:
                 rank.accepted_number += 1
                 info["is_ac"] = True
                 info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds() / 60
                 rank.total_time += info["ac_time"]
                 info["score"] = problem.total_score - info["ac_time"]
+                rank.total_score += info["score"]
 
         rank.submission_info[str(self.submission.problem_id)] = info
         rank.save()
