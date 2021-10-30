@@ -109,7 +109,7 @@ class EditUserSerializer(serializers.Serializer):
 
 
 class EditUserSettingSerializer(serializers.Serializer):
-    major = serializers.CharField(max_length=128)
+    major = serializers.ChoiceField(choices=("Major", "Double Major", "Non-CS Major"))
 
 
 class EditUserProfileSerializer(serializers.Serializer):
