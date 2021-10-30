@@ -103,9 +103,9 @@ export default {
         { value: 'Python3', text: 'Python3' }
       ],
       majors: [
-        { value: 'Major(원전공)', text: 'Major(원전공)' },
-        { value: 'Double Major(복수전공)', text: 'Double Major(복수전공)' },
-        { value: 'Non-CS Major(비전공)', text: 'Non-CS Major(비전공)' }
+        { value: 'Major', text: 'Major(원전공)' },
+        { value: 'Double Major', text: 'Double Major(복수전공)' },
+        { value: 'Non-CS Major', text: 'Non-CS Major(비전공)' }
       ],
       semesters: [
         { value: null, text: 'Semesters' },
