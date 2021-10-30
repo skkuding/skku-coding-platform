@@ -1,0 +1,11 @@
+[*]
+indent_style = space
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{html,css,js,json,vue,yml}]
+indent_size = 2
+
+[*.{py,sh,conf}]
+indent_size = 4

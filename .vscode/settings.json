@@ -1,0 +1,6 @@
+{
+  "files.autoSave": "off",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "material-icon-theme.activeIconPack": "vue_vuex"
+}

@@ -197,9 +197,5 @@ typings/
 # dotenv environment variables file
 .env
 
-# editor
-.vscode
-.idea
-
 # DB backup
 *.sql
