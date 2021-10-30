@@ -54,6 +54,8 @@ class UserProfileAPI(APIView):
         username = request.GET.get("username")
         try:
             if username:
+                if not username == user.username:
+                    return self.error("You only can get your profile")
                 user = User.objects.get(username=username, is_disabled=False)
             else:
                 user = request.user
