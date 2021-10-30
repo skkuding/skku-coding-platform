@@ -1,5 +1,6 @@
 {
   "files.autoSave": "off",
+  "editor.bracketPairColorization.enabled": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "material-icon-theme.activeIconPack": "vue_vuex"
