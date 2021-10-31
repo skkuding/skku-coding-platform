@@ -18,10 +18,7 @@ tasks:
     init: yarn --cwd /workspace/skku-coding-platform/frontend/ install
 
   - name: Install backend packages
-    before: python3 -m venv $BACKEND/.venv && source $BACKEND/.venv/bin/activate
-    init: python3 -m pip install -r $BACKEND/deploy/requirements.txt
-    env:
-      BACKEND: /workspace/skku-coding-platform/backend
+    init: python3 -m pip install -r /workspace/skku-coding-platform/backend/deploy/requirements.txt
 
 vscode:
   extensions:
