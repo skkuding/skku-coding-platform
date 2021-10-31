@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "gruntfuggly.todo-tree",
+    "humao.rest-client",
+    "johnsoncodehk.volar",
+    "ms-azuretools.vscode-docker",
+    "ms-python.python",
+    "naumovs.color-highlight",
+    "oderwat.indent-rainbow",
+    "pkief.material-icon-theme"
+  ]
+}

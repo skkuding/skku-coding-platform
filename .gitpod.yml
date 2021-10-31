@@ -1,0 +1,41 @@
+gitConfig:
+  pull.rebase: 'true'
+
+ports:
+  - port: 8080
+    onOpen: ignore
+  - port: 5435
+    onOpen: ignore
+  - port: 6380
+    onOpen: ignore
+  - port: 5432
+    onOpen: ignore
+  - port: 6379
+    onOpen: ignore
+
+tasks:
+  - name: Install frontend packages
+    init: yarn --cwd /workspace/skku-coding-platform/frontend/ install
+
+  - name: Install backend packages
+    before: python3 -m venv $BACKEND/.venv && source $BACKEND/.venv/bin/activate
+    init: python3 -m pip install -r $BACKEND/deploy/requirements.txt
+    env:
+      BACKEND: /workspace/skku-coding-platform/backend
+
+vscode:
+  extensions:
+    - bradlc.vscode-tailwindcss
+    - dbaeumer.vscode-eslint
+    - donjayamanne.githistory
+    - eamodio.gitlens
+    - editorconfig.editorconfig
+    - esbenp.prettier-vscode
+    - gruntfuggly.todo-tree
+    - humao.rest-client
+    - ms-azuretools.vscode-docker
+    - ms-python.python
+    - naumovs.color-highlight
+    - octref.vetur
+    - oderwat.indent-rainbow
+    - pkief.material-icon-theme
