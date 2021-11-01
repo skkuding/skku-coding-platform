@@ -16,9 +16,6 @@ from problem.utils import parse_problem_template
 from submission.models import JudgeStatus, Submission
 from utils.cache import cache
 from utils.constants import CacheKey
-from django.utils.timezone import now
-import dateutil.parser
-from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -362,7 +359,6 @@ class JudgeDispatcher(DispatcherBase):
     def _update_acm_contest_rank(self, rank):
         info = rank.submission_info.get(str(self.submission.problem_id))
         # Because of the previous changes, you need to get it again here
-        problem = Problem.objects.select_for_update().get(contest_id=self.contest_id, id=self.problem.id)
         # This question has been submitted
         if info:
             if info["is_ac"]:
@@ -373,23 +369,23 @@ class JudgeDispatcher(DispatcherBase):
             if self.submission.result == JudgeStatus.ACCEPTED:
                 rank.accepted_number += 1
                 info["is_ac"] = True
-                info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds() / 60
+                info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds() // 60
                 rank.total_time += info["ac_time"]
-                info["score"] = problem.total_score - (info["ac_time"] + 20*(info["problem_submission"]-1)) # -1: to consider correct answer
-                rank.total_score += info["score"]
+                info["penalty"] = info["ac_time"] + 20*(info["problem_submission"]-1)
+                rank.total_penalty += info["penalty"]
 
         # First submission
         else:
             rank.submission_number += 1
-            info = {"is_ac": False, "ac_time": 0, "problem_submission": 0, "score": 0}
+            info = {"is_ac": False, "ac_time": 0, "problem_submission": 0, "penalty": 0}
             info["problem_submission"] += 1
             if self.submission.result == JudgeStatus.ACCEPTED:
                 rank.accepted_number += 1
                 info["is_ac"] = True
-                info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds() / 60
+                info["ac_time"] = (self.submission.create_time - self.contest.start_time).total_seconds() // 60
                 rank.total_time += info["ac_time"]
-                info["score"] = problem.total_score - info["ac_time"]
-                rank.total_score += info["score"]
+                info["penalty"] = info["ac_time"]
+                rank.total_penalty += info["penalty"]
 
         rank.submission_info[str(self.submission.problem_id)] = info
         rank.save()

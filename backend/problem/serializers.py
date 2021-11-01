@@ -86,13 +86,12 @@ class EditProblemSerializer(CreateOrEditProblemSerializer):
 
 class CreateContestProblemSerializer(CreateOrEditProblemSerializer):
     contest_id = serializers.IntegerField()
-    total_score = serializers.IntegerField()
 
 
 class EditContestProblemSerializer(CreateOrEditProblemSerializer):
     id = serializers.IntegerField()
     contest_id = serializers.IntegerField()
-    total_score = serializers.IntegerField()
+
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
