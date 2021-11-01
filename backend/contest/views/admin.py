@@ -16,10 +16,10 @@ from utils.constants import CacheKey
 from utils.decorators import ensure_created_by
 from utils.shortcuts import rand_str
 from utils.tasks import delete_files
-from ..models import Contest, ContestAnnouncement, ACMContestRank
+from ..models import Contest, ContestAnnouncement
 from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
                            CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
-                           EditConetestSeriaizer, EditContestAnnouncementSerializer, ACMContesHelperSerializer,)
+                           EditConetestSeriaizer, EditContestAnnouncementSerializer)
 
 
 class ContestAPI(APIView):
@@ -63,7 +63,7 @@ class ContestAPI(APIView):
         data["end_time"] = dateutil.parser.parse(data["end_time"])
         if data["end_time"] <= data["start_time"]:
             return self.error("Start time must occur earlier than end time")
-        if not data["password"]:
+        if data["password"] == "":
             data["password"] = None
         for ip_range in data["allowed_ip_ranges"]:
             try:

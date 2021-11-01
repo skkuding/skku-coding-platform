@@ -186,7 +186,7 @@ class ContestAccessAPI(APIView):
 class ContestRankAPI(APIView):
     def get_rank(self):
         return ACMContestRank.objects.filter(contest=self.contest, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).\
-            select_related("user").order_by("-accepted_number", "-total_score", "total_time")
+            select_related("user").order_by("-accepted_number", "total_penalty", "total_time")
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -205,7 +205,7 @@ class ContestRankAPI(APIView):
     def get(self, request):
         contest_id = request.GET.get("contest_id")
         try:
-            contest = Contest.objects.get(id=contest_id, visible=True, password__isnull=False)
+            contest = Contest.objects.get(id=contest_id, visible=True)
         except Contest.DoesNotExist:
             return self.error("Contest does not exist")
         self.contest = contest
