@@ -136,6 +136,7 @@
 <script>
 import tiptap from '../../components/Tiptap.vue'
 import api from '../../api.js'
+// import sw from '@public/sw.js'
 
 export default {
   name: 'Announcement',
@@ -248,6 +249,9 @@ export default {
       try {
         await api[funcName](data)
         this.showEditAnnouncementDialog = false
+        // if (funcName === 'createContestAnnouncement') {
+        //   sw.sendNotification(data.title, data.content)
+        // }
         await this.init()
       } catch (err) {
       }

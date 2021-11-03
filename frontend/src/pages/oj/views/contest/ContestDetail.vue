@@ -18,15 +18,7 @@
     <div class="description">
       <p v-dompurify-html="contest.description"></p>
     </div>
-    <div class="notification">
-      <p v-dompurify-html>
-        구독 안 하면 어쩌구 저쩌구. . .
-        브라우저에서 알림 어쩌구 저쩌구 . . .
-        윈도우 기본 설정 어쩌구 저쩌구 . . .
-      </p>
-      <b-button @click="getSubscribe(this.user.username)"> 구독! </b-button>
-      </div>
-      <div class="table">
+    <div class="table">
       <b-table
         hover
         :items="contestProblems"
@@ -54,6 +46,18 @@
         limit="3"
       ></b-pagination>
     </div>
+    <b-modal
+      title="Contest Notification"
+      ok-only
+      centered
+      v-model="showNotificationModal"
+    >
+      <p>
+        If you want to receive an alarm for contest announcement
+        while the contest is underway, <br/>
+        please set the alarm to <strong>'Allow'</strong>. 😊
+      </p>
+    </b-modal>
   </div>
 </template>
 
@@ -83,6 +87,7 @@ export default {
       //     key: 'title'
       //   }
       // ],
+      showNotificationModal: false,
       contest: {},
       contestProblems: [],
       contestProblemListFields: [
@@ -111,6 +116,12 @@ export default {
         this.timer = setInterval(() => {
           this.$store.commit(types.NOW_ADD_1S)
         }, 1000)
+      }
+      await webpush.subscribe(this.user.username)
+      if (!webpush.isSubscribe()) {
+        this.showNotificationModal = true
+      } else {
+        this.showNotificationModal = false
       }
     } catch (err) {
     }

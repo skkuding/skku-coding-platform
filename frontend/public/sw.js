@@ -1,7 +1,7 @@
 // Example navigatorPush.service.js file
 var getTitle = title => {
   if (title === '') {
-    title = 'New accouncement'
+    title = 'New Accouncement!'
   }
   return title
 }

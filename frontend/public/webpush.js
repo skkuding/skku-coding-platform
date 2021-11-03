@@ -1,9 +1,10 @@
 import { register, unregister } from 'register-service-worker'
-import applicationServerPublicKey from '../../data/backend/config/applicationServerPublicKey.txt'
+import applicationServerPublicKey from '../../data/backend/config/applicationServerKey.txt'
+
 function loadVersionBrowser (userAgent) {
   const ua = userAgent
-  let tem
-  let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []
+  var tem
+  var M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []
   if (/trident/i.test(M[1])) {
     tem = /\brv[ :]+(\d+)/g.exec(ua) || []
     return { name: 'IE', version: (tem[1] || '') }
@@ -24,8 +25,7 @@ function loadVersionBrowser (userAgent) {
   }
 };
 function urlBase64ToUint8Array (base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4)
-  var base64 = (base64String + padding)
+  var base64 = (base64String)
     .replace(/-/g, '+')
     .replace(/_/g, '/')
 
@@ -49,6 +49,11 @@ function getCookie (cookieName) {
   return cookieValue
 };
 function requestPOSTTOServer (data) {
+  // this.$axios({
+  //   url: `${this.serverHost}/push/subscriptions`,
+  //   method: 'POST',
+  //   data: { subscription: JSON.stringify(data) }
+  // })
   return fetch('http://localhost/api/wp_device', {
     method: 'post',
     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
@@ -56,7 +61,7 @@ function requestPOSTTOServer (data) {
     credentials: 'include'
   })
 };
-let isSubscribe = false
+var isSubscribe = false
 export default {
   async subscribe (username) {
     console.log('key: ', applicationServerPublicKey)
@@ -80,7 +85,7 @@ export default {
           }
           const res = await requestPOSTTOServer(data)
           console.log(res)
-          isSubscribe = res.ok // res.data.error가 안 돼있어서, 상태코드로 대충 처리해놓았다.
+          isSubscribe = true
         } catch (err) {
         }
       }
@@ -94,4 +99,29 @@ export default {
   isSubscribe () {
     return isSubscribe
   }
+  // async sendNotification (title, content) {
+  //   try {
+  //     for(var key in subscriptions) {
+  //       if(key === 'lastId')
+  //         continue;
+
+  //       const sub = JSON.parse(subscriptions[key]);
+
+  //       const pushConfig = {
+  //         endpoint : sub.endpoint,
+  //         keys : {
+  //           auth : sub.keys.auth,
+  //           p256dh : sub.keys.p256dh
+  //         }
+  //       }
+  //     }
+  //     webpush.sendNotification (pushConfig, JSON.stringify({
+  //       title: title,
+  //       message: content
+  //     }))
+  //   } catch (err) {
+  //     console.log('send Notification err')
+  //     console.log(err)
+  //   }
+  // }
 }
