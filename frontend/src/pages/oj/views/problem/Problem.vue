@@ -150,14 +150,14 @@
 
       <b-row id="problem-container">
         <b-col id="problem-description" cols="5">
-          <div class="description-io" v-katex:auto>
+          <div class="description-io">
             <h2>Description</h2>
-            <p v-dompurify-html="problem.description"></p>
+            <p v-dompurify-html="problem.description" v-katex:auto></p>
             <div class="blank-line"></div>
             <h2>Input</h2>
-            <p v-dompurify-html="problem.input_description"></p>
+            <p v-dompurify-html="problem.input_description" v-katex:auto></p>
             <h2>Output</h2>
-            <p v-dompurify-html="problem.output_description"></p>
+            <p v-dompurify-html="problem.output_description" v-katex:auto></p>
             <div class="blank-line"></div>
           </div>
 
@@ -179,9 +179,9 @@
             <div class="blank-line"></div>
           </div>
 
-          <div v-if="problem.hint" v-katex:auto>
+          <div v-if="problem.hint">
             <h2>Hint</h2>
-            <p v-dompurify-html="problem.hint"></p>
+            <p v-dompurify-html="problem.hint" v-katex:auto></p>
           </div>
           <b-table
             :items="[{time_limit:problem.time_limit + ' ms', memory_limit:problem.memory_limit + ' MB'}]"
