@@ -199,3 +199,6 @@ typings/
 
 # DB backup
 *.sql
+
+# devcontainer
+.devcontainer/data

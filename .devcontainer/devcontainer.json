@@ -1,5 +1,12 @@
 {
-  "recommendations": [
+  "name": "Coding Platform",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+
+  "postCreateCommand": "./.devcontainer/postCreateCommand.sh",
+
+  "extensions": [
     "bradlc.vscode-tailwindcss",
     "dbaeumer.vscode-eslint",
     "donjayamanne.githistory",
