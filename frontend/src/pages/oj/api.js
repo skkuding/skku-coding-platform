@@ -3,7 +3,9 @@ import store from '@/store'
 import axios from 'axios'
 
 Vue.prototype.$http = axios
-axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost/api'
+axios.defaults.baseURL =
+  process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:8000/api'
+axios.defaults.withCredentials = process.env.NODE_ENV !== 'production'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -127,7 +129,7 @@ export default {
       offset,
       limit
     }
-    Object.keys(searchParams).forEach((element) => {
+    Object.keys(searchParams).forEach(element => {
       if (searchParams[element]) {
         params[element] = searchParams[element]
       }
@@ -149,7 +151,7 @@ export default {
       limit
     }
     if (searchParams !== undefined) {
-      Object.keys(searchParams).forEach((element) => {
+      Object.keys(searchParams).forEach(element => {
         if (searchParams[element]) {
           params[element] = searchParams[element]
         }
