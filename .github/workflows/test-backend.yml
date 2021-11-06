@@ -46,8 +46,8 @@ jobs:
       - name: Create Demo Database
         working-directory: ${{ env.working-directory }}
         run: |
-          docker run -it -d -e POSTGRES_DB=codingplatform -e POSTGRES_USER=codingplatform -e POSTGRES_PASSWORD=codingplatform --name db postgres:12-alpine
-          docker run -it -d --name redis redis:4.0-alpine
+          docker run -it -d -p 127.0.0.1:5432:5432 -e POSTGRES_DB=codingplatform -e POSTGRES_USER=codingplatform -e POSTGRES_PASSWORD=codingplatform --name db postgres:12-alpine
+          docker run -it -d -p 127.0.0.1:6379:6379 --name redis redis:4.0-alpine
 
       - name: Migrate Database
         working-directory: ${{ env.working-directory }}
