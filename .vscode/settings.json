@@ -5,6 +5,9 @@
   "editor.formatOnSave": true,
   "eslint.workingDirectories": ["frontend/"],
   "material-icon-theme.activeIconPack": "vue_vuex",
+  "python.formatting.provider": "none",
+  "python.linting.flake8Args": ["--config", "backend/.flake8"],
+  "python.linting.flake8Enabled": true,
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   }
