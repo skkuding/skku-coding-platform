@@ -4,5 +4,8 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "eslint.workingDirectories": ["frontend/"],
-  "material-icon-theme.activeIconPack": "vue_vuex"
+  "material-icon-theme.activeIconPack": "vue_vuex",
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  }
 }
