@@ -8,6 +8,9 @@ services:
     volumes:
       - ..:/workspace:cached
     command: sleep infinity
+    environment:
+      - POSTGRES_HOST=db
+      - REDIS_HOST=redis
 
   db:
     image: postgres:12-alpine
