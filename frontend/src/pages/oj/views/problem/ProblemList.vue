@@ -206,6 +206,7 @@ export default {
     .problem-list-table{
       width: 95%;
       margin: 0 auto;
+      cursor: pointer;
     }
   }
   div {

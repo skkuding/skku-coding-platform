@@ -55,6 +55,10 @@ export default {
       //     key: 'title'
       //   }
       // ],
+      limit: 200,
+      total: 0,
+      perPage: 10,
+      currentPage: 1,
       contestID: '',
       contest: {},
       contestProblems: [],
@@ -88,6 +92,7 @@ export default {
         const res = await this.$store.dispatch('getContestProblems')
         const data = res.data.data
         this.contestProblems = data
+        this.total = this.contestProblems.length
       } catch (err) {
       }
     },
