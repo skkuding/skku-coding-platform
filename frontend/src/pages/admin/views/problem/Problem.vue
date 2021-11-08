@@ -18,7 +18,7 @@
             ></b-form-input>
           </b-form-group>
         </b-col>
-        <b-col cols="9">
+        <b-col cols="6">
           <b-form-group
             label-for="input-title"
             :invalid-feedback="titleInvalidFeedback"
@@ -34,6 +34,22 @@
               v-model="problem.title"
               placeholder="Title"
               :state="titleState"
+            ></b-form-input>
+          </b-form-group>
+        </b-col>
+        <b-col cols="3">
+          <b-form-group
+            label-for="input-problem-score"
+          >
+            <template v-slot:label>
+              <p class="labels">
+                Score
+              </p>
+            </template>
+            <b-form-input
+              id="input-problem-score"
+              v-model="problem.total_score"
+              placeholder="Score"
             ></b-form-input>
           </b-form-group>
         </b-col>
@@ -479,6 +495,7 @@ export default {
       contest: {},
       problem: {
         title: '',
+        total_score: '',
         languages: [],
         io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
       },
@@ -535,6 +552,7 @@ export default {
     this.problem = this.reProblem = {
       _id: '',
       title: '',
+      total_score: '',
       description: '',
       input_description: '',
       output_description: '',
