@@ -15,6 +15,8 @@
       <b-table
         :items="contestRankingList"
         :fields="contestRankingListFields"
+        :per-page="perPage"
+        :current-page="currentPage"
         head-variant="light"
       >
         <template v-for="problem in contestProblemID"
@@ -35,14 +37,14 @@
         </template>
       </b-table>
     </div>
-    <!-- <div class="pagination">
+    <div class="pagination">
       <b-pagination
         v-model="currentPage"
-        :total-rows="contestProblems.length"
+        :total-rows="contestRankingList.length"
         :per-page="perPage"
         limit="3"
       ></b-pagination>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -54,6 +56,10 @@ export default {
   name: 'ContestRanking',
   data () {
     return {
+      limit: 1000,
+      total: 0,
+      perPage: 20,
+      currentPage: 1,
       contestID: '',
       contestRankingList: [],
       contestRankingListFields: [
@@ -86,7 +92,9 @@ export default {
     }
     this.contestRankingListFields.push({ key: 'accepted_number', label: 'AC' })
     this.contestRankingListFields.push({ key: 'total_score', label: 'Total Score' })
+
     await this.getContestRanking()
+    this.total = this.contestRankingList.length
     this.contestRankingList.problem = []
     this.setRankingList()
     setInterval(() => {
@@ -113,7 +121,7 @@ export default {
     },
     async getContestRanking () {
       try {
-        const res = await api.getContestRanking(this.contestID, 1)
+        const res = await api.getContestRanking(this.contestID, 1, 0, this.limit)
         const data = res.data.data.results
         this.contestRankingList = data
       } catch (err) {
