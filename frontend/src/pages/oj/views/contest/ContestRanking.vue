@@ -21,19 +21,36 @@
         :per-page="perPage"
         :current-page="currentPage"
         head-variant="light"
+        class="text-center"
       >
+        <template #thead-top="data">
+          <b-tr>
+            <b-th colspan="2"><span class="sr-only">Username and rank</span></b-th>
+            <b-th v-for="(problem, index) in contestProblemID"
+              :key="index"
+              colspan="1"
+            >
+              {{ data.fields[2+index].item }}
+            </b-th>
+            <b-th colspan="2" style="text-align: center;">Total</b-th>
+          </b-tr>
+        </template>
         <template v-for="problem in contestProblemID"
           v-slot:[`cell(${problem})`]="data"
         >
           <div v-if="data.item[problem].is_ac === true" :key="problem">
-            <div>{{ data.item[problem].score }}</div>
-            <div>{{ getTimeformat(data.item[problem].ac_time) }}</div>
+            <div class="userscore">{{ parseInt(data.item[problem].score) }}</div>
+            <div class="usertime">{{ getTimeformat(data.item[problem].ac_time) }}</div>
           </div>
-          <div v-else-if="data.item[problem].problem_submission === '0'" :key="problem"> {{ '-' }}</div>
-          <div v-else :key="problem" class="ac-false"> {{ '-' + data.item[problem].problem_submission }} </div>
+          <div v-else-if="data.item[problem].problem_submission === '0'"
+            :key="problem"
+          >
+            {{ '-' }}
+          </div>
+          <div v-else class="ac-false" :key="problem"> {{ '-' + data.item[problem].problem_submission }} </div>
         </template>
         <template #cell(id)="data">
-          {{ data.value }}
+          {{ data.index + 1 }}
         </template>
         <template #cell(accepted_number)="data">
           <div class="userAC">{{ data.value }}</div>
@@ -94,7 +111,7 @@ export default {
     await this.getContestProblems()
     for (const contestProblem of this.contestProblems) {
       this.contestProblemID.push((contestProblem.id) + '')
-      this.contestRankingListFields.push({ key: contestProblem.id + '', label: contestProblem._id }) // table 에 표시되는건 display id
+      this.contestRankingListFields.push({ key: contestProblem.id + '', label: contestProblem.total_score + '', item: contestProblem._id })
     }
     this.contestRankingListFields.push({ key: 'accepted_number', label: 'AC' })
     this.contestRankingListFields.push({ key: 'total_score', label: 'Total Score' })
@@ -169,9 +186,15 @@ export default {
       this.$set(this.remaintime, 'sec', sec)
     },
     getTimeformat (time) {
-      const hour = parseInt(time / 60)
+      var hour = parseInt(time / 60)
+      if (hour < 10) {
+        hour = '0' + hour
+      }
       time -= hour * 60
-      const min = parseInt(time)
+      var min = parseInt(time)
+      if (min < 10) {
+        min = '0' + min
+      }
       return hour + ':' + min
     }
   },
@@ -226,7 +249,7 @@ export default {
     color: #8DC63F;
   }
   .usertime {
-    font-size: 10px;
+    font-size: 12px;
   }
   .userTotalscore, .userAC{
     color: #3391E5;
