@@ -27,27 +27,15 @@
       @ok="handleAddProblem"
     >
       <div class="modal-info">
-        Please input Display ID and Score for the contest problem
+        Please input Display ID for the contest problem
       </div>
       <b-form-group
         label="Display ID"
         label-for="display-id-input"
-        label-cols-sm="2"
       >
         <b-form-input
           id="display-id-input"
           v-model="displayID"
-          required
-        ></b-form-input>
-      </b-form-group>
-      <b-form-group
-        label="Score"
-        label-for="score-input"
-        label-cols-sm="2"
-      >
-        <b-form-input
-          id="score-input"
-          v-model="total_score"
           required
         ></b-form-input>
       </b-form-group>
@@ -82,7 +70,6 @@ export default {
       ],
       problemID: '',
       displayID: '',
-      total_score: '',
       confirmModalState: null
     }
   },
@@ -121,8 +108,7 @@ export default {
       const data = {
         problem_id: this.problemID,
         contest_id: this.contestID,
-        display_id: this.displayID,
-        total_score: this.total_score
+        display_id: this.displayID
       }
       try {
         await api.addProblemFromPublic(data)
@@ -137,7 +123,6 @@ export default {
     resetConfirmModal () {
       this.confirmModalState = null
       this.displayID = ''
-      this.total_score = ''
     }
   },
   computed: {
