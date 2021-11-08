@@ -76,7 +76,7 @@
         <b-navbar-nav class="ml-auto">
           <b-nav-item v-if="statusVisible">
             <template>
-              <div @click.stop="$refs.sidebar.onMySubmissionClicked({ID:submissionId})">
+              <div @click.stop="onMySubmissionClicked">
                 <b-badge
                   class="statusBadge"
                   variant="light"
@@ -464,6 +464,11 @@ export default {
       } else {
         await submitFunc(data, true)
       }
+    },
+    async onMySubmissionClicked () {
+      await this.$refs.sidebar.onMySubmissionClicked({ ID: this.submissionId })
+      await this.$nextTick()
+      this.$refs.sidebar.codemirror_key += 1
     }
   },
   computed: {
