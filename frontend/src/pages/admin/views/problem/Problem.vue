@@ -43,7 +43,7 @@
           >
             <template v-slot:label>
               <p class="labels">
-                Score
+                ACM Score
               </p>
             </template>
             <b-form-input
