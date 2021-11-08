@@ -203,6 +203,14 @@ export default {
       }
     })
   },
+  getContestRanking (contestID, forceRefresh) {
+    return ajax('contest/rank/', 'get', {
+      params: {
+        contest_id: contestID,
+        force_refresh: forceRefresh
+      }
+    })
+  },
   submitCode (data) {
     return ajax('submission/', 'post', {
       data

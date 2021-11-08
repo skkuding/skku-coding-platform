@@ -112,6 +112,14 @@ export default {
         }
       })
     },
+    async goRanking () {
+      await this.$router.push({
+        name: 'contest-ranking',
+        params: {
+          contestID: this.$route.params.contestID
+        }
+      })
+    },
     ...mapActions(['changeDomTitle']),
     async handleRoute (route) {
       await this.$router.push(route)
