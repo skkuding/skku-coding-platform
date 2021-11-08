@@ -15,36 +15,23 @@
         </div>
       </div>
     </div>
+
+    <b-navbar sticky-top style="height: 100%;">
+      <b-navbar-nav class="mx-auto" align="center">
+        <b-nav-item class="contest__menu">
+          <router-link class="nav-link" :to="{ name: 'contest-details', param: { contest_id : contestID }}">Top</router-link>
+        </b-nav-item>
+        <b-nav-item class="contest__menu">
+          <router-link class="nav-link" :to="{ name: 'contest-problems', param: { contest_id : contestID }}">Problems</router-link>
+        </b-nav-item>
+        <b-nav-item class="contest__menu">
+          <router-link class="nav-link" :to="{ name: 'contest-ranking', param: { contest_id : contestID }}">Standings</router-link>
+        </b-nav-item>
+      </b-navbar-nav>
+    </b-navbar>
+
     <div class="description">
       <p v-dompurify-html="contest.description"></p>
-    </div>
-    <div class="table">
-      <b-table
-        hover
-        :items="contestProblems"
-        :fields="contestProblemListFields"
-        :per-page="perPage"
-        :current-page="currentPage"
-        head-variant="light"
-        @row-clicked="goContestProblem"
-      >
-        <template #cell(title)="data">
-          {{data.value}}
-          <b-icon
-            icon="check2-circle"
-            style="color: #8DC63F;"
-            font-scale="1.2"
-            v-if="data.item.my_status===0"></b-icon>
-        </template>
-      </b-table>
-    </div>
-    <div class="pagination">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="contestProblems.length"
-        :per-page="perPage"
-        limit="3"
-      ></b-pagination>
     </div>
   </div>
 </template>
@@ -74,6 +61,7 @@ export default {
       //     key: 'title'
       //   }
       // ],
+      contestID: '',
       contest: {},
       contestProblems: [],
       contestProblemListFields: [
@@ -209,30 +197,5 @@ export default {
     p {
       margin-top: 1rem;
     }
-  }
-  .table{
-    width: 95% !important;
-    margin: 0 auto;
-  }
-  div {
-    &.pagination{
-      margin-right: 5%;
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
-  .status-container {
-    position: relative;
-    top: 10px;
-    margin-right: 60px;
-    padding: 5px 8px 4px;
-    display: flex;
-    border: 2px solid #bdbdbd;
-    border-radius: 6px;
-    color: #828282;
-  }
-  .font-bold {
-    font-family: manrope_bold;
   }
 </style>
