@@ -93,7 +93,7 @@ export const CONTEST_STATUS_REVERSE = {
   },
   0: {
     name: 'Underway',
-    color: '#F1BA48'
+    color: '#8DC63F'
   },
   '-1': {
     name: 'Ended',

@@ -2,18 +2,11 @@
   <div class="contest-ranking-card font-bold">
     <div class="top-bar mb-4">
       <h2 class="title"> {{ contest.title }} </h2>
-      <b-badge
-        class="time-limit-container"
-        variant="light"
-        pill
-      >
-        <div v-if="remaintime.hour >= 0">
-          <b-icon icon="clock-fill"/>
-          {{ remaintime.hour + ':' + remaintime.min + ':' + remaintime.sec }}
-        </div>
-        <div v-else-if="remaintime.hour === -1">Endend</div>
-        <div v-else>-</div>
-      </b-badge>
+      <status-badge
+        :status_name="contestStatus.name"
+        :status_color="contestStatus.color"
+        :status_endtime="contest.end_time"
+      ></status-badge>
     </div>
 
     <b-navbar class="contest-tab" sticky-top style="height: 100%;">
@@ -39,18 +32,6 @@
         head-variant="light"
         class="text-center"
       >
-        <template #thead-top="data">
-          <b-tr>
-            <b-th colspan="2"><span class="sr-only">Username and rank</span></b-th>
-            <b-th v-for="(problem, index) in contestProblemID"
-              :key="index"
-              colspan="1"
-            >
-              {{ data.fields[2+index].item }}
-            </b-th>
-            <b-th colspan="2">Total Score</b-th>
-          </b-tr>
-        </template>
         <template v-for="problem in contestProblemID"
           v-slot:[`cell(${problem})`]="data"
         >
@@ -73,9 +54,7 @@
         </template>
         <template #cell(accepted_number)="data">
           <div class="user-AC">{{ data.value }}</div>
-        </template>
-        <template #cell(total_score)="data">
-          <div class="user-totalscore">{{ data.value }}</div>
+          <div class="user-penalty">{{ data.item.total_penalty }}</div>
         </template>
       </b-table>
     </div>
@@ -92,9 +71,12 @@
 
 <script>
 import api from '@oj/api'
-import moment from 'moment'
+import StatusBadge from '../../components/StatusBadge.vue'
+import { mapState, mapGetters } from 'vuex'
+import { CONTEST_STATUS_REVERSE } from '@/utils/constants'
 
 export default {
+  components: { StatusBadge },
   name: 'ContestRanking',
   data () {
     return {
@@ -130,18 +112,15 @@ export default {
     await this.getContestProblems()
     for (const contestProblem of this.contestProblems) {
       this.contestProblemID.push((contestProblem.id) + '')
-      this.contestRankingListFields.push({ key: contestProblem.id + '', label: contestProblem.total_score + '', item: contestProblem._id })
+      this.contestRankingListFields.push({ key: contestProblem.id + '', label: contestProblem._id })
     }
-    this.contestRankingListFields.push({ key: 'accepted_number', label: 'AC' })
-    this.contestRankingListFields.push({ key: 'total_score', label: 'Score' })
+    this.contestRankingListFields.push({ key: 'accepted_number', label: '' })
 
     await this.getContestRanking()
+    console.log(this.contestRankingList)
     this.total = this.contestRankingList.length
     this.contestRankingList.problem = []
     this.setRankingList()
-    setInterval(() => {
-      this.calculateRemainTime()
-    }, 1000)
   },
   methods: {
     async getContestDetail () {
@@ -149,7 +128,6 @@ export default {
         const res = await this.$store.dispatch('getContest')
         const data = res.data.data
         this.contest = data
-        this.endtime = moment(data.end_time)
       } catch (err) {
       }
     },
@@ -180,21 +158,6 @@ export default {
         }
       }
     },
-    calculateRemainTime () {
-      if (moment(this.endtime).isBefore(moment.now())) {
-        this.$set(this.remaintime, 'hour', -1)
-        return
-      }
-      var timeDiff = moment.duration(this.endtime.diff(moment.now())).asSeconds()
-      const hour = this.checkNumberformat(parseInt(timeDiff / 3600))
-      this.$set(this.remaintime, 'hour', hour)
-      timeDiff -= hour * 3600
-      const min = this.checkNumberformat(parseInt(timeDiff / 60))
-      this.$set(this.remaintime, 'min', min)
-      timeDiff -= min * 60
-      const sec = this.checkNumberformat(parseInt(timeDiff))
-      this.$set(this.remaintime, 'sec', sec)
-    },
     getTimeformat (time) {
       const hour = this.checkNumberformat(parseInt(time / 60))
       time -= hour * 60
@@ -210,6 +173,16 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      contest: state => state.contest.contest
+    }),
+    ...mapGetters(['contestStatus']),
+    contestStatus () {
+      return {
+        name: CONTEST_STATUS_REVERSE[this.contest.status].name,
+        color: CONTEST_STATUS_REVERSE[this.contest.status].color
+      }
+    }
   },
   watch: {
   }
@@ -227,13 +200,6 @@ export default {
     width: 90%;
     display: flex;
     justify-content: space-between;
-    .time-limit-container {
-      font-size: 14px;
-      padding: 8px 50px;
-      margin: 8px;
-      color: #fff;
-      background-color: #E9A05A;
-    }
   }
   .title {
     color: #7C7A7B;
@@ -274,13 +240,10 @@ export default {
   .ac-false {
     color: #E9A05A;
   }
-  .user-score{
-    color: #8DC63F;
-  }
-  .user-time {
+  .user-time, .user-penalty {
     font-size: 12px;
   }
-  .user-totalscore, .user-AC{
+  .user-AC{
     color: #3391E5;
   }
   div {
