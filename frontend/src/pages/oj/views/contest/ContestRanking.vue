@@ -1,7 +1,7 @@
 <template>
   <div class="contest-ranking-card font-bold">
     <div class="top-bar mb-4">
-      <h2 class="title"> Standings </h2>
+      <h2 class="title"> {{ contest.title }} </h2>
       <b-badge
         class="time-limit-container"
         variant="light"
@@ -11,9 +11,25 @@
           <b-icon icon="clock-fill"/>
           {{ remaintime.hour + ':' + remaintime.min + ':' + remaintime.sec }}
         </div>
-        <div v-else>Ended</div>
+        <div v-else-if="remaintime.hour === -1">Endend</div>
+        <div v-else>-</div>
       </b-badge>
     </div>
+
+    <b-navbar class="contest-tab" sticky-top style="height: 100%;">
+      <b-navbar-nav class="mx-auto" align="center">
+        <b-nav-item class="contest__menu">
+          <router-link class="nav-link" :to="{ name: 'contest-details', param: { contest_id : contestID }}">Top</router-link>
+        </b-nav-item>
+        <b-nav-item class="contest__menu">
+          <router-link class="nav-link" :to="{ name: 'contest-problems', param: { contest_id : contestID }}">Problems</router-link>
+        </b-nav-item>
+        <b-nav-item class="contest__menu">
+          <router-link class="nav-link" :to="{ name: 'contest-ranking', param: { contest_id : contestID }}">Standings</router-link>
+        </b-nav-item>
+      </b-navbar-nav>
+    </b-navbar>
+
     <div class="table">
       <b-table
         :items="contestRankingList"
@@ -230,6 +246,24 @@ export default {
     width: 70%;
     font-family: Manrope;
   }
+  .contest-tab {
+    position: relative;
+    height: 48px;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff;
+  }
+  .contest__menu {
+    width: 100%;
+  }
+  .contest__menu__item {
+    width: 100px;
+    text-align: center;
+    &:hover {
+      text-decoration: underline;
+      text-decoration-color: #8dc63f;
+    }
+  }
   .table{
     width: 95% !important;
     margin: 0 auto;
@@ -256,5 +290,8 @@ export default {
       display: flex;
       justify-content: flex-end;
     }
+  }
+  .font-bold {
+    font-family: manrope_bold;
   }
 </style>
