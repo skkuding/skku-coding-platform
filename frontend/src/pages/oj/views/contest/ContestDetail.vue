@@ -206,4 +206,7 @@ export default {
       margin-top: 1rem;
     }
   }
+  .font-bold {
+    font-family: manrope_bold;
+  }
 </style>
