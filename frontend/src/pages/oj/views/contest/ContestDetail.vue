@@ -3,28 +3,30 @@
     <div class="top-bar mb-4">
       <h2 class="title"> {{ contest.title }} </h2>
       <status-badge
+        style="margin-right: 40px;"
         :status_name="contestStatus.name"
         :status_color="contestStatus.color"
         :status_endtime="contest.end_time"
       ></status-badge>
     </div>
 
-    <b-navbar sticky-top style="height: 100%;">
-      <b-navbar-nav class="mx-auto" align="center">
-        <b-nav-item class="contest__menu">
-          <router-link class="nav-link" :to="{ name: 'contest-details', param: { contest_id : contestID }}">Top</router-link>
-        </b-nav-item>
-        <b-nav-item class="contest__menu">
-          <router-link class="nav-link" :to="{ name: 'contest-problems', param: { contest_id : contestID }}">Problems</router-link>
-        </b-nav-item>
-        <b-nav-item class="contest__menu">
-          <router-link class="nav-link" :to="{ name: 'contest-ranking', param: { contest_id : contestID }}">Standings</router-link>
-        </b-nav-item>
-      </b-navbar-nav>
-    </b-navbar>
-
-    <div class="description">
-      <p v-dompurify-html="contest.description"></p>
+    <div>
+      <b-tabs
+        content-class="mt-3"
+        class="contest-tab"
+        pills
+        align="center"
+      >
+        <b-tab title="Top">
+          <p class="contest-tab-description" v-dompurify-html="contest.description"></p>
+        </b-tab>
+        <b-tab title="Problems">
+          <contest-problem-list></contest-problem-list>
+        </b-tab>
+        <b-tab title="Standings">
+          <contest-ranking></contest-ranking>
+        </b-tab>
+      </b-tabs>
     </div>
   </div>
 </template>
@@ -36,11 +38,15 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '@/store'
 import { CONTEST_STATUS_REVERSE } from '@/utils/constants'
 import StatusBadge from '../../components/StatusBadge.vue'
+import ContestProblemList from './ContestProblemList.vue'
+import ContestRanking from './ContestRanking.vue'
 
 export default {
-  name: 'ContestProblemList',
+  name: 'ContestDetail',
   components: {
-    StatusBadge
+    StatusBadge,
+    ContestProblemList,
+    ContestRanking
   },
   data () {
     return {
@@ -109,9 +115,7 @@ export default {
   },
   computed: {
     ...mapState({
-      showMenu: state => state.contest.itemVisible.menu,
       contest: state => state.contest.contest,
-      contest_table: state => [state.contest.contest],
       problems: state => state.contest.contestProblems,
       now: state => state.contest.now
     }),
@@ -132,10 +136,6 @@ export default {
       this.contestID = newVal.params.contestID
       this.changeDomTitle({ title: this.contest.title })
     }
-  },
-  beforeDestroy () {
-    clearInterval(this.timer)
-    this.$store.commit(types.CLEAR_CONTEST)
   }
 }
 </script>
@@ -163,12 +163,12 @@ export default {
     width: 70%;
     font-family: Manrope;
   }
-  .description {
-    margin-left: 68px;
-    margin-right: 68px;
-
-    p {
-      margin-top: 1rem;
+  .contest-tab {
+    width: 95%;
+    margin: 0 auto;
+    &-description {
+      width: 95%;
+      margin: 0 auto;
     }
   }
   .font-bold {
