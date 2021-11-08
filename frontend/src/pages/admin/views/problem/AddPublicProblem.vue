@@ -47,7 +47,7 @@
       >
         <b-form-input
           id="score-input"
-          v-model="score"
+          v-model="total_score"
           required
         ></b-form-input>
       </b-form-group>
@@ -82,7 +82,7 @@ export default {
       ],
       problemID: '',
       displayID: '',
-      score: '',
+      total_score: '',
       confirmModalState: null
     }
   },
@@ -122,7 +122,7 @@ export default {
         problem_id: this.problemID,
         contest_id: this.contestID,
         display_id: this.displayID,
-        score: this.score
+        total_score: this.total_score
       }
       try {
         await api.addProblemFromPublic(data)
