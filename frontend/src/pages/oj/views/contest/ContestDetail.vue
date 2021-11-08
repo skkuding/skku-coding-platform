@@ -62,18 +62,7 @@ export default {
       //   }
       // ],
       contestID: '',
-      contest: {},
-      contestProblems: [],
-      contestProblemListFields: [
-        {
-          label: '#',
-          key: '_id'
-        },
-        {
-          label: 'Title',
-          key: 'title'
-        }
-      ]
+      contest: {}
     }
   },
   async mounted () {
@@ -102,23 +91,6 @@ export default {
         this.contestProblems = data
       } catch (err) {
       }
-    },
-    async goContestProblem (row) {
-      await this.$router.push({
-        name: 'contest-problem-details',
-        params: {
-          contestID: this.$route.params.contestID,
-          problemID: row._id
-        }
-      })
-    },
-    async goRanking () {
-      await this.$router.push({
-        name: 'contest-ranking',
-        params: {
-          contestID: this.$route.params.contestID
-        }
-      })
     },
     ...mapActions(['changeDomTitle']),
     async handleRoute (route) {
