@@ -32,31 +32,34 @@
             >
               {{ data.fields[2+index].item }}
             </b-th>
-            <b-th colspan="2" style="text-align: center;">Total</b-th>
+            <b-th colspan="2">Total Score</b-th>
           </b-tr>
         </template>
         <template v-for="problem in contestProblemID"
           v-slot:[`cell(${problem})`]="data"
         >
           <div v-if="data.item[problem].is_ac === true" :key="problem">
-            <div class="userscore">{{ parseInt(data.item[problem].score) }}</div>
-            <div class="usertime">{{ getTimeformat(data.item[problem].ac_time) }}</div>
+            <div class="user-score">{{ parseInt(data.item[problem].score) }}</div>
+            <div class="user-time">{{ getTimeformat(data.item[problem].ac_time) }}</div>
           </div>
           <div v-else-if="data.item[problem].problem_submission === '0'"
             :key="problem"
           >
             {{ '-' }}
           </div>
-          <div v-else class="ac-false" :key="problem"> {{ '-' + data.item[problem].problem_submission }} </div>
+          <div v-else :key="problem" class="ac-false"> {{ '-' + data.item[problem].problem_submission }} </div>
         </template>
         <template #cell(id)="data">
           {{ data.index + 1 }}
         </template>
+        <template #cell()="data">
+          <div class="user-name">{{ data.value }}</div>
+        </template>
         <template #cell(accepted_number)="data">
-          <div class="userAC">{{ data.value }}</div>
+          <div class="user-AC">{{ data.value }}</div>
         </template>
         <template #cell(total_score)="data">
-          <div class="userTotalscore">{{ data.value }}</div>
+          <div class="user-totalscore">{{ data.value }}</div>
         </template>
       </b-table>
     </div>
@@ -114,7 +117,7 @@ export default {
       this.contestRankingListFields.push({ key: contestProblem.id + '', label: contestProblem.total_score + '', item: contestProblem._id })
     }
     this.contestRankingListFields.push({ key: 'accepted_number', label: 'AC' })
-    this.contestRankingListFields.push({ key: 'total_score', label: 'Total Score' })
+    this.contestRankingListFields.push({ key: 'total_score', label: 'Score' })
 
     await this.getContestRanking()
     this.total = this.contestRankingList.length
@@ -167,35 +170,27 @@ export default {
         return
       }
       var timeDiff = moment.duration(this.endtime.diff(moment.now())).asSeconds()
-      var hour = parseInt(timeDiff / 3600)
-      if (hour < 10) {
-        hour = '0' + hour
-      }
+      const hour = this.checkNumberformat(parseInt(timeDiff / 3600))
       this.$set(this.remaintime, 'hour', hour)
       timeDiff -= hour * 3600
-      var min = parseInt(timeDiff / 60)
-      if (min < 10) {
-        min = '0' + min
-      }
+      const min = this.checkNumberformat(parseInt(timeDiff / 60))
       this.$set(this.remaintime, 'min', min)
       timeDiff -= min * 60
-      var sec = parseInt(timeDiff)
-      if (sec < 10) {
-        sec = '0' + sec
-      }
+      const sec = this.checkNumberformat(parseInt(timeDiff))
       this.$set(this.remaintime, 'sec', sec)
     },
     getTimeformat (time) {
-      var hour = parseInt(time / 60)
-      if (hour < 10) {
-        hour = '0' + hour
-      }
+      const hour = this.checkNumberformat(parseInt(time / 60))
       time -= hour * 60
-      var min = parseInt(time)
-      if (min < 10) {
-        min = '0' + min
-      }
+      const min = this.checkNumberformat(parseInt(time))
       return hour + ':' + min
+    },
+    checkNumberformat (num) {
+      if (num < 10) {
+        return '0' + num
+      } else {
+        return num
+      }
     }
   },
   computed: {
@@ -239,19 +234,19 @@ export default {
     width: 95% !important;
     margin: 0 auto;
   }
-  .table-head{
-    text-align: center;
+  .user-name {
+    width: 120px;
   }
   .ac-false {
     color: #E9A05A;
   }
-  .userscore{
+  .user-score{
     color: #8DC63F;
   }
-  .usertime {
+  .user-time {
     font-size: 12px;
   }
-  .userTotalscore, .userAC{
+  .user-totalscore, .user-AC{
     color: #3391E5;
   }
   div {
