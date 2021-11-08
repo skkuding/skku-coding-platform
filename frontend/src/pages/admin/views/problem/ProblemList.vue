@@ -67,6 +67,11 @@
             name="Delete Problem"
             @click.native="deleteProblem(row.item.id)"
           />
+          <icon-btn
+            icon="check2-all"
+            name="Check submissions"
+            @click.native="goSubmission(row.item)"
+          />
         </template>
       </b-table>
       <div class="panel-options">
@@ -267,6 +272,27 @@ export default {
     },
     showAddPublicProblemModal () {
       this.$refs['add-public-problem'].show()
+    },
+    goSubmission (problem) {
+      if (this.routeName === 'contest-problem-list') {
+        this.$router.push({
+          name: 'contest-problem-submission',
+          params: {
+            problemId: problem.id,
+            problemTitle: problem.title,
+            contestId: this.contestId,
+            problemDisplayId: problem._id
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'problem-submission',
+          params: {
+            problemId: problem.id,
+            problemTitle: problem.title
+          }
+        })
+      }
     }
   },
   computed: {

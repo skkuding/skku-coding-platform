@@ -323,6 +323,36 @@ export default {
     return ajax('admin/upload_file/', 'post', {
       data
     })
+  },
+  getSubmissionList (problemId, offset, limit) {
+    return ajax('submissions/', 'get', {
+      params: {
+        myself: '0',
+        result: '',
+        username: '',
+        page: 1,
+        problem_id: problemId,
+        offset,
+        limit
+      }
+    })
+  },
+  getContestSubmissionList (contestId, problemId, offset, limit) {
+    return ajax('contest_submissions/', 'get', {
+      params: {
+        contest_id: contestId,
+        problem_id: problemId,
+        offset,
+        limit
+      }
+    })
+  },
+  getSubmission (submissionId) {
+    return ajax('submission/', 'get', {
+      params: {
+        id: submissionId
+      }
+    })
   }
 }
 
