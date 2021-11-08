@@ -1,28 +1,5 @@
 <template>
   <div class="contest-ranking-card font-bold">
-    <div class="top-bar mb-4">
-      <h2 class="title"> {{ contest.title }} </h2>
-      <status-badge
-        :status_name="contestStatus.name"
-        :status_color="contestStatus.color"
-        :status_endtime="contest.end_time"
-      ></status-badge>
-    </div>
-
-    <b-navbar class="contest-tab" sticky-top style="height: 100%;">
-      <b-navbar-nav class="mx-auto" align="center">
-        <b-nav-item class="contest__menu">
-          <router-link class="nav-link" :to="{ name: 'contest-details', param: { contest_id : contestID }}">Top</router-link>
-        </b-nav-item>
-        <b-nav-item class="contest__menu">
-          <router-link class="nav-link" :to="{ name: 'contest-problems', param: { contest_id : contestID }}">Problems</router-link>
-        </b-nav-item>
-        <b-nav-item class="contest__menu">
-          <router-link class="nav-link" :to="{ name: 'contest-ranking', param: { contest_id : contestID }}">Standings</router-link>
-        </b-nav-item>
-      </b-navbar-nav>
-    </b-navbar>
-
     <div class="table">
       <b-table
         :items="contestRankingList"
@@ -36,8 +13,8 @@
           v-slot:[`cell(${problem})`]="data"
         >
           <div v-if="data.item[problem].is_ac === true" :key="problem">
-            <div class="user-score">{{ parseInt(data.item[problem].score) }}</div>
-            <div class="user-time">{{ getTimeformat(data.item[problem].ac_time) }}</div>
+            <div class="user-time">{{ data.item[problem].problem_submission }}</div>
+            <div class="user-penalty">{{ parseInt(data.item[problem].penalty) }}</div>
           </div>
           <div v-else-if="data.item[problem].problem_submission === '0'"
             :key="problem"
@@ -54,7 +31,7 @@
         </template>
         <template #cell(accepted_number)="data">
           <div class="user-AC">{{ data.value }}</div>
-          <div class="user-penalty">{{ data.item.total_penalty }}</div>
+          <div class="user-total-penalty">{{ data.item.total_penalty }}</div>
         </template>
       </b-table>
     </div>
@@ -71,12 +48,8 @@
 
 <script>
 import api from '@oj/api'
-import StatusBadge from '../../components/StatusBadge.vue'
-import { mapState, mapGetters } from 'vuex'
-import { CONTEST_STATUS_REVERSE } from '@/utils/constants'
 
 export default {
-  components: { StatusBadge },
   name: 'ContestRanking',
   data () {
     return {
@@ -100,7 +73,6 @@ export default {
         }
       ],
       contest: {},
-      endtime: '',
       remaintime: {},
       contestProblems: [],
       contestProblemID: []
@@ -114,10 +86,9 @@ export default {
       this.contestProblemID.push((contestProblem.id) + '')
       this.contestRankingListFields.push({ key: contestProblem.id + '', label: contestProblem._id })
     }
-    this.contestRankingListFields.push({ key: 'accepted_number', label: '' })
+    this.contestRankingListFields.push({ key: 'accepted_number', label: 'AC' })
 
     await this.getContestRanking()
-    console.log(this.contestRankingList)
     this.total = this.contestRankingList.length
     this.contestRankingList.problem = []
     this.setRankingList()
@@ -157,32 +128,9 @@ export default {
           }
         }
       }
-    },
-    getTimeformat (time) {
-      const hour = this.checkNumberformat(parseInt(time / 60))
-      time -= hour * 60
-      const min = this.checkNumberformat(parseInt(time))
-      return hour + ':' + min
-    },
-    checkNumberformat (num) {
-      if (num < 10) {
-        return '0' + num
-      } else {
-        return num
-      }
     }
   },
   computed: {
-    ...mapState({
-      contest: state => state.contest.contest
-    }),
-    ...mapGetters(['contestStatus']),
-    contestStatus () {
-      return {
-        name: CONTEST_STATUS_REVERSE[this.contest.status].name,
-        color: CONTEST_STATUS_REVERSE[this.contest.status].color
-      }
-    }
   },
   watch: {
   }
@@ -194,35 +142,20 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .top-bar {
-    margin-top: 40px;
-    margin-left: 68px;
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-  }
-  .title {
-    color: #7C7A7B;
-    display:inline;
-    position:relative;
-    // top:36px;
-  }
-  .contest-ranking-card {
-    margin: 0 auto;
-    width: 70%;
-    font-family: Manrope;
-  }
-  .table{
-    width: 95% !important;
-    margin: 0 auto;
-  }
   .user-name {
     width: 120px;
   }
   .ac-false {
-    color: #E9A05A;
+    margin: auto 0;
+    color: #9da6af;
   }
-  .user-time, .user-penalty {
+  .user-penalty {
+    font-size: 12px;
+  }
+  .user-time {
+    color: #8dc63f;
+  }
+  .user-total-penalty {
     font-size: 12px;
   }
   .user-AC{
