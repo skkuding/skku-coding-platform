@@ -4,6 +4,7 @@ import {
   Announcement,
   ContestDetail,
   ContestList,
+  ContestRanking,
   ApplyResetPassword,
   EmailAuth,
   Register,
@@ -94,6 +95,12 @@ export default [
     path: '/contest/:contestID/',
     component: ContestDetail,
     meta: { title: 'Contest Details' }
+  },
+  {
+    name: 'contest-ranking',
+    path: '/contest/:contestID/rank/',
+    component: ContestRanking,
+    meta: { title: 'Contest Ranking' }
   },
   {
     name: 'profile-setting',
