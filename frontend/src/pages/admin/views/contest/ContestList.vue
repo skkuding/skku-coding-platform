@@ -205,7 +205,7 @@ export default {
     },
     downloadSubmissions () {
       const excludeAdmin = this.excludeAdmin ? '1' : '0'
-      const url = `/admin/download_submissions?contest_id=${this.currentId}&exclude_admin=${excludeAdmin}`
+      const url = `/admin/download_submissions/?contest_id=${this.currentId}&exclude_admin=${excludeAdmin}`
       utils.downloadFile(url)
     },
     async goEdit (contestId) {
