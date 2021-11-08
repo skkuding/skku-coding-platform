@@ -2,18 +2,11 @@
   <div class="contest-list-card font-bold">
     <div class="top-bar mb-4">
       <h2 class="title"> {{ contest.title }} </h2>
-      <div class="problem-list-table">
-        <div class="status-container">
-          <b-icon
-            icon="circle-fill"
-            shift-h="-2"
-            shift-v="-3"
-            class="mx-1"
-            :style="'color:' + contestStatus.color"
-          />
-          {{ contestStatus.name }}
-        </div>
-      </div>
+      <status-badge
+        :status_name="contestStatus.name"
+        :status_color="contestStatus.color"
+        :status_endtime="contest.end_time"
+      ></status-badge>
     </div>
 
     <b-navbar sticky-top style="height: 100%;">
@@ -68,9 +61,13 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '@/store'
 import { CONTEST_STATUS_REVERSE } from '@/utils/constants'
 import { ProblemMixin } from '@oj/components/mixins'
-// import time from '@/utils/time'
+import StatusBadge from '../../components/StatusBadge.vue'
+
 export default {
   name: 'ContestProblemList',
+  components: {
+    StatusBadge
+  },
   mixins: [ProblemMixin],
   data () {
     return {
@@ -200,6 +197,7 @@ export default {
     margin-left: 68px;
     width: 90%;
     display: flex;
+    justify-content: space-between;
   }
   .title {
     color: #7C7A7B;
@@ -211,9 +209,6 @@ export default {
     margin: 0 auto;
     width: 70%;
     font-family: Manrope;
-    .problem-list-table {
-      margin: 0 0 0 auto;
-    }
   }
   .table{
     width: 95% !important;
@@ -226,16 +221,6 @@ export default {
       display: flex;
       justify-content: flex-end;
     }
-  }
-  .status-container {
-    position: relative;
-    top: 10px;
-    margin-right: 60px;
-    padding: 5px 8px 4px;
-    display: flex;
-    border: 2px solid #bdbdbd;
-    border-radius: 6px;
-    color: #828282;
   }
   .font-bold {
     font-family: manrope_bold;
