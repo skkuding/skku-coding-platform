@@ -212,24 +212,6 @@ export default {
     width: 70%;
     font-family: Manrope;
   }
-  .contest-tab {
-    position: relative;
-    height: 48px;
-    width: 100%;
-    z-index: 1000;
-    background-color: #fff;
-  }
-  .contest__menu {
-    width: 100%;
-  }
-  .contest__menu__item {
-    width: 100px;
-    text-align: center;
-    &:hover {
-      text-decoration: underline;
-      text-decoration-color: #8dc63f;
-    }
-  }
   .table{
     width: 95% !important;
     margin: 0 auto;
