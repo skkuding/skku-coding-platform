@@ -203,11 +203,13 @@ export default {
       }
     })
   },
-  getContestRanking (contestID, forceRefresh) {
+  getContestRanking (contestID, forceRefresh, offset, limit) {
     return ajax('contest/rank/', 'get', {
       params: {
         contest_id: contestID,
-        force_refresh: forceRefresh
+        force_refresh: forceRefresh,
+        offset,
+        limit
       }
     })
   },
