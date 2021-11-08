@@ -137,6 +137,7 @@ export default {
     resetConfirmModal () {
       this.confirmModalState = null
       this.displayID = ''
+      this.total_score = ''
     }
   },
   computed: {
