@@ -5,9 +5,10 @@
       <b-badge
         class="time-limit-container"
         variant="light"
-        size="sm"
+        pill
       >
-        limit time
+        <div v-if="remaintime.hour >= 0">{{ remaintime.hour + ':' + remaintime.min + ':' + remaintime.sec + ' Left' }} </div>
+        <div v-else>Ended</div>
       </b-badge>
     </div>
     <div class="table">
@@ -47,6 +48,7 @@
 
 <script>
 import api from '@oj/api'
+import moment from 'moment'
 
 export default {
   name: 'ContestRanking',
@@ -68,6 +70,8 @@ export default {
         }
       ],
       contest: {},
+      endtime: '',
+      remaintime: {},
       contestProblems: [],
       contestProblemID: []
     }
@@ -85,7 +89,9 @@ export default {
     await this.getContestRanking()
     this.contestRankingList.problem = []
     this.setRankingList()
-    console.log(this.contestRankingList)
+    setInterval(() => {
+      this.calculateRemainTime()
+    }, 1000)
   },
   methods: {
     async getContestDetail () {
@@ -93,7 +99,7 @@ export default {
         const res = await this.$store.dispatch('getContest')
         const data = res.data.data
         this.contest = data
-        console.log(data)
+        this.endtime = moment(data.end_time)
       } catch (err) {
       }
     },
@@ -119,10 +125,34 @@ export default {
           if (Object.keys(rank.submission_info).includes(problem) === true) {
             this.$set(rank, problem, rank.submission_info[problem])
           } else {
-            this.$set(rank, problem, { problem_submission: '0' })
+            this.$set(rank, problem, { problem_submission: '0', is_ac: false })
           }
         }
       }
+    },
+    calculateRemainTime () {
+      if (moment(this.endtime).isBefore(moment.now())) {
+        this.$set(this.remaintime, 'hour', -1)
+        return
+      }
+      var timeDiff = moment.duration(this.endtime.diff(moment.now())).asSeconds()
+      var hour = parseInt(timeDiff / 3600)
+      if (hour < 10) {
+        hour = '0' + hour
+      }
+      this.$set(this.remaintime, 'hour', hour)
+      timeDiff -= hour * 3600
+      var min = parseInt(timeDiff / 60)
+      if (min < 10) {
+        min = '0' + min
+      }
+      this.$set(this.remaintime, 'min', min)
+      timeDiff -= min * 60
+      var sec = parseInt(timeDiff)
+      if (sec < 10) {
+        sec = '0' + sec
+      }
+      this.$set(this.remaintime, 'sec', sec)
     }
   },
   computed: {
@@ -144,9 +174,10 @@ export default {
     display: flex;
     justify-content: space-between;
     .time-limit-container {
-      font-size: 12px;
-      padding: 6px 10px;
-      color: #4F4F4F;
+      font-size: 14px;
+      padding: 8px 50px;
+      margin: 8px;
+      color: #fff;
       background-color: #E9A05A;
     }
   }
