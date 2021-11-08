@@ -7,7 +7,10 @@
         variant="light"
         pill
       >
-        <div v-if="remaintime.hour >= 0">{{ remaintime.hour + ':' + remaintime.min + ':' + remaintime.sec + ' Left' }} </div>
+        <div v-if="remaintime.hour >= 0">
+          <b-icon icon="clock-fill"/>
+          {{ remaintime.hour + ':' + remaintime.min + ':' + remaintime.sec }}
+        </div>
         <div v-else>Ended</div>
       </b-badge>
     </div>
@@ -24,10 +27,13 @@
         >
           <div v-if="data.item[problem].is_ac === true" :key="problem">
             <div>{{ data.item[problem].score }}</div>
-            <div>{{ data.item[problem].ac_time }}</div>
+            <div>{{ getTimeformat(data.item[problem].ac_time) }}</div>
           </div>
           <div v-else-if="data.item[problem].problem_submission === '0'" :key="problem"> {{ '-' }}</div>
           <div v-else :key="problem" class="ac-false"> {{ '-' + data.item[problem].problem_submission }} </div>
+        </template>
+        <template #cell(id)="data">
+          {{ data.value }}
         </template>
         <template #cell(accepted_number)="data">
           <div class="userAC">{{ data.value }}</div>
@@ -161,6 +167,12 @@ export default {
         sec = '0' + sec
       }
       this.$set(this.remaintime, 'sec', sec)
+    },
+    getTimeformat (time) {
+      const hour = parseInt(time / 60)
+      time -= hour * 60
+      const min = parseInt(time)
+      return hour + ':' + min
     }
   },
   computed: {
