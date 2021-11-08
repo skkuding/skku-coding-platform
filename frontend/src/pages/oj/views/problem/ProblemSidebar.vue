@@ -416,6 +416,7 @@ export default {
           margin-top: 10px;
           margin-bottom: 20px;
           font-size: 18px;
+          cursor: pointer;
         }
       }
     }
@@ -493,6 +494,7 @@ export default {
                 min-width: 100px;
                 padding: 15px 25px;
                 border-top: 1px solid #3B4F56;
+                cursor: pointer;
               }
             }
           }

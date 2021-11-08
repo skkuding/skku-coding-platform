@@ -24,7 +24,7 @@
           <div v-else :key="problem" class="ac-false"> {{ '-' + data.item[problem].problem_submission }} </div>
         </template>
         <template #cell(id)="data">
-          {{ data.index + 1 }}
+          {{ data.index + (currentPage - 1) * perPage + 1 }}
         </template>
         <template #cell()="data">
           <div class="user-name">{{ data.value }}</div>
@@ -53,7 +53,7 @@ export default {
   name: 'ContestRanking',
   data () {
     return {
-      limit: 1000,
+      limit: 200,
       total: 0,
       perPage: 20,
       currentPage: 1,

@@ -111,7 +111,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
@@ -128,9 +128,10 @@ export default {
   .title{
     color: #7C7A7B;
   }
-  .notice-list-card .table{
+  .table{
     width: 95% !important;
     margin: 0 auto;
+    cursor: pointer;
   }
   .no-announcement {
     text-align: center;
