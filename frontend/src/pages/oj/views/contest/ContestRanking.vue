@@ -1,5 +1,16 @@
 <template>
   <div class="contest-ranking-card font-bold">
+    <div class="standings-description" style="text-align: right;">
+      <b-icon icon="question-circle" id="standings-info" style="margin-right: 30px;"/>
+      <b-popover
+        target="standings-info"
+        title="How to read?"
+        placement="bottom"
+        triggers="hover focus"
+      >
+        <img style="width: 200px; height: auto;" src="@/assets/standing.png"/>
+      </b-popover>
+    </div>
     <div class="table">
       <b-table
         :items="contestRankingList"
