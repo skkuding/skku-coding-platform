@@ -20,10 +20,10 @@
         <b-tab title="Top">
           <p class="contest-tab-description" v-dompurify-html="contest.description"></p>
         </b-tab>
-        <b-tab title="Problems">
+        <b-tab title="Problems" lazy>
           <contest-problem-list></contest-problem-list>
         </b-tab>
-        <b-tab title="Standings">
+        <b-tab title="Standings" lazy>
           <contest-ranking></contest-ranking>
         </b-tab>
       </b-tabs>
@@ -69,7 +69,6 @@ export default {
   async mounted () {
     this.contestID = this.$route.params.contestID
     this.route_name = this.$route.name
-    this.getContestProblems()
     try {
       const res = await this.$store.dispatch('getContest')
       this.changeDomTitle({ title: res.data.data.title })
