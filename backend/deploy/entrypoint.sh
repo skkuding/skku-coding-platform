@@ -23,6 +23,7 @@ if [ ! -f "$SSL/server.key" ]; then
         -subj "/C=CN/ST=Beijing/L=Beijing/O=Beijing OnlineJudge Technology Co., Ltd./OU=Service Infrastructure Department/CN=`hostname`" -nodes
 fi
 
+cd $APP/deploy/nginx
 if [ ! -z "$LOWER_IP_HEADER" ]; then
     sed -i "s/__IP_HEADER__/\$http_$LOWER_IP_HEADER/g" api_proxy.conf;
 else
