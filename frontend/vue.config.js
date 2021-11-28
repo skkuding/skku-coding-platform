@@ -18,6 +18,14 @@ module.exports = {
       chunks: ['chunk-vendors', 'chunk-common', 'admin']
     }
   },
+  devServer: {
+    proxy: {
+      '^/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true
+      }
+    }
+  },
   configureWebpack: {
     resolve: {
       extensions: ['.js', '.vue', '.json'],
