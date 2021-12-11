@@ -5,7 +5,8 @@
   },
   "editor.formatOnSave": true,
   "eslint.workingDirectories": [
-    "frontend/"
+    "frontend/",
+    "frontend-new/"
   ],
   "files.autoSave": "off",
   "material-icon-theme.activeIconPack": "vue_vuex",

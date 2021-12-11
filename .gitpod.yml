@@ -16,7 +16,9 @@ ports:
 
 tasks:
   - name: Node.js
-    init: yarn --cwd $GITPOD_REPO_ROOT/frontend/ install
+    init: |
+      yarn --cwd $GITPOD_REPO_ROOT/frontend/ install
+      yarn --cwd $GITPOD_REPO_ROOT/frontend-new/ install
     command: |
       echo 'export PROXY_URL=$(gp url 8000)' >> ~/.bashrc
       gp sync-done api-proxy-url

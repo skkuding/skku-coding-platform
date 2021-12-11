@@ -1,0 +1,29 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "vue/setup-compiler-macros": true
+  },
+  "extends": [
+    "standard",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:vue/vue3-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "parser": "@typescript-eslint/parser",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "html",
+    "import",
+    "vue",
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "vue/script-setup-uses-vars": "error"
+  }
+}
