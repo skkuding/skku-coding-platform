@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-// eslint-disable-next-line import/no-unresolved
 import routes from 'virtual:generated-pages'
 
 const router = createRouter({

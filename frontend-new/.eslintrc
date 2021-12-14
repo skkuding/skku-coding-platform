@@ -24,6 +24,7 @@
     "@typescript-eslint"
   ],
   "rules": {
+    "import/no-unresolved": "off",
     "vue/script-setup-uses-vars": "error",
     "vue/multi-word-component-names": "off"
   }
