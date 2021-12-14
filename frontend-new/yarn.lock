@@ -272,7 +272,7 @@
     "@vue/compiler-core" "3.2.26"
     "@vue/shared" "3.2.26"
 
-"@vue/compiler-sfc@3.2.26":
+"@vue/compiler-sfc@3.2.26", "@vue/compiler-sfc@^3.2.4":
   version "3.2.26"
   resolved "https://registry.yarnpkg.com/@vue/compiler-sfc/-/compiler-sfc-3.2.26.tgz#3ce76677e4aa58311655a3bea9eb1cb804d2273f"
   integrity sha512-ePpnfktV90UcLdsDQUh2JdiTuhV0Skv2iYXxfNMOK/F3Q+2BO0AulcVcfoksOpTJGmhhfosWfMyEaEf0UaWpIw==
@@ -2505,6 +2505,15 @@ vite-plugin-pages@^0.19.0-beta.8:
     json5 "^2.2.0"
     local-pkg "^0.4.0"
     yaml "^2.0.0-9"
+
+vite-plugin-vue-layouts@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-vue-layouts/-/vite-plugin-vue-layouts-0.5.0.tgz#2dd05f7682e5aba5e4d29b8169efc2611fe75e53"
+  integrity sha512-KN03GMSGNrWxeHJo5OO9fvdZh44PfievNAoLeMbf20UQPBBO6kpIMVTYB6sFPMWmiTbqZmq3we4z/ocJkxAEiA==
+  dependencies:
+    "@vue/compiler-sfc" "^3.2.4"
+    debug "^4.3.2"
+    fast-glob "^3.2.7"
 
 vite@^2.6.4:
   version "2.7.2"
