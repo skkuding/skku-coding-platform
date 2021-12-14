@@ -45,6 +45,7 @@ tasks:
 vscode:
   extensions:
     - bradlc.vscode-tailwindcss
+    - csstools.postcss
     - dbaeumer.vscode-eslint
     - donjayamanne.githistory
     - eamodio.gitlens

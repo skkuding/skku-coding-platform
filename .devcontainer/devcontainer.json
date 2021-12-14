@@ -3,12 +3,13 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
-  "forwardPorts": [10000],
-
+  "forwardPorts": [
+    10000
+  ],
   "postCreateCommand": "./.devcontainer/postCreateCommand.sh",
-
   "extensions": [
     "bradlc.vscode-tailwindcss",
+    "csstools.postcss",
     "dbaeumer.vscode-eslint",
     "donjayamanne.githistory",
     "eamodio.gitlens",
@@ -22,7 +23,6 @@
     "pkief.material-icon-theme",
     "rangav.vscode-thunder-client"
   ],
-
   // Connect as non-root user (https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user)
   "remoteUser": "vscode"
 }
