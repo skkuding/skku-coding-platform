@@ -1,5 +1,5 @@
 import { register, unregister } from 'register-service-worker'
-import applicationServerPublicKey from '../../data/backend/config/applicationServerKey.txt'
+import applicationServerPublicKey from '../../backend/data/config/applicationServerKey.txt'
 
 function loadVersionBrowser (userAgent) {
   const ua = userAgent
