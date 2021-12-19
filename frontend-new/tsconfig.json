@@ -10,6 +10,12 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "types": [
+      "vite/client",
+      "vite-plugin-pages/client",
+      "vite-plugin-vue-layouts/client",
+      "unplugin-icons/types/vue"
+    ],
     "lib": [
       "esnext",
       "dom"
