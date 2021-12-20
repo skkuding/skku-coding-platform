@@ -4,7 +4,10 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    HeaderLogo: typeof import('./components/atoms/HeaderLogo.vue')['default']
+    HeaderMain: typeof import('./components/organisms/HeaderMain.vue')['default']
+    HeaderNav: typeof import('./components/molecules/HeaderNav.vue')['default']
+    NavItem: typeof import('./components/atoms/NavItem.vue')['default']
   }
 }
 

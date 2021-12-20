@@ -4,3 +4,6 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+// vite-imagetools
+declare module '*.png?h=40'
