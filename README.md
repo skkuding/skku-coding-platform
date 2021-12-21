@@ -35,16 +35,20 @@ https://github.com/skku-npc/skku-coding-platform/wiki
 ### 백엔드 팀
 - 김학산 [@cranemont](https://github.com/cranemont)
 - 박민서 [@minseo999](https://github.com/minseo999)
+- 박지윤 [@cho-to](https://github.com/cho-to)
 - 이윤성 [@Anzanda](https://github.com/Anzanda)
+- 임소리 [@aintbe](https://github.com/aintbe)
 - 조재훈 [@joft-ware](https://github.com/joft-ware)
 - 최영우 [@cyw320712](https://github.com/cyw320712)
+- 최영주 [@y-jiu](https://github.com/y-jiu)
 - 최재민 [@dotoleeoak](https://github.com/dotoleeoak)
 
 ### 프론트엔드 팀
 - 하지민 [@jimin9038](https://github.com/jimin9038) 
 - 고민채 [@Kohminchae](https://github.com/Kohminchae)
+- 구성현 [@goo314](https://github.com/goo314)
 - 민경환 [@DailyPS](https://github.com/DailyPS)
-- 최영주 [@y-jiu](https://github.com/y-jiu)
+- 조성현 [@st42597](https://github.com/st42597)
 - 하솔비 [@SOLBI1028](https://github.com/SOLBI1028)
 
 <details>
