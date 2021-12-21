@@ -1,14 +1,22 @@
 {
-  "files.autoSave": "off",
   "editor.bracketPairColorization.enabled": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "editor.formatOnSave": true,
-  "eslint.workingDirectories": ["frontend/"],
+  "eslint.workingDirectories": [
+    "frontend/"
+  ],
+  "files.autoSave": "off",
   "material-icon-theme.activeIconPack": "vue_vuex",
+  "prettier.enable": false,
   "python.formatting.provider": "none",
-  "python.linting.flake8Args": ["--config", "backend/.flake8"],
+  "python.linting.flake8Args": [
+    "--config",
+    "backend/.flake8"
+  ],
   "python.linting.flake8Enabled": true,
-  "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  "[javascript][typescript][vue]": {
+    "editor.formatOnSave": false
   }
 }

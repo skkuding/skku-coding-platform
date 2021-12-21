@@ -1,5 +1,5 @@
 gitConfig:
-  pull.rebase: 'true'
+  pull.rebase: "true"
 
 ports:
   - port: 8080
@@ -27,12 +27,10 @@ vscode:
     - donjayamanne.githistory
     - eamodio.gitlens
     - editorconfig.editorconfig
-    - esbenp.prettier-vscode
     - gruntfuggly.todo-tree
     - humao.rest-client
     - ms-azuretools.vscode-docker
     - ms-python.python
     - naumovs.color-highlight
-    - octref.vetur
     - oderwat.indent-rainbow
     - pkief.material-icon-theme
