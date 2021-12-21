@@ -9,7 +9,7 @@ from django.db.models import F
 
 from account.models import User
 from conf.models import JudgeServer
-from contest.models import ContestRuleType, ACMContestRank, OIContestRank, ContestStatus
+from contest.models import ContestRuleType, ACMContestRank, ContestStatus
 from options.options import SysOptions
 from problem.models import Problem, ProblemRuleType
 from problem.utils import parse_problem_template
@@ -310,19 +310,6 @@ class JudgeDispatcher(DispatcherBase):
                 user_profile.acm_problems_status["contest_problems"] = contest_problems_status
                 user_profile.save(update_fields=["acm_problems_status"])
 
-            elif self.contest.rule_type == ContestRuleType.OI:
-                contest_problems_status = user_profile.oi_problems_status.get("contest_problems", {})
-                score = self.submission.statistic_info["score"]
-                if problem_id not in contest_problems_status:
-                    contest_problems_status[problem_id] = {"status": self.submission.result,
-                                                           "_id": self.problem._id,
-                                                           "score": score}
-                else:
-                    contest_problems_status[problem_id]["score"] = score
-                    contest_problems_status[problem_id]["status"] = self.submission.result
-                user_profile.oi_problems_status["contest_problems"] = contest_problems_status
-                user_profile.save(update_fields=["oi_problems_status"])
-
             problem = Problem.objects.select_for_update().get(contest_id=self.contest_id, id=self.problem.id)
             result = str(self.submission.result)
             problem_info = problem.statistic_info
@@ -333,18 +320,14 @@ class JudgeDispatcher(DispatcherBase):
             problem.save(update_fields=["submission_number", "accepted_number", "statistic_info"])
 
     def update_contest_rank(self):
-        if self.contest.rule_type == ContestRuleType.OI or self.contest.real_time_rank:
+        if self.contest.real_time_rank:
             cache.delete(f"{CacheKey.contest_rank_cache}:{self.contest.id}")
 
         def get_rank(model):
             return model.objects.select_for_update().get(user_id=self.submission.user_id, contest=self.contest)
 
-        if self.contest.rule_type == ContestRuleType.ACM:
-            model = ACMContestRank
-            func = self._update_acm_contest_rank
-        else:
-            model = OIContestRank
-            func = self._update_oi_contest_rank
+        model = ACMContestRank
+        func = self._update_acm_contest_rank
 
         try:
             rank = get_rank(model)
@@ -388,15 +371,4 @@ class JudgeDispatcher(DispatcherBase):
                 rank.total_penalty += info["penalty"]
 
         rank.submission_info[str(self.submission.problem_id)] = info
-        rank.save()
-
-    def _update_oi_contest_rank(self, rank):
-        problem_id = str(self.submission.problem_id)
-        current_score = self.submission.statistic_info["score"]
-        last_score = rank.submission_info.get(problem_id)
-        if last_score:
-            rank.total_score = rank.total_score - last_score + current_score
-        else:
-            rank.total_score = rank.total_score + current_score
-        rank.submission_info[problem_id] = current_score
         rank.save()
