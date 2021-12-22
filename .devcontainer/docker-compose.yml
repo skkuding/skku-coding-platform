@@ -12,6 +12,27 @@ services:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
 
+  judge-server:
+    image: skkunpc/judge-server
+    container_name: judge-server
+    restart: always
+    read_only: true
+    cap_drop:
+      - SETPCAP
+      - MKNOD
+      - NET_BIND_SERVICE
+      - SYS_CHROOT
+      - SETFCAP
+      - FSETID
+    tmpfs:
+      - /tmp
+    volumes:
+      - ../backend/data/test_case:/test_case:ro
+    environment:
+      - SERVICE_URL=http://judge-server:8080
+      - BACKEND_URL=http://app:8000/api/judge_server_heartbeat/
+      - TOKEN=CHANGE_THIS
+
   db:
     image: postgres:12-alpine
     restart: unless-stopped
@@ -29,5 +50,5 @@ services:
       - redis-data:/data
 
 volumes:
-  postgres-data:
-  redis-data:
+  postgres-data: null
+  redis-data: null
