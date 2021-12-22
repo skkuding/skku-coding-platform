@@ -15,7 +15,7 @@ defineProps({
       text-gray-600
       hover:text-gray-400
       active:text-gray-300
-      transition duration-150 hover:ease-in-out
+      transition hover:ease-in-out
     "
     active-class="
       text-lime-500
