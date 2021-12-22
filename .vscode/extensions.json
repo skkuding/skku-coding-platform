@@ -1,16 +1,8 @@
 {
   "recommendations": [
-    "bradlc.vscode-tailwindcss",
-    "dbaeumer.vscode-eslint",
-    "donjayamanne.githistory",
-    "eamodio.gitlens",
-    "editorconfig.editorconfig",
-    "gruntfuggly.todo-tree",
-    "johnsoncodehk.volar",
-    "ms-python.python",
-    "naumovs.color-highlight",
-    "oderwat.indent-rainbow",
-    "pkief.material-icon-theme",
-    "rangav.vscode-thunder-client"
+    "ms-vscode-remote.remote-containers"
+  ],
+  "unwantedRecommendations": [
+    "esbenp.prettier-vscode"
   ]
 }
