@@ -60,3 +60,21 @@ services:
     ports:
       - "0.0.0.0:80:8000"
       - "0.0.0.0:443:1443"
+
+  coderunner:
+    image: coc0a25/coderunner:0.1
+    container_name: coderunner
+    restart: always
+    cap_drop:
+      - SETPCAP
+      - MKNOD
+      - NET_BIND_SERVICE
+      - SYS_CHROOT
+      - SETFCAP
+      - FSETID
+    volumes:
+      - ./data/cli/compile:/log/compile
+      - ./data/cli/run:/log/run
+      - ./data/cli/server:/log/server
+    ports:
+      - "0.0.0.0:40000:3000"
