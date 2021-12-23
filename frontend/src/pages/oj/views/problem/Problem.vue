@@ -271,6 +271,7 @@
               :value.sync="code"
               :language="language"
               :theme="theme"
+              :key="$route.fullPath"
             />
           </b-row>
           <!-- <b-row id="io">
@@ -431,6 +432,13 @@ export default {
       problem.languages = problem.languages.sort()
       this.problem = problem
 
+      let precode = localStorage.getItem(this.problemID)
+      if (precode) {
+        this.code = precode
+      } else {
+        this.code = ''
+      }
+
       if (this.code === '') {
         const userId = this.user.username
         let preferredLanguage = problem.languages[0]
@@ -535,6 +543,7 @@ export default {
         this.$error('Code can not be empty')
         return
       }
+      localStorage.setItem(this.problemID, this.code)
       this.submissionId = ''
       this.result = { result: 9 }
       this.submitting = true
