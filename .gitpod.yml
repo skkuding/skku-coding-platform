@@ -29,6 +29,7 @@ vscode:
     - editorconfig.editorconfig
     - gruntfuggly.todo-tree
     - humao.rest-client
+    - johnsoncodehk.volar
     - ms-azuretools.vscode-docker
     - ms-python.python
     - naumovs.color-highlight
