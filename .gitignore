@@ -122,15 +122,9 @@ dmypy.json
 # profiling data
 .prof
 
-backend/data/config/*
-backend/data/log/*
-backend/data/public/avatar/*
+backend/data/**
 !backend/data/public/avatar/default.png
-backend/data/public/upload/*
-backend/data/public/website/*
 !backend/data/public/website/favicon.ico
-backend/data/ssl/*
-backend/data/test_case/*
 !**.gitkeep
 
 http_locations.conf

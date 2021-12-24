@@ -12,9 +12,9 @@ services:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
 
-  judge-server:
+  judge-server-dev:
     image: skkunpc/judge-server
-    container_name: judge-server
+    container_name: judge-server-dev
     restart: always
     read_only: true
     cap_drop:
@@ -28,8 +28,11 @@ services:
       - /tmp
     volumes:
       - ../backend/data/test_case:/test_case:ro
+      - ./judge-server/log:/log
+      - ./judge-server/run:/judger
+
     environment:
-      - SERVICE_URL=http://judge-server:8080
+      - SERVICE_URL=http://judge-server-dev:8080
       - BACKEND_URL=http://app:8000/api/judge_server_heartbeat/
       - TOKEN=CHANGE_THIS
 
