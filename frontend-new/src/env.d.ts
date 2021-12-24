@@ -6,4 +6,4 @@ declare module '*.vue' {
 }
 
 // vite-imagetools
-declare module '*.png?h=40'
+declare module '*&webp'

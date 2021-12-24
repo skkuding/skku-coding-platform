@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import src from '~/assets/signature.png?h=40'
+import src from '~/assets/signature.png?h=40&webp'
 </script>
 
 <template>
