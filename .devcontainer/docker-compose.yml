@@ -33,7 +33,7 @@ services:
 
     environment:
       - SERVICE_URL=http://judge-server-dev:8080
-      - BACKEND_URL=http://app:8000/api/judge_server_heartbeat/
+      - DISABLE_HEARTBEAT=1
       - TOKEN=CHANGE_THIS
 
   db:
