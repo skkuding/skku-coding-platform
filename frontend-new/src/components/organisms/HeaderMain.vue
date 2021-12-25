@@ -21,9 +21,9 @@ onBeforeRouteLeave(() => {
       border-b
     "
   >
-    <HeaderLogo />
-    <HeaderNav />
-    <HeaderMobileButton @click="openMobileMenu" />
+    <AtomsHeaderLogo />
+    <MoleculesHeaderNav />
+    <AtomsHeaderMobileButton @click="openMobileMenu" />
   </header>
-  <HeaderMobileNav :active="isMobileNavShown" />
+  <MoleculesHeaderMobileNav :active="isMobileNavShown" />
 </template>

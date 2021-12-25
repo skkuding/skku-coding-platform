@@ -22,6 +22,7 @@ export default defineConfig({
           prefix: 'icon'
         })
       ],
+      directoryAsNamespace: true,
       dts: 'src/components.d.ts'
     }),
     imagetools()

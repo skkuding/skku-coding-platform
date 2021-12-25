@@ -6,17 +6,17 @@
       lg:gap-5
     "
   >
-    <NavItem to="/notice">
+    <AtomsNavItem to="/notice">
       Notices
-    </NavItem>
-    <NavItem to="/contest">
+    </AtomsNavItem>
+    <AtomsNavItem to="/contest">
       Contests
-    </NavItem>
-    <NavItem to="/problem">
+    </AtomsNavItem>
+    <AtomsNavItem to="/problem">
       Problems
-    </NavItem>
-    <NavItem to="/lecture">
+    </AtomsNavItem>
+    <AtomsNavItem to="/lecture">
       Lectures
-    </NavItem>
+    </AtomsNavItem>
   </div>
 </template>

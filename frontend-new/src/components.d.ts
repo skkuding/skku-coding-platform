@@ -4,13 +4,13 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
-    HeaderLogo: typeof import('./components/atoms/HeaderLogo.vue')['default']
-    HeaderMain: typeof import('./components/organisms/HeaderMain.vue')['default']
-    HeaderMobileButton: typeof import('./components/atoms/HeaderMobileButton.vue')['default']
-    HeaderMobileNav: typeof import('./components/molecules/HeaderMobileNav.vue')['default']
-    HeaderNav: typeof import('./components/molecules/HeaderNav.vue')['default']
+    AtomsHeaderLogo: typeof import('./components/atoms/HeaderLogo.vue')['default']
+    AtomsHeaderMobileButton: typeof import('./components/atoms/HeaderMobileButton.vue')['default']
+    AtomsNavItem: typeof import('./components/atoms/NavItem.vue')['default']
     IconFaBars: typeof import('~icons/fa/bars')['default']
-    NavItem: typeof import('./components/atoms/NavItem.vue')['default']
+    MoleculesHeaderMobileNav: typeof import('./components/molecules/HeaderMobileNav.vue')['default']
+    MoleculesHeaderNav: typeof import('./components/molecules/HeaderNav.vue')['default']
+    OrganismsHeaderMain: typeof import('./components/organisms/HeaderMain.vue')['default']
   }
 }
 

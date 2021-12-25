@@ -6,7 +6,7 @@
       items-center
     "
   >
-    <HeaderMain />
+    <OrganismsHeaderMain />
     <router-view />
   </div>
 </template>
