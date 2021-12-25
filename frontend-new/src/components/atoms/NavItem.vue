@@ -11,7 +11,7 @@ defineProps({
   <router-link
     :to="to"
     class="
-      text-lg font-semibold tracking-wide
+      text-lg font-semibold
       text-gray-600
       hover:text-gray-400
       active:text-gray-300
