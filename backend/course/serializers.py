@@ -63,8 +63,12 @@ class CourseStudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Registration
-        fields = ("course",)
+        fields = ("course", "bookmark",)
 
+
+class BookmarkCourseSerializer(serializers.Serializer):
+    course_id = serializers.IntegerField()
+    bookmark = serializers.BooleanField()
 
 class UserListSerializer(serializers.ModelSerializer):
     user = UserAdminSerializer()
