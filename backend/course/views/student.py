@@ -1,9 +1,9 @@
-from utils.api import APIView
+from utils.api import APIView, validate_serializer
 from utils.decorators import login_required
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration
-from ..serializers import CourseStudentSerializer
+from ..serializers import BookmarkCourseSerializer, CourseStudentSerializer
 
 
 class CourseAPI(APIView):
@@ -15,6 +15,12 @@ class CourseAPI(APIView):
                 description="Unique ID of a course",
                 requied=True,
                 type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="bookmark",
+                in_=openapi.IN_QUERY,
+                description="True for get bookmark list",
+                type=openapi.TYPE_BOOLEAN
             ),
             openapi.Parameter(
                 name="limit",
@@ -51,4 +57,32 @@ class CourseAPI(APIView):
 
         courses = Registration.objects.filter(user_id=user_id)
 
+        if request.GET.get("bookmark") == "true":
+            courses = courses.filter(bookmark=True)
+
         return self.success(self.paginate_data(request, courses, CourseStudentSerializer))
+
+
+class BookmarkCourseAPI(APIView):
+    @swagger_auto_schema(
+        request_body=BookmarkCourseSerializer,
+        operation_description="Bookmark a course"
+    )
+    @validate_serializer(BookmarkCourseSerializer)
+    @login_required
+    def put(self, request):
+        data = request.data
+        course_id = data["course_id"]
+
+        try:
+            Course.objects.get(id=course_id)
+            registration = Registration.objects.get(user_id=request.user.id, course_id=course_id)
+        except Course.DoesNotExist:
+            return self.error("Course does not exist")
+        except Registration.DoesNotExist:
+            return self.error("Invalid access, not registered course")
+
+        registration.bookmark = data["bookmark"]
+
+        registration.save()
+        return self.success(BookmarkCourseSerializer(registration).data)
