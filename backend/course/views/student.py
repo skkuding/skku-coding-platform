@@ -3,7 +3,7 @@ from utils.decorators import login_required
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration
-from ..serializers import BookmarkCourseSerializer, CourseStudentSerializer
+from ..serializers import BookmarkCourseSerializer, CourseRegistrationSerializer
 
 
 class CourseAPI(APIView):
@@ -38,7 +38,7 @@ class CourseAPI(APIView):
             ),
         ],
         operation_description="Get registered course list of requesting user",
-        responses={200: CourseStudentSerializer},
+        responses={200: CourseRegistrationSerializer},
     )
     @login_required
     def get(self, request):
@@ -49,7 +49,7 @@ class CourseAPI(APIView):
             try:
                 Course.objects.get(id=course_id)
                 course = Registration.objects.get(user_id=user_id, course_id=course_id)
-                return self.success(CourseStudentSerializer(course).data)
+                return self.success(CourseRegistrationSerializer(course).data)
             except Course.DoesNotExist:
                 return self.error("Course does not exist")
             except Registration.DoesNotExist:
@@ -60,7 +60,7 @@ class CourseAPI(APIView):
         if request.GET.get("bookmark") == "true":
             courses = courses.filter(bookmark=True)
 
-        return self.success(self.paginate_data(request, courses, CourseStudentSerializer))
+        return self.success(self.paginate_data(request, courses, CourseRegistrationSerializer))
 
 
 class BookmarkCourseAPI(APIView):

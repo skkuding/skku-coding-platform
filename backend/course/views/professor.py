@@ -5,7 +5,7 @@ from account.models import User
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration
-from ..serializers import (CourseProfessorSerializer, CreateCourseSerializer, EditCourseSerializer,
+from ..serializers import (BookmarkCourseSerializer, CourseProfessorSerializer, CourseRegistrationSerializer, CreateCourseSerializer, EditCourseSerializer,
                            RegisterSerializer, EditRegisterSerializer, RegisterErrorSerializer,  UserListSerializer)
 
 
@@ -48,6 +48,10 @@ class CourseAPI(APIView):
             except Course.DoesNotExist:
                 return self.error("Course does not exist")
 
+        if request.GET.get("bookmark") == "true":
+            courses = Registration.objects.filter(course__created_by=request.user, bookmark=True)
+            return self.success(self.paginate_data(request, courses, CourseRegistrationSerializer))
+
         courses = Course.objects.filter(created_by=request.user)
         return self.success(self.paginate_data(request, courses, CourseProfessorSerializer))
 
@@ -66,6 +70,8 @@ class CourseAPI(APIView):
                                        created_by=request.user,
                                        registered_year=data["registered_year"],
                                        semester=data["semester"])
+
+        Registration.objects.create(course_id=course.id, user_id=request.user.id)
         return self.success(CourseProfessorSerializer(course).data)
 
     @swagger_auto_schema(
@@ -112,6 +118,32 @@ class CourseAPI(APIView):
 
         course.delete()
         return self.success()
+
+
+class BookmarkCourseAPI(APIView):
+    @swagger_auto_schema(
+        request_body=BookmarkCourseSerializer,
+        operation_description="Bookmark a course"
+    )
+    @validate_serializer(BookmarkCourseSerializer)
+    @admin_role_required
+    def put(self, request):
+        data = request.data
+        course_id = data["course_id"]
+
+        try:
+            course = Course.objects.get(id=course_id)
+            ensure_created_by(course, request.user)
+            registration = Registration.objects.get(user_id=request.user.id, course_id=course_id)
+        except Course.DoesNotExist:
+            return self.error("Course does not exist")
+        except Registration.DoesNotExist:
+            return self.error("Invalid access, not registered course")
+
+        registration.bookmark = data["bookmark"]
+
+        registration.save()
+        return self.success(BookmarkCourseSerializer(registration).data)
 
 
 class StudentManagementAPI(APIView):
