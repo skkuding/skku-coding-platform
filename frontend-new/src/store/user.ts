@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { reactive, computed } from 'vue'
+import api from '~/modules/axios'
 import { ADMIN_TYPE, PROBLEM_PERMISSION } from '~/constants'
 import type { AdminType, User, Profile } from '~/types'
 
@@ -21,7 +22,7 @@ export const useUserStore = defineStore('user', () => {
   )
 
   const getProfile = async () => {
-    const res = {} // TODO: request API
+    const res = await api.get('profile/')
     Object.assign(profile, res || {})
   }
 
