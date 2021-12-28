@@ -59,3 +59,4 @@ vscode:
     - naumovs.color-highlight
     - oderwat.indent-rainbow
     - pkief.material-icon-theme
+    - stylelint.vscode-stylelint

@@ -21,7 +21,8 @@
     "naumovs.color-highlight",
     "oderwat.indent-rainbow",
     "pkief.material-icon-theme",
-    "rangav.vscode-thunder-client"
+    "rangav.vscode-thunder-client",
+    "stylelint.vscode-stylelint"
   ],
   // Connect as non-root user (https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user)
   "remoteUser": "vscode"
