@@ -95,8 +95,8 @@ export default {
       const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey
       if (e.domEvent.keyCode === 13) {
         this.term.write('\n')
-        this.socket.emit('stdin', this.stdin)
         this.userinput = true
+        this.socket.emit('stdin', this.stdin)
       } else if (e.domEvent.keyCode === 8) {
         if (this.term._core.buffer.x > 2) {
           this.term.write('\b \b')
@@ -146,6 +146,7 @@ export default {
       this.socket.on('stdout', (output) => {
         if (this.userinput) {
           this.stdout = output.replace(this.stdin + '\r\n', '')
+          this.stdin = ''
           this.term.write(this.stdout)
           this.userinput = false
         } else {
