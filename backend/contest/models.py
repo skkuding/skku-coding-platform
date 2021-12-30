@@ -5,6 +5,7 @@ from django.db.models import JSONField
 
 from utils.constants import ContestStatus, ContestType
 from account.models import User
+from problem.models import Problem
 from utils.models import RichTextField
 
 
@@ -30,7 +31,7 @@ class Contest(models.Model):
         if self.start_time > now():
             # NOT_START return 1
             return ContestStatus.CONTEST_NOT_START
-        elif self.end_time < now():
+        elif self.end_time < now(): 
             # ENDED return -1
             return ContestStatus.CONTEST_ENDED
         else:
@@ -91,6 +92,7 @@ class OIContestRank(AbstractContestRank):
 
 class ContestAnnouncement(models.Model):
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
     title = models.TextField()
     content = RichTextField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
