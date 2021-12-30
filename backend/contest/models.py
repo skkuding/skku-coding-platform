@@ -5,7 +5,6 @@ from django.db.models import JSONField
 
 from utils.constants import ContestStatus, ContestType
 from account.models import User
-from problem.models import Problem
 from utils.models import RichTextField
 
 
@@ -92,7 +91,7 @@ class OIContestRank(AbstractContestRank):
 
 class ContestAnnouncement(models.Model):
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
+    problem = models.ForeignKey("problem.Problem", on_delete=models.CASCADE, default=None)
     title = models.TextField()
     content = RichTextField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
