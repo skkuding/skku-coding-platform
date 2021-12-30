@@ -132,8 +132,8 @@ export default {
       this.stdin = ''
       this.stdout = ''
       this.stderr = ''
-
-      this.socket = io('http://localhost:40000', {
+      // TODO: Add additional URI
+      this.socket = io('https://localhost', {
         reconnection: false,
         query: {
           token: this.dir,
@@ -166,7 +166,7 @@ export default {
     },
     async compile () {
       try {
-        const res = await axios.post('http://localhost:40000/compile', { lang: this.lang, code: this.code })
+        const res = await axios.post('https://localhost/code-run/compile', { lang: this.lang, code: this.code })
         console.log(res.data)
         this.stderr = ''
         if (res.data.status !== 1) {

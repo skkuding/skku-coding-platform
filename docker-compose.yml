@@ -76,5 +76,3 @@ services:
       - ./data/cli/compile:/log/compile
       - ./data/cli/run:/log/run
       - ./data/cli/server:/log/server
-    ports:
-      - "0.0.0.0:40000:3000"
