@@ -156,7 +156,7 @@ export default {
     async goContest (item) {
       if (item.contest_type !== CONTEST_TYPE.PUBLIC && !this.isAuthenticated) {
         this.$error('Please login first!')
-        await this.$store.dispatch('changeModalStatus', { visible: true })
+        await this.$store.dispatch('changeModalStatus', { mode: 'login', visible: true })
       } else {
         this.$router.push({
           name: 'contest-details',

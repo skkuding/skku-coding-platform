@@ -132,7 +132,7 @@ export default {
       this.cur_contest_id = item.id
       if (!this.isAuthenticated) {
         this.$error('Please login first!')
-        await this.$store.dispatch('changeModalStatus', { visible: true })
+        await this.$store.dispatch('changeModalStatus', { mode: 'login', visible: true })
       } else {
         if (item.contest_type === CONTEST_TYPE.PRIVATE) {
           this.$error('This contest is locked')
