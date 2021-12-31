@@ -62,9 +62,9 @@ export default {
       },
       majors: [
         { value: '', text: '-- Select Your Major --', disabled: 'true' },
-        { value: 'Major(원전공)', text: 'Major(원전공)' },
-        { value: 'Double Major(복수전공)', text: 'Double Major(복수전공)' },
-        { value: 'Non-CS Major(비전공)', text: 'Non-CS Major(비전공)' }
+        { value: 'Major', text: 'Major(원전공)' },
+        { value: 'Double Major', text: 'Double Major(복수전공)' },
+        { value: 'Non-CS Major', text: 'Non-CS Major(비전공)' }
       ]
     }
   },
