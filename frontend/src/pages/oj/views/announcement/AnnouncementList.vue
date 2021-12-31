@@ -12,7 +12,15 @@
           :current-page="currentPage"
           head-variant="light"
           @row-clicked="goAnnouncement"
-        ></b-table>
+        >
+          <template #cell(top_fixed)="row">
+            <div v-if="row.item.top_fixed === true"><b-icon icon="tag-fill" scale="0.8"/></div>
+          </template>
+          <template #cell(title)="row">
+            <div v-if="row.item.top_fixed === true">{{ changeRowColor(row.item) }}</div>
+            {{row.item.title}}
+          </template>
+        </b-table>
         <div
           v-if="!announcements.length"
           class="no-announcement"
@@ -46,6 +54,10 @@ export default {
       announcement: '',
       listVisible: true,
       noticeListColumns: [
+        {
+          key: 'top_fixed',
+          label: ''
+        },
         {
           key: 'title',
           label: 'Title',
@@ -86,7 +98,10 @@ export default {
       try {
         const res = await api.getAnnouncementList(0, 250)
         this.btnLoading = false
-        this.announcements = res.data.data.results
+        const announcements = res.data.data.results
+        const topFixed = announcements.filter(announcement => (announcement.top_fixed === true))
+        const notTopFixed = announcements.filter(announcement => (announcement.top_fixed === false))
+        this.announcements = [...topFixed, ...notTopFixed]
         this.total = res.data.data.total
       } catch (err) {
         this.btnLoading = false
@@ -106,6 +121,9 @@ export default {
       this.announcement = announcement
       this.listVisible = false
       await this.$router.push({ name: 'announcement-details', params: { announcementID: announcement.id } })
+    },
+    changeRowColor (announcement) {
+      announcement._rowVariant = 'secondary'
     }
   }
 }

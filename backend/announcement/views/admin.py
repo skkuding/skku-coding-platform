@@ -24,7 +24,8 @@ class AnnouncementAdminAPI(APIView):
         announcement = Announcement.objects.create(title=data["title"],
                                                    content=data["content"],
                                                    created_by=request.user,
-                                                   visible=data["visible"])
+                                                   visible=data["visible"],
+                                                   top_fixed=data["top_fixed"])
         return self.success(AnnouncementSerializer(announcement).data)
 
     @swagger_auto_schema(
