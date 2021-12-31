@@ -21,7 +21,16 @@
           <template #cell(visible)="row">
             <b-form-checkbox
               v-model="row.item.visible"
-              @change="handleVisibleSwitch(row.item)"
+              @change="handleSwitch(row.item)"
+              switch
+            >
+            </b-form-checkbox>
+          </template>
+
+          <template #cell(top_fixed)="row">
+            <b-form-checkbox
+              v-model="row.item.top_fixed"
+              @change="handleSwitch(row.item)"
               switch
             >
             </b-form-checkbox>
@@ -58,7 +67,16 @@
           <template #cell(visible)="row">
             <b-form-checkbox
               v-model="row.item.visible"
-              @change="handleVisibleSwitch(row.item)"
+              @change="handleSwitch(row.item)"
+              switch
+            >
+            </b-form-checkbox>
+          </template>
+
+          <template #cell(top_fixed)="row">
+            <b-form-checkbox
+              v-model="row.item.top_fixed"
+              @change="handleSwitch(row.item)"
               switch
             >
             </b-form-checkbox>
@@ -118,10 +136,18 @@
         <span class="text-danger">*</span> Content
       </p>
       <tiptap v-model="announcement.content" />
-      <div class="visible-box">
+      <div class="switch-box">
         <span>Visible</span>
         <b-form-checkbox
           v-model="announcement.visible"
+          switch
+          style="magin-right: 20px;"
+        />
+      </div>
+      <div class="switch-box">
+        <span>Top Fixed</span>
+        <b-form-checkbox
+          v-model="announcement.top_fixed"
           switch
         />
       </div>
@@ -155,6 +181,7 @@ export default {
         { key: 'last_update_time', label: 'LastUpdateTime' },
         { key: 'created_by.username', label: 'Author' },
         { key: 'visible', label: 'Visible' },
+        { key: 'top_fixed', label: 'Top Fixed' },
         { key: 'option', label: 'Option', thClass: 'announcementOption', tdClass: 'announcementOption' }
       ],
       pageSize: 15,
@@ -164,6 +191,7 @@ export default {
       announcement: {
         title: '',
         visible: true,
+        top_fixed: false,
         content: ''
       },
       announcementDialogTitle: 'Edit Announcement',
@@ -236,7 +264,8 @@ export default {
           id: this.currentAnnouncementId,
           title: this.announcement.title,
           content: this.announcement.content,
-          visible: this.announcement.visible
+          visible: this.announcement.visible,
+          top_fixed: this.announcement.top_fixed
         }
       }
       if (this.contestID) {
@@ -275,6 +304,7 @@ export default {
             if (item.id === this.currentAnnouncementId) {
               this.announcement.title = item.title
               this.announcement.visible = item.visible
+              this.announcement.top_fixed = item.top_fixed
               this.announcement.content = item.content
               this.mode = 'edit'
               return true
@@ -288,6 +318,7 @@ export default {
             if (item.id === this.currentAnnouncementId) {
               this.announcement.title = item.title
               this.announcement.visible = item.visible
+              this.announcement.top_fixed = item.top_fixed
               this.announcement.content = item.content
               this.mode = 'edit'
               return true
@@ -299,17 +330,19 @@ export default {
         this.announcementDialogTitle = 'Create Announcement'
         this.announcement.title = ''
         this.announcement.visible = true
+        this.announcement.top_fixed = false
         this.announcement.content = ''
         this.mode = 'create'
       }
     },
-    handleVisibleSwitch (row) {
+    handleSwitch (row) {
       this.mode = 'edit'
       this.submitAnnouncement({
         id: row.id,
         title: row.title,
         content: row.content,
-        visible: row.visible
+        visible: row.visible,
+        top_fixed: row.top_fixed
       })
     }
   },
@@ -326,10 +359,13 @@ export default {
     margin-bottom: 20px;
   }
 
-  .visible-box {
+  .switch-box {
+    display: flex;
     margin-top: 10px;
-    width: 205px;
-    float: left;
+    margin-right: 20px;
+    & span {
+      margin-right: 10px;
+    }
   }
 </style>
 
