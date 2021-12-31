@@ -82,11 +82,12 @@ export default {
   .status-container {
     font-size: 14px;
     padding: 6px 50px;
-    margin: 8px;
     display: flex;
     border: 2px solid #eaeaea;
     border-radius: 20px;
     color: #7c7a7b;
+    max-height: 40px;
+    min-width: fit-content;
   }
   .status-icon {
     margin-bottom: 2px;

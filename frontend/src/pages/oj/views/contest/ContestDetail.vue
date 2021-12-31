@@ -155,6 +155,7 @@ export default {
     color: #7C7A7B;
     display:inline;
     position:relative;
+    word-break: keep-all;
     // top:36px;
   }
   .contest-list-card {
