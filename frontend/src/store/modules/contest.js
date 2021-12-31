@@ -134,6 +134,14 @@ const mutations = {
 }
 
 const actions = {
+  async getContestList (query) {
+    const res = await api.getContestList(0, 20, query)
+    const data = res.data.data.results
+    const underway = data.filter(contest => contest.status === '0')
+    const notunderway = data.filter(contest => contest.status !== '0')
+    const contestList = [...underway, ...notunderway]
+    return contestList
+  },
   async getContest ({ commit, rootState, dispatch }) {
     const res = await api.getContest(rootState.route.params.contestID)
     const contest = res.data.data

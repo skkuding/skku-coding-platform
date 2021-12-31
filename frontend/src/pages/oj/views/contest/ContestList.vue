@@ -69,8 +69,6 @@ export default {
       CONTEST_STATUS: CONTEST_STATUS,
       route_name: '',
       contestID: '',
-      currentPage: 1,
-      perPage: 5,
       query: {
         status: '',
         keyword: '',
@@ -116,7 +114,7 @@ export default {
     },
     async getContestList () {
       try {
-        const res = await api.getContestList(0, 20, this.query)
+        const res = await api.getContestList(0, this.limit, this.query)
         this.contests = res.data.data.results
         this.total = res.data.data.total
       } catch (err) {

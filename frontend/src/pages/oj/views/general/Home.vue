@@ -134,12 +134,17 @@ export default {
       this.total = res.data.data.total
     },
     async getContestList () {
-      const res = await api.getContestList(0, 3)
-      const contests = res.data.data.results
+      const res = await api.getContestList(0, 10)
+      let contests = res.data.data.results
       this.total = res.data.data.total
 
       const status = [CONTEST_STATUS.UNDERWAY, CONTEST_STATUS.NOT_START]
-      this.contests = contests.filter(contest => contest.status in status).reverse()
+      contests = contests.filter(contest => contest.status in status)
+      if (contests.length >= 3) {
+        this.contests = [contests[0], contests[1], contests[2]]
+      } else {
+        this.contests = [...contests]
+      }
     },
     async goAnnouncement (item) {
       if (item && item.id) {
