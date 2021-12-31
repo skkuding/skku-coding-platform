@@ -51,7 +51,7 @@ export default {
   name: 'ContestList',
   async beforeRouteEnter (to, from, next) {
     try {
-      const res = await api.getContestList(0, 1000)
+      const res = await api.getContestList(0, 20)
       next((vm) => {
         vm.contests = res.data.data.results
         vm.total = res.data.data.total
@@ -62,14 +62,15 @@ export default {
   },
   data () {
     return {
-      limit: 200,
+      limit: 20,
       total: 0,
       perPage: 5,
       currentPage: 1,
       CONTEST_STATUS: CONTEST_STATUS,
       route_name: '',
       contestID: '',
-      page: 1,
+      currentPage: 1,
+      perPage: 5,
       query: {
         status: '',
         keyword: '',
@@ -115,7 +116,7 @@ export default {
     },
     async getContestList () {
       try {
-        const res = await api.getContestList(0, this.limit, this.query)
+        const res = await api.getContestList(0, 20, this.query)
         this.contests = res.data.data.results
         this.total = res.data.data.total
       } catch (err) {
