@@ -15,6 +15,7 @@
         >
           <template #cell(top_fixed)="row">
             <div v-if="row.item.top_fixed === true"><b-icon icon="tag-fill" scale="0.8"/></div>
+            <div v-else>{{ calculateIdx(row) }}</div>
           </template>
           <template #cell(title)="row">
             <div v-if="row.item.top_fixed === true">{{ changeRowColor(row.item) }}</div>
@@ -53,6 +54,7 @@ export default {
       announcements: [],
       announcement: '',
       listVisible: true,
+      topFixedCount: 0,
       noticeListColumns: [
         {
           key: 'top_fixed',
@@ -100,6 +102,7 @@ export default {
         this.btnLoading = false
         const announcements = res.data.data.results
         const topFixed = announcements.filter(announcement => (announcement.top_fixed === true))
+        this.topFixedCount = topFixed.length
         const notTopFixed = announcements.filter(announcement => (announcement.top_fixed === false))
         this.announcements = [...topFixed, ...notTopFixed]
         this.total = res.data.data.total
@@ -124,6 +127,9 @@ export default {
     },
     changeRowColor (announcement) {
       announcement._rowVariant = 'secondary'
+    },
+    calculateIdx (row) {
+      return row.index - this.topFixedCount + 1
     }
   }
 }
