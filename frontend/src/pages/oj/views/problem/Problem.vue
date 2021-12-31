@@ -378,8 +378,10 @@ export default {
     },
     // when language dropdown changed
     onChangeLang (newLang) {
-      if (this.problem.template[newLang] && this.code.trim() === '') {
+      if (this.problem.template[newLang]) {
         this.code = this.problem.template[newLang]
+      } else {
+        this.code = ''
       }
       this.language = newLang
     },
