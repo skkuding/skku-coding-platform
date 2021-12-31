@@ -46,7 +46,12 @@ const actions = {
     commit(types.CHANGE_PROFILE, {
       profile: {}
     })
-    storage.clear()
+    // storage.clear()
+    for (let [key, value] in Object.entries(storage)) { // not working!!
+      if(key.indexOf('problemCode') !== -1) {
+        storage.remove('problemCode_5_1')
+      }
+    }
   }
 }
 

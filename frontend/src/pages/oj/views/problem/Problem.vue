@@ -432,11 +432,15 @@ export default {
       problem.languages = problem.languages.sort()
       this.problem = problem
 
-      let precode = localStorage.getItem(this.problemID)
+      const precode = storage.get(buildProblemCodeKey(this.problemID,this.contestID))
       if (precode) {
-        this.code = precode
+        this.code = precode.code
+        this.language = precode.language
+        this.theme = precode.theme
       } else {
-        this.code = ''
+        this.code = '',
+        this.language = 'C++',
+        this.theme = 'material'
       }
 
       if (this.code === '') {
@@ -543,7 +547,11 @@ export default {
         this.$error('Code can not be empty')
         return
       }
-      localStorage.setItem(this.problemID, this.code)
+      storage.set(buildProblemCodeKey(this.problemID, this.contestID), {
+        code: this.code,
+        language: this.language,
+        theme: this.theme
+      })
       this.submissionId = ''
       this.result = { result: 9 }
       this.submitting = true
@@ -670,6 +678,14 @@ export default {
     clearInterval(this.refreshStatus)
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: true })
     storage.set(buildProblemCodeKey(this.problem._id, from.params.contestID), {
+      code: this.code,
+      language: this.language,
+      theme: this.theme
+    })
+    next()
+  },
+  beforeRouteUpdate (to, from, next) {
+    storage.set(buildProblemCodeKey(from.params.problemID,from.params.contestID), {
       code: this.code,
       language: this.language,
       theme: this.theme
