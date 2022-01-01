@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from utils.shortcuts import get_env
 
 
 class JudgeServer(models.Model):
@@ -17,6 +18,9 @@ class JudgeServer(models.Model):
 
     @property
     def status(self):
+        # In devcontainer, ignore heartbeat since server is not always running (PR#250)
+        if get_env("DISABLE_HEARTBEAT"):
+            return "normal"
         # Increase the one-second delay to improve adaptability to the network environment
         if (timezone.now() - self.last_heartbeat).total_seconds() > 6:
             return "abnormal"
