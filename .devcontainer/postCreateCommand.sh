@@ -27,5 +27,11 @@ JudgeServer.objects.create(
 )
 " | python3 /workspace/backend/manage.py shell
 
+# Register judge server token
+echo "
+from options.options import SysOptions
+SysOptions.judge_server_token='$JUDGE_SERVER_TOKEN'
+" | python3 /workspace/backend/manage.py shell
+
 # Install Node packages
 yarn --cwd /workspace/frontend install

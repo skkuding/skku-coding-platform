@@ -13,6 +13,7 @@ services:
       - REDIS_HOST=redis
       - DISABLE_HEARTBEAT=1
       - JUDGE_SERVER_URL=http://judge-server-dev:8080
+      - JUDGE_SERVER_TOKEN=CHANGE_THIS
 
   judge-server-dev:
     image: skkunpc/judge-server
@@ -32,7 +33,6 @@ services:
       - ../backend/data/test_case:/test_case:ro
       - ./judge-server/log:/log
       - ./judge-server/run:/judger
-
     environment:
       - DISABLE_HEARTBEAT=1
       - TOKEN=CHANGE_THIS
