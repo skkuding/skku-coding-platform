@@ -11,6 +11,8 @@ services:
     environment:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
+      - DISABLE_HEARTBEAT=1
+      - JUDGE_SERVER_URL=http://judge-server-dev:8080
 
   judge-server-dev:
     image: skkunpc/judge-server
@@ -32,7 +34,6 @@ services:
       - ./judge-server/run:/judger
 
     environment:
-      - SERVICE_URL=http://judge-server-dev:8080
       - DISABLE_HEARTBEAT=1
       - TOKEN=CHANGE_THIS
 
