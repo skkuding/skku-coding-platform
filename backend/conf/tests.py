@@ -183,3 +183,13 @@ class DashboardInfoAPITest(APITestCase):
         resp = self.client.get(self.url)
         self.assertSuccess(resp)
         self.assertEqual(resp.data["data"]["user_count"], 1)
+
+
+class IpAddressInfoAPITest(APITestCase):
+    def setUp(self):
+        self.url = self.reverse("ip_address_info_api")
+        self.create_admin()
+
+    def test_get_ip(self):
+        resp = self.client.get(self.url)
+        self.assertSuccess(resp)

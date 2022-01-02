@@ -34,8 +34,8 @@
             </b-form-group>
             <b-form-group label-cols="3"
             label = "IP:">
-              <label class=“mr-sm-2”>IP:</label>
-              <span>{{ session.ip }}</span>
+              <label class=“mr-sm-2”></label>
+              <span>{{ ip }}</span>
             </b-form-group>
             <b-form-group label-cols="3"
             label = "OS">
@@ -172,7 +172,8 @@ export default {
       activeNames: [1],
       session: {},
       loadingReleases: true,
-      releases: []
+      releases: [],
+      ip: ''
     }
   },
   async mounted () {
@@ -185,6 +186,12 @@ export default {
     try {
       const resp = await api.getSessions()
       this.parseSession(resp.data.data)
+    } catch (err) {
+    }
+
+    try {
+      const resp = await api.getIPAddress()
+      this.ip = resp.data.data.ip
     } catch (err) {
     }
 

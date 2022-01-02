@@ -323,6 +323,9 @@ export default {
     return ajax('admin/upload_file/', 'post', {
       data
     })
+  },
+  getIPAddress () {
+    return ajax('admin/ip_info/', 'get')
   }
 }
 
