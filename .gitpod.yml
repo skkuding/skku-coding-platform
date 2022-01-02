@@ -19,7 +19,9 @@ tasks:
     init: yarn --cwd /workspace/skku-coding-platform/frontend/ install
 
   - name: Python
-    init: python3 -m pip install -r /workspace/skku-coding-platform/backend/deploy/requirements.txt
+    init: |
+      pip freeze | xargs pip uninstall -y
+      pip install -r /workspace/skku-coding-platform/backend/deploy/requirements.txt
 
   - name: DB Container
     command: docker-compose -f /workspace/skku-coding-platform/.gitpod.docker-compose.yml up -d
