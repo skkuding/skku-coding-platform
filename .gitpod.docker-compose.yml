@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:12-alpine
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=codingplatform
+      - POSTGRES_USER=codingplatform
+      - POSTGRES_DB=codingplatform
+    ports:
+      - "0.0.0.0:5432:5432"
+
+  redis:
+    image: redis:4.0-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    ports:
+      - "0.0.0.0:6379:6379"
+
+volumes:
+  postgres-data: null
+  redis-data: null
