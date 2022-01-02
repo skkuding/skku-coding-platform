@@ -192,6 +192,7 @@ export default {
       // Map (key: problem id, value: problem title)
       problem_titles: {},
       clarifications_table_fields: [
+        'Problem',
         'Title',
         'Clarifications',
         { label: 'Created Time', key: 'created_time' }
@@ -264,12 +265,22 @@ export default {
       const result = await api.getContestAnnouncementList(this.contestID)
       const data = result.data.data
       this.clarifications = data.map(v => {
+        let problemInfo = ''
+        for (const problem of this.contestProblems) {
+          if (problem.id === v.problem) {
+            console.log('33')
+            problemInfo = problem._id + ' ' + problem.title
+          }
+        }
         return {
           Title: v.title,
           Clarifications: v.content,
-          created_time: v.create_time
+          created_time: v.create_time,
+          Problem: problemInfo
         }
       })
+      console.log(data)
+      console.log(this.contestProblems)
     },
     async getMySubmissions () {
       // Initialize problem id-title map
