@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ..views import SMTPAPI, JudgeServerAPI, WebsiteConfigAPI, TestCasePruneAPI, SMTPTestAPI
+from ..views import SMTPAPI, JudgeServerAPI, WebsiteConfigAPI, TestCasePruneAPI, SMTPTestAPI, IpAddressInfoAPI
 from ..views import ReleaseNotesAPI, DashboardInfoAPI
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path("prune_test_case/", TestCasePruneAPI.as_view(), name="prune_test_case_api"),
     path("versions/", ReleaseNotesAPI.as_view(), name="get_release_notes_api"),
     path("dashboard_info/", DashboardInfoAPI.as_view(), name="dashboard_info_api"),
+    path("ip_info/", IpAddressInfoAPI.as_view(), name="ip_address_info_api"),
 ]

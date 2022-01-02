@@ -289,3 +289,16 @@ class DashboardInfoAPI(APIView):
             "today_submission_count": today_submission_count,
             "judge_server_count": judge_server_count
         })
+
+
+class IpAddressInfoAPI(APIView):
+    @swagger_auto_schema(operation_description="Get IpAddressInfo")
+    def get(self, request):
+        x_forwareded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+        if x_forwareded_for:
+            ip = x_forwareded_for.split(",")[0]
+        else:
+            ip = request.META.get("REMOTE_ADDR")
+        return self.success({
+            "ip": ip
+        })
