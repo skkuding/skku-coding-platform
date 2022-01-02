@@ -17,7 +17,7 @@
     "bootstrap-vue": "^2.21.2",
     "browser-detect": "^0.2.28",
     "core-js": "^3.19.3",
-    "highlight.js": "10",
+    "highlight.js": "10.7.3",
     "iview": "2",
     "katex": "^0.15.1",
     "moment": "^2.29.1",
