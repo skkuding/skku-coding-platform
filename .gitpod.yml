@@ -7,6 +7,8 @@ ports:
   - port: 8000 # Django runserver
     onOpen: ignore
     visibility: public
+  - port: 3000 # Vite
+    onOpen: ignore
   - port: 5432 # PostgreSQL
     onOpen: ignore
   - port: 6379 # Redis
