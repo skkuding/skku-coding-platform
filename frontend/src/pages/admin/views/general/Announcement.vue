@@ -132,6 +132,16 @@
         placeholder="Title"
       >
       </b-form-input>
+      <p class="labels" v-if="contestID">
+        <span class="text-danger">*</span> Related Problem ID
+      </p>
+      <b-form-select
+        v-if="contestID"
+        v-model="announcement.problem_id"
+        placeholder="Problem ID"
+        :options="problemOption"
+      >
+      </b-form-select>
       <p class="labels">
         <span class="text-danger">*</span> Content
       </p>
@@ -195,7 +205,8 @@ export default {
         content: ''
       },
       announcementDialogTitle: 'Edit Announcement',
-      currentPage: 0
+      currentPage: 0,
+      problemOption: []
     }
   },
   watch: {
@@ -270,6 +281,7 @@ export default {
       }
       if (this.contestID) {
         data.contest_id = this.contestID
+        data.problem_id = this.announcement.problem_id
         funcName = this.mode === 'edit' ? 'updateContestAnnouncement' : 'createContestAnnouncement'
       } else {
         funcName = this.mode === 'edit' ? 'updateAnnouncement' : 'createAnnouncement'
@@ -294,7 +306,20 @@ export default {
         this.loading = true
       }
     },
-    openAnnouncementDialog (id) {
+    async getProblemOption () {
+      const res = await api.getContestProblemList({
+        contest_id: this.contestID,
+        limit: 100,
+        offset: 0
+      })
+      this.problemOption = res.data.data.results.map(item => {
+        return {
+          value: item.id,
+          text: item._id + ' ' + item.title
+        }
+      })
+    },
+    async openAnnouncementDialog (id) {
       this.showEditAnnouncementDialog = true
       if (id !== null) {
         if (this.contestID) {
@@ -306,11 +331,13 @@ export default {
               this.announcement.visible = item.visible
               this.announcement.top_fixed = item.top_fixed
               this.announcement.content = item.content
+              this.announcement.problem_id = item.problem
               this.mode = 'edit'
               return true
             }
             return false
           })
+          await this.getProblemOption()
         } else {
           this.currentAnnouncementId = id
           this.announcementDialogTitle = 'Edit Announcement'
@@ -332,7 +359,11 @@ export default {
         this.announcement.visible = true
         this.announcement.top_fixed = false
         this.announcement.content = ''
+        this.announcement.problem_id = ''
         this.mode = 'create'
+        if (this.contestID) {
+          await this.getProblemOption()
+        }
       }
     },
     handleSwitch (row) {
