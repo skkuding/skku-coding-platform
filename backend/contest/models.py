@@ -30,7 +30,7 @@ class Contest(models.Model):
         if self.start_time > now():
             # NOT_START return 1
             return ContestStatus.CONTEST_NOT_START
-        elif self.end_time < now(): 
+        elif self.end_time < now():
             # ENDED return -1
             return ContestStatus.CONTEST_ENDED
         else:

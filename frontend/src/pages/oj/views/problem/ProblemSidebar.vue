@@ -268,7 +268,6 @@ export default {
         let problemInfo = ''
         for (const problem of this.contestProblems) {
           if (problem.id === v.problem) {
-            console.log('33')
             problemInfo = problem._id + ' ' + problem.title
           }
         }
@@ -279,8 +278,6 @@ export default {
           Problem: problemInfo
         }
       })
-      console.log(data)
-      console.log(this.contestProblems)
     },
     async getMySubmissions () {
       // Initialize problem id-title map

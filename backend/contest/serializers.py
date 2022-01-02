@@ -62,6 +62,7 @@ class CreateContestAnnouncementSerializer(serializers.Serializer):
 
 class EditContestAnnouncementSerializer(serializers.Serializer):
     id = serializers.IntegerField()
+    problem_id = serializers.IntegerField(required=False)
     title = serializers.CharField(max_length=128, required=False)
     content = serializers.CharField(required=False, allow_blank=True)
     visible = serializers.BooleanField(required=False)
