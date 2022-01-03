@@ -1,7 +1,7 @@
 from django.urls import path
 
-from ..views.admin import ContestAnnouncementAPI, ContestAPI, DownloadContestSubmissions
+from ..views.admin import BannerAdminAPI
 
 urlpatterns = [
-    path("banner/", BannerAPI.as_view(), name="banner_admin_api"),
+    path("banner/", BannerAdminAPI.as_view(), name="banner_admin_api")
 ]

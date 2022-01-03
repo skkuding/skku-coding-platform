@@ -40,7 +40,8 @@ class SimditorImageUploadAPIView(CSRFExemptAPIView):
         except IOError as e:
             logger.error(e)
             return self.error("Upload Error")
-        return self.success({"file_path": f"{settings.UPLOAD_PREFIX}/{img_name}"})
+        return self.success({"file_path": f"{settings.UPLOAD_PREFIX}/{img_name}",
+                             "img_name": img_name})
 
 
 class SimditorFileUploadAPIView(CSRFExemptAPIView):
@@ -72,4 +73,4 @@ class SimditorFileUploadAPIView(CSRFExemptAPIView):
         return self.success({
             "file_path": f"{settings.UPLOAD_PREFIX}/{file_name}",
             "file_name": file.name
-            })
+        })

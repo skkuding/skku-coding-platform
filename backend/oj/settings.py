@@ -39,6 +39,7 @@ VENDOR_APPS = [
 LOCAL_APPS = [
     'account',
     'announcement',
+    'banner',
     'conf',
     'problem',
     'contest',
