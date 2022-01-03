@@ -38,6 +38,12 @@
         Announcement
       </b-list-group-item>
       <b-list-group-item
+        to="/banner"
+        class="list-group-subitem"
+      >
+        Banner
+      </b-list-group-item>
+      <b-list-group-item
         to="/conf"
         class="list-group-subitem"
       >
