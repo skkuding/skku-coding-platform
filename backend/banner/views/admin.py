@@ -5,7 +5,6 @@ from banner.models import Banner
 from banner.serializers import (BannerAdminSerializer, CreateBannerSerializer, EditBannerSerializer)
 from utils.api import APIView, validate_serializer
 from utils.decorators import super_admin_required
-from utils.shortcuts import check_is_id
 
 
 class BannerAdminAPI(APIView):
@@ -19,14 +18,11 @@ class BannerAdminAPI(APIView):
         ],
         operation_description="Get Banner image"
     )
-    @validate_serializer(BannerAdminSerializer)
     @super_admin_required
     def get(self, request):
         banner_id = request.GET.get("id")
         # get single banner image
         if banner_id:
-            if not id or not check_is_id(id):
-                return self.error("Invalid parameter, id is required")
             try:
                 banner = Banner.objects.get(id=banner_id)
                 return self.success(BannerAdminSerializer(banner).data)
@@ -35,7 +31,7 @@ class BannerAdminAPI(APIView):
         # get all banner images
         else:
             banners = Banner.objects.all()
-            return self.success(BannerAdminSerializer(banners).data)
+            return self.success(BannerAdminSerializer(banners, many=True).data)
 
     @swagger_auto_schema(
         request_body=CreateBannerSerializer,
@@ -81,8 +77,11 @@ class BannerAdminAPI(APIView):
     )
     @super_admin_required
     def delete(self, request):
-        id = request.GET.get("id")
-        if not id:
-            return self.error("Invalid Parameter, id is required")
-        Banner.objects.filter(id__in=id).delete()
-        return self.success()
+        banner_id = request.GET.get("id")
+        if not banner_id:
+            return self.error("Invalid parameter, id is required")
+        try:
+            Banner.objects.filter(id=request.GET["id"]).delete()
+            return self.success()
+        except Banner.DoesNotExist:
+            return self.error("Banner does not exist")
