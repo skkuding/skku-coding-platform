@@ -97,6 +97,26 @@ export default {
       data
     })
   },
+  getBannerImage (id) {
+    return ajax('admin/banner/', 'get', {
+      params: {
+        id
+      }
+    })
+  },
+  createBannerImage (data) {
+    return ajax('admin/banner/', 'post', { data })
+  },
+  editBannerImage (data) {
+    return ajax('admin/banner/', 'put', { data })
+  },
+  deleteBannerImage (id) {
+    return ajax('admin/banner/', 'delete', {
+      params: {
+        id
+      }
+    })
+  },
   getLanguages () {
     return ajax('languages/', 'get')
   },

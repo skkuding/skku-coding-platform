@@ -6,22 +6,29 @@
       @sliding-start="onSlideStart"
       @sliding-end="onSlideEnd"
     >
-      <b-carousel-slide :img-src="require('@/assets/banner1.png')"></b-carousel-slide>
-      <b-carousel-slide :img-src="require('@/assets/banner2.png')"></b-carousel-slide>
-      <b-carousel-slide :img-src="require('@/assets/banner3.png')"></b-carousel-slide>
-      <b-carousel-slide :img-src="require('@/assets/banner4.png')"></b-carousel-slide>
-
+      <b-carousel-slide
+        v-for="(image, index) in bannerImageList"
+        :key="index"
+        :img-src=image.path
+      ></b-carousel-slide>
     </b-carousel>
   </div>
 </template>
 
 <script>
+import api from '../api'
+
 export default {
   data () {
     return {
       slide: 0,
-      sliding: null
+      sliding: null,
+      bannerImageList: []
     }
+  },
+  async mounted () {
+    const res = await api.getBannerImage()
+    this.bannerImageList = res.data.data.path
   },
   methods: {
     onSlideStart (slide) {
