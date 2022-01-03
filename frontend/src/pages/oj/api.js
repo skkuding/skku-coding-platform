@@ -250,6 +250,9 @@ export default {
     return ajax('submission/', 'put', {
       data
     })
+  },
+  getBannerImage () {
+    return ajax('banner/', 'get')
   }
 }
 

@@ -1,100 +1,131 @@
 <template>
     <div class="view">
         <Panel title="Current Images">
-            <div class="banner-images">
-                <b-img
-                    :src="require('@/assets/banner1.png')"
-                    rounded
-                    class="banner-preview"
-                />
-                <b-img
-                    :src="require('@/assets/banner2.png')"
-                    rounded
-                    class="banner-preview"
-                />
-                <b-img
-                    :src="require('@/assets/banner3.png')"
-                    rounded
-                    class="banner-preview"
-                />
+          <div class="banner-images">
+            <div
+              v-for="(image, index) in bannerImageList"
+              :key="index"
+            >
+              <b-img
+                :src=image.path
+                rounded
+                class="banner-preview"
+              />
             </div>
+          </div>
             <b-table
                 style="margin-top: 20px;"
                 :items="bannerImageList"
                 :fields="bannerImageListFields"
             >
-                <template #cell(options)="">
-                    <icon-btn
-                        name="Delete"
-                        icon="trash"
-                    />
-                </template>
+              <template #cell(id)="data">
+                {{ data.index + 1 }}
+              </template>
+              <template #cell(visible)="data">
+                <b-form-checkbox v-model="data.item.visible" switch @change="handleVisibleSwitch(data.item)"/>
+              </template>
+              <template #cell(options)="data">
+                <icon-btn
+                  name="Delete"
+                  icon="trash"
+                  @click.native="deleteImage(data.item.id)"
+                />
+              </template>
             </b-table>
         </Panel>
         <Panel title="Import New Image">
             <div>* Banner image size: 2000 * 613</div>
             <b-form-file
-                multiple
                 v-model="newImage"
                 accept="image/*"
                 style="margin-top: 10px;"
+                @input="uploadImage"
             >
-                <template slot="file-name" slot-scope="{names}">
-                    <b-badge
-                        v-for="(name, index) in names"
-                        :key="index"
-                        style="font-size: 14px; margin-right: 10px;"
-                    >
-                        <span v-if="index < 4"> {{ names[index] }} </span>
-                    </b-badge>
-                    <b-badge v-if="names.length > 4" style="font-size: 14px;"> + {{ names.length - 4 + ' More files' }} </b-badge>
-                </template>
             </b-form-file>
             <b-button
                 variant="primary"
                 size="sm"
                 style="margin-top: 10px;"
+                @click="insertImage"
             >Save</b-button>
         </Panel>
     </div>
 </template>
 
 <script>
+import api from '../../api.js'
+import time from '@/utils/time'
+
 export default {
   name: 'Banner',
   data () {
     return {
-      bannerImageList: [
-        { title: 'Banner1', size: '2000*613', createTime: '2021-12-6 17:43:11' },
-        { title: 'Banner2', size: '2000*613', createTime: '2021-12-7 12:33:15' },
-        { title: 'Banner3', size: '2000*613', createTime: '2021-12-7 12:34:11' }
-      ],
+      bannerImageList: [],
       bannerImageListFields: [
+        { key: 'id', label: '#' },
         { key: 'title', label: 'Title' },
-        { key: 'size', label: 'Size' },
-        { key: 'createTime', label: 'Create Time' },
+        {
+          key: 'create_time',
+          label: 'Create Time',
+          formatter: value => {
+            return time.utcToLocal(value, 'YYYY-M-DD HH:mm')
+          }
+        },
+        { key: 'visible', label: 'Visible' },
         { key: 'options', label: 'Options' }
       ],
-      newImage: []
+      newImage: {
+        img_name: '',
+        img_path: ''
+      }
     }
   },
   async mounted () {
+    const res = await api.getBannerImage()
+    this.bannerImageList = res.data.data
   },
   methods: {
+    async uploadImage () {
+      const formData = new FormData()
+      formData.append('image', this.newImage)
+      if (this.newImage === null) {
+        return
+      }
+      const res = await api.uploadImage(formData)
+      this.newImage.img_name = res.data.data.img_name
+      this.newImage.img_path = res.data.data.file_path
+    },
+    async insertImage () {
+      const data = {
+        title: this.newImage.img_name,
+        path: this.newImage.img_path
+      }
+      await api.createBannerImage(data)
+      const res = await api.getBannerImage()
+      this.bannerImageList = res.data.data
+    },
+    async handleVisibleSwitch (image) {
+      await api.editBannerImage(image)
+    },
+    async deleteImage (imageId) {
+      await this.$confirm('Sure to delete this Image? ', 'Delete Contest', 'warning', false)
+      await api.deleteBannerImage(imageId)
+      const res = await api.getBannerImage()
+      this.bannerImageList = res.data.data
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-    .banner-images{
-        display:flex;
-        overflow-x: auto;
-    }
-    .banner-preview{
-        margin-top: 10px;
-        margin-right: 10px;
-        width: 400px;
-        height: auto;
-    }
-
+  .banner-images{
+    display: flex;
+    overflow-x: auto;
+  }
+  .banner-preview{
+    margin-top: 10px;
+    margin-right: 10px;
+    width: 400px;
+    height: auto;
+  }
 </style>
