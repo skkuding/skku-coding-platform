@@ -1,6 +1,8 @@
+from django.db import models
+from django.db.models import fields
 from utils.api import UsernameSerializer, serializers
 from account.serializers import UserAdminSerializer
-from .models import Course, Registration
+from .models import Question, Course, Registration
 
 
 class CreateCourseSerializer(serializers.Serializer):
@@ -67,3 +69,28 @@ class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = "__all__"
+
+
+class QuestionListSerializer(serializers.ModelSerializer):
+    class Meta:
+      model = Question
+      fields = ("title", "status", "create_time")
+
+
+class QnASerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = "__all__"
+
+
+class CreateQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+      model = Question
+      fields = ("title", "content")
+
+
+class EditQuestionSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    class Meta:
+      model = Question
+      fields = ("title", "content")
