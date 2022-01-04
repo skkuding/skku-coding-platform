@@ -45,6 +45,7 @@ export default {
       total: 0,
       perPage: 10,
       currentPage: 1,
+      contestID: '',
       contestProblems: [],
       clarifications: [],
       contestClarificationFields: [
@@ -58,7 +59,9 @@ export default {
     }
   },
   async mounted () {
+    this.contestID = this.$route.params.contestID
     await this.getContestProblems()
+    await this.getContestAnnouncementList()
   },
   methods: {
     async getContestProblems () {
