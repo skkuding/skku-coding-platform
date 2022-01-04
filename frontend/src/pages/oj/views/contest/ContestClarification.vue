@@ -45,6 +45,7 @@ export default {
       total: 0,
       perPage: 10,
       currentPage: 1,
+      contestProblems: [],
       clarifications: [],
       contestClarificationFields: [
         'Problem',
@@ -57,8 +58,17 @@ export default {
     }
   },
   async mounted () {
+    await this.getContestProblems()
   },
   methods: {
+    async getContestProblems () {
+      try {
+        const res = await this.$store.dispatch('getContestProblems')
+        const data = res.data.data
+        this.contestProblems = data
+      } catch (err) {
+      }
+    },
     async getContestAnnouncementList () {
       const result = await api.getContestAnnouncementList(this.contestID)
       const data = result.data.data
