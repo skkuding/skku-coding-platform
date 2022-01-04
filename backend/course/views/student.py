@@ -1,9 +1,9 @@
-from utils.api import APIView
+from utils.api import APIView, validate_serializer
 from account.decorators import login_required
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Registration
-from ..serializers import CourseStudentSerializer
+from ..serializers import CourseStudentSerializer, CreateQuestionSerializer
 
 
 class CourseAPI(APIView):
@@ -55,3 +55,21 @@ class CourseAPI(APIView):
         courses = Registration.objects.filter(user_id=user_id)
 
         return self.success(self.paginate_data(request, courses, CourseStudentSerializer))
+
+class QuestionAPI(APIView):
+    @validate_serializer(CreateQuestionSerializer)
+    @swagger_auto_schema(
+        request_body=CreateQuestionSerializer,
+        operation_description="Uploading Question."
+    )
+    def post(self, request):
+      data = request.data
+      title = data["title"]
+      content = data["content"]
+
+      if title is None:
+        return self.error("Title is required")
+      elif content is None:
+        return self.error("Content is required")
+      else:
+        return self.success()
