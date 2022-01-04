@@ -26,7 +26,7 @@
         <b-tab title="Standings" lazy>
           <contest-ranking></contest-ranking>
         </b-tab>
-        <b-tab title="Clarifiacations" lazy>
+        <b-tab title="Clarifications" lazy>
           <contest-clarification></contest-clarification>
         </b-tab>
       </b-tabs>
