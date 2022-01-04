@@ -1,9 +1,9 @@
 from utils.api import APIView, validate_serializer
-from account.decorators import login_required
+from account.decorators import login_required, ensure_created_by
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from ..models import Course, Registration
-from ..serializers import CourseStudentSerializer, CreateQuestionSerializer
+from ..models import Course, Question, Registration
+from ..serializers import CourseStudentSerializer, CreateQuestionSerializer, EditQuestionSerializer, QuestionSerializer
 
 
 class CourseAPI(APIView):
@@ -62,14 +62,29 @@ class QuestionAPI(APIView):
         request_body=CreateQuestionSerializer,
         operation_description="Uploading Question."
     )
+    @login_required
     def post(self, request):
       data = request.data
-      title = data["title"]
-      content = data["content"]
+      question = Question.objects.create(**data)
+      return self.success(QuestionSerializer(question).data)
 
-      if title is None:
-        return self.error("Title is required")
-      elif content is None:
-        return self.error("Content is required")
-      else:
-        return self.success()
+    @validate_serializer(EditQuestionSerializer)
+    @swagger_auto_schema(
+        request_body=EditQuestionSerializer,
+        operation_description="Edit Question."
+    )
+    @login_required
+    def put(self, request):
+      data = request.data
+      try:
+          question = Question.objects.get(id=data.pop("id"))
+          ensure_created_by(question, request.user)
+      except Question.DoesNotExist:
+          return self.error("Question does not exist")
+
+      for k, v in data.items():
+          setattr(question, k, v)
+      question.save()
+      return self.success(QuestionSerializer(question).data)
+
+      

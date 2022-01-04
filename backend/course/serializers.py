@@ -77,7 +77,9 @@ class QuestionListSerializer(serializers.ModelSerializer):
       fields = ("title", "status", "create_time")
 
 
-class QnASerializer(serializers.ModelSerializer):
+class QuestionSerializer(serializers.ModelSerializer):
+    created_by = UsernameSerializer()
+    course = CourseSerializer()
     class Meta:
         model = Question
         fields = "__all__"
@@ -86,11 +88,11 @@ class QnASerializer(serializers.ModelSerializer):
 class CreateQuestionSerializer(serializers.ModelSerializer):
     class Meta:
       model = Question
-      fields = ("title", "content")
+      fields = "__all__"
 
 
 class EditQuestionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     class Meta:
       model = Question
-      fields = ("title", "content")
+      fields = ("title", "content","last_update_time")
