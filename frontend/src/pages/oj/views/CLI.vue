@@ -40,7 +40,7 @@ export default {
       stdout: '',
       stderr: '',
       socket: '',
-      code: 'inp = input()\nprint(inp, inp)',
+      code: 'for i in range(0, 4, 1):\n    inp = input()\n    print(inp, inp)',
       compileResult: '',
       dir: null,
       lang: '',
@@ -89,6 +89,7 @@ export default {
     this.term.writeln('Please Run your code!!')
     this.term.open(this.$refs.terminal)
     this.term.onKey(e => {
+      console.log(e)
       if (!this.writable) {
         return
       }
@@ -97,17 +98,45 @@ export default {
         this.term.write('\n')
         this.userinput = true
         this.socket.emit('stdin', this.stdin)
+        this.writable = false
       } else if (e.domEvent.keyCode === 8) {
         if (this.term._core.buffer.x > 2) {
           this.term.write('\b \b')
           this.stdin = this.stdin.length === 1 ? '' : this.stdin.substring(0, this.stdin.length - 1)
         }
-      } else if (printable) {
+      } else if (e.key.length === 1 && printable) {
+        console.log(e.domEvent.keyCode + 'Printable')
+        console.log(e.domEvent.key)
         this.term.write(e.key)
         this.stdin += e.key
       } else {
-        this.stdin += e.key
+        console.log(e.domEvent.keyCode + 'Not acceptable character')
       }
+    })
+    this.term.attachCustomKeyEventHandler(async (e) => {
+      if (e.ctrlKey && e.code === 'KeyV' && e.type === 'keydown') {
+        const selection = this.term.getSelection
+        if (selection) {
+          const clipboardData = await navigator.clipboard.readText()
+          const splitedData = clipboardData.split(/\r?\n/)
+
+          this.lastLine = splitedData[splitedData.length - 1]
+          const exceptLastLine = splitedData.slice(0, -1).join('\n')
+          console.log('11', this.lastLine, exceptLastLine)
+
+          if (exceptLastLine) {
+            this.term.writeln(exceptLastLine)
+            this.stdin = exceptLastLine
+            this.userinput = true
+            this.socket.emit('stdin', this.stdin)
+            this.writable = false
+          }
+
+          return false
+        }
+        return true
+      }
+      return true
     })
   },
   beforeDestroy () {
@@ -145,13 +174,23 @@ export default {
 
       this.socket.on('stdout', (output) => {
         if (this.userinput) {
+          console.log('22', this.lastLine)
+          if (this.lastLine) {
+            console.log('Lastline')
+            this.stdin.replaceAll(/(?<=[^\r])\n/g, '\r\n')
+          }
           this.stdout = output.replace(this.stdin + '\r\n', '')
           this.stdin = ''
           this.term.write(this.stdout)
           this.userinput = false
+          this.writable = true
         } else {
           this.stdout += output
           this.term.write(this.stdout)
+        }
+        if (this.lastLine) {
+          this.term.write(this.lastLine)
+          this.stdin = this.lastLine
         }
       })
 
