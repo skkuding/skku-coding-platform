@@ -26,6 +26,9 @@
         <b-tab title="Standings" lazy>
           <contest-ranking></contest-ranking>
         </b-tab>
+        <b-tab title="Clarifiacations" lazy>
+          <contest-clarification></contest-clarification>
+        </b-tab>
       </b-tabs>
     </div>
   </div>
@@ -40,13 +43,15 @@ import { CONTEST_STATUS_REVERSE } from '@/utils/constants'
 import StatusBadge from '../../components/StatusBadge.vue'
 import ContestProblemList from './ContestProblemList.vue'
 import ContestRanking from './ContestRanking.vue'
+import ContestClarification from './ContestClarification.vue'
 
 export default {
   name: 'ContestDetail',
   components: {
     StatusBadge,
     ContestProblemList,
-    ContestRanking
+    ContestRanking,
+    ContestClarification
   },
   data () {
     return {
