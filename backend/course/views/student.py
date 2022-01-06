@@ -144,5 +144,29 @@ class QuestionAPI(APIView):
         question.delete()
         return self.success()
 
-
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        operation_description="Get Announcement"
+    )
+    @super_admin_required
+    def get(self, request):
+        """
+        get announcement list / get one announcement
+        """
+        question_id = request.GET.get("id")
+        if question_id:
+            try:
+                question = Question.objects.get(id=question_id)
+                return self.success(QuestionSerializer(question).data)
+            except Question.DoesNotExist:
+                return self.error("Announcement does not exist")
+        question = Question.objects.all().order_by("-create_time")
+        
+        return self.success(self.paginate_data(request, question, QuestionSerializer))
       
