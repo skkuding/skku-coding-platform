@@ -432,7 +432,7 @@ export default {
       problem.languages = problem.languages.sort()
       this.problem = problem
 
-      const precode = storage.get(buildProblemCodeKey(this.problemID,this.contestID))
+      const precode = storage.get(buildProblemCodeKey(this.problemID, this.contestID))
       if (precode) {
         this.code = precode.code
         this.language = precode.language
@@ -685,7 +685,7 @@ export default {
     next()
   },
   beforeRouteUpdate (to, from, next) {
-    storage.set(buildProblemCodeKey(from.params.problemID,from.params.contestID), {
+    storage.set(buildProblemCodeKey(from.params.problemID, from.params.contestID), {
       code: this.code,
       language: this.language,
       theme: this.theme

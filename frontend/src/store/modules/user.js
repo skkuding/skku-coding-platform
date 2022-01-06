@@ -47,9 +47,9 @@ const actions = {
       profile: {}
     })
     // storage.clear()
-    for (let [key, value] in Object.entries(storage)) { // not working!!
-      if(key.indexOf('problemCode') !== -1) {
-        storage.remove('problemCode_5_1')
+    for (const key in localStorage) {
+      if (key.indexOf('problemCode') === -1) {
+        storage.remove(key)
       }
     }
   }
