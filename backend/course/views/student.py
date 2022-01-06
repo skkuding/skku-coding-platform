@@ -1,5 +1,5 @@
 from utils.api import APIView, validate_serializer
-from account.decorators import login_required, ensure_created_by
+from account.decorators import login_required, ensure_created_by, super_admin_required
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from ..models import Course, Question, Registration
@@ -67,7 +67,7 @@ class QuestionAPI(APIView):
       data = request.data
       question = Question.objects.create(**data)
       return self.success(QuestionSerializer(question).data)
-
+ 
     @validate_serializer(EditQuestionSerializer)
     @swagger_auto_schema(
         request_body=EditQuestionSerializer,
@@ -86,5 +86,63 @@ class QuestionAPI(APIView):
           setattr(question, k, v)
       question.save()
       return self.success(QuestionSerializer(question).data)
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                required=True,
+                description="unique announcement id"
+            ),
+        ],
+        operation_description="Delete Announcement"
+    )
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="course_id",
+                in_=openapi.IN_QUERY,
+                description="Id of course",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="assignment_id",
+                in_=openapi.IN_QUERY,
+                description="Id of assignment to delete",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="question_id",
+                in_=openapi.IN_QUERY,
+                description="Id of question to delete",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            )
+        ],
+        operation_description="Delete question",
+    )
+    @login_required
+    def delete(self, request):
+        course_id = request.GET.get("course_id")
+        assignment_id = request.GET.get("assignment_id")
+        question_id = request.GET.get("question_id")
+
+        if not course_id:
+            return self.error("Invalid parameter, course_id is required")
+        if not assignment_id:
+            return self.error("Invalid parameter, assignment_id is required")
+
+        try:
+            question = Question.objects.get(id=question_id)
+            ensure_created_by(question, request.user)
+        except Question.DoesNotExist:
+            return self.error("Question does not exist")
+
+        question.delete()
+        return self.success()
+
 
       
