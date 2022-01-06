@@ -17,6 +17,7 @@ ports:
 tasks:
   - name: Node.js
     init: yarn --cwd $GITPOD_REPO_ROOT/frontend/ install
+    command: echo 'export PROXY_URL=$(gp url 8000)' >> ~/.bashrc
 
   - name: Python
     init: |

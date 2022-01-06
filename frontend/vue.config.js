@@ -19,9 +19,10 @@ module.exports = {
     }
   },
   devServer: {
+    disableHostCheck: true,
     proxy: {
       '^/api': {
-        target: 'http://localhost:8000',
+        target: process.env.PROXY_URL || 'http://localhost:8000',
         changeOrigin: true
       }
     }
