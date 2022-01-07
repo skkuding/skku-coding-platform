@@ -33,4 +33,4 @@ class EditQuestionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     class Meta:
       model = Question
-      fields = ("title", "content","last_update_time")
+      fields = ("title", "content")
