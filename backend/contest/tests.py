@@ -7,6 +7,20 @@ from utils.api.tests import APITestCase
 
 from .models import ContestAnnouncement, ContestRuleType, Contest
 
+from problem.models import ProblemIOMode
+
+DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test</p>", "input_description": "test",
+                        "output_description": "test", "time_limit": 1000, "memory_limit": 256, "difficulty": "Level1",
+                        "visible": True, "tags": ["test"], "languages": ["C", "C++", "Java", "Python2"], "template": {},
+                        "samples": [{"input": "test", "output": "test"}], "spj": False, "spj_language": "C",
+                        "spj_code": "", "spj_compile_ok": True, "test_case_id": "499b26290cc7994e0b497212e842ea85",
+                        "test_case_score": [{"output_name": "1.out", "input_name": "1.in", "output_size": 0,
+                                             "stripped_output_md5": "d41d8cd98f00b204e9800998ecf8427e",
+                                             "input_size": 0, "score": 0}],
+                        "io_mode": {"io_mode": ProblemIOMode.standard, "input": "input.txt", "output": "output.txt"},
+                        "share_submission": False,
+                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
+
 DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description",
                         "start_time": timezone.localtime(timezone.now()),
                         "end_time": timezone.localtime(timezone.now()) + timedelta(days=1),
@@ -103,7 +117,12 @@ class ContestAnnouncementAdminAPITest(APITestCase):
         self.create_super_admin()
         self.url = self.reverse("contest_announcement_admin_api")
         contest_id = self.create_contest().data["data"]["id"]
-        self.data = {"title": "test title", "content": "test content", "contest_id": contest_id, "visible": True}
+        url = self.reverse("contest_problem_admin_api")
+        data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        data["contest_id"] = contest_id
+        self.problem = self.client.post(url, data=data).data["data"]
+        problem_id = self.problem["id"]
+        self.data = {"title": "test title", "content": "test content", "contest_id": contest_id, "visible": True, "problem_id": problem_id}
 
     def create_contest(self):
         url = self.reverse("contest_admin_api")
@@ -140,8 +159,8 @@ class ContestAnnouncementListAPITest(APITestCase):
     def create_contest_announcements(self):
         contest_id = self.client.post(self.reverse("contest_admin_api"), data=DEFAULT_CONTEST_DATA).data["data"]["id"]
         url = self.reverse("contest_announcement_admin_api")
-        self.client.post(url, data={"title": "test title1", "content": "test content1", "contest_id": contest_id})
-        self.client.post(url, data={"title": "test title2", "content": "test content2", "contest_id": contest_id})
+        self.client.post(url, data={"title": "test title1", "content": "test content1", "contest_id": contest_id, "problem_id": "1"})
+        self.client.post(url, data={"title": "test title2", "content": "test content2", "contest_id": contest_id, "problem_id": "1"})
         return contest_id
 
     def test_get_contest_announcement_list(self):
