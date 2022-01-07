@@ -17,10 +17,16 @@ ports:
 tasks:
   - name: Node.js
     init: yarn --cwd $GITPOD_REPO_ROOT/frontend/ install
-    command: echo 'export PROXY_URL=$(gp url 8000)' >> ~/.bashrc
+    command: |
+      echo 'export PROXY_URL=$(gp url 8000)' >> ~/.bashrc
+      gp sync-done api-proxy-url
+      source ~/.bashrc
 
   - name: Python
+    openMode: split-right
     command: |
+      gp sync-await api-proxy-url
+      source ~/.bashrc
       pip freeze | xargs pip uninstall -y
       pip install -r $GITPOD_REPO_ROOT/backend/deploy/requirements.txt
       echo `cat /dev/urandom | head -1 | md5sum | head -c 32` > $GITPOD_REPO_ROOT/backend/data/config/secret.key
@@ -28,7 +34,11 @@ tasks:
       python3 $GITPOD_REPO_ROOT/backend/manage.py inituser --username=root --password=rootroot --action=create_super_admin
 
   - name: DB Container
-    command: docker-compose -f $GITPOD_REPO_ROOT/.gitpod.docker-compose.yml up -d
+    openMode: tab-before
+    command: |
+      gp sync-await api-proxy-url
+      source ~/.bashrc
+      docker-compose -f $GITPOD_REPO_ROOT/.gitpod.docker-compose.yml up -d
 
 vscode:
   extensions:
