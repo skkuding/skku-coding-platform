@@ -59,10 +59,8 @@ class BannerAdminAPI(APIView):
         except Banner.DoesNotExist:
             return self.error("Banner does not exist")
 
-        for k, v in data.items():
-            setattr(banner, k, v)
+        setattr(banner, "visible", data["visible"])
         banner.save()
-
         return self.success(BannerAdminSerializer(banner).data)
 
     @swagger_auto_schema(
