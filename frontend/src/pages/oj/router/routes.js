@@ -21,7 +21,8 @@ import {
   LectureAssignmentList,
   LectureAssignmentDetail,
   LectureQna,
-  LectureQnaDetail
+  LectureQnaDetail,
+  Profile
 } from '../views'
 
 export default [
@@ -116,9 +117,9 @@ export default [
     meta: { title: 'Contest Ranking' }
   },
   {
-    name: 'profile-setting',
+    name: 'setting',
     path: '/setting',
-    meta: { requiresAuth: true, title: 'Profile Settings' },
+    meta: { requiresAuth: true, title: 'settings' },
     component: ProfileSetting
   },
   {
@@ -162,6 +163,12 @@ export default [
     path: '/lecture/:courseID/question/:questionID',
     meta: { title: 'Lecture QnA Detail' },
     component: LectureQnaDetail
+  },
+  {
+    name: 'profile',
+    path: '/profile',
+    meta: { requiresAuth: true, title: 'My Profile' },
+    component: Profile
   },
   {
     path: '*',
