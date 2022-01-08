@@ -35,6 +35,7 @@
           </template>
           <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
           <b-dropdown-item v-b-modal.setting>Setting</b-dropdown-item>
+          <b-dropdown-item @click="goProfile()">My Profile</b-dropdown-item>
           <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -47,6 +48,7 @@
     </b-modal>
     <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
       <profileSetting></profileSetting>
+      <!--TODO: setting page 눌렀을 때 프로필 페이지로 가도록 하기-->
     </b-modal>
   </div>
 </template>
@@ -81,6 +83,11 @@ export default {
       this.changeModalStatus({
         visible: true,
         mode: mode
+      })
+    },
+    async goProfile () {
+      await this.$router.push({
+        name: 'profile'
       })
     }
   },

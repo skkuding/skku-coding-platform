@@ -6,6 +6,7 @@ import NotFound from './general/404.vue'
 import Home from './general/Home.vue'
 import ContestRanking from './contest/ContestRanking.vue'
 import ContestProblemList from './contest/ContestProblemList.vue'
+import Profile from './user/Profile.vue'
 
 // Grouping Components in the Same Chunk
 const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
@@ -25,7 +26,8 @@ export {
   Home, NotFound,
   Logout, ProblemList, Announcement, AnnouncementList, Problem,
   ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting,
-  ContestList, ContestDetail, ContestProblemList, ContestRanking, Register
+  ContestList, ContestDetail, ContestProblemList, ContestRanking, Register,
+  Profile
 }
 /* 구성 요소 내보내기는 두 가지 범주로 나뉩니다.
  *   하나는 일반적으로 직접 내보내기에 사용되며

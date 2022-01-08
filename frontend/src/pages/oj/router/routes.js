@@ -15,7 +15,8 @@ import {
   Problem,
   ProblemList,
   ResetPassword,
-  ProfileSetting
+  ProfileSetting,
+  Profile
 } from '../views'
 
 export default [
@@ -110,10 +111,16 @@ export default [
     meta: { title: 'Contest Ranking' }
   },
   {
-    name: 'profile-setting',
+    name: 'setting',
     path: '/setting',
-    meta: { requiresAuth: true, title: 'Profile Settings' },
+    meta: { requiresAuth: true, title: 'settings' },
     component: ProfileSetting
+  },
+  {
+    name: 'profile',
+    path: '/profile',
+    meta: { requiresAuth: true, title: 'My Profile' },
+    component: Profile
   },
   {
     path: '*',
