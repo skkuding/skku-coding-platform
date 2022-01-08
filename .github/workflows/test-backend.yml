@@ -5,7 +5,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the master branch
   pull_request:
     paths:
-      - 'backend/**'
+      - "backend/**"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -22,8 +22,8 @@ jobs:
 
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.7.10' # using SemVer's version range syntax
-          architecture: 'x64'
+          python-version: "3.8.10" # using SemVer's version range syntax
+          architecture: "x64"
 
       - uses: actions/cache@v2
         with:
