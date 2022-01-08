@@ -64,7 +64,6 @@ import Banner from '@oj/components/Banner.vue'
 import api from '@oj/api'
 import { mapState, mapGetters } from 'vuex'
 import time from '@/utils/time'
-import storage from '@/utils/storage'
 import {
   CONTEST_TYPE,
   CONTEST_STATUS

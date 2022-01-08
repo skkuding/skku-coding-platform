@@ -438,8 +438,8 @@ export default {
         this.language = precode.language
         this.theme = precode.theme
       } else {
-        this.code = '',
-        this.language = 'C++',
+        this.code = ''
+        this.language = 'C++'
         this.theme = 'material'
       }
 
