@@ -1,15 +1,5 @@
-<script setup lang="ts">
-defineProps({
-  to: {
-    type: String,
-    required: true
-  }
-})
-</script>
-
 <template>
   <router-link
-    :to="to"
     class="
       text-lg font-semibold
       text-gray-600
