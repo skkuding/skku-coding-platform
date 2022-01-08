@@ -77,6 +77,11 @@ export default {
       } else {
         window.open('/admin/')
       }
+    },
+    async goProfile () {
+      await this.$router.push({
+        name: 'profile'
+      })
     }
   },
   computed: {
