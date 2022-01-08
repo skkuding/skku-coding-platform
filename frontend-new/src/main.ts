@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import { createHead } from '@vueuse/head'
 import generatedRoutes from 'virtual:generated-pages'
 import { setupLayouts } from 'virtual:generated-layouts'
 import NProgress from 'nprogress'
@@ -16,7 +17,10 @@ const router = createRouter({
 router.beforeEach(() => { NProgress.start() })
 router.afterEach(() => { NProgress.done() })
 
+const head = createHead()
+
 const app = createApp(App)
 
 app.use(router)
+app.use(head)
 app.mount('#app')
