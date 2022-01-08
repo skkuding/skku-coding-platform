@@ -25,7 +25,7 @@ class BankFilterSerializer(serializers.Serializer):
     count = serializers.IntegerField()
 
 
-class CreateConetestSeriaizer(serializers.Serializer):
+class CreateContestSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
     requirements = serializers.ListField(child=serializers.CharField(max_length=128))
@@ -44,7 +44,7 @@ class CreateConetestSeriaizer(serializers.Serializer):
     rank_penalty_visible = serializers.BooleanField()
 
 
-class EditConetestSeriaizer(serializers.Serializer):
+class EditContestSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
