@@ -40,6 +40,8 @@
                 accept="image/*"
                 style="margin-top: 10px;"
                 @input="uploadImage"
+                ref="image-input"
+                id = "imageUpload"
             >
             </b-form-file>
             <b-button
@@ -85,17 +87,8 @@ export default {
     this.bannerImageList = res.data.data
   },
   methods: {
-    async uploadImage () {
-      const formData = new FormData()
-      formData.append('image', this.newImage)
-      if (this.newImage === null) {
-        return
-      }
-      const res = await api.uploadImage(formData)
-      this.newImage.img_name = res.data.data.img_name
-      this.newImage.img_path = res.data.data.file_path
-    },
     async insertImage () {
+      this.$refs['image-input'].reset()
       const data = {
         title: this.newImage.img_name,
         path: this.newImage.img_path
@@ -104,11 +97,41 @@ export default {
       const res = await api.getBannerImage()
       this.bannerImageList = res.data.data
     },
+    async uploadImage () {
+      const self = this
+      const imageUpload = document.getElementById('imageUpload')
+      if (typeof (imageUpload.files) === 'undefined') {
+        return
+      }
+      const reader = new FileReader()
+      reader.readAsDataURL(imageUpload.files[0])
+      reader.onload = function (e) {
+        const image = new Image()
+        image.src = e.target.result
+        image.onload = async function () {
+          const imgheight = this.height
+          const imgwidth = this.width
+          if (imgheight !== 613 || imgwidth !== 2000) {
+            self.$confirm('Please check size of image. \nThe size of banner image should be 2000*613.', 'Check size of image', 'warning', false)
+            self.$refs['image-input'].reset()
+            return
+          }
+          const formData = new FormData()
+          formData.append('image', self.newImage)
+          if (self.newImage === null) {
+            return
+          }
+          const res = await api.uploadImage(formData)
+          self.newImage.img_name = res.data.data.img_name
+          self.newImage.img_path = res.data.data.file_path
+        }
+      }
+    },
     async handleVisibleSwitch (image) {
       await api.editBannerImage(image)
     },
     async deleteImage (imageId) {
-      await this.$confirm('Sure to delete this Image? ', 'Delete Contest', 'warning', false)
+      await this.$confirm('Sure to delete this Image? ', 'Delete Banner Image', 'warning', false)
       await api.deleteBannerImage(imageId)
       const res = await api.getBannerImage()
       this.bannerImageList = res.data.data
