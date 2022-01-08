@@ -3,7 +3,7 @@ from utils.api import UsernameSerializer, serializers
 from .models import Contest, ContestAnnouncement, ContestRuleType
 
 
-class CreateConetestSeriaizer(serializers.Serializer):
+class CreateContestSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
     start_time = serializers.DateTimeField()
@@ -15,7 +15,7 @@ class CreateConetestSeriaizer(serializers.Serializer):
     allowed_ip_ranges = serializers.ListField(child=serializers.CharField(max_length=32), allow_empty=True)
 
 
-class EditConetestSeriaizer(serializers.Serializer):
+class EditContestSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
