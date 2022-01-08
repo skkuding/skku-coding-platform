@@ -6,6 +6,7 @@ on:
   pull_request:
     paths:
       - "frontend/**"
+      - ".github/workflows/test-frontend.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -13,7 +14,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
-    runs-on: ubuntu-18.04 
+    runs-on: ubuntu-18.04
     env:
       working-directory: ./frontend
 
@@ -22,7 +23,7 @@ jobs:
 
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: "14"
 
       - name: Cache Node modules
         id: cache-yarn
@@ -43,7 +44,7 @@ jobs:
       - name: Check styles
         working-directory: ${{ env.working-directory }}
         run: yarn lint --no-fix
-      
+
       - name: Build production files
         working-directory: ${{ env.working-directory }}
         run: yarn build
