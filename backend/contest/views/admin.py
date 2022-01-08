@@ -19,18 +19,18 @@ from utils.shortcuts import rand_str
 from utils.tasks import delete_files
 from ..models import Contest, ContestAnnouncement, ContestPrize, ACMContestRank
 from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
-                           CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
-                           EditConetestSeriaizer, EditContestAnnouncementSerializer,
+                           CreateContestSerializer, CreateContestAnnouncementSerializer,
+                           EditContestSerializer, EditContestAnnouncementSerializer,
                            ContestPrizeSerializer, ACMContestRankSerializer)
 
 
 class ContestAPI(APIView):
     @swagger_auto_schema(
-        request_body=CreateConetestSeriaizer,
+        request_body=CreateContestSerializer,
         operation_description="Create new contest",
         responses={200: ContestAdminSerializer},
     )
-    @validate_serializer(CreateConetestSeriaizer)
+    @validate_serializer(CreateContestSerializer)
     def post(self, request):
         data = request.data
         data["start_time"] = dateutil.parser.parse(data["start_time"])
@@ -60,11 +60,11 @@ class ContestAPI(APIView):
         return self.success(data)
 
     @swagger_auto_schema(
-        request_body=EditConetestSeriaizer,
+        request_body=EditContestSerializer,
         operation_description="Edit contest",
         responses={200: ContestAdminSerializer},
     )
-    @validate_serializer(EditConetestSeriaizer)
+    @validate_serializer(EditContestSerializer)
     def put(self, request):
         data = request.data
         try:
