@@ -8,7 +8,7 @@ RUN yarn install && \
     yarn build
 
 # Deploy Stage
-FROM python:3.7-alpine3.13
+FROM python:3.8.10-alpine3.13
 
 ENV OJ_ENV production
 ENV NODE_ENV production
