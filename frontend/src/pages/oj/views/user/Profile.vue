@@ -8,6 +8,7 @@
       <tab-split-in-two :left="leftTabs" :right="rightTabs" :current-tab="currentTab" @show-tab="showTab"></tab-split-in-two>
     </div>
     <div class="tab-content">
+      <!--v-show: rendering once when Profile.vue mounted, v-if: rendering every time tab clicked -->
       <profile-summary v-if="currentTab==='Summary'"></profile-summary>
       <profile-submission v-if="currentTab==='Submission'"></profile-submission>
       <profile-history v-show="currentTab==='History'"></profile-history>
@@ -21,17 +22,20 @@
 
 <script>
 
-import UserInfo from '../../components/UserInfo'
-import TabSplitInTwo from '../../components/user/profile/TabSplitInTwo.vue'
-import ProfileSubmission from '../../components/user/profile/ProfileSubmission.vue'
+import UserInfo from '../../components/user/UserInfo'
+import TabSplitInTwo from '../../components/user/TabSplitInTwo.vue'
+import ProfileSubmission from '../../components/user/ProfileSubmission.vue'
+import ProfileContest from '../../components/user/ProfileContest.vue'
+import ProfileGroup from '../../components/user/ProfileGroup.vue'
 
 export default {
   name: 'ProfileSetting',
   components: {
     UserInfo,
     TabSplitInTwo,
-    ProfileSubmission
-
+    ProfileSubmission,
+    ProfileContest,
+    ProfileGroup
   },
   data () {
     return {
