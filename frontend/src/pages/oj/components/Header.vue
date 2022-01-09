@@ -48,7 +48,6 @@
     </b-modal>
     <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
       <profileSetting></profileSetting>
-      <!--TODO: setting page 눌렀을 때 프로필 페이지로 가도록 하기-->
     </b-modal>
   </div>
 </template>
