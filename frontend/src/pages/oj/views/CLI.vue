@@ -10,15 +10,11 @@
     </select>
     <form>
       <p><textarea cols="60" rows="8" v-model="code"></textarea></p>
-      <!-- <button type="button" value="Connect" @click="compile()">compile</button> -->
       <button type="button" value="Connect" @click="run()">Run</button>
     </form>
     <div style = "margin-left: 30px; margin-right:30px" ref="terminal"/>
     <h1> stdin </h1>
-    <form>
-      <input type="text" v-model="stdin" readonly>
-      <!-- <button type="button" value="input" @click="postStdin()">input</button> -->
-    </form>
+    <p><textarea cols="40" rows="6" v-model="stdin" readonly></textarea></p>
     <h1> stdout </h1>
     <p><textarea cols="40" rows="6" v-model="stdout" readonly></textarea></p>
   </div>
@@ -66,9 +62,6 @@ export default {
         lineHeight: 16
       }
     })
-    this.term.prompt = () => {
-      this.term.write('\r< ')
-    }
     this.term.writeln(
       `
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -100,10 +93,8 @@ export default {
         this.socket.emit('stdin', this.stdin)
         this.writable = false
       } else if (e.domEvent.keyCode === 8) {
-        if (this.term._core.buffer.x > 2) {
-          this.term.write('\b \b')
-          this.stdin = this.stdin.length === 1 ? '' : this.stdin.substring(0, this.stdin.length - 1)
-        }
+        this.term.write('\b \b')
+        this.stdin = this.stdin.length === 1 ? '' : this.stdin.substring(0, this.stdin.length - 1)
       } else if (e.key.length === 1 && printable) {
         console.log(e.domEvent.keyCode + 'Printable')
         console.log(e.domEvent.key)
@@ -114,22 +105,19 @@ export default {
       }
     })
     this.term.attachCustomKeyEventHandler(async (e) => {
+      if (!this.writable) {
+        return
+      }
       if (e.ctrlKey && e.code === 'KeyV' && e.type === 'keydown') {
         const selection = this.term.getSelection
         if (selection) {
           const clipboardData = await navigator.clipboard.readText()
           const splitedData = clipboardData.split(/\r?\n/)
+          const joinedData = splitedData.join('\n')
 
-          this.lastLine = splitedData[splitedData.length - 1]
-          const exceptLastLine = splitedData.slice(0, -1).join('\n')
-          console.log('11', this.lastLine, exceptLastLine)
-
-          if (exceptLastLine) {
-            this.term.writeln(exceptLastLine)
-            this.stdin = exceptLastLine
-            this.userinput = true
-            this.socket.emit('stdin', this.stdin)
-            this.writable = false
+          if (joinedData) {
+            this.term.write(joinedData)
+            this.stdin = joinedData
           }
 
           return false
@@ -157,7 +145,6 @@ export default {
       }
       this.term.clear()
       this.term.writeln('\x1B[1;3;31mCode running...\x1B[0m')
-      this.term.prompt()
       this.stdin = ''
       this.stdout = ''
       this.stderr = ''
@@ -175,11 +162,8 @@ export default {
       this.socket.on('stdout', (output) => {
         if (this.userinput) {
           console.log('22', this.lastLine)
-          if (this.lastLine) {
-            console.log('Lastline')
-            this.stdin.replaceAll(/(?<=[^\r])\n/g, '\r\n')
-          }
-          this.stdout = output.replace(this.stdin + '\r\n', '')
+          const replaceStdin = this.stdin.replaceAll(/\r?\n/g, '\r\n')
+          this.stdout = output.replace(replaceStdin + '\r\n', '')
           this.stdin = ''
           this.term.write(this.stdout)
           this.userinput = false
@@ -187,10 +171,6 @@ export default {
         } else {
           this.stdout += output
           this.term.write(this.stdout)
-        }
-        if (this.lastLine) {
-          this.term.write(this.lastLine)
-          this.stdin = this.lastLine
         }
       })
 
