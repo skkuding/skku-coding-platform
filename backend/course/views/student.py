@@ -90,17 +90,6 @@ class QuestionAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                name="id", in_=openapi.IN_QUERY,
-                type=openapi.TYPE_INTEGER,
-                required=True,
-                description="unique announcement id"
-            ),
-        ],
-        operation_description="Delete Announcement"
-    )
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
                 name="course_id",
                 in_=openapi.IN_QUERY,
                 description="Id of course",
