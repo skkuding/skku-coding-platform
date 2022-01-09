@@ -10,7 +10,6 @@ class AdminType(object):
     NONE = "None"
 
 
-# created_by, course_id, title, content, create_time, last_update_time, status
 class Question(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -22,6 +21,7 @@ class Question(models.Model):
     class Meta:
         db_table = "question"
         ordering = ("-create_time",)
+
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)

@@ -48,6 +48,7 @@ LOCAL_APPS = [
     'judge',
     'assignment',
     'course',
+    'qna'
 ]
 
 INSTALLED_APPS = VENDOR_APPS + LOCAL_APPS

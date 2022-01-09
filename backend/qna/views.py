@@ -118,6 +118,7 @@ class QuestionAPI(APIView):
         
         return self.success(self.paginate_data(request, question, QuestionSerializer))
 
+
 class AnswerAPI(APIView):
     @swagger_auto_schema(
         request_body=CreateAnswerSerializer,
@@ -190,6 +191,7 @@ class AnswerAPI(APIView):
             ),
         ]
     )
+    @login_required
     def delete(self, request):
         id = request.GET.get("id")
         if not id:
