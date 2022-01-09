@@ -113,7 +113,7 @@
           <b-tab href="#Upload-From-Local" title="Upload From Local">
             <b-form-file class="mt-3 mb-3" v-model="selectedFile" accept="image/*" drop-placeholder="Drop a Image here" placeholder="Select a Image or Drop a file here" @input="uploadImage">
             </b-form-file>
-            <b-btn dark @click="insertImage(); $bvModal.hide('image-modal')" :class="{ 'is-disabled': selectedFile === null }">
+            <b-btn :disabled="disableInsertImage" dark @click="insertImage(); $bvModal.hide('image-modal')" :class="{ 'is-disabled': selectedFile === null }">
               Insert image
             </b-btn>
           </b-tab>
@@ -124,7 +124,7 @@
       <b-card class="pa-1" >
         <b-form-file class="mb-3" v-model="selectedFile" accept="*" drop-placeholder="Drop a file here" placeholder="Select a file or Drop a file here" @input="uploadFile">
         </b-form-file>
-        <b-btn type="submit" dark @click="insertFile(); $bvModal.hide('file-modal')" :class="{ 'is-disabled': selectedFile === null }" >
+        <b-btn :disabled="disableInsertFile" type="submit" dark @click="insertFile(); $bvModal.hide('file-modal')" :class="{ 'is-disabled': selectedFile === null }" >
           Insert File
         </b-btn>
       </b-card>
@@ -157,7 +157,9 @@ export default {
       fileModal: false,
       fileURL: null,
       fileLink: null,
-      selectedFile: null
+      selectedFile: null,
+      disableInsertImage: true,
+      disableInsertFile: true
     }
   },
   watch: {
@@ -211,6 +213,7 @@ export default {
       this.selectedFile = null
       this.fileURL = null
       this.imageModal = false
+      this.disableInsertImage = true
     },
     async uploadImage () {
       const formData = new FormData()
@@ -220,9 +223,11 @@ export default {
       }
       const res = await api.uploadImage(formData)
       this.fileURL = res.data.data.file_path
+      this.disableInsertImage = false
     },
     insertFile () {
       this.editor.chain().focus().insertContent(this.fileLink).run()
+      this.disableInsertFile = true
     },
     async uploadFile () {
       const formData = new FormData()
@@ -233,6 +238,7 @@ export default {
       const res = await api.uploadFile(formData)
       const link = '<a target="_blank" href="' + res.data.data.file_path + '">' + res.data.data.file_name + '</a>'
       this.fileLink = link
+      this.disableInsertFile = false
     }
   }
 }
