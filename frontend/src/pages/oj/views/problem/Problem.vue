@@ -165,12 +165,12 @@
               <b-icon icon="arrow-clockwise" scale="1.1" />
             </b-button>
           </b-nav-item>
-          <!-- <b-nav-item>
-            <b-button class="btn">
+          <b-nav-item>
+            <b-button class="btn" @click="rerenderRunInCli">
               <b-icon icon="play" scale="1.4"/>
               Run
             </b-button>
-          </b-nav-item> -->
+          </b-nav-item>
           <b-nav-item>
             <b-button
               class="btn-submit"
@@ -273,20 +273,9 @@
               :theme="theme"
             />
           </b-row>
-          <!-- <b-row id="io">
-            <b-row class="io-header">
-              <b-col class="io-header-cell right-border">Input</b-col>
-              <b-col class="io-header-cell">Output</b-col>
-            </b-row>
-            <b-row class="io-content">
-              <b-col class="io-content-cell right-border">
-                <pre></pre>
-              </b-col>
-              <b-col class="io-content-cell">
-                <pre></pre>
-              </b-col>
-            </b-row>
-          </b-row> -->
+          <b-row id="io">
+            <run-in-cli v-if="runInCliKey" :code="code" :language="language" :run-in-cli-key="runInCliKey"></run-in-cli>
+          </b-row>
         </b-col>
       </b-row>
       <b-sidebar id="sidebar" no-header backdrop>
@@ -320,6 +309,7 @@ import moment from 'moment'
 import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
 import profileSetting from '@oj/views/user/ProfileSetting'
+import RunInCli from '@oj/components/problem/RunInCli'
 
 export default {
   name: 'ProblemDetails',
@@ -328,7 +318,8 @@ export default {
     ProblemSidebar,
     login,
     register,
-    profileSetting
+    profileSetting,
+    RunInCli
   },
   mixins: [FormMixin],
   data () {
@@ -345,6 +336,8 @@ export default {
       assignmentID: '',
       assignment_name: '',
       submitting: false,
+
+      runInCliKey: 0,
 
       submissionId: '',
       submitted: false,
@@ -488,6 +481,14 @@ export default {
         } else {
           this.code = ''
         }
+      }
+    },
+    rerenderRunInCli () {
+      this.runInCliKey += 1
+      if (this.runInCliKey === 1) {
+        setTimeout(() => {
+          this.runInCliKey++
+        }, 1000)
       }
     },
     // when language dropdown changed

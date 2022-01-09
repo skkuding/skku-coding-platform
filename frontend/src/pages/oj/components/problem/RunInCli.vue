@@ -1,22 +1,6 @@
 <template>
   <div style="text-align: center;">
-    <h1>Code</h1>
-    <select v-model="lang">
-      <option disabled value="">languages</option>
-      <option>c</option>
-      <option>cpp</option>
-      <option>py2</option>
-      <option>py3</option>
-    </select>
-    <form>
-      <p><textarea cols="60" rows="8" v-model="code"></textarea></p>
-      <button type="button" value="Connect" @click="run()">Run</button>
-    </form>
-    <div style = "margin-left: 30px; margin-right:30px" ref="terminal"/>
-    <h1> stdin </h1>
-    <p><textarea cols="40" rows="6" v-model="stdin" readonly></textarea></p>
-    <h1> stdout </h1>
-    <p><textarea cols="40" rows="6" v-model="stdout" readonly></textarea></p>
+    <div ref="terminal"/>
   </div>
 </template>
 
@@ -24,23 +8,25 @@
 import io from 'socket.io-client'
 import axios from 'axios'
 import { Terminal } from 'xterm'
+import { FitAddon } from 'xterm-addon-fit'
 
 import 'xterm/lib/addons/fullscreen/fullscreen.css'
 import 'xterm/dist/xterm.css'
 
 export default {
-  name: 'socket',
+  name: 'RunInCLI',
+  props: {
+    code: String,
+    language: String,
+    runInCliKey: Number
+  },
   data () {
     return {
       stdin: '',
       stdout: '',
       stderr: '',
       socket: '',
-      code: 'for i in range(0, 4, 1):\n    inp = input()\n    print(inp, inp)',
-      compileResult: '',
       dir: null,
-      lang: '',
-      lastStdin: '',
       userinput: false,
       writable: false
     }
@@ -49,7 +35,7 @@ export default {
     this.term = new Terminal({
       rendererType: 'canvas',
       rows: 25,
-      cols: 100,
+      cols: 80,
       convertEol: true,
       scrollback: 50,
       disableStdin: false,
@@ -57,11 +43,16 @@ export default {
       cursorStyle: 'underline',
       theme: {
         foreground: '#7e9192',
-        background: '#002833',
-        cursor: 'help',
+        background: '#24272D',
+        cursor: '#FFFFFF',
         lineHeight: 16
       }
     })
+
+    const fitAddon = new FitAddon()
+    this.term.loadAddon(fitAddon)
+    fitAddon.fit()
+
     this.term.writeln(
       `
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -69,7 +60,7 @@ export default {
 ▓▓▓▓▒ ▒░░   ░▒▓░ ░ ▓
 ▓▓▒  ▒░░░ ░▒ ░▓▓▓▓▓▓
 ▓▒ ▒░░   ░░▓ ▒▓▓▓▓▓▓
-▓░ ░░░  ░░░▒   ▓▓▓▓▓
+▓░ ░░░  ░░░▒   ▓▓▓▓▓             Welcome to \x1B[1;32mSKKU Coding platform!\x1B[0m
 ▓  ░   ░░░▒  ▒ ▒▓▓▓▓
 ▓▓ ▒ ░▒░▒▓▓▓▓▓ ░ ▒▓▓
 ▓▓░ ▒ ▓▓▓▓▓▓ ▓▓▓ ░▓▓
@@ -78,26 +69,22 @@ export default {
 ▓▓▓▓▓▓▓▓▓▒▒▒▒▒▓▓▓▓▓▓
       `
     )
-    this.term.writeln('Welcome to \x1B[1;32mSKKU Coding platform!\x1B[0m')
-    this.term.writeln('Please Run your code!!')
+    this.term.writeln('')
     this.term.open(this.$refs.terminal)
     this.term.onKey(e => {
-      console.log(e)
       if (!this.writable) {
         return
       }
       const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey
-      if (e.domEvent.keyCode === 13) {
+      if (e.domEvent.keyCode === 13) { // Enter Key
         this.term.write('\n')
         this.userinput = true
         this.socket.emit('stdin', this.stdin)
         this.writable = false
-      } else if (e.domEvent.keyCode === 8) {
+      } else if (e.domEvent.keyCode === 8) { // Backspace Key
         this.term.write('\b \b')
         this.stdin = this.stdin.length === 1 ? '' : this.stdin.substring(0, this.stdin.length - 1)
-      } else if (e.key.length === 1 && printable) {
-        console.log(e.domEvent.keyCode + 'Printable')
-        console.log(e.domEvent.key)
+      } else if (e.key.length === 1 && printable) { // printable character
         this.term.write(e.key)
         this.stdin += e.key
       } else {
@@ -153,7 +140,7 @@ export default {
         reconnection: false,
         query: {
           token: this.dir,
-          lang: this.lang
+          lang: this.shortLanguage
         }
       })
 
@@ -161,7 +148,6 @@ export default {
 
       this.socket.on('stdout', (output) => {
         if (this.userinput) {
-          console.log('22', this.lastLine)
           const replaceStdin = this.stdin.replaceAll(/\r?\n/g, '\r\n')
           this.stdout = output.replace(replaceStdin + '\r\n', '')
           this.stdin = ''
@@ -177,19 +163,34 @@ export default {
       this.socket.on('exited', () => {
         this.term.writeln('\x1B[1;3;31mProgram exited\x1B[0m')
         this.writable = false
+        this.$emit('completeRun')
       })
     },
-    postStdin () {
-      this.socket.emit('stdin', this.stdin)
-      this.userinput = true
-    },
     async compile () {
+      this.term.clear()
+      this.term.writeln(
+        `
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  ▓▓▓▓▓▓▒▒      ░▒▓▓▓▓
+  ▓▓▓▓▒ ▒░░   ░▒▓░ ░ ▓
+  ▓▓▒  ▒░░░ ░▒ ░▓▓▓▓▓▓
+  ▓▒ ▒░░   ░░▓ ▒▓▓▓▓▓▓
+  ▓░ ░░░  ░░░▒   ▓▓▓▓▓                       Compiling... 
+  ▓  ░   ░░░▒  ▒ ▒▓▓▓▓
+  ▓▓ ▒ ░▒░▒▓▓▓▓▓ ░ ▒▓▓
+  ▓▓░ ▒ ▓▓▓▓▓▓ ▓▓▓ ░▓▓
+  ▓▓▓▒ ▒▓▓▓ ▓▓▓▓▓  ▓▓▓
+  ▓▓▓▓▓▓▓░░▒▓▓▓▓▒ ▒▓▓▓
+  ▓▓▓▓▓▓▓▓▓▒▒▒▒▒▓▓▓▓▓▓
+        `
+      )
       try {
-        const res = await axios.post('https://localhost/code-run/compile', { lang: this.lang, code: this.code })
-        console.log(res.data)
+        const res = await axios.post('https://localhost/code-run/compile', { lang: this.shortLanguage, code: this.code })
         this.stderr = ''
         if (res.data.status !== 1) {
           this.stderr = res.data.output
+          this.term.clear()
+          this.term.writeln('\x1B[1;31m ### Compile Error ### \x1B[0m')
           this.term.writeln('\x1B[1;31m' + res.data.output + '\x1B[0m')
           return -1
         } else {
@@ -199,6 +200,24 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    }
+  },
+  computed: {
+    shortLanguage () {
+      const language = {
+        C: 'c',
+        'C++': 'cpp',
+        Java: 'java',
+        Python2: 'py2',
+        Python3: 'py3',
+        Golang: 'go'
+      }
+      return language[this.language]
+    }
+  },
+  watch: {
+    'runInCliKey' () {
+      this.run()
     }
   }
 }
