@@ -16,6 +16,9 @@ class JudgeServer(models.Model):
     service_url = models.TextField(null=True)
     is_disabled = models.BooleanField(default=False)
 
+    def __str__(self):
+        return "ip: " + self.ip + " task_number: " + str(self.task_number) + " is_disabled: " + str(self.is_disabled)
+
     @property
     def status(self):
         # In devcontainer, ignore heartbeat since server is not always running (PR#250)
