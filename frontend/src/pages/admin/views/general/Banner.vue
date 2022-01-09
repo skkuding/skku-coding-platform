@@ -46,10 +46,11 @@
             </b-form-file>
             <b-button
                 variant="primary"
-                size="sm"
+                size="md"
                 style="margin-top: 10px;"
                 @click="insertImage"
-            >Save</b-button>
+                :disabled="disableAddButton"
+            >Add</b-button>
         </Panel>
     </div>
 </template>
@@ -79,7 +80,8 @@ export default {
       newImage: {
         img_name: '',
         img_path: ''
-      }
+      },
+      disableAddButton: true
     }
   },
   async mounted () {
@@ -96,6 +98,7 @@ export default {
       await api.createBannerImage(data)
       const res = await api.getBannerImage()
       this.bannerImageList = res.data.data
+      this.disableAddButton = true
     },
     async uploadImage () {
       const self = this
@@ -124,6 +127,7 @@ export default {
           const res = await api.uploadImage(formData)
           self.newImage.img_name = res.data.data.img_name
           self.newImage.img_path = res.data.data.file_path
+          self.disableAddButton = false
         }
       }
     },
