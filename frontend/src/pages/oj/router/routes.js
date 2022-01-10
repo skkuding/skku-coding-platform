@@ -22,7 +22,8 @@ import {
   LectureAssignmentDetail,
   LectureQna,
   LectureQnaDetail,
-  Profile
+  Profile,
+  ProfileContest
 } from '../views'
 
 export default [
@@ -169,6 +170,12 @@ export default [
     path: '/profile',
     meta: { requiresAuth: true, title: 'My Profile' },
     component: Profile
+  },
+  {
+    name: 'profile-contest',
+    path: '/profile-contest',
+    component: ProfileContest,
+    meta: { title: 'Profile Contest' }
   },
   {
     path: '*',
