@@ -17,7 +17,7 @@ DEFAULT_QUESTION_DATA = { "title": "title",
                           "status": True }
 
                           
-class QuestionAPITest(APITestCase):
+class QuestionStudentAPITest(APITestCase):
     def setUp(self):
         professor = self.create_admin()
         self.course_id = Course.objects.create(created_by=professor, **DEFAULT_COURSE_DATA).id
@@ -59,6 +59,22 @@ class QuestionAPITest(APITestCase):
         self.assertSuccess(res)
         self.assertFalse(Question.objects.filter(id=id).exists())
 
+class QuestionProfessorAPITest(APITestCase):
+    def setUp(self):
+        professor = self.create_admin()
+        self.course_id = Course.objects.create(created_by=professor, **DEFAULT_COURSE_DATA).id
+        self.data = copy.deepcopy(DEFAULT_QUESTION_DATA)
+        self.data["course_id"] = self.course_id
+        self.question_id = Question.objects.create(created_by=professor, **self.data).id
+        self.url = self.reverse("question_professor_api")
+
+    def test_get_assignment_list(self):
+        resp = self.client.get(f"{self.url}?course_id={self.course_id}")
+        self.assertSuccess(resp)
+
+    def test_get_one_assignment(self):
+        resp = self.client.get(f"{self.url}?course_id={self.course_id}&question_id={self.question_id}")
+        self.assertSuccess(resp)
 
 class AnswerAPITest(APITestCase):
     def setUp(self):
