@@ -12,12 +12,12 @@ class AdminType(object):
 
 class Question(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     title = models.TextField()
     content = models.TextField()
     create_time = models.DateTimeField(auto_now_add=True)
-    last_update_time = models.DateTimeField()
-    status = models.BooleanField()
+    last_update_time = models.DateTimeField(auto_now=True)
+    status = models.BooleanField(default=0)
     class Meta:
         db_table = "question"
         ordering = ("-create_time",)
