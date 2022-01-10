@@ -18,18 +18,18 @@ class QuestionAPI(APIView):
     )
     @login_required
     def post(self, request):
-      data = request.data
-      course_id = request.data["course_id"]
+        data = request.data
+        course_id = request.data["course_id"]
 
-      try:
-          course = Course.objects.get(id=course_id)
-      except Course.DoesNotExist:
-          return self.error("Course does not exists")
+        try:
+            course = Course.objects.get(id=course_id)
+        except Course.DoesNotExist:
+            return self.error("Course does not exists")
 
-      data["created_by"] = request.user
-      data["course"] = course
-      question = Question.objects.create(**data)
-      return self.success(QuestionSerializer(question).data)
+        data["created_by"] = request.user
+        data["course"] = course
+        question = Question.objects.create(**data)
+        return self.success(QuestionSerializer(question).data)
  
     @validate_serializer(EditQuestionSerializer)
     @swagger_auto_schema(
@@ -38,17 +38,17 @@ class QuestionAPI(APIView):
     )
     @login_required
     def put(self, request):
-      data = request.data
-      try:
-          question = Question.objects.get(id=data.pop("id"))
-          ensure_created_by(question, request.user)
-      except Question.DoesNotExist:
-          return self.error("Question does not exist")
+        data = request.data
+        try:
+            question = Question.objects.get(id=data.pop("id"))
+            ensure_created_by(question, request.user)
+        except Question.DoesNotExist:
+            return self.error("Question does not exist")
 
-      for k, v in data.items():
-          setattr(question, k, v)
-      question.save()
-      return self.success(QuestionSerializer(question).data)
+        for k, v in data.items():
+            setattr(question, k, v)
+        question.save()
+        return self.success(QuestionSerializer(question).data)
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -128,11 +128,18 @@ class AnswerAPI(APIView):
     def post(self, request):
         data = request.data
         try:
-            question = Question.objects.get(id=data.pop("question_id"))
+            question = Question.objects.get(id=data.pop("question_id"), status=True)
             data["question"] = question
             data["created_by"] = request.user
         except Question.DoesNotExist:
             return self.error("Question does not exist")
+        
+        if data.pop("closure", False):
+            if not request.user.is_question_admin(question) and not request.user.is_super_admin():
+                return self.error("No permission for closure")
+            question.status = False
+            question.save()
+            
         answer = Answer.objects.create(**data)
         answer.update_admin_type(request.user)
         return self.success(AnswerSerializer(answer).data)
@@ -151,7 +158,7 @@ class AnswerAPI(APIView):
         except:
             return self.error("Answer does not exist")
         if answer.created_by != request.user and not request.user.is_super_admin():
-            return self.error("No permission for edit")
+            return self.error("No permission for this action")
         
         answer.content = data["content"]
         answer.save()
@@ -199,6 +206,6 @@ class AnswerAPI(APIView):
         except Answer.DoesNotExist:
             return self.error("Answer does not exists")
         if answer.created_by != request.user and not request.user.is_super_admin():
-            return self.error("No permission for deletion")
+            return self.error("No permission for this action")
         answer.delete()
         return self.success()
