@@ -4,19 +4,30 @@ from drf_yasg import openapi
 from utils.api import APIView, validate_serializer
 from utils.decorators import login_required, ensure_created_by, super_admin_required
 
-from .models import Question, Answer
-from .serializers import (  CreateQuestionSerializer,QuestionSerializer,EditQuestionSerializer,
+from ..models import Question, Answer
+from course.models import Course
+from ..serializers import (  CreateQuestionSerializer,QuestionSerializer,EditQuestionSerializer,
                             AnswerSerializer, CreateAnswerSerializer, EditAnswerSerializer)
 
 class QuestionAPI(APIView):
     @validate_serializer(CreateQuestionSerializer)
     @swagger_auto_schema(
         request_body=CreateQuestionSerializer,
-        operation_description="Uploading Question."
+        operation_description="Uploading Question.",
+        responses={200: QuestionSerializer},
     )
     @login_required
     def post(self, request):
       data = request.data
+      course_id = request.data["course_id"]
+
+      try:
+          course = Course.objects.get(id=course_id)
+      except Course.DoesNotExist:
+          return self.error("Course does not exists")
+
+      data["created_by"] = request.user
+      data["course"] = course
       question = Question.objects.create(**data)
       return self.success(QuestionSerializer(question).data)
  
@@ -42,27 +53,9 @@ class QuestionAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                name="id", in_=openapi.IN_QUERY,
-                type=openapi.TYPE_INTEGER,
-                required=True,
-                description="unique announcement id"
-            ),
-        ],
-        operation_description="Delete Announcement"
-    )
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
                 name="course_id",
                 in_=openapi.IN_QUERY,
                 description="Id of course",
-                required=True,
-                type=openapi.TYPE_INTEGER,
-            ),
-            openapi.Parameter(
-                name="assignment_id",
-                in_=openapi.IN_QUERY,
-                description="Id of assignment to delete",
                 required=True,
                 type=openapi.TYPE_INTEGER,
             ),
@@ -79,16 +72,13 @@ class QuestionAPI(APIView):
     @login_required
     def delete(self, request):
         course_id = request.GET.get("course_id")
-        assignment_id = request.GET.get("assignment_id")
-        question_id = request.GET.get("question_id")
+        question_id = request.GET.get("id")
 
         if not course_id:
             return self.error("Invalid parameter, course_id is required")
-        if not assignment_id:
-            return self.error("Invalid parameter, assignment_id is required")
 
         try:
-            question = Question.objects.get(id=question_id)
+            question = Question.objects.get(id=question_id, course_id = course_id)
             ensure_created_by(question, request.user)
         except Question.DoesNotExist:
             return self.error("Question does not exist")
@@ -98,8 +88,15 @@ class QuestionAPI(APIView):
 
     @swagger_auto_schema(
         manual_parameters=[
+          openapi.Parameter(
+                name="course_id",
+                in_=openapi.IN_QUERY,
+                description="Id of course",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
             openapi.Parameter(
-                name="id", in_=openapi.IN_QUERY,
+                name="question_id", in_=openapi.IN_QUERY,
                 type=openapi.TYPE_INTEGER,
                 required=True
             ),
@@ -107,10 +104,11 @@ class QuestionAPI(APIView):
         operation_description="Get Question"
     )
     def get(self, request):
+        course_id = request.GET.get("course_id")
         question_id = request.GET.get("id")
         if question_id:
             try:
-                question = Question.objects.get(id=question_id)
+                question = Question.objects.get(id=question_id, course_id = course_id)
                 return self.success(QuestionSerializer(question).data)
             except Question.DoesNotExist:
                 return self.error("Question does not exist")
