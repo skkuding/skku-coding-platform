@@ -11,18 +11,18 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = "__all__"
 
-class CreateQuestionSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Question
-        fields = "__all__"
+class CreateQuestionSerializer(serializers.Serializer):
+    course_id = serializers.IntegerField()
+    # created_by = serializers.IntegerField()
+    title = serializers.CharField(max_length=128)
+    content = serializers.CharField(max_length=1024 * 1024 * 8)
+    last_update_time = serializers.DateTimeField()
+    create_time = serializers.DateTimeField()
 
-class EditQuestionSerializer(serializers.ModelSerializer):
+class EditQuestionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-
-    class Meta:
-        model = Question
-        fields = ("title", "content")
+    title = serializers.CharField(max_length=128)
+    content = serializers.CharField(max_length=1024 * 1024 * 8)
 
 
 class AnswerSerializer(serializers.Serializer):

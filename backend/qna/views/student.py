@@ -72,13 +72,13 @@ class QuestionAPI(APIView):
     @login_required
     def delete(self, request):
         course_id = request.GET.get("course_id")
-        question_id = request.GET.get("id")
+        question_id = request.GET.get("question_id")
 
         if not course_id:
             return self.error("Invalid parameter, course_id is required")
 
         try:
-            question = Question.objects.get(id=question_id, course_id = course_id)
+            question = Question.objects.get(id=question_id, course_id=course_id)
             ensure_created_by(question, request.user)
         except Question.DoesNotExist:
             return self.error("Question does not exist")
@@ -105,10 +105,10 @@ class QuestionAPI(APIView):
     )
     def get(self, request):
         course_id = request.GET.get("course_id")
-        question_id = request.GET.get("id")
+        question_id = request.GET.get("question_id")
         if question_id:
             try:
-                question = Question.objects.get(id=question_id, course_id = course_id)
+                question = Question.objects.get(id=question_id, course_id=course_id)
                 return self.success(QuestionSerializer(question).data)
             except Question.DoesNotExist:
                 return self.error("Question does not exist")
