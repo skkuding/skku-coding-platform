@@ -22,7 +22,6 @@ class QuestionAPITest(APITestCase):
     def setUp(self):
         professor = self.create_admin()
         self.course_id = Course.objects.create(created_by=professor, **DEFAULT_COURSE_DATA).id
-        # student_id = student.id
         self.data = copy.deepcopy(DEFAULT_QUESTION_DATA)
         self.data["course_id"] = self.course_id
         self.url = self.reverse("question_api")
@@ -48,6 +47,11 @@ class QuestionAPITest(APITestCase):
     def test_get_question_list(self):
         self.test_create_question()
         response = self.client.get(f"{self.url}?course_id={self.course_id}")
+        self.assertSuccess(response)
+
+    def test_get_one_question(self):
+        id = self.test_create_question().data["data"]["id"]
+        response = self.client.get(f"{self.url}?course_id={self.course_id}&question_id={id}")
         self.assertSuccess(response)
 
     def test_delete_question(self):
