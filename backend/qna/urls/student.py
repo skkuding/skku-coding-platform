@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ..views import AnswerAPI, QuestionAPI
+from ..views.student import AnswerAPI, QuestionAPI
 
 urlpatterns = [
     path("course/question", QuestionAPI.as_view(), name="question_api"),
