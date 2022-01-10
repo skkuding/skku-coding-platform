@@ -83,7 +83,7 @@ def get_env(name, default=""):
     return os.environ.get(name, default)
 
 
-def DRAMATIQ_WORKER_ARGS(time_limit=3600_000, max_retries=0, max_age=7200_000):
+def DRAMATIQ_WORKER_ARGS(time_limit=10_000, max_retries=0, max_age=7200_000):
     return {"max_retries": max_retries, "time_limit": time_limit, "max_age": max_age}
 
 

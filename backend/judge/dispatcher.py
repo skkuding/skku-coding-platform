@@ -165,6 +165,7 @@ class JudgeDispatcher(DispatcherBase):
             "language_config": sub_config["config"],
             "src": code,
             "max_cpu_time": self._change_time(language, self.problem.time_limit),
+            "max_real_time": self._change_time(language, self.problem.time_limit)*3,
             "max_memory": self._change_memory(language, self.problem.memory_limit),
             "test_case_id": self.problem.test_case_id,
             "output": False,

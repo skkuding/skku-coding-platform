@@ -345,7 +345,7 @@ export default {
             return {
               title: tc.test_case,
               result: JUDGE_STATUS[tc.result].name,
-              exec_time: tc.real_time,
+              exec_time: tc.cpu_time,
               memory: tc.memory
             }
           }
