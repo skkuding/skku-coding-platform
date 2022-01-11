@@ -182,6 +182,7 @@ export default {
   .lecture-card {
     &__card ::v-deep{
       color: #7C7A7B;
+      cursor: default;
     }
     &__cardcolor {
       height: 135px;

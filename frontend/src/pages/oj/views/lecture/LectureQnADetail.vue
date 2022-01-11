@@ -98,7 +98,7 @@
           </b-form-group>
         </div>
         <template #modal-footer>
-          <b-button @click="showEditQuestionDialog = false">Cancel</b-button>
+          <b-button style="cursor: pointer" @click="showEditQuestionDialog = false">Cancel</b-button>
           <b-button>Save</b-button>
         </template>
       </b-modal>

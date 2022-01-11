@@ -188,7 +188,9 @@ export default {
     .table{
       width: 95% !important;
       margin: 0 auto;
-      cursor: pointer;
+      td {
+        cursor: pointer;
+      }
     }
   }
   .top-bar {

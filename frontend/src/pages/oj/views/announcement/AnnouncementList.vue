@@ -152,10 +152,15 @@ export default {
   .title{
     color: #7C7A7B;
   }
-  .table{
-    width: 95% !important;
-    margin: 0 auto;
-    cursor: pointer;
+  .table {
+    th {
+      cursor: default;
+    }
+    td {
+      width: 95% !important;
+      margin: 0 auto;
+      cursor: pointer;
+    }
   }
   .no-announcement {
     text-align: center;

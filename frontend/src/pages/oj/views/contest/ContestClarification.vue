@@ -106,7 +106,12 @@ export default {
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
   .table {
-    cursor: pointer;
+    th { 
+      cursor: default;
+    }
+    td {
+      cursor: pointer;
+    }
   }
   div {
     &.pagination{
