@@ -13,7 +13,6 @@ import LectureAssignmentDetail from './lecture/LectureAssignmentDetail.vue'
 import LectureQna from './lecture/LectureQnA.vue'
 import LectureQnaDetail from './lecture/LectureQnADetail.vue'
 import Profile from './user/Profile.vue'
-import ProfileContest from './user/ProfileContest.vue'
 
 // Grouping Components in the Same Chunk
 const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
