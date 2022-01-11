@@ -255,6 +255,9 @@ export default {
     width:95% !important;
     margin-left:auto;
     margin-right:auto;
+    td {
+      cursor: pointer;
+    }
   }
   .tags {
     color:#767676;

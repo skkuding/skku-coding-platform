@@ -49,7 +49,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>Clarifications</h1>
-            <b-icon icon="x" class="close-icon" @click="close()"/>
+            <b-icon style="cursor: pointer" icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
         <div id="clarifications-table">
@@ -79,7 +79,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>My Submissions</h1>
-            <b-icon icon="x" class="close-icon" @click="close()"/>
+            <b-icon style="cursor: pointer" icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
         <div id="my-submissions-table">
@@ -110,7 +110,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>All Submissions</h1>
-            <b-icon icon="x" class="close-icon" @click="close()"/>
+            <b-icon style="cursor: pointer" icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
         <div id="all-submissions-table">
@@ -140,7 +140,7 @@
         <template #modal-header="{ close }">
           <div class="modal-title-close">
             <h1>Submission #{{submission_detail.id}}</h1>
-            <b-icon icon="x" class="close-icon" @click="close()"/>
+            <b-icon style="cursor: pointer" icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
         <div id="submission-info-table">
@@ -554,11 +554,13 @@ export default {
                 min-width: 100px;
                 padding: 15px 25px;
                 border-top: 1px solid #3B4F56;
-                cursor: pointer;
+                
               }
             }
           }
-
+          #my-submissions-table table td {
+            cursor: pointer;
+          }
           #submission-info-table {
             table {
               color: white;

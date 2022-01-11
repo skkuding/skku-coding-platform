@@ -180,5 +180,8 @@ export default {
     position: relative;
     border-bottom-color: #8DC63F;
   }
+  .button {
+    cursor: pointer;
+  }
 
 </style>
