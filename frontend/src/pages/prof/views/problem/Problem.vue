@@ -867,11 +867,17 @@ export default {
             spj: this.problem.spj
           })
           const fileList = response.data.data.info
+          let testcaseScoreSum = 0
           for (const file of fileList) {
             file.score = (100 / fileList.length).toFixed(0)
+            testcaseScoreSum += Number(file.score)
             if (!file.output_name && this.problem.spj) {
               file.output_name = '-'
             }
+          }
+          // To make Automatic testcase score sum 100
+          if (testcaseScoreSum !== 100) {
+            fileList[0].score = Number(fileList[0].score) + (100 - testcaseScoreSum)
           }
           this.problem.test_case_score = fileList
           this.testCaseUploaded = true
@@ -882,7 +888,16 @@ export default {
             self.$bvModal.show('checkTestcaseScoreModal')
             self.$root.$on('bv::modal::hide', (bvEvent) => {
               if (bvEvent.componentId === 'checkTestcaseScoreModal' && bvEvent.trigger === 'ok') {
-                resolve(true)
+                let testcaseScoreSum = 0
+                for (const file of fileList) {
+                  testcaseScoreSum += Number(file.score)
+                }
+                if (testcaseScoreSum !== 100) {
+                  bvEvent.preventDefault()
+                  self.$error('Testcase Score Sum must be 100!')
+                } else {
+                  resolve()
+                }
               } else {
                 reject(new Error('user canceled'))
               }
@@ -891,6 +906,7 @@ export default {
           await api[funcName](this.problem)
           this.$router.push({ name: 'course-assignment-list', params: { assignmentId: this.assignmentId } })
         } catch (err) {
+          console.error(err)
         }
       } else {
         try {
