@@ -97,7 +97,7 @@ export default {
       })
     },
     formatTime (timeValue) {
-      return time.utcToLocal(timeValue, 'YYYY-M-D hh:mm')
+      return time.utcToLocal(timeValue, 'YYYY-M-D HH:mm')
     },
     ...mapActions(['changeDomTitle'])
   },
