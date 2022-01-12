@@ -26,7 +26,6 @@
         :key="index"
         style="width: 230px; margin: 25px 25px 0 0; cursor: pointer;"
       >
-        <!-- @click="goAssignmentList(lecture.course.id)" -->
         <b-card-text class="lecture-card__card">
           <div
             class="lecture-card__cardcolor"
@@ -37,7 +36,7 @@
               {{ lecture.course.title }}
               <b-button
                 class="lecture-card__btn"
-                @click="setBookmarkCourse(lecture.course.id, lecture.bookmark)"
+                @click="setBookmarkCourse(index, lecture.course.id, lecture.bookmark)"
                 v-if="saveBtnVisible"
               >
                 <b-icon :icon="setIcon(lecture.bookmark)"/>
@@ -83,7 +82,6 @@ export default {
       perPage: 10,
       currentPage: 1,
       lectureList: [],
-      bookmarkList: [],
       lectureTableColumns: [
         {
           label: 'Subject',
@@ -92,7 +90,6 @@ export default {
         'Semester'
       ],
       semesters: ['Spring', 'Summer', 'Fall', 'Winter'],
-      visible: '',
       backcolor: [
         '#9EC1CF', '#CC99C9', '#FEB144', '#FF6663', '#7C7A7B', '#E2E2E2'
       ],
@@ -100,15 +97,17 @@ export default {
     }
   },
   async mounted () {
-    try {
-      const resp = await api.getBookmarkCourseList()
-      const data = resp.data.data
-      this.lectureList = data.results
-      this.bookmarkList = data.results
-    } catch (err) {
-    }
+    await this.init()
   },
   methods: {
+    async init () {
+      try {
+        const resp = await api.getBookmarkCourseList()
+        const data = resp.data.data
+        this.lectureList = data.results
+      } catch (err) {
+      }
+    },
     async goCourseDashboard (item) {
       await this.$router.push({
         name: 'lecture-dashboard',
@@ -129,13 +128,13 @@ export default {
       this.lectureList = data.results
       this.saveBtnVisible = true
     },
-    async setBookmarkCourse (courseID, bookmark) {
+    async setBookmarkCourse (index, courseID, bookmark) {
       await api.setBookmark(courseID, !bookmark)
-      const resp = await api.getBookmarkCourseList()
-      this.bookmarkList = resp.data.data.results
+      this.lectureList[index].bookmark = !bookmark
     },
-    saveBookmark () {
-      this.$router.go()
+    async saveBookmark () {
+      this.saveBtnVisible = !this.saveBtnVisible
+      await this.init()
     },
     setIcon (bookmark) {
       return bookmark ? 'bookmark-fill' : 'bookmark'
