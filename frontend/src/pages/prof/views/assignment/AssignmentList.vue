@@ -127,7 +127,11 @@
             :modal-type="modalType"
             @update="getAssignmentList"
           ></create-assignment-modal>
-          <import-public-problem-modal :assignment-id="selectedAssignmentId" @update="updateAssignmentProblemList"></import-public-problem-modal>
+          <import-public-problem-modal
+            :assignment-id="selectedAssignmentId"
+            @update="updateAssignmentProblemList(selectedAssignmentId)"
+          >
+          </import-public-problem-modal>
           <div v-if="!assignmentList.length">
             No Assignment
           </div>
@@ -208,7 +212,6 @@ export default {
   async mounted () {
     this.lectureId = this.$route.params.lectureId
     this.routeName = this.$route.name
-    console.log(this.lectureId)
     // get course information
     try {
       const res = await api.getCourseList(this.lectureId)
@@ -227,9 +230,7 @@ export default {
     } catch (err) {
     }
     if (this.$route.params.assignmentAnchor) {
-      console.log('11')
       for (const assignment of this.assignmentList) {
-        console.log('22 ' + assignment.id + ' ' + this.$route.params.assignmentAnchor)
         if (assignment.id === this.$route.params.assignmentAnchor) {
           const res = await api.getAssignmentProblem(assignment.id)
           assignment.problemList = res.data.data.results
@@ -253,31 +254,36 @@ export default {
     async editAssignment (assignmentId) {
       this.modalType = 'edit'
       this.selectedAssignmentId = assignmentId
-      console.log('edit-assignment-call')
       await this.$bvModal.show('create-assignment')
     },
     async updateAssignmentProblemList (assignmentId) {
-      api.getAssignmentProblem(assignmentId)
+      const res = await api.getAssignmentProblem(assignmentId)
+      for (let i = 0; i < this.assignmentList.length; i++) {
+        if (this.assignmentList[i].id === assignmentId) {
+          this.$set(this.assignmentList[i], 'problemList', res.data.data.results)
+          this.assignmentList[i]._showDetails = false
+          this.$set(this.assignmentList[i], '_showDetails', true)
+        }
+      }
+      // this.assignmentList.forEach(assignment => {
+      //   if (assignment.id === assignmentId) {
+      //     assignment.problemList = res.data.data.results
+      //   }
+      // })
     },
     async toggleAssignmentProblem (item) {
-      console.log('update assignment problem call')
-      console.log(item)
       if (item._showDetails) {
         item._showDetails = false
-        console.log(item.id + ' close')
       } else if (item.problemList) {
         this.$set(item, '_showDetails', true)
-        console.log('data exists ' + item.id + ' open')
       } else {
         const res = await api.getAssignmentProblem(item.id)
         item.problemList = res.data.data.results
-        await this.updateAssignmentProblemList(item.id)
+        // await this.updateAssignmentProblemList(item.id)
         this.$set(item, '_showDetails', true)
-        console.log('data downloaded ' + item.id + ' open')
       }
     },
     createAssignmentProblem (assignmentId) {
-      console.log('route name' + this.routeName + 'assignmentId' + assignmentId)
       if (this.routeName === 'lecture-assignment-list') {
         this.$router.push({ name: 'create-lecture-problem', params: { assignmentId: assignmentId } })
       }
@@ -307,17 +313,19 @@ export default {
     async deleteAssignment (assignmentId) {
       try {
         await this.$confirm('Sure to delete this assignment? The associated submissions will be deleted as well.', 'Delete Assignment', 'warning', false)
-        api.deleteAssignment(this.lectureId, assignmentId)
-        await this.getAssignmentList(this.lectureId)
+        await api.deleteAssignment(this.lectureId, assignmentId)
+        this.getAssignmentList()
       } catch (err) {
+        console.log(err)
       }
     },
     async deleteAssignmentProblem (assignmentId, problemId) {
       try {
         await this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', 'warning', false)
-        api.deleteAssignmentProblem(problemId)
+        await api.deleteAssignmentProblem(problemId)
         await this.updateAssignmentProblemList(assignmentId)
       } catch (err) {
+        console.log(err)
       }
     },
     assignmentStatus (status) {

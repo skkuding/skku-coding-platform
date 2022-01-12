@@ -113,9 +113,9 @@ export default {
     Tiptap
   },
   props: [
-    'lecture-id',
-    'modal-type',
-    'assignment-id'
+    'lectureId',
+    'modalType',
+    'assignmentId'
   ],
   data () {
     return {
@@ -126,7 +126,7 @@ export default {
         content: '',
         start_time: '',
         end_time: '',
-        visible: undefined
+        visible: false
       },
       startDate: '',
       startTime: '',
@@ -190,8 +190,13 @@ export default {
       this.form.id = res.data.data.id
     }
   },
+  computed: {
+    modalTypeOrAssignmentId () {
+      return `${this.modalType}|${this.assignmentId}`
+    }
+  },
   watch: {
-    async 'modalType' () {
+    async modalTypeOrAssignmentId () {
       console.log('edit-assignment-called')
       if (this.modalType === 'edit') {
         this.resetModal()
