@@ -1,15 +1,15 @@
 <template>
   <div>
-    <Sidemenu/>
+    <sidemenu/>
     <article class="lecture-assignment-card">
       <div class="top-bar mb-4">
-        <h2 class="title">Lecture Assignments</h2>
+        <h2 class="title">Course Assignments</h2>
       </div>
       <div
         v-if="!assignments.length"
         class="no-assignment"
       >
-        <p>No Lecture Assignment</p>
+        <p>No Course Assignment</p>
       </div>
       <div
         class="table"
@@ -54,15 +54,15 @@
 </template>
 
 <script>
-import Sidemenu from '@oj/components/Sidemenu.vue'
+import sidemenu from '@oj/components/Sidemenu.vue'
 import { ASSIGNMENT_STATUS_REVERSE, ASSIGNMENT_STATUS, ASSIGNMENT_SUBMISSION_STATUS, ASSIGNMENT_SUBMISSION_STATUS_REVERSE } from '@/utils/constants'
 import api from '@oj/api'
 import moment from 'moment'
 
 export default {
-  name: 'LectureAssignmentList',
+  name: 'CourseAssignmentList',
   components: {
-    Sidemenu
+    sidemenu
   },
   data () {
     return {
@@ -101,7 +101,7 @@ export default {
     this.courseID = this.$route.params.courseID
     this.route_name = this.$route.name
     try {
-      await this.getLectureAssignmentList(1)
+      await this.getCourseAssignmentList(1)
     } catch (err) {
     }
   },
@@ -114,9 +114,9 @@ export default {
         params: { assignmentID: assignment.id }
       })
     },
-    async getLectureAssignmentList (page) {
+    async getCourseAssignmentList (page) {
       try {
-        const res = await api.getLectureAssignmentList(this.courseID, (page - 1) * this.perPage, 250)
+        const res = await api.getCourseAssignmentList(this.courseID, (page - 1) * this.perPage, 250)
         this.sortAssignmentList(res.data.data.results)
         this.total = res.data.data.total
       } catch (err) {
@@ -125,7 +125,7 @@ export default {
     async currentChange (page) {
       this.courseID = this.$route.params.courseID
       this.currentPage = page
-      await this.getLectureAssignmentList(page)
+      await this.getCourseAssignmentList(page)
     },
     assignmentStatus (value) {
       return {

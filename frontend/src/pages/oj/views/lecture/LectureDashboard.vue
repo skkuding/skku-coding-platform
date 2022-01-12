@@ -34,7 +34,7 @@
 <script>
 import api from '@oj/api'
 export default {
-  name: 'LectureDashboardOj',
+  name: 'CourseDashboard',
   components: {
     // Split into many components
   },
@@ -61,10 +61,10 @@ export default {
     try {
       this.$Loading.start()
       this.courseID = this.$route.params.courseID
-      const res = await api.getLecture(this.courseID)
+      const res = await api.getCourse(this.courseID)
       this.$Loading.finish()
       this.lecture = res.data.data.course
-      const res2 = await api.getLectureAssignmentList(this.courseID)
+      const res2 = await api.getCourseAssignmentList(this.courseID)
       this.assignment = res2.data.data.results
     } catch (err) {
     }

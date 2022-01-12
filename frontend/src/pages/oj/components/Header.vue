@@ -19,7 +19,7 @@
           <router-link class="nav-link" active-class="active" to="/problem">Problems</router-link>
         </b-nav-item>
         <b-nav-item class="header__menu">
-          <router-link class="nav-link" active-class="active" to="/lecture">Lectures</router-link>
+          <router-link class="nav-link" active-class="active" to="/lecture">Lecture</router-link>
         </b-nav-item>
       </b-navbar-nav>
 

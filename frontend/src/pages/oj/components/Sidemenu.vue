@@ -1,10 +1,10 @@
 <template>
-  <div class="Sidemenu">
+  <div class="sidemenu">
     <b-card>
       <b-list-group class="menu-container">
-        <b-list-group-item class="menu-item" @click="goLectureList">
+        <b-list-group-item class="menu-item" @click="goCourseList">
           <b-icon class="icon" icon="calendar2-check"/>
-          <p>Lecture</p>
+          <p>Course</p>
         </b-list-group-item>
         <b-list-group-item class="menu-item" @click="goAssignmentList">
           <b-icon class="icon" icon="journal-text"/>
@@ -30,7 +30,7 @@ export default {
     this.courseID = this.$route.params.courseID
   },
   methods: {
-    async goLectureList () {
+    async goCourseList () {
       await this.$router.push({
         name: 'lecture-list'
       })
@@ -39,7 +39,7 @@ export default {
       await this.$router.push({
         name: 'lecture-assignment',
         params: {
-          courseID: this.$route.params.courseID
+          courseID: this.courseID
         }
       })
     },
@@ -47,7 +47,7 @@ export default {
       await this.$router.push({
         name: 'lecture-qna',
         params: {
-          courseID: this.$route.params.courseID
+          courseID: this.courseID
         }
       })
     }
@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .Sidemenu {
+  .sidemenu {
     position: fixed;
     top: 30%;
     right: 70px;

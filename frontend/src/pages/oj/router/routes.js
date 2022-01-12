@@ -17,7 +17,7 @@ import {
   ResetPassword,
   ProfileSetting,
   LectureList,
-  LectureDashboardOj,
+  LectureDashboard,
   LectureAssignmentList,
   LectureAssignmentDetail,
   LectureQna,
@@ -138,7 +138,7 @@ export default [
     name: 'lecture-dashboard',
     path: '/lecture/:courseID',
     meta: { title: 'Lecture Dashboard' },
-    component: LectureDashboardOj
+    component: LectureDashboard
   },
   {
     name: 'lecture-assignment',

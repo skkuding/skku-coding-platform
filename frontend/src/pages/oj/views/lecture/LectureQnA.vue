@@ -1,8 +1,8 @@
 <template>
   <div class="lecture-qna-card">
-    <Sidemenu/>
+    <sidemenu/>
     <div class="top-bar mb-4">
-      <h2 class="title">Lecture QnA</h2>
+      <h2 class="title">Course QnA</h2>
       <b-button
         class="button"
         size="sm"
@@ -79,12 +79,12 @@
 </template>
 
 <script>
-import Sidemenu from '@oj/components/Sidemenu.vue'
+import sidemenu from '@oj/components/Sidemenu.vue'
 
 export default {
-  name: 'LectureQna',
+  name: 'CourseQna',
   components: {
-    Sidemenu
+    sidemenu
   },
   data () {
     return {

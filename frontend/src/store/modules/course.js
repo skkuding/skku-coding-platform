@@ -28,9 +28,9 @@ const mutations = {
 }
 
 const actions = {
-  async getLectureAssignmentList ({ rootState }) {
+  async getCourseAssignmentList ({ rootState }) {
     try {
-      const res = await api.getLectureAssignmentList(rootState.route.params.courseID)
+      const res = await api.getCourseAssignmentList(rootState.route.params.courseID)
       this.commit(types.CHANGE_ASSIGNMENTLIST, { assignmentList: res.data.data })
       return res
     } catch (err) {
@@ -38,16 +38,16 @@ const actions = {
       throw err
     }
   },
-  async getLectureAssignment ({ commit, rootState }) {
-    const res = await api.getLectureAssignment(rootState.route.params.courseID, rootState.route.params.assignmentID)
+  async getCourseAssignment ({ commit, rootState }) {
+    const res = await api.getCourseAssignment(rootState.route.params.courseID, rootState.route.params.assignmentID)
     const assignment = res.data.data
     commit(types.CHANGE_ASSIGNMENT, { assignment: assignment })
     commit(types.NOW, { now: moment(assignment.now) })
     return res
   },
-  async getLectureAssignmentProblemList ({ commit, rootState }) {
+  async getCourseAssignmentProblemList ({ commit, rootState }) {
     try {
-      const res = await api.getLectureAssignmentProblemList(rootState.route.params.courseID, rootState.route.params.assignmentID)
+      const res = await api.getCourseAssignmentProblemList(rootState.route.params.courseID, rootState.route.params.assignmentID)
       commit(types.CHANGE_ASSIGNMENT_PROBLEMS, { assignmentProblems: res.data.data })
       return res
     } catch (err) {

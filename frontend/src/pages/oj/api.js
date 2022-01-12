@@ -254,17 +254,17 @@ export default {
   getBannerImage () {
     return ajax('banner/', 'get')
   },
-  getLectureList () {
+  getCourseList () {
     return ajax('lecture/course', 'get')
   },
-  getLecture (courseID) {
+  getCourse (courseID) {
     return ajax('lecture/course', 'get', {
       params: {
         course_id: courseID
       }
     })
   },
-  getBookmarkLectureList () {
+  getBookmarkCourseList () {
     return ajax('lecture/bookmark_course_list', 'get')
   },
   setBookmark (courseID) {
@@ -274,7 +274,7 @@ export default {
       }
     })
   },
-  getLectureAssignmentList (courseID, offset, limit) {
+  getCourseAssignmentList (courseID, offset, limit) {
     return ajax('lecture/course/assignment', 'get', {
       params: {
         course_id: courseID,
@@ -284,7 +284,7 @@ export default {
       }
     })
   },
-  getLectureAssignment (courseID, assignmentID) {
+  getCourseAssignment (courseID, assignmentID) {
     return ajax('lecture/course/assignment', 'get', {
       params: {
         course_id: courseID,
@@ -292,7 +292,7 @@ export default {
       }
     })
   },
-  getLectureAssignmentProblemList (courseID, assignmentID) {
+  getCourseAssignmentProblemList (courseID, assignmentID) {
     return ajax('lecture/course/assignment/problem', 'get', {
       params: {
         course_id: courseID,
@@ -300,7 +300,7 @@ export default {
       }
     })
   },
-  getLectureAssignmentProblem (assignmentID, problemID) {
+  getCourseAssignmentProblem (assignmentID, problemID) {
     return ajax('lecture/course/assignment/problem', 'get', {
       params: {
         assignment_id: assignmentID,
