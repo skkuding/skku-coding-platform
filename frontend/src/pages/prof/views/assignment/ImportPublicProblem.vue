@@ -189,10 +189,10 @@ export default {
       await this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
     },
     selectProblem (item) {
-      this.form.selectedProblemId = item._id
+      this.form.selectedProblemId = item.id
     },
     async goCreateProblem () {
-      if (this.form.selectProblemId === null || this.form.displayId === '') {
+      if (this.form.selectedProblemId === null || this.form.displayId === '') {
         this.$error('Select Problem and enter display ID!')
         return
       }
