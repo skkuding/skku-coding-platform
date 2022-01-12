@@ -60,7 +60,7 @@ class User(AbstractBaseUser):
 
     def is_assignment_admin(self, assignment):
         return self.is_authenticated and (assignment.created_by == self or self.admin_type == AdminType.SUPER_ADMIN)
-        
+
     def is_question_admin(self, question):
         return self.is_authenticated and question.created_by == self
 
