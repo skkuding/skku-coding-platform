@@ -38,7 +38,7 @@
                     {{ data.item.title }}
                   </template>
                   <template v-slot:cell(submission)="data">
-                    {{ data.item.accepted_number }} / {{ data.item.submission_number }}
+                    {{ data.item.total_submission_assignment }} / {{ studentTotal }}
                   </template>
                   <template #cell(operation)="data">
                     <div>
@@ -198,7 +198,7 @@ export default {
       ],
       problemField: [
         {
-          key: 'id',
+          key: '_id',
           label: '#'
         },
         {
@@ -207,11 +207,12 @@ export default {
         },
         {
           key: 'submission',
-          label: 'Accepted rate'
+          label: 'Submission rate'
         },
         'Operation'
       ],
-      selectedAssignmentId: null
+      selectedAssignmentId: null,
+      studentTotal: 0
     }
   },
   async mounted () {
@@ -241,6 +242,7 @@ export default {
         }
       }
     }
+    this.getUserTotal()
     this.pageLocations[0].text = this.title + '_' + this.courseCode + '-' + this.classNumber
   },
   methods: {
@@ -356,6 +358,13 @@ export default {
     showImportPublicProblemModal (assignmentId) {
       this.selectedAssignmentId = assignmentId
       this.$bvModal.show('import-public-problem-modal')
+    },
+    async getUserTotal () {
+      try {
+        const res = await api.getCourseStudents(this.courseId, 0, 0)
+        this.studentTotal = res.data.data.total
+      } catch (err) {
+      }
     }
   },
   computed: {
