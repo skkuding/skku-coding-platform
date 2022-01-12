@@ -191,7 +191,7 @@ export default {
     selectProblem (item) {
       this.form.selectedProblemId = item._id
     },
-    goCreateProblem () {
+    async goCreateProblem () {
       if (this.form.selectProblemId === null || this.form.displayId === '') {
         this.$error('Select Problem and enter display ID!')
         return
@@ -201,16 +201,8 @@ export default {
         problem_id: this.form.selectedProblemId,
         display_id: this.form.displayId
       }
-      profApi.addProblemFromPublic(data)
+      await profApi.addProblemFromPublic(data)
       this.$emit('update')
-      // this.$router.push({
-      //   name: 'create-lecture-problem',
-      //   params: {
-      //     publicProblemId: this.form.selectedProblemId,
-      //     lectureId: this.$route.params.lectureId,
-      //     assignmentId: this.assignmentId
-      //   }
-      // })
     }
   },
   watch: {
