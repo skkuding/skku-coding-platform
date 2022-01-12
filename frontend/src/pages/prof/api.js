@@ -177,10 +177,13 @@ export default {
       }
     })
   },
-  getContestList (id, offset, limit) {
-    return ajax('/assignment_submissions_professor/', 'get', {
+  getAssignmentSubmission (assignmentId, problemId, offset, limit) {
+    return ajax('/assignment_submissions_professor', 'get', {
       params: {
-
+        assignment_id: assignmentId,
+        problem_id: problemId,
+        offset: offset,
+        limit: limit
       }
     })
   },

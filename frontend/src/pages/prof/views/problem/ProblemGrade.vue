@@ -1,10 +1,10 @@
 <template>
-  <div class="grade">
-    <p>{{pageInfo.title}}_{{pageInfo.class_number}}_{{pageInfo.course_code}}-Assignment{{pageInfo.assignment_id}}</p>
+  <div class="flex-grow-1 mx-2">
+    <b-breadcrumb :items="pageLocations" class="mt-3"></b-breadcrumb>
     <Panel :title="'Assignment'+assignmentId+' - '+problemId+' '+problemTitle">
       <b-table
         ref="table"
-        :items="scoreList"
+        :items="submissionList"
         :fields="field"
         :per-page="pageSize"
         :current-page="updateCurrentPage"
@@ -73,7 +73,7 @@
 <script>
 import IconBtn from '../../components/btn/IconBtn.vue'
 // import Modal from '../components/modal.vue'
-// import api from '../api.js'
+import api from '../../api.js'
 // import utils from '@/utils/utils'
 export default {
   name: 'ProblemGrade',
@@ -99,46 +99,29 @@ export default {
         { key: 'code', label: 'Code' },
         { key: 'score', label: 'Score' }
       ],
-      scoreList: [{
-        student_id: 1,
-        name: 'qwerqwer',
-        user_score: 90,
-        total_score: 100,
-        code: true
-      },
-      {
-        student_id: 2,
-        name: 'itsme',
-        user_score: 60,
-        total_score: 100,
-        code: false
-      },
-      {
-        student_id: 5,
-        name: 'puupuupu',
-        user_score: 70,
-        total_score: 100,
-        code: false
-      },
-      {
-        student_id: 7,
-        name: 'qiwieoro',
-        user_score: 99,
-        total_score: 100,
-        code: true
-      }],
-      pageInfo: {
-        title: 'Python Programming',
-        course_code: 'GDBEASDF',
-        class_number: 41,
-        assignment_id: 1,
-        problem_id: 1
-      }
+      pageLocations: [
+        {
+          text: this.$route.params.lectureInfo,
+          to: '/lecture/' + this.$route.params.lectureId + '/dashboard'
+        },
+        {
+          text: this.$route.params.assignmentInfo,
+          to: '/lecture/' + this.$route.params.lectureId + '/assignment'
+        },
+        {
+          text: this.$route.params.problemId + ' - '
+        }
+      ]
     }
   },
   watch: {
   },
+  async created () {
+    const res = await api.getAssignmentSubmission(this.$route.params.assignmentId, this.$route.params.problemId, 0, 250)
+    this.submissionList = res.data.data.results
+  },
   mounted () {
+    this.pageLocations += this.problemTitle
     this.init()
     this.getSubmissionList()
   },
