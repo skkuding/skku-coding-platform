@@ -9,7 +9,7 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 
 export default {
   login (username, password) {
-    return ajax('login', 'post', {
+    return ajax('login/', 'post', {
       data: {
         username,
         password
@@ -17,16 +17,16 @@ export default {
     })
   },
   logout () {
-    return ajax('logout', 'get')
+    return ajax('logout/', 'get')
   },
   getProfile () {
-    return ajax('profile', 'get')
+    return ajax('profile/', 'get')
   },
   getLanguages () {
-    return ajax('languages', 'get')
+    return ajax('languages/', 'get')
   },
   getAssignmentSubmission (assignmentId, problemId, offset, limit) {
-    return ajax('/assignment_submissions_professor', 'get', {
+    return ajax('/assignment_submissions_professor/', 'get', {
       params: {
         assignment_id: assignmentId,
         problem_id: problemId,
@@ -36,40 +36,40 @@ export default {
     })
   },
   getProblemTagList () {
-    return ajax('problem/tags', 'get')
+    return ajax('problem/tags/', 'get')
   },
   compileSPJ (data) {
-    return ajax('admin/compile_spj', 'post', {
+    return ajax('admin/compile_spj/', 'post', {
       data
     })
   },
   getSessions () {
-    return ajax('sessions', 'get')
+    return ajax('sessions/', 'get')
   },
   createTestCase (data) {
-    return ajax('admin/testcase_text', 'post', {
+    return ajax('admin/testcase_text/', 'post', {
       data
     })
   },
   getTestCase (id) {
-    return ajax('admin/testcase_text', 'get', {
+    return ajax('admin/testcase_text/', 'get', {
       params: {
         id
       }
     })
   },
   uploadTestCase (data) {
-    return ajax('admin/test_case', 'post', {
+    return ajax('admin/test_case/', 'post', {
       data
     })
   },
   uploadImage (data) {
-    return ajax('admin/upload_image', 'post', {
+    return ajax('admin/upload_image/', 'post', {
       data
     })
   },
   uploadFile (data) {
-    return ajax('admin/upload_file', 'post', {
+    return ajax('admin/upload_file/', 'post', {
       data
     })
   },
@@ -99,79 +99,79 @@ export default {
   },
   getCourseStudents (courseId, limit, offset) {
     const params = { course_id: courseId, limit, offset }
-    return ajax('/lecture/professor/course/students', 'get', {
+    return ajax('/lecture/professor/course/students/', 'get', {
       params: params
     })
   },
   registerStudent (data) {
-    return ajax('/lecture/professor/course/students', 'post', {
+    return ajax('/lecture/professor/course/students/', 'post', {
       data
     })
   },
   deleteStudent (registrationId) {
     const params = { registration_id: registrationId }
-    return ajax('/lecture/professor/course/students', 'delete', {
+    return ajax('/lecture/professor/course/students/', 'delete', {
       params: params
     })
   },
   getAssignmentList (courseId, assignmentId, limit, offset) {
     const params = { course_id: courseId, assignment_id: assignmentId, limit, offset }
-    return ajax('/lecture/professor/course/assignment', 'get', {
+    return ajax('/lecture/professor/course/assignment/', 'get', {
       params: params
     })
   },
   createAssignment (data) {
-    return ajax('/lecture/professor/course/assignment', 'post', {
+    return ajax('/lecture/professor/course/assignment/', 'post', {
       data
     })
   },
   editAssignment (data) {
-    return ajax('/lecture/professor/course/assignment', 'put', {
+    return ajax('/lecture/professor/course/assignment/', 'put', {
       data
     })
   },
   deleteAssignment (courseId, assignmentId) {
     const params = { course_id: courseId, assignment_id: assignmentId }
-    return ajax('/lecture/professor/course/assignment', 'delete', {
+    return ajax('/lecture/professor/course/assignment/', 'delete', {
       params: params
     })
   },
   // only assignmentId param => return problemList instead
   getAssignmentProblem (assignmentId, problemId) {
     const params = { problem_id: problemId, assignment_id: assignmentId }
-    return ajax('/lecture/professor/course/assignment/problem', 'get', {
+    return ajax('/lecture/professor/course/assignment/problem/', 'get', {
       params: params
     })
   },
   createAssignmentProblem (data) {
-    return ajax('/lecture/professor/course/assignment/problem', 'post', {
+    return ajax('/lecture/professor/course/assignment/problem/', 'post', {
       data
     })
   },
   editAssignmentProblem (data) {
-    return ajax('/lecture/professor/course/assignment/problem', 'put', {
+    return ajax('/lecture/professor/course/assignment/problem/', 'put', {
       data
     })
   },
   deleteAssignmentProblem (id) {
     const params = { id: id }
-    return ajax('/lecture/professor/course/assignment/problem', 'delete', {
+    return ajax('/lecture/professor/course/assignment/problem/', 'delete', {
       params: params
     })
   },
   addProblemFromPublic (data) {
-    return ajax('/lecture/professor/course/assignment/add_problem_from_public', 'post', {
+    return ajax('/lecture/professor/course/assignment/add_problem_from_public/', 'post', {
       data
     })
   },
   getDashboardInfo (limit, offset) {
     const params = { limit, offset }
-    return ajax('/professor/professor_dashboard_info', 'get', {
+    return ajax('/professor/professor_dashboard_info/', 'get', {
       params
     })
   },
   editSubmissionScore (data) {
-    return ajax('/edit_submission_score', 'put', {
+    return ajax('/edit_submission_score/', 'put', {
       data
     })
   }
