@@ -36,7 +36,7 @@
           <template slot="button-content">
             <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
           </template>
-          <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
+          <b-dropdown-item v-if="isAdminRole" @click="goManagement">Management</b-dropdown-item>
           <b-dropdown-item v-b-modal.setting>Setting</b-dropdown-item>
           <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
@@ -77,14 +77,18 @@ export default {
   },
   methods: {
     ...mapActions(['getProfile', 'changeModalStatus']),
-    openWindow (route) {
-      window.open(route)
-    },
     handleBtnClick (mode) {
       this.changeModalStatus({
         visible: true,
         mode: mode
       })
+    },
+    goManagement () {
+      if (this.isSuperAdmin) {
+        window.open('/admin/')
+      } else {
+        window.open('/prof/')
+      }
     }
   },
   computed: {
