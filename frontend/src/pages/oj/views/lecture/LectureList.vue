@@ -8,7 +8,8 @@
       <b-card
         v-for="(lecture,index) in lectureList"
         :key="index"
-        style="width: 300px; margin: 35px 35px 0 0;"
+        style="width: 300px; margin: 35px 35px 0 0; cursor: pointer;"
+        @click="goAssignmentList(lecture.course.id)"
       >
         <b-card-text class="lecture-card__card">
           <div
@@ -96,6 +97,14 @@ export default {
       await this.$router.push({
         name: 'lecture-dashboard',
         params: { courseID: item.course.id }
+      })
+    },
+    async goAssignmentList (courseID) {
+      await this.$router.push({
+        name: 'lecture-assignment',
+        params: {
+          courseID: courseID
+        }
       })
     },
     getSemester (semesterno) {
