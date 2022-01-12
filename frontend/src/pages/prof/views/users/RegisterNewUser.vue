@@ -78,6 +78,13 @@ export default {
     this.lectureId = this.$route.params.lectureId
   },
   methods: {
+    resetModal () {
+      this.form.studentIds = [
+        {
+          value: ''
+        }
+      ]
+    },
     async submitRegistration (bvModalEvt) {
       bvModalEvt.preventDefault()
       this.showErrorResult = false
@@ -89,6 +96,7 @@ export default {
       if (!res.data.error && !res.data.data) {
         this.$success('Registration Succeeded')
         this.$emit('update')
+        this.resetModal()
         this.$nextTick(() => {
           this.$bvModal.hide('register-new-user')
         })

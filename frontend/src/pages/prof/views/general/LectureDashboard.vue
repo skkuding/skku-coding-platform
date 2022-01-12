@@ -19,10 +19,6 @@
         id="first-col"
       >
         <b-card class="admin-info drop-shadow-custom" title="Assignments">
-        <b-input placeholder="Course id for new assignment -- !!! for debugging!!!" v-model="newAssignmentCourseId" type="number"></b-input>
-        <b-button variant="primary" @click="newAssignment">
-          + New Assignment For debugging
-        </b-button>
         <b-table
           borderless
           hover
@@ -32,7 +28,7 @@
           :current-page="updateCurrentPage"
         >
           <template #cell(title)="data">
-            <b-link :to="'/lecture/' + data.item.course.id + '/assignment#' + data.item.id"> {{ data.value }}</b-link>
+            <b-link :to="{ name: 'lecture-assignment-list', params: { lectureId: data.item.course.id, assignmentAnchor: data.item.id } }"> {{ data.value }}</b-link>
           </template>
           <template #cell(status)="data">
             <b-button
@@ -163,17 +159,6 @@ export default {
       } catch (err) {
         console.log(err)
       }
-    },
-    async newAssignment () { // only for debugging
-      const data = {
-        title: 'programming',
-        course_id: this.newAssignmentCourseId,
-        content: '232323',
-        start_time: '2021-08-22T04:55:17.644Z',
-        end_time: '2021-08-23T04:55:17.644Z',
-        visible: true
-      }
-      api.postAssignment(data)
     }
   },
   computed: {

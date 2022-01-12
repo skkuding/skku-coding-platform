@@ -11,7 +11,7 @@
         :items="[submission_detail]"
         :fields="submission_info_table_fields">
         <template #cell(create_time)="data">
-          <span>{{data.item.create_time.split('/[T]|[.]/').slice(0,2).join(' ')}}</span>
+          <span>{{data.item.create_time.split(/[T]|[.]/).slice(0,2).join(' ')}}</span>
         </template>
         <template #cell(result)="data">
           <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
