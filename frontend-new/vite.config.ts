@@ -31,5 +31,10 @@ export default defineConfig({
     alias: {
       '~': path.resolve(__dirname, './src')
     }
+  },
+  server: {
+    hmr: {
+      port: process.env.GITPOD_WORKSPACE_ID ? 443 : undefined
+    }
   }
 })
