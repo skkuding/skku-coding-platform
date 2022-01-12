@@ -32,7 +32,7 @@
               variant="outline-*"
             />
           </b-button>
-          <Modal :problemID="problemId"/>
+          <!-- <Modal :problemID="problemId"/> -->
         </template>
 
         <template #cell(score)="row">
@@ -72,14 +72,14 @@
 
 <script>
 import IconBtn from '../../components/btn/IconBtn.vue'
-import Modal from '/../components/modal.vue'
+// import Modal from '../components/modal.vue'
 // import api from '../api.js'
 // import utils from '@/utils/utils'
 export default {
   name: 'ProblemGrade',
   components: {
-    IconBtn,
-    Modal
+    IconBtn
+    // Modal
   },
   data () {
     return {
@@ -146,9 +146,9 @@ export default {
     init () {
       // this.$route.assignmentId
     },
-    downloadAll () {
-      
-    },
+    // downloadAll () {
+
+    // },
     download () {
       // const url = `/prof/download_submissions?contest_id=${this.currentId}&exclude_admin=${excludeAdmin}`
       // utils.downloadFile(url)
