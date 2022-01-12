@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard-list-card font-bold">
     <div class="mb-5">
-      <h3 class = "title"> {{ lecture.title }} </h3>
+      <h3 class = "title"> {{ lecture.title }}_{{lecture.course_code}} </h3>
     </div>
-    <b-row>
+    <b-row class="mt-5">
     <b-col cols = "8">
     <b-calendar block
       v-model="value"
@@ -40,25 +40,28 @@ export default {
   data () {
     return {
       value: '',
-      lectureList: [],
+      courseID: '',
       lecture: {
         title: '',
-        status: '',
-        start_time: '',
-        end_time: ''
+        course_code: '',
+        class_number: '',
+        registered_year: '',
+        semester: '',
+        created_by: ''
       },
-      temp: []
+      assignment: [],
+      datepick: []
     }
   },
   async mounted () {
     try {
-      const resp1 = await api.getLectureList()
-      const lecturelist = resp1.data.data
-      this.lectureList = lecturelist
-      const resp2 = await api.getLecture(1)
-      this.lecture = resp2.data.data
-      const resp3 = await api.getLectureAssignmentList(1)
-      this.temp = resp3.data.data
+      this.$Loading.start()
+      this.courseID = this.$route.params.courseID
+      const res = await api.getLecture(this.courseID)
+      this.$Loading.finish()
+      this.lecture = res.data.data.course
+      const res2 = await api.getLectureAssignmentList(this.courseID)
+      this.assignment = res2.data.data.results
     } catch (err) {
     }
   },
@@ -74,8 +77,15 @@ export default {
       })
     },
     dateClass (ymd, date) {
-      const day = date.getDate()
-      return day >= 10 && day <= 20 ? 'AssignmentDates' : ''
+      const moment = require('moment')
+      for (var i in this.assignment) {  
+        this.datepick.push(moment(date).isBetween(this.assignment[i].start_time, this.assignment[i].end_time) ? date : '')
+      }
+      for (var j in this.datepick) {
+        if (moment(this.datepick[j]).isSame(date)) {
+          return 'AssignmentDates'
+        }
+      }
     }
   },
   computed: {
@@ -96,7 +106,7 @@ export default {
     color: #7C7A7B;
     display:inline;
     position:relative;
-    top:36px;
+    top:24px;
   }
   .dashboard-list-card {
     margin:0 auto;
