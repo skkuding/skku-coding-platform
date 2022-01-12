@@ -3,13 +3,14 @@
     <sidemenu/>
     <div class="top-bar mb-4">
       <h2 class="title">Course QnA</h2>
-      <b-button
+      <!-- <b-button
         class="button"
         size="sm"
         @click="editCreateQuestionDialog"
-      >New Question</b-button>
+      >New Question</b-button> -->
     </div>
-    <div class="table">
+    <div style="margin-left: 68px;">QnA Page will be provided soon. :></div>
+    <!-- <div class="table">
       <b-table
         hover
         :items="questions"
@@ -27,7 +28,6 @@
             scale="0.7"
             :style="'color:' + data.item.color"
           ></b-icon>
-          <!-- color는 constant에 선언, getter로 불러오기 contestlist 참조 -->
           {{ data.item.status }}
         </template>
       </b-table>
@@ -74,7 +74,7 @@
         <b-button @click="showCreateQuestionDialog = false">Cancel</b-button>
         <b-button @click="submitQuestion">Save</b-button>
       </template>
-    </b-modal>
+    </b-modal> -->
   </div>
 </template>
 
