@@ -426,7 +426,8 @@
           </div>
 
           <div class="add-sample-btn" v-if="!testcase_file_upload">
-            <button type="button" class="add-samples" @click="addTestCase()"><b-icon icon="plus"></b-icon> Add Testcase
+            <button type="button" class="add-samples" @click="addTestCase()"><b-icon icon="plus"></b-icon>
+              Add Testcase
             </button>
           </div>
 
@@ -457,6 +458,26 @@
             placeholder="Source"
           ></b-form-input>
           <save @click.native="submit()" style="margin-top: 24px;">Save</save>
+          <b-modal id="checkTestcaseScoreModal" title="Check testcase points" ok-only>
+            <p>
+              Testcase upload success!
+              Please check points at each testcase. After revising testcase points, press OK button.
+            </p>
+            <b-table
+              :items="problem.test_case_score"
+              :fields="testcaseTableFields"
+              style="width: 100%"
+            >
+              <template #cell(score)="row">
+                <b-form-input
+                  size="sm"
+                  v-model="row.item.score"
+                  :placeholder="Score"
+                  :disabled="problem.rule_type !== 'ASSIGNMENT'"
+                />
+              </template>
+            </b-table>
+          </b-modal>
         </Panel>
       </b-col>
     </b-row>
@@ -855,6 +876,18 @@ export default {
           this.problem.test_case_score = fileList
           this.testCaseUploaded = true
           this.problem.test_case_id = response.data.data.id
+          // for check testcase score after testcase upload
+          const self = this
+          await new Promise(function (resolve, reject) {
+            self.$bvModal.show('checkTestcaseScoreModal')
+            self.$root.$on('bv::modal::hide', (bvEvent) => {
+              if (bvEvent.componentId === 'checkTestcaseScoreModal' && bvEvent.trigger === 'ok') {
+                resolve(true)
+              } else {
+                reject(new Error('user canceled'))
+              }
+            })
+          })
           await api[funcName](this.problem)
           this.$router.push({ name: 'course-assignment-list', params: { assignmentId: this.assignmentId } })
         } catch (err) {
