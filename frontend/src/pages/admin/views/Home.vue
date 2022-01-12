@@ -164,6 +164,16 @@ export default {
     margin-right: 5px;
     /*font-size: 18px;*/
   }
+
+  .list-group-item {
+    padding: 1rem 2rem;
+    border: 0px solid
+  }
+
+  .list-group-item-action:focus, .list-group-item-action:hover {
+    background-color: #40a0ff38;
+  }
+
   .table td, .table th {
     vertical-align: middle;
   }
