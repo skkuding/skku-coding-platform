@@ -318,6 +318,15 @@ export default {
     return ajax('admin/upload_file', 'post', {
       data
     })
+  },
+  getAssignmentList (courseId, offset, limit) {
+    const params = { paging: true, offset, limit }
+    if (courseId) {
+      params.keyword = courseId
+    }
+    return ajax('lecture/professor/course/assignment', 'get', {
+      params: params
+    })
   }
 }
 
