@@ -184,9 +184,9 @@ export default {
       }
     })
   },
-  getSubmissionList (){
+  // getSubmissionList (){
 
-  },
+  // },
   getContestAnnouncementList (contestID) {
     return ajax('admin/contest/announcement', 'get', {
       params: {
@@ -303,9 +303,9 @@ export default {
       data
     })
   },
-  getCourseList () {
-    return ajax('lecture/course', 'get')
-  },
+  // getCourseList () {
+  //   return ajax('lecture/course', 'get')
+  // },
   getTestCase (id) {
     return ajax('admin/testcase_text', 'get', {
       params: {
@@ -389,25 +389,26 @@ export default {
       params: params
     })
   },
-  getAssignmentProblemList (problemId, assignmentId) {
+  // only assignmentId param => return problemList instead
+  getAssignmentProblem (assignmentId, problemId) {
     const params = { problem_id: problemId, assignment_id: assignmentId }
-    return ajax('/lecture/profressor/course/assignment/problem', 'get', {
+    return ajax('/lecture/professor/course/assignment/problem', 'get', {
       params: params
     })
   },
   createAssignmentProblem (data) {
-    return ajax('/lecture/profressor/course/assignment/problem', 'post', {
+    return ajax('/lecture/professor/course/assignment/problem', 'post', {
       data
     })
   },
   editAssignmentProblem (data) {
-    return ajax('/lecture/profressor/course/assignment/problem', 'put', {
+    return ajax('/lecture/professor/course/assignment/problem', 'put', {
       data
     })
   },
   deleteAssignmentProblem (id) {
     const params = { id: id }
-    return ajax('/lecture/profressor/course/assignment/problem', 'delete', {
+    return ajax('/lecture/professor/course/assignment/problem', 'delete', {
       params: params
     })
   }
