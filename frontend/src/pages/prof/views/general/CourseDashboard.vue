@@ -1,10 +1,10 @@
 <template>
-  <div class="flex-grow-1 mx-2">
+  <div class="flex-grow-1 mx-2" style="max-width: 1300px;">
     <b-breadcrumb :items="pageLocations" class="mt-3"></b-breadcrumb>
     <b-row
       type="flex"
       cols = "1"
-      id="dashboard"
+      class="course-dashboard"
     >
       <b-col>
         <user-list :course-title="title"></user-list>
@@ -13,7 +13,7 @@
     <b-row
       type="flex"
       cols = "1"
-      id="dashboard"
+      class="course-dashboard"
     >
       <b-col
         id="first-col"
@@ -163,5 +163,10 @@ export default {
 <style lang="scss">
   .drop-shadow-custom {
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  }
+  .course-dashboard {
+    margin: auto;
+    flex:1 0;
+    max-width: 1300px;
   }
 </style>

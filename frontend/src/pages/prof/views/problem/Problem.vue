@@ -1,457 +1,465 @@
 <template>
-  <div class="flex-grow-1 mx-2 problem">
+  <div class="flex-grow-1 mx-2 problem" style="max-width: 1300px;">
     <b-breadcrumb :items="pageLocations" class="mt-3"></b-breadcrumb>
-    <Panel :title="title">
-      <b-row>
-        <b-col cols="3">
-          <b-form-group
-            label-for="input-display-id"
-          >
-            <template v-slot:label>
-              <p class="labels">
-                Display ID
-              </p>
-            </template>
-            <b-form-input
-              id="input-display-id"
-              v-model="problem._id"
-              placeholder="Display ID"
-            ></b-form-input>
-          </b-form-group>
-        </b-col>
-        <b-col cols="9">
-          <b-form-group
-            label-for="input-title"
-            :invalid-feedback="titleInvalidFeedback"
-            :state="titleState"
-          >
-            <template v-slot:label>
-              <p class="labels">
-                <span class="text-danger">*</span> Title
-              </p>
-            </template>
-            <b-form-input
-              id="input-title"
-              v-model="problem.title"
-              placeholder="Title"
-              :state="titleState"
-            ></b-form-input>
-          </b-form-group>
-        </b-col>
-      </b-row>
-
-      <b-row>
-        <b-col>
-          <p class="labels">
-            <span class="text-danger">*</span> Description
-            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.description_preview>Preview</b-button>
-          </p>
-          <tiptap v-model="problem.description"></tiptap>
-          <b-modal id="description_preview" title="Description Preview" hide-footer>
-            <template #default>
-              <div v-katex:auto>
-                <p v-dompurify-html="problem.description"></p>
-              </div>
-            </template>
-          </b-modal>
-        </b-col>
-      </b-row>
-
-      <b-row>
-        <b-col>
-          <p class="labels">
-            <span class="text-danger">*</span> Input Description
-            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.input_description_preview>Preview</b-button>
-          </p>
-          <tiptap v-model="problem.input_description"></tiptap>
-          <b-modal id="input_description_preview" title="Input Description Preview" hide-footer>
-            <template #default>
-              <div v-katex:auto>
-                <p v-dompurify-html="problem.input_description"></p>
-              </div>
-            </template>
-          </b-modal>
-        </b-col>
-      </b-row>
-
-      <b-row>
-        <b-col>
-          <p class="labels">
-            <span class="text-danger">*</span> Output Description
-            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.output_description_preview>Preview</b-button>
-          </p>
-          <tiptap v-model="problem.output_description"></tiptap>
-          <b-modal id="output_description_preview" title="Output Description Preview" hide-footer>
-            <template #default>
-              <div v-katex:auto>
-                <p v-dompurify-html="problem.output_description"></p>
-              </div>
-            </template>
-          </b-modal>
-        </b-col>
-      </b-row>
-
-      <b-row>
-        <b-col cols="4">
-          <p class="labels">
-            <span class="text-danger">*</span> Time Limit (ms)
-          </p>
-          <b-form-input
-            v-model="problem.time_limit"
-            placeholder="Time Limit"
-            type="number"
-          ></b-form-input>
-        </b-col>
-        <b-col cols="4">
-          <p class="labels">
-            <span class="text-danger">*</span> Memory Limit (MB)
-          </p>
-          <b-form-input
-            v-model="problem.memory_limit"
-            placeholder="Memory Limit"
-            type="number"
-          ></b-form-input>
-        </b-col>
-        <b-col cols="2">
-          <p class="labels">
-            Difficulty
-          </p>
-          <b-form-select
-            v-model="problem.difficulty"
-            :options="difficultyOptions"
-            size="sm"
-          ></b-form-select>
-        </b-col>
-      </b-row>
-
-      <b-row>
-        <b-col cols="2">
-          <p class="labels">
-            Visible
-          </p>
-          <b-form-checkbox
-            v-model="problem.visible"
-            switch
-          >
-          </b-form-checkbox>
-        </b-col>
-        <b-col cols="2">
-          <p class="labels">
-            Share Submission
-          </p>
-          <b-form-checkbox
-            v-model="problem.share_submission"
-            switch
-          >
-          </b-form-checkbox>
-        </b-col>
-        <b-col cols="4">
-          <p class="labels">
-            <span class="text-danger">*</span> Tag
-          </p>
-          <div>
-            <b-form-tags v-model="problem.tags">
-              <template v-slot="{tags, addTag, removeTag}">
-                <div>
-                  <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                    <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                      <b-form-tag
-                        @remove="removeTag(tag)"
-                        :title="tag"
-                        :disabled="disabled"
-                        variant="info"
-                      >{{ tag }}</b-form-tag>
-                    </li>
-                  </ul>
-                </div>
-                <b-dropdown size="sm" text="tag" variant="outline-secondary" block-menu-class="w-100" class="tag-dropdown" drop-right>
-                  <b-dropdown-form @submit.stop.prevent="() => {}">
-                    <b-form-group>
-                      <b-input-group class="mb-2">
-                        <b-form-input
-                          v-model="search"
-                          type="search"
-                          size="sm"
-                          autocomplete="off"
-                          @keyup.enter="onAddClick({ search, addTag })"
-                        ></b-form-input>
-                        <b-input-group-append>
-                          <b-button size="sm" @click="onAddClick({search, addTag})" variant="primary">Add</b-button>
-                        </b-input-group-append>
-                      </b-input-group>
-                    </b-form-group>
-                  </b-dropdown-form>
-                  <b-dropdown-divider></b-dropdown-divider>
-                  <b-dropdown-item-button
-                    v-for="item in availableTags"
-                    :key="item"
-                    @click="onTagClick({ item, addTag })"
-                  >
-                    {{ item }}
-                  </b-dropdown-item-button>
-                </b-dropdown>
-              </template>
-            </b-form-tags>
-          </div>
-        </b-col>
-        <b-col cols="4">
-          <b-form-group>
-            <template v-slot:label>
-              <p class="labels">
-                <span class="text-danger">*</span> Languages
-              </p>
-            </template>
-            <b-form-checkbox-group
-              id="languages-checkbox-group"
-              v-model="problem.languages"
-            >
-              <b-form-checkbox
-                v-for="lang in allLanguage.languages"
-                :key="lang.name"
-                :value="lang.name"
-                :title="lang.description"
-                v-b-tooltip.hover
-                style="margin: 0px 24px 24px 0px;"
+    <b-row
+      type="flex"
+      cols = "1"
+      id="add-or-edit-problem"
+    >
+      <b-col>
+        <Panel :title="title">
+          <b-row>
+            <b-col cols="3">
+              <b-form-group
+                label-for="input-display-id"
               >
-              {{ lang.name }}
-              </b-form-checkbox>
-            </b-form-checkbox-group>
-          </b-form-group>
-        </b-col>
-      </b-row>
-
-      <div>
-        <b-form-group v-for="(sample, index) in problem.samples" :key="'sample'+index">
-          <Accordion :title="'Sample' + (index + 1)">
-            <b-button variant="danger" size="sm" slot="header" @click="deleteSample(index)">
-              <b-icon icon="trash-fill"></b-icon> Delete
-            </b-button>
-            <b-row>
-              <b-col cols="6">
-                <p class="labels" style="margin-top: 8px">
-                  <span class="text-danger">*</span> Input Samples
-                </p>
-                <b-form-textarea
-                  v-model="sample.input"
-                  placeholder="Input Samples"
-                  rows="5"
-                ></b-form-textarea>
-              </b-col>
-              <b-col cols="6">
-                <p class="labels" style="margin-top: 8px">
-                  <span class="text-danger">*</span> Output Samples
-                </p>
-                <b-form-textarea
-                  v-model="sample.output"
-                  placeholder="Output Samples"
-                  rows="5"
-                ></b-form-textarea>
-              </b-col>
-            </b-row>
-          </Accordion>
-        </b-form-group>
-      </div>
-
-      <div class="add-sample-btn">
-        <button type="button" class="add-samples" @click="addSample()"><b-icon icon="plus"></b-icon> Add Sample
-        </button>
-      </div>
-      <b-row>
-        <b-col>
-          <p class="labels">
-            Hint
-            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.hintpreview>Preview</b-button>
-          </p>
-          <tiptap v-model="problem.hint" placeholder=""></tiptap>
-          <b-modal id="hintpreview" title="Hint Preview" hide-footer>
-            <template #default>
-              <div v-katex:auto>
-                <p v-dompurify-html="problem.hint"></p>
-              </div>
-            </template>
-          </b-modal>
-        </b-col>
-      </b-row>
-
-      <p class="labels">
-        Code Template
-      </p>
-      <b-row v-for="(v, k) in template" :key="'template'+k" style="margin: 12px 0px;">
-        <p><b-form-checkbox v-model="v.checked">{{ k }}</b-form-checkbox></p>
-        <div v-if="v.checked">
-          <code-mirror v-model="v.code" :mode="v.mode"></code-mirror>
-        </div>
-      </b-row>
-
-      <b-row>
-        <b-col>
-          <p class="labels">
-            Special Judge
-          </p>
-          <b-form-checkbox v-model="problem.spj" @click.native.prevent="switchSpj()">Use Special Judge</b-form-checkbox>
-        </b-col>
-      </b-row>
-
-      <b-form-group v-if="problem.spj" style="margin-top: 20px;">
-        <Accordion title="Special Judge Code">
-          <template slot="header">
-            <b-row style="align-items: center;">
-              <span style="margin-right: 8px">SPJ Language</span>
-              <b-form-radio-group
-                id="spj-radio-group"
-                v-model="problem.spj_language"
+                <template v-slot:label>
+                  <p class="labels">
+                    Display ID
+                  </p>
+                </template>
+                <b-form-input
+                  id="input-display-id"
+                  v-model="problem._id"
+                  placeholder="Display ID"
+                ></b-form-input>
+              </b-form-group>
+            </b-col>
+            <b-col cols="9">
+              <b-form-group
+                label-for="input-title"
+                :invalid-feedback="titleInvalidFeedback"
+                :state="titleState"
               >
-                <b-form-radio
-                  v-for="spj_lang in allLanguage.spj_languages"
-                  :key="'spj'+spj_lang.name"
-                  :value="spj_lang.name"
-                  :title="spj_lang.description"
-                  v-b-tooltip.hover
-                >
-                {{ spj_lang.name }}
-                </b-form-radio>
-              </b-form-radio-group>
-              <b-button
-                variant="primary"
-                size="sm"
-                style="margin-right: 16px"
-                @click="compileSPJ"
-              >
-                <b-icon icon="shuffle"></b-icon> Compile
-              </b-button>
-            </b-row>
-          </template>
-          <code-mirror v-model="problem.spj_code" :mode="spjMode"></code-mirror>
-        </Accordion>
-      </b-form-group>
+                <template v-slot:label>
+                  <p class="labels">
+                    <span class="text-danger">*</span> Title
+                  </p>
+                </template>
+                <b-form-input
+                  id="input-title"
+                  v-model="problem.title"
+                  placeholder="Title"
+                  :state="titleState"
+                ></b-form-input>
+              </b-form-group>
+            </b-col>
+          </b-row>
 
-      <b-row>
-        <b-col cols="4">
-          <b-form-group>
-            <template v-slot:label>
+          <b-row>
+            <b-col>
               <p class="labels">
-                IO Mode
+                <span class="text-danger">*</span> Description
+                <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.description_preview>Preview</b-button>
               </p>
-            </template>
-            <b-form-radio-group v-model="problem.io_mode.io_mode">
-              <b-form-radio value="Standard IO">Standard IO</b-form-radio>
-              <b-form-radio value="File IO">File IO</b-form-radio>
-            </b-form-radio-group>
-          </b-form-group>
-        </b-col>
-        <b-col cols="3" v-if="problem.io_mode.io_mode == 'File IO'">
-          <b-form-group
-            label-for="file-input"
-          >
-            <template v-slot:label>
+              <tiptap v-model="problem.description"></tiptap>
+              <b-modal id="description_preview" title="Description Preview" hide-footer>
+                <template #default>
+                  <div v-katex:auto>
+                    <p v-dompurify-html="problem.description"></p>
+                  </div>
+                </template>
+              </b-modal>
+            </b-col>
+          </b-row>
+
+          <b-row>
+            <b-col>
               <p class="labels">
-                <span class="text-danger">*</span> Input File Name
+                <span class="text-danger">*</span> Input Description
+                <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.input_description_preview>Preview</b-button>
               </p>
-            </template>
-            <b-form-input
-              id="file-input"
-              v-model="problem.io_mode.input"
-            ></b-form-input>
-          </b-form-group>
-        </b-col>
-        <b-col cols="3" v-if="problem.io_mode.io_mode == 'File IO'">
-          <b-form-group
-            label-for="file-output"
-          >
-            <template v-slot:label>
+              <tiptap v-model="problem.input_description"></tiptap>
+              <b-modal id="input_description_preview" title="Input Description Preview" hide-footer>
+                <template #default>
+                  <div v-katex:auto>
+                    <p v-dompurify-html="problem.input_description"></p>
+                  </div>
+                </template>
+              </b-modal>
+            </b-col>
+          </b-row>
+
+          <b-row>
+            <b-col>
               <p class="labels">
-                <span class="text-danger">*</span> Output File Name
+                <span class="text-danger">*</span> Output Description
+                <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.output_description_preview>Preview</b-button>
               </p>
-            </template>
-            <b-form-input
-              id="file-output"
-              v-model="problem.io_mode.output"
-            ></b-form-input>
-          </b-form-group>
-        </b-col>
-      </b-row>
+              <tiptap v-model="problem.output_description"></tiptap>
+              <b-modal id="output_description_preview" title="Output Description Preview" hide-footer>
+                <template #default>
+                  <div v-katex:auto>
+                    <p v-dompurify-html="problem.output_description"></p>
+                  </div>
+                </template>
+              </b-modal>
+            </b-col>
+          </b-row>
 
-      <b-form-checkbox
-        style="margin: 24px 0px;"
-        v-model="testcase_file_upload"
-        @click.native.prevent="switchTestcase()"
-      >
-        Upload with file
-      </b-form-checkbox>
-      <b-row>
-        <b-col cols="6" v-if="testcase_file_upload">
-          <b-form-file
-            v-model="testcaseFile"
-            :state="Boolean(testcaseFile)"
-          ></b-form-file>
-        </b-col>
-      </b-row>
-
-      <div v-if="!testcase_file_upload">
-        <b-form-group v-for="(testcase, index) in problem.testcases" :key="'testcase'+index">
-          <Accordion :title="'Testcase' + (index + 1)">
-            <b-button variant="danger" size="sm" slot="header" @click="deleteTestCase(index)">
-              <b-icon icon="trash-fill"></b-icon> Delete
-            </b-button>
-            <b-row>
-              <b-col cols="6">
-                <p class="labels" style="margin-top: 8px">
-                  Input
-                </p>
-                <b-form-textarea
-                  v-model="testcase.input"
-                  placeholder="Input"
-                  rows="5"
-                ></b-form-textarea>
-              </b-col>
-              <b-col cols="6">
-                <p class="labels" style="margin-top: 8px">
-                  Output
-                </p>
-                <b-form-textarea
-                  v-model="testcase.output"
-                  placeholder="Output"
-                  rows="5"
-                ></b-form-textarea>
-              </b-col>
-            </b-row>
-          </Accordion>
-        </b-form-group>
-      </div>
-
-      <div class="add-sample-btn" v-if="!testcase_file_upload">
-        <button type="button" class="add-samples" @click="addTestCase()"><b-icon icon="plus"></b-icon> Add Testcase
-        </button>
-      </div>
-
-      <b-row>
-        <b-col>
-          <b-table
-            :items="problem.test_case_score"
-            :fields="testcaseTableFields"
-            style="width: 100%"
-          >
-            <template #cell(score)="row">
+          <b-row>
+            <b-col cols="4">
+              <p class="labels">
+                <span class="text-danger">*</span> Time Limit (ms)
+              </p>
               <b-form-input
+                v-model="problem.time_limit"
+                placeholder="Time Limit"
+                type="number"
+              ></b-form-input>
+            </b-col>
+            <b-col cols="4">
+              <p class="labels">
+                <span class="text-danger">*</span> Memory Limit (MB)
+              </p>
+              <b-form-input
+                v-model="problem.memory_limit"
+                placeholder="Memory Limit"
+                type="number"
+              ></b-form-input>
+            </b-col>
+            <b-col cols="2">
+              <p class="labels">
+                Difficulty
+              </p>
+              <b-form-select
+                v-model="problem.difficulty"
+                :options="difficultyOptions"
                 size="sm"
-                v-model="row.item.score"
-                :placeholder="Score"
-                :disabled="problem.rule_type !== 'ASSIGNMENT'"
-              />
-            </template>
-          </b-table>
-        </b-col>
-      </b-row>
+              ></b-form-select>
+            </b-col>
+          </b-row>
 
-      <p class="labels">
-        Source
-      </p>
-      <b-form-input
-        v-model="problem.source"
-        placeholder="Source"
-      ></b-form-input>
-      <save @click.native="submit()" style="margin-top: 24px;">Save</save>
-    </Panel>
+          <b-row>
+            <b-col cols="2">
+              <p class="labels">
+                Visible
+              </p>
+              <b-form-checkbox
+                v-model="problem.visible"
+                switch
+              >
+              </b-form-checkbox>
+            </b-col>
+            <b-col cols="2">
+              <p class="labels">
+                Share Submission
+              </p>
+              <b-form-checkbox
+                v-model="problem.share_submission"
+                switch
+              >
+              </b-form-checkbox>
+            </b-col>
+            <b-col cols="4">
+              <p class="labels">
+                <span class="text-danger">*</span> Tag
+              </p>
+              <div>
+                <b-form-tags v-model="problem.tags">
+                  <template v-slot="{tags, addTag, removeTag}">
+                    <div>
+                      <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                        <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                          <b-form-tag
+                            @remove="removeTag(tag)"
+                            :title="tag"
+                            :disabled="disabled"
+                            variant="info"
+                          >{{ tag }}</b-form-tag>
+                        </li>
+                      </ul>
+                    </div>
+                    <b-dropdown size="sm" text="tag" variant="outline-secondary" block-menu-class="w-100" class="tag-dropdown" drop-right>
+                      <b-dropdown-form @submit.stop.prevent="() => {}">
+                        <b-form-group>
+                          <b-input-group class="mb-2">
+                            <b-form-input
+                              v-model="search"
+                              type="search"
+                              size="sm"
+                              autocomplete="off"
+                              @keyup.enter="onAddClick({ search, addTag })"
+                            ></b-form-input>
+                            <b-input-group-append>
+                              <b-button size="sm" @click="onAddClick({search, addTag})" variant="primary">Add</b-button>
+                            </b-input-group-append>
+                          </b-input-group>
+                        </b-form-group>
+                      </b-dropdown-form>
+                      <b-dropdown-divider></b-dropdown-divider>
+                      <b-dropdown-item-button
+                        v-for="item in availableTags"
+                        :key="item"
+                        @click="onTagClick({ item, addTag })"
+                      >
+                        {{ item }}
+                      </b-dropdown-item-button>
+                    </b-dropdown>
+                  </template>
+                </b-form-tags>
+              </div>
+            </b-col>
+            <b-col cols="4">
+              <b-form-group>
+                <template v-slot:label>
+                  <p class="labels">
+                    <span class="text-danger">*</span> Languages
+                  </p>
+                </template>
+                <b-form-checkbox-group
+                  id="languages-checkbox-group"
+                  v-model="problem.languages"
+                >
+                  <b-form-checkbox
+                    v-for="lang in allLanguage.languages"
+                    :key="lang.name"
+                    :value="lang.name"
+                    :title="lang.description"
+                    v-b-tooltip.hover
+                    style="margin: 0px 24px 24px 0px;"
+                  >
+                  {{ lang.name }}
+                  </b-form-checkbox>
+                </b-form-checkbox-group>
+              </b-form-group>
+            </b-col>
+          </b-row>
+
+          <div>
+            <b-form-group v-for="(sample, index) in problem.samples" :key="'sample'+index">
+              <Accordion :title="'Sample' + (index + 1)">
+                <b-button variant="danger" size="sm" slot="header" @click="deleteSample(index)">
+                  <b-icon icon="trash-fill"></b-icon> Delete
+                </b-button>
+                <b-row>
+                  <b-col cols="6">
+                    <p class="labels" style="margin-top: 8px">
+                      <span class="text-danger">*</span> Input Samples
+                    </p>
+                    <b-form-textarea
+                      v-model="sample.input"
+                      placeholder="Input Samples"
+                      rows="5"
+                    ></b-form-textarea>
+                  </b-col>
+                  <b-col cols="6">
+                    <p class="labels" style="margin-top: 8px">
+                      <span class="text-danger">*</span> Output Samples
+                    </p>
+                    <b-form-textarea
+                      v-model="sample.output"
+                      placeholder="Output Samples"
+                      rows="5"
+                    ></b-form-textarea>
+                  </b-col>
+                </b-row>
+              </Accordion>
+            </b-form-group>
+          </div>
+
+          <div class="add-sample-btn">
+            <button type="button" class="add-samples" @click="addSample()"><b-icon icon="plus"></b-icon> Add Sample
+            </button>
+          </div>
+          <b-row>
+            <b-col>
+              <p class="labels">
+                Hint
+                <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.hintpreview>Preview</b-button>
+              </p>
+              <tiptap v-model="problem.hint" placeholder=""></tiptap>
+              <b-modal id="hintpreview" title="Hint Preview" hide-footer>
+                <template #default>
+                  <div v-katex:auto>
+                    <p v-dompurify-html="problem.hint"></p>
+                  </div>
+                </template>
+              </b-modal>
+            </b-col>
+          </b-row>
+
+          <p class="labels">
+            Code Template
+          </p>
+          <b-row v-for="(v, k) in template" :key="'template'+k" style="margin: 12px 0px;">
+            <p><b-form-checkbox v-model="v.checked">{{ k }}</b-form-checkbox></p>
+            <div v-if="v.checked">
+              <code-mirror v-model="v.code" :mode="v.mode"></code-mirror>
+            </div>
+          </b-row>
+
+          <b-row>
+            <b-col>
+              <p class="labels">
+                Special Judge
+              </p>
+              <b-form-checkbox v-model="problem.spj" @click.native.prevent="switchSpj()">Use Special Judge</b-form-checkbox>
+            </b-col>
+          </b-row>
+
+          <b-form-group v-if="problem.spj" style="margin-top: 20px;">
+            <Accordion title="Special Judge Code">
+              <template slot="header">
+                <b-row style="align-items: center;">
+                  <span style="margin-right: 8px">SPJ Language</span>
+                  <b-form-radio-group
+                    id="spj-radio-group"
+                    v-model="problem.spj_language"
+                  >
+                    <b-form-radio
+                      v-for="spj_lang in allLanguage.spj_languages"
+                      :key="'spj'+spj_lang.name"
+                      :value="spj_lang.name"
+                      :title="spj_lang.description"
+                      v-b-tooltip.hover
+                    >
+                    {{ spj_lang.name }}
+                    </b-form-radio>
+                  </b-form-radio-group>
+                  <b-button
+                    variant="primary"
+                    size="sm"
+                    style="margin-right: 16px"
+                    @click="compileSPJ"
+                  >
+                    <b-icon icon="shuffle"></b-icon> Compile
+                  </b-button>
+                </b-row>
+              </template>
+              <code-mirror v-model="problem.spj_code" :mode="spjMode"></code-mirror>
+            </Accordion>
+          </b-form-group>
+
+          <b-row>
+            <b-col cols="4">
+              <b-form-group>
+                <template v-slot:label>
+                  <p class="labels">
+                    IO Mode
+                  </p>
+                </template>
+                <b-form-radio-group v-model="problem.io_mode.io_mode">
+                  <b-form-radio value="Standard IO">Standard IO</b-form-radio>
+                  <b-form-radio value="File IO">File IO</b-form-radio>
+                </b-form-radio-group>
+              </b-form-group>
+            </b-col>
+            <b-col cols="3" v-if="problem.io_mode.io_mode == 'File IO'">
+              <b-form-group
+                label-for="file-input"
+              >
+                <template v-slot:label>
+                  <p class="labels">
+                    <span class="text-danger">*</span> Input File Name
+                  </p>
+                </template>
+                <b-form-input
+                  id="file-input"
+                  v-model="problem.io_mode.input"
+                ></b-form-input>
+              </b-form-group>
+            </b-col>
+            <b-col cols="3" v-if="problem.io_mode.io_mode == 'File IO'">
+              <b-form-group
+                label-for="file-output"
+              >
+                <template v-slot:label>
+                  <p class="labels">
+                    <span class="text-danger">*</span> Output File Name
+                  </p>
+                </template>
+                <b-form-input
+                  id="file-output"
+                  v-model="problem.io_mode.output"
+                ></b-form-input>
+              </b-form-group>
+            </b-col>
+          </b-row>
+
+          <b-form-checkbox
+            style="margin: 24px 0px;"
+            v-model="testcase_file_upload"
+            @click.native.prevent="switchTestcase()"
+          >
+            Upload with file
+          </b-form-checkbox>
+          <b-row>
+            <b-col cols="6" v-if="testcase_file_upload">
+              <b-form-file
+                v-model="testcaseFile"
+                :state="Boolean(testcaseFile)"
+              ></b-form-file>
+            </b-col>
+          </b-row>
+
+          <div v-if="!testcase_file_upload">
+            <b-form-group v-for="(testcase, index) in problem.testcases" :key="'testcase'+index">
+              <Accordion :title="'Testcase' + (index + 1)">
+                <b-button variant="danger" size="sm" slot="header" @click="deleteTestCase(index)">
+                  <b-icon icon="trash-fill"></b-icon> Delete
+                </b-button>
+                <b-row>
+                  <b-col cols="6">
+                    <p class="labels" style="margin-top: 8px">
+                      Input
+                    </p>
+                    <b-form-textarea
+                      v-model="testcase.input"
+                      placeholder="Input"
+                      rows="5"
+                    ></b-form-textarea>
+                  </b-col>
+                  <b-col cols="6">
+                    <p class="labels" style="margin-top: 8px">
+                      Output
+                    </p>
+                    <b-form-textarea
+                      v-model="testcase.output"
+                      placeholder="Output"
+                      rows="5"
+                    ></b-form-textarea>
+                  </b-col>
+                </b-row>
+              </Accordion>
+            </b-form-group>
+          </div>
+
+          <div class="add-sample-btn" v-if="!testcase_file_upload">
+            <button type="button" class="add-samples" @click="addTestCase()"><b-icon icon="plus"></b-icon> Add Testcase
+            </button>
+          </div>
+
+          <b-row>
+            <b-col>
+              <b-table
+                :items="problem.test_case_score"
+                :fields="testcaseTableFields"
+                style="width: 100%"
+              >
+                <template #cell(score)="row">
+                  <b-form-input
+                    size="sm"
+                    v-model="row.item.score"
+                    :placeholder="Score"
+                    :disabled="problem.rule_type !== 'ASSIGNMENT'"
+                  />
+                </template>
+              </b-table>
+            </b-col>
+          </b-row>
+
+          <p class="labels">
+            Source
+          </p>
+          <b-form-input
+            v-model="problem.source"
+            placeholder="Source"
+          ></b-form-input>
+          <save @click.native="submit()" style="margin-top: 24px;">Save</save>
+        </Panel>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
@@ -921,6 +929,11 @@ export default {
     .add-sample-btn {
       margin-bottom: 10px;
     }
+  }
+  #add-or-edit-problem {
+    margin: auto;
+    flex:1 0;
+    max-width: 1300px;
   }
   .labels {
     margin-top: 24px;
