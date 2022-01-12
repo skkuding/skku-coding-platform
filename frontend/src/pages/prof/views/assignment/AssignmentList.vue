@@ -323,7 +323,7 @@ export default {
     },
     async deleteAssignment (assignmentId) {
       try {
-        await this.$confirm('Sure to delete this assignment? The associated submissions will be deleted as well.', 'Delete Assignment', 'warning', false)
+        await this.$confirm('Sure to delete this assignment?', 'Delete Assignment', 'warning', false)
         await api.deleteAssignment(this.courseId, assignmentId)
         this.getAssignmentList()
       } catch (err) {
@@ -331,7 +331,7 @@ export default {
     },
     async deleteAssignmentProblem (assignmentId, problemId) {
       try {
-        await this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', 'warning', false)
+        await this.$confirm('Sure to delete this problem?', 'Delete Problem', 'warning', false)
         await api.deleteAssignmentProblem(problemId)
         await this.updateAssignmentProblemList(assignmentId)
       } catch (err) {
