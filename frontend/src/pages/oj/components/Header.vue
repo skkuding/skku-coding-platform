@@ -84,15 +84,15 @@ export default {
       })
     },
     goManagement () {
-      if (this.isSuperAdmin) {
-        window.open('/admin/')
-      } else {
+      if (!this.isSuperAdmin) {
         window.open('/prof/')
+      } else {
+        window.open('/admin/')
       }
     }
   },
   computed: {
-    ...mapGetters(['website', 'modalStatus', 'user', 'isAuthenticated', 'isAdminRole']),
+    ...mapGetters(['website', 'modalStatus', 'user', 'isAuthenticated', 'isAdminRole', 'isSuperAdmin']),
     modalVisible: {
       get () {
         return this.modalStatus.visible
