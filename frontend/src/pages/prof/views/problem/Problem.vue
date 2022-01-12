@@ -616,6 +616,7 @@ export default {
         text: 'Create Problem'
       })
     }
+    this.getProblemTagList()
   },
   watch: {
     '$route' () {
