@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-list-card font-bold">
     <div class="mb-5">
-      <h3 class = "title"> {{ lecture.title }}_{{lecture.course_code}} </h3>
+      <h5 class = "title"> {{ lecture.title }}_{{lecture.course_code}} </h5>
     </div>
     <b-row class="mt-5">
     <b-col cols = "8">
