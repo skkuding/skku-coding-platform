@@ -1,7 +1,7 @@
 <template>
   <div id="sidebar-wrapper">
     <b-list-group class="prof_vertical_menu" v-show="sideMenuShow">
-      <img id="coding-platform-logo" src="@/assets/logos/codingPlatformLogo.png" alt="coding-platform-logo">
+      <img id="coding-platform-logo" src="@/assets/logos/codingPlatformLogo.png" alt="coding-platform-logo" @click="goHome">
       <b-list-group-item>
         <div style="width: 100%;height:1px;background-color: #B8B8B8;"></div>
       </b-list-group-item>
@@ -84,24 +84,16 @@
     <b-button size="sm" variant="light" id="put-in-button" @click="$emit('hide')">
       <b-icon-box-arrow-left>
     </b-button>
-    <b-button size="sm" variant="primary" id="new-course-button" v-b-modal.registerNew>
-      + New Course
-    </b-button>
     <b-button size="sm" variant="primary" id="all-course-button" @click="goBookmark">
-      + All Course
+      All Course
     </b-button>
-    <register-new-course-modal @newCourseCreated="groupCourses"></register-new-course-modal>
   </div>
 </template>
 
 <script>
 import api from '../api.js'
-import RegisterNewCourse from '../views/general/RegisterNewCourse.vue'
 export default {
   name: 'SideMenu',
-  components: [
-    RegisterNewCourse
-  ],
   data () {
     return {
       currentPath: '',
@@ -144,6 +136,11 @@ export default {
       await this.$router.push({
         name: 'course-bookmark'
       })
+    },
+    goHome () {
+      this.$router.push({
+        name: 'dashboard'
+      })
     }
   },
   watch: {
@@ -178,7 +175,8 @@ export default {
   }
   #coding-platform-logo {
     display: block;
-    margin:auto;
+    margin: auto;
+    cursor: pointer;
   }
   #prof_vertical_menu {
     flex-grow: 1;
