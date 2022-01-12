@@ -1,9 +1,6 @@
 <template>
   <div id="sidebar-wrapper">
     <b-list-group class="prof_vertical_menu" v-show="sideMenuShow">
-      <!-- <b-list-group-item class="put-in" style="font-size: 20px;padding-top: 2rem;">
-        SKKU Coding Platform
-      </b-list-group-item> -->
       <img id="coding-platform-logo" src="@/assets/logos/codingPlatformLogo.png" alt="coding-platform-logo">
       <b-list-group-item>
         <div style="width: 100%;height:1px;background-color: #B8B8B8;"></div>
@@ -85,6 +82,9 @@
         </div>
       </div>
     </b-list-group>
+    <b-button variant="light" id="put-in-button" @click="$emit('hide')">
+      <b-icon-box-arrow-left>
+    </b-button>
   </div>
 </template>
 
@@ -136,10 +136,13 @@ export default {
 
 <style scoped lang="scss">
   #sidebar-wrapper {
-    min-height:100vh;
-    width:15%;
-    min-width:270px;
-    height:100%;
+    min-height: 100vh;
+    width: 15%;
+    min-width: 270px;
+    height: 100%;
+    top: 0px;
+    position: sticky;
+    padding-bottom: 150px;
     background-color: white;
     word-break: break-all;
     overflow-y: scroll;
@@ -170,11 +173,18 @@ export default {
   }
   .list-group-subitem {
     padding: 10px 16px 10px 30px;
+    font-size: 15px;
   }
   .list-group-lecture {
     padding: 5px 16px 5px 50px;
+    font-size: 15px;
   }
   .list-group-inner {
-    padding: 5px 16px 5px 70px;
+    padding: 5px 16px 5px 75px;
+  }
+  #put-in-button {
+    bottom: 0px;
+    left: 0px;
+    position: fixed;
   }
 </style>

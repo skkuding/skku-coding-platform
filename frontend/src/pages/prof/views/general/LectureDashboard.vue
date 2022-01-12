@@ -116,6 +116,9 @@ export default {
       ]
     }
   },
+  async created () {
+    this.getAssignmentList(1)
+  },
   async mounted () {
     this.lectureId = this.$route.params.lectureId
     try {
@@ -133,6 +136,7 @@ export default {
       this.createdBy + this.title + this.courseCode +
       this.classNumber + this.registeredYear + this.semester
     )
+    this.getAssignmentList(1)
     this.pageLocations[0].text = this.title + '_' + this.courseCode + '-' + this.classNumber
   },
   methods: {
@@ -141,7 +145,7 @@ export default {
       await this.getAssignmentList(page)
     },
     async getAssignmentList (page) {
-      this.loading = true // api.getAssignmentList (courseId, assignmentId, limit, offset)
+      this.loading = true
       try {
         const res = await api.getAssignmentList(this.lectureId, null, this.pageSize, (page - 1) * this.pageSize)
         this.total = res.data.data.total

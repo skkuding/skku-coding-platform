@@ -20,7 +20,11 @@
               </b-button>
             </template>
             <template v-slot:row-details="row">
+              <div v-if="!row.item.problemList.length">
+                No Problem data! Please add some problems
+              </div>
               <b-table
+                v-else
                 hover
                 :items="row.item.problemList"
                 :fields="problemField"
@@ -54,25 +58,24 @@
                   </div>
                 </template>
               </b-table>
-              <b-button
-                size="sm"
-                variant="warning"
-                class="mr-2"
-                v-b-modal.importProblem
-              >
-                +problem<br>From SKKU coding platform
-              </b-button>
-              <b-button
-                size="sm"
-                variant="primary"
-                class="mr-2"
-                @click="createAssignmentProblem(row.item.id)"
-              >
-                +problem<br>Create a new problem
-              </b-button>
-              <!--<div v-if="!problemList.length" v-text="center-align">
-                No Problem
-              </div>-->
+              <b-col class="text-right">
+                <b-button
+                  size="sm"
+                  style="background-color: #4891FE; border-color: unset;"
+                  class="mr-2 text-light"
+                  v-b-modal.importProblem
+                >
+                  +problem<br>From SKKU coding platform
+                </b-button>
+                <b-button
+                  size="sm"
+                  style="background-color: #E9A05A; border-color: unset"
+                  class="mr-2 text-light"
+                  @click="createAssignmentProblem(row.item.id)"
+                >
+                  +problem<br>Create a new problem
+                </b-button>
+              </b-col>
             </template>
             <template #cell(title)="data">
               {{ data.item.title }}
@@ -122,7 +125,7 @@
           @update="getAssignmentList"
         ></create-assignment-modal>
         <import-public-problem-modal></import-public-problem-modal>
-        <div v-if="!assignmentList.length" v-text="center-align">
+        <div v-if="!assignmentList.length">
           No Assignment
         </div>
       </b-card>
@@ -183,7 +186,7 @@ export default {
         },
         {
           key: 'submission',
-          label: 'Accepted/All submission'
+          label: 'Accepted rate'
         },
         'Operation'
       ]

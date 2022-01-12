@@ -1,7 +1,7 @@
 <template>
   <div id="container">
-    <side-menu v-on:hide="showSideMenu=false" v-show="showSideMenu"/>
-    <div style="flex: 1 0 auto">
+    <side-menu @hide="showSideMenu=false" v-show="showSideMenu"/>
+    <div style="flex: 1 1 auto">
       <div id="prof-header">
         <b-button
           variant="light"
