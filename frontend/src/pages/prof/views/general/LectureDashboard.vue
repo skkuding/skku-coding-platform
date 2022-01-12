@@ -112,9 +112,6 @@ export default {
       ]
     }
   },
-  async created () {
-    this.getAssignmentList(1)
-  },
   async mounted () {
     this.lectureId = this.$route.params.lectureId
     try {
