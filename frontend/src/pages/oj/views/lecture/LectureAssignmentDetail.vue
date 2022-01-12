@@ -21,7 +21,8 @@
             @row-clicked="goAssignmentProblem"
           >
             <template #cell(total_score)="data">
-              {{ data.item.my_score + ' / ' + data.item.total_score }}
+              <span v-if="data.item.my_score!==-1">{{ data.item.my_score + ' / ' + data.item.total_score }}</span>
+              <span v-else>No Submission</span>
             </template>
           </b-table>
         </div>
@@ -34,6 +35,7 @@
 import sidemenu from '@oj/components/Sidemenu.vue'
 import { mapActions } from 'vuex'
 import time from '@/utils/time'
+import api from '@oj/api'
 
 export default {
   name: 'CourseAssignmentDetail',
@@ -99,6 +101,18 @@ export default {
           problemID: row._id
         }
       })
+    },
+    async getAssignmentScore (problemID) {
+      const params = {
+        myself: '1',
+        page: 1,
+        problem_id: problemID,
+        assignment_id: this.assignmentID
+      }
+      const result = await api.getAssignmentSubmissionList(0, 1000, params)
+      const data = result.data.data.results
+      const score = !data.length ? -1 : data[0].statistic_info.score
+      return score
     },
     formatTime (timeValue) {
       return time.utcToLocal(timeValue, 'YYYY-M-D HH:mm')
