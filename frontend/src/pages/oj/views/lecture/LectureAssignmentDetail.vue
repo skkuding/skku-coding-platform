@@ -21,7 +21,7 @@
             @row-clicked="goAssignmentProblem"
           >
             <template #cell(total_score)="data">
-              {{ '/ ' + data.item.total_score }}
+              {{ data.item.my_score + ' / ' + data.item.total_score }}
             </template>
           </b-table>
         </div>
@@ -83,6 +83,10 @@ export default {
         const res = await this.$store.dispatch('getCourseAssignmentProblemList')
         const data = res.data.data.results
         this.assignmentProblems = data
+        for (const assignmentProblem of this.assignmentProblems) {
+          const myScore = await this.getAssignmentScore(assignmentProblem._id)
+          this.$set(assignmentProblem, 'my_score', myScore)
+        }
       } catch (err) {
       }
     },
