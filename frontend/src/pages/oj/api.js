@@ -100,11 +100,6 @@ export default {
       data
     })
   },
-  sendEmailAuth (data) {
-    return ajax('send_email_auth/', 'post', {
-      data
-    })
-  },
   changePassword (data) {
     return ajax('change_password/', 'post', {
       data
@@ -255,27 +250,27 @@ export default {
     return ajax('banner/', 'get')
   },
   getCourseList () {
-    return ajax('lecture/course', 'get')
+    return ajax('lecture/course/', 'get')
   },
   getCourse (courseID) {
-    return ajax('lecture/course', 'get', {
+    return ajax('lecture/course/', 'get', {
       params: {
         course_id: courseID
       }
     })
   },
   getBookmarkCourseList () {
-    return ajax('lecture/bookmark_course_list', 'get')
+    return ajax('lecture/bookmark_course_list/', 'get')
   },
   setBookmark (courseID) {
-    return ajax('lecture/bookmark_course', 'put', {
+    return ajax('lecture/bookmark_course/', 'put', {
       data: {
         course_id: courseID
       }
     })
   },
   getCourseAssignmentList (courseID, offset, limit) {
-    return ajax('lecture/course/assignment', 'get', {
+    return ajax('lecture/course/assignment/', 'get', {
       params: {
         course_id: courseID,
         paging: true,
@@ -285,7 +280,7 @@ export default {
     })
   },
   getCourseAssignment (courseID, assignmentID) {
-    return ajax('lecture/course/assignment', 'get', {
+    return ajax('lecture/course/assignment/', 'get', {
       params: {
         course_id: courseID,
         assignment_id: assignmentID
@@ -293,7 +288,7 @@ export default {
     })
   },
   getCourseAssignmentProblemList (courseID, assignmentID) {
-    return ajax('lecture/course/assignment/problem', 'get', {
+    return ajax('lecture/course/assignment/problem/', 'get', {
       params: {
         course_id: courseID,
         assignment_id: assignmentID
@@ -301,7 +296,7 @@ export default {
     })
   },
   getCourseAssignmentProblem (assignmentID, problemID) {
-    return ajax('lecture/course/assignment/problem', 'get', {
+    return ajax('lecture/course/assignment/problem/', 'get', {
       params: {
         assignment_id: assignmentID,
         problem_id: problemID
@@ -311,7 +306,7 @@ export default {
   getAssignmentSubmissionList (offset, limit, params) {
     params.limit = limit
     params.offset = offset
-    return ajax('assignment_submissions', 'get', {
+    return ajax('assignment_submissions/', 'get', {
       params
     })
   }
