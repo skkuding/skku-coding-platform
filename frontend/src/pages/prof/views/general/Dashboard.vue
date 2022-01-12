@@ -69,14 +69,13 @@
         <b-table
           borderless
           hover
+          tbody-class="table-body"
           :fields="assignmentListFields"
           :items="assignmentList"
           :per-page="pageSize"
           :current-page="updateCurrentPage"
+          @row-clicked="goAssignment"
         >
-          <template #cell(title)="data">
-            <b-link :to="{ name: 'course-assignment-list', params: { courseId: data.item.course.id, assignmentAnchor: data.item.id } }"> {{ data.value }}</b-link>
-          </template>
           <template #cell(status)="data">
             <b-button
               size="sm"
@@ -226,6 +225,9 @@ export default {
         this.$parent.updateSidebar += 1
       } catch (err) {
       }
+    },
+    async goAssignment (item) {
+      await this.$router.push({ name: 'course-assignment-list', params: { courseId: item.course.id, assignmentAnchor: item.id } })
     }
   },
   computed: {
@@ -298,5 +300,8 @@ export default {
   }
   .drop-shadow-custom {
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  }
+  .table-body {
+    cursor: pointer;
   }
 </style>

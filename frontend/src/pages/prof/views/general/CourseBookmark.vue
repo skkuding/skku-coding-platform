@@ -95,6 +95,7 @@ export default {
       try {
         const resp = await api.getCourseList()
         this.courseList = resp.data.data.results
+        console.log(this.courseList)
       } catch (err) {
       }
     },
@@ -116,14 +117,6 @@ export default {
     },
     async updateCourseList () {
       await this.init()
-      // try {
-      //   const res = await api.getCourseList()
-      //   res.data.data.results.map(course => {
-      //     this.courseList.push(course.course)
-      //   })
-      //   this.$parent.updateSidebar += 1
-      // } catch (err) {
-      // }
     }
   }
 }
