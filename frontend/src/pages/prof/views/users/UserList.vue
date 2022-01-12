@@ -141,7 +141,6 @@ export default {
       this.currentPage = page
       this.getUserList(page)
     },
-    // 사용자 목록 가져 오기
     async getUserList (page) {
       try {
         const res = await api.getCourseStudents(this.lectureId, this.pageSize, (page - 1) * this.pageSize)
@@ -193,5 +192,4 @@ export default {
 </script>
 
 <style lang="scss">
-  // Be careful of common css selector in admin/oj
 </style>

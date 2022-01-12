@@ -201,7 +201,6 @@ export default {
             }
           }
 
-          // occasional code indent css fix
           /deep/ #submission-source-code .CodeMirror-sizer {
             margin-left: 38px !important;
           }

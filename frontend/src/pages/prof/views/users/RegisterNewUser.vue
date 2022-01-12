@@ -165,7 +165,6 @@ export default {
   }
 </style>
 <style lang="scss" scoped>
-  // Be careful of common css selector in admin/oj
   .students-button {
     all: unset;
     border-radius: 4px;
