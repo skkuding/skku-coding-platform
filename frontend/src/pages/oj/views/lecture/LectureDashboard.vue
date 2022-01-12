@@ -7,7 +7,7 @@
     <b-col cols = "8">
     <b-calendar block
       v-model="value"
-      class="border rounded p-2 cal"
+      class="border rounded p-2 calendar"
       selected-variant="success"
       nav-button-variant="secondary"
       locale="en"
@@ -57,18 +57,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .cal{
-    width: 100% !important;
-    .btn{
-      background-color: white !important;
-    }
-  }
   .font-bold {
     font-family: manrope_bold;
   }
-  .dashboard-list-card{
+  .title {
+    margin-bottom:0;
+    color: #7C7A7B;
+    display:inline;
+    position:relative;
+    top:36px;
+  }
+  .dashboard-list-card {
     margin:0 auto;
     width:70%;
-    font-family:Manrope;
+  }
+  .calendar::v-deep .form-control {
+    width:100%;
+    box-shadow: none;
+  }
+  .calendar::v-deep .b-calendar-grid {
+    width:100%;
+    box-shadow: none;
+  }
+  .calendar::v-deep .btn {
+    background-color: white;
+    color: #4f4f4f;
   }
 </style>

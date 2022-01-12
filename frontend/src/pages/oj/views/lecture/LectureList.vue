@@ -5,6 +5,7 @@
     </div>
     <div class = "table lecture-list-table mt-4" >
       <b-table
+      hover
       id="lecturelist"
       :items="items"
       :per-page="perPage"
@@ -64,7 +65,6 @@ export default {
   .lecture-list-card{
     margin:0 auto;
     width:70%;
-    font-family:Manrope;
     .lecture-list-table{
       width: 95%;
       margin: 0 auto;
