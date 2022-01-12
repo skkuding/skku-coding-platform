@@ -166,16 +166,6 @@ export default {
     } catch (err) {
       console.log(err)
     }
-    // for (const lecture of this.lectureList) {
-    //   const resp = await api.getCourseStudentTotal(lecture.id, 1)
-    //   this.infoData.user_count += resp.data.data.total_students
-    // }
-    // try {
-    //   const res = await api.getAssignmentList()
-    //   this.assignmentList = res.data.data.results
-    // } catch (err) {
-    //   console.log(err)
-    // }
     const res = await api.getDashboardInfo()
     this.infoData.user_count = res.data.data.student_count
     this.infoData.today_submission_count = res.data.data.today_submission_count

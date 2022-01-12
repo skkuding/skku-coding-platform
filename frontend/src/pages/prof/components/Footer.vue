@@ -28,7 +28,6 @@ export default {
     }
   },
   mounted () {
-    this.getWebsiteConfig()
   },
   methods: {
     copy () {
