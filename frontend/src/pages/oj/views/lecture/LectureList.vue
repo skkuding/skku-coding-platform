@@ -1,14 +1,14 @@
 <template>
   <div class="lecture-list-card font-bold">
     <div class="top-bar mb-2">
-      <h2 class="title">Lectures</h2>
+      <h2 class="title">Courses</h2>
       <div>
         <b-button
           class="top-bar__btn"
           v-if="!saveBtnVisible"
           size="sm"
           @click="setBookmark"
-        >All Lecture</b-button>
+        >All Course</b-button>
         <b-button
           class="top-bar__btn"
           v-if="saveBtnVisible"
@@ -19,7 +19,7 @@
         </b-button>
       </div>
     </div>
-    <div class="no-lecture" v-if="!lectureList.length">No Lecture</div>
+    <div class="no-lecture" v-if="!lectureList.length">No Course</div>
     <div class="lecture-card-list">
       <b-card
         v-for="(lecture,index) in lectureList"
@@ -37,7 +37,7 @@
               {{ lecture.course.title }}
               <b-button
                 class="lecture-card__btn"
-                @click="setBookmarkLecture(lecture.course.id)"
+                @click="setBookmarkCourse(lecture.course.id)"
                 v-if="saveBtnVisible"
               >
                 <b-icon :icon="setIcon(lecture.course.id)"/>
@@ -72,10 +72,10 @@
       v-model="showInformation"
       centered
       ok-only
-      title="Lecture Registration"
+      title="Course Registration"
     >
       If you have a lecture you are taking but you can't see it,
-      press the "All Lecture" button and register the lecture you want to see. :>
+      press the "All Course" button and register the lecture you want to see. :>
     </b-modal>
   </div>
 </template>
@@ -84,7 +84,7 @@
 import api from '@oj/api'
 
 export default {
-  name: 'LectureList',
+  name: 'CourseList',
   components: {
   },
   data () {
@@ -112,7 +112,7 @@ export default {
   },
   async mounted () {
     try {
-      const resp = await api.getBookmarkLectureList()
+      const resp = await api.getBookmarkCourseList()
       const data = resp.data.data
       this.lectureList = data.results
       this.bookmarkList = data.results
@@ -126,7 +126,7 @@ export default {
     }
   },
   methods: {
-    async goLectureDashboard (item) {
+    async goCourseDashboard (item) {
       await this.$router.push({
         name: 'lecture-dashboard',
         params: { courseID: item.course.id }
@@ -141,14 +141,14 @@ export default {
       })
     },
     async setBookmark () {
-      const resp = await api.getLectureList()
+      const resp = await api.getCourseList()
       const data = resp.data.data
       this.lectureList = data.results
       this.saveBtnVisible = true
     },
-    async setBookmarkLecture (courseID) {
+    async setBookmarkCourse (courseID) {
       await api.setBookmark(courseID)
-      const resp = await api.getBookmarkLectureList()
+      const resp = await api.getBookmarkCourseList()
       this.bookmarkList = resp.data.data.results
       this.bookmarkIDList = []
       for (var lecture of this.bookmarkList) {

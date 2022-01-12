@@ -23,7 +23,7 @@
         </h2>
         <ul id="problem-list">
           <li v-for="(assignmentProblem, index) of assignmentProblems" :key="index"
-            @click="()=>goLectureAssignmentProblem(assignmentProblem._id)">
+            @click="()=>goCourseAssignmentProblem(assignmentProblem._id)">
             {{assignmentProblem.title}}
           </li>
         </ul>
@@ -255,7 +255,7 @@ export default {
       await this.getContestProblems()
     } else if (this.$route.params.assignmentID) {
       this.assignmentID = this.$route.params.assignmentID
-      await this.getLectureAssignmentProblemList()
+      await this.getCourseAssignmentProblemList()
     }
     this.submission_table_fields.unshift('Problem')
     this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
@@ -272,9 +272,9 @@ export default {
         }
       }
     },
-    async getLectureAssignmentProblemList () {
+    async getCourseAssignmentProblemList () {
       try {
-        const res = await this.$store.dispatch('getLectureAssignmentProblemList')
+        const res = await this.$store.dispatch('getCourseAssignmentProblemList')
         this.assignmentProblems = res.data.data.results
       } catch (err) {
       }
@@ -364,7 +364,7 @@ export default {
         }
       })
     },
-    async goLectureAssignmentProblem (problemID) {
+    async goCourseAssignmentProblem (problemID) {
       await this.$router.push({
         name: 'lecture-assignment-problem-details',
         params: {

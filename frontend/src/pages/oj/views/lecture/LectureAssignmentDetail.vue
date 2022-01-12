@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Sidemenu/>
+    <sidemenu/>
     <article class="lecture-assignment-card">
       <section class="top-bar mb-4">
         <div class="assignment-title">{{ assignment.title }}</div>
@@ -31,14 +31,14 @@
 </template>
 
 <script>
-import Sidemenu from '@oj/components/Sidemenu.vue'
+import sidemenu from '@oj/components/Sidemenu.vue'
 import { mapActions } from 'vuex'
 import time from '@/utils/time'
 
 export default {
-  name: 'LectureAssignmentDetail',
+  name: 'CourseAssignmentDetail',
   components: {
-    Sidemenu
+    sidemenu
   },
   data () {
     return {
@@ -63,24 +63,24 @@ export default {
     this.courseID = this.$route.params.courseID
     this.route_name = this.$route.name
     try {
-      await this.getLectureAssignment()
-      await this.getLectureAssignmentProblemList()
+      await this.getCourseAssignment()
+      await this.getCourseAssignmentProblemList()
     } catch (err) {
     }
   },
   methods: {
-    async getLectureAssignment () {
+    async getCourseAssignment () {
       try {
-        const res = await this.$store.dispatch('getLectureAssignment')
+        const res = await this.$store.dispatch('getCourseAssignment')
         const data = res.data.data
         this.assignment = data
         this.changeDomTitle({ title: data.title })
       } catch (err) {
       }
     },
-    async getLectureAssignmentProblemList () {
+    async getCourseAssignmentProblemList () {
       try {
-        const res = await this.$store.dispatch('getLectureAssignmentProblemList')
+        const res = await this.$store.dispatch('getCourseAssignmentProblemList')
         const data = res.data.data.results
         this.assignmentProblems = data
       } catch (err) {

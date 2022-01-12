@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Sidemenu/>
+    <sidemenu/>
     <article class="lecture-qna-card">
       <section class="question-container">
         <div class="question__header">
@@ -119,12 +119,12 @@
 </template>
 
 <script>
-import Sidemenu from '@oj/components/Sidemenu.vue'
+import sidemenu from '@oj/components/Sidemenu.vue'
 
 export default {
-  name: 'LectureQnaDetail',
+  name: 'CourseQnaDetail',
   components: {
-    Sidemenu
+    sidemenu
   },
   data () {
     return {
