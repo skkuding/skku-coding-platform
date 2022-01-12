@@ -155,16 +155,9 @@ export default {
   methods: {
     async downloadAllSubmissions () {
       const url = 'lecture/professor/download_submissions?problem_id=' + this.problemId + '&assignment_id=' + this.assignmentId + '&exclude_admin=' + Number(this.downloadExcludeAdmin) + '&last_submission=' + Number(this.downloadOnlyLastSubmissions)
-      utils.downloadFile(url)
+      await utils.downloadFile(url)
       this.downloadOnlyLastSubmissions = false
       this.downloadExcludeAdmin = false
-    },
-    goCode (id) {
-      this.$router.push({ name: 'announcement', params: { id } })
-    },
-    currentChange (page) {
-      this.currentPage = page
-      this.getSubmissionList(page)
     },
     async editSubmissionScore (submissionId, newScore, row) {
       const data = {
