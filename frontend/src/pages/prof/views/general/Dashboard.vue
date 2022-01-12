@@ -42,10 +42,10 @@
         />
       </div>
       <b-card title="My Course" class="admin-info drop-shadow-custom">
-        {{ currentSemester }}
+        {{ currentYear + ' ' + semester[currentSemester] }}
         <b-list-group>
           <b-list-group-item
-            v-for="(course,index) in courseList"
+            v-for="(course,index) in currentSemesterCourseList"
             :to="'course/'+ course.id +'/dashboard'"
             :key="index">{{ course.title + '_' + course.course_code + '-' + course.class_number }}
           </b-list-group-item>
@@ -129,8 +129,8 @@ export default {
         underway_assignments_count: 0,
         env: {}
       },
-      courseList: [
-      ],
+      courseList: [],
+      currentSemesterCourseList: [],
       assignmentListFields: [
         {
           key: 'title',
@@ -144,6 +144,8 @@ export default {
       assignmentList: [
       ],
       session: {},
+      semester: ['Spring', 'Summer', 'Fall', 'Winter'],
+      currentYear: '',
       currentSemester: ''
     }
   },
@@ -170,15 +172,20 @@ export default {
       this.$error('Since the amount of underway assignment exceeds system limit, failed to load all underway assignments.')
     }
     const now = new Date()
-    this.currentSemester = now.getFullYear()
-    const nowMonth = now.getMonth()
-    if (nowMonth >= 8) {
-      this.currentSemester += ' Fall'
-    } else if (nowMonth >= 2 && nowMonth <= 5) {
-      this.currentSemester += ' Spring'
+    this.currentYear = now.getFullYear()
+    const nowMonth = now.getMonth() + 1
+    if (nowMonth >= 2 && nowMonth <= 5) {
+      this.currentSemester = 0
+    } else if (nowMonth >= 6 && nowMonth <= 8) {
+      this.currentSemester = 1
+    } else if (nowMonth >= 8 && nowMonth <= 12) {
+      this.currentSemester = 2
     } else {
-      this.currentSemester += ' Summer/Winter'
+      this.currentSemester = 3
     }
+    this.currentSemesterCourseList = this.courseList.filter((course) => {
+      return course.semester === this.currentSemester && course.registered_year === this.currentYear
+    })
   },
   methods: {
     async currentChange (page) {
@@ -204,7 +211,7 @@ export default {
     },
     async updateCourseList () {
       try {
-        const res = await api.getCourseList()
+        const res = await api.getBookmarkCourseList()
         this.courseList = res.data.data.results
         this.$parent.updateSidebar += 1
       } catch (err) {
