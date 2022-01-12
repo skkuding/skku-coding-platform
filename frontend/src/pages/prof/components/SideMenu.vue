@@ -85,7 +85,7 @@
       <b-icon-box-arrow-left>
     </b-button>
     <b-button size="sm" variant="primary" id="all-course-button" @click="goBookmark">
-      All Course
+      See All Course
     </b-button>
   </div>
 </template>
@@ -216,14 +216,9 @@ export default {
     left: 10px;
     position: fixed;
   }
-  #new-course-button {
-    bottom: 0px;
-    left: 50px;
-    position: fixed;
-  }
   #all-course-button {
     bottom: 0px;
-    left: 160px;
+    left: 46px;
     position: fixed;
   }
 </style>
