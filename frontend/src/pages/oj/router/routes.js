@@ -15,7 +15,13 @@ import {
   Problem,
   ProblemList,
   ResetPassword,
-  ProfileSetting
+  ProfileSetting,
+  LectureList,
+  LectureDashboardOj,
+  LectureAssignmentList,
+  LectureAssignmentDetail,
+  LectureQna,
+  LectureQnaDetail
 } from '../views'
 
 export default [
@@ -114,6 +120,42 @@ export default [
     path: '/setting',
     meta: { requiresAuth: true, title: 'Profile Settings' },
     component: ProfileSetting
+  },
+  {
+    name: 'lecture-list',
+    path: '/lecture',
+    meta: { title: 'Lecture List' },
+    component: LectureList
+  },
+  {
+    name: 'lecture-dashboard',
+    path: '/lecture/:courseID',
+    meta: { title: 'Lecture Dashboard' },
+    component: LectureDashboardOj
+  },
+  {
+    name: 'lecture-assignment',
+    path: '/lecture/:courseID/assignment',
+    meta: { title: 'Lecture Assignment' },
+    component: LectureAssignmentList
+  },
+  {
+    name: 'lecture-assignment-detail',
+    path: '/lecture/:courseID/assignment/:assignmentID',
+    meta: { title: 'Lecture Assignment Detail' },
+    component: LectureAssignmentDetail
+  },
+  {
+    name: 'lecture-qna',
+    path: '/lecture/:courseID/question',
+    meta: { title: 'Lecture QnA' },
+    component: LectureQna
+  },
+  {
+    name: 'lecture-qna-detail',
+    path: '/lecture/:courseID/question/:questionID',
+    meta: { title: 'Lecture QnA Detail' },
+    component: LectureQnaDetail
   },
   {
     path: '*',

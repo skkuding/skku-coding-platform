@@ -6,6 +6,12 @@ import NotFound from './general/404.vue'
 import Home from './general/Home.vue'
 import ContestRanking from './contest/ContestRanking.vue'
 import ContestProblemList from './contest/ContestProblemList.vue'
+import LectureList from './lecture/LectureList.vue'
+import LectureDashboardOj from './lecture/LectureDashboard.vue'
+import LectureAssignmentList from './lecture/LectureAssignmentList.vue'
+import LectureAssignmentDetail from './lecture/LectureAssignmentDetail.vue'
+import LectureQna from './lecture/LectureQnA.vue'
+import LectureQnaDetail from './lecture/LectureQnADetail.vue'
 
 // Grouping Components in the Same Chunk
 const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
@@ -25,7 +31,8 @@ export {
   Home, NotFound,
   Logout, ProblemList, Announcement, AnnouncementList, Problem,
   ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting,
-  ContestList, ContestDetail, ContestProblemList, ContestRanking, Register
+  ContestList, ContestDetail, ContestProblemList, ContestRanking, Register,
+  LectureList, LectureDashboardOj, LectureAssignmentList, LectureAssignmentDetail, LectureQna, LectureQnaDetail
 }
 /* 구성 요소 내보내기는 두 가지 범주로 나뉩니다.
  *   하나는 일반적으로 직접 내보내기에 사용되며
