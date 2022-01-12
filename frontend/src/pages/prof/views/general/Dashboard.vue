@@ -162,7 +162,9 @@ export default {
     }
     try {
       const res = await api.getBookmarkCourseList(null, 250, 0)
-      this.courseList = res.data.data.results
+      res.data.data.results.map(course => {
+        this.courseList.push(course.course)
+      })
       if (res.data.data.total > 250) {
         this.$error('Since there are too much courses, failed to get all course list')
       }

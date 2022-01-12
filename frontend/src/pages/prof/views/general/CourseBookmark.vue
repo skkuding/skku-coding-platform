@@ -15,17 +15,17 @@
           :per-page="pageSize"
           :current-page="updateCurrentPage"
         >
-          <template #cell(title)="data">
+          <template #cell(course)="data">
             <b-button
               class="bookmark__btn"
-              @click="setBookmark(data.item.id, data.item.bookmark)"
+              @click="setBookmark(data.index, data.item.course.id, data.item.bookmark)"
             >
               <b-icon :icon="setIcon(data.item.bookmark)"/>
             </b-button>
-            {{data.value + '  ( ' + data.item.course_code + '-' + data.item.class_number + ' ) '}}
+            {{data.item.course.title + '  ( ' + data.item.course.course_code + '-' + data.item.course.class_number + ' ) '}}
           </template>
-          <template #cell(semester)="data">
-            {{data.item.registered_year + '-' + semesterStr[data.value]}}
+          <template #cell()="data">
+            {{data.item.course.registered_year + '-' + semesterStr[data.value]}}
           </template>
         </b-table>
       </b-card>
@@ -42,7 +42,14 @@ export default {
     return {
       courseList: [],
       courseListFields: [
-        'title', 'semester'
+        {
+          label: 'title',
+          key: 'course'
+        },
+        {
+          label: 'semester',
+          key: 'course.semester'
+        }
       ],
       semesterStr: ['Spring', 'Summer', 'Fall', 'Winter'],
       pageLocations: [
@@ -69,7 +76,8 @@ export default {
     setIcon (bookmark) {
       return bookmark ? 'bookmark-fill' : 'bookmark'
     },
-    async setBookmark (courseID, bookmark) {
+    async setBookmark (index, courseID, bookmark) {
+      this.courseList[index].bookmark = !bookmark
       await api.setBookmark(courseID, !bookmark)
       this.$parent.updateSidebar += 1
     }

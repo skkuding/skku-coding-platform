@@ -119,9 +119,12 @@ export default {
     async groupCourses () {
       const res = await api.getBookmarkCourseList(null, 250, 0)
       const courses = res.data.data.results
+      for (const course of courses) {
+        this.courses.push(course.course)
+      }
       // Make registered term unique list
       const registeredTerms = new Set()
-      courses.forEach(course => {
+      this.courses.forEach(course => {
         registeredTerms.add(JSON.stringify({
           semester: course.semester,
           registered_year: course.registered_year
@@ -130,7 +133,6 @@ export default {
       this.registeredTerms = Array.from(registeredTerms).map(term =>
         JSON.parse(term)
       )
-      this.courses = courses
     },
     async goBookmark () {
       await this.$router.push({
