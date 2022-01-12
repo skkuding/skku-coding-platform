@@ -13,7 +13,7 @@
             <b-icon icon="trash-fill"></b-icon> Delete
           </b-button>
         </b-col>
-        <b-col cols="6" >
+        <b-col cols="6">
           <b-button
             variant="outline-primary"
             size="sm"
@@ -40,6 +40,10 @@
           :value="row.item.registration_id"
         >
         </b-form-checkbox>
+      </template>
+
+      <template #cell(index)="data">
+        {{ (currentPage - 1) * pageSize + (data.index + 1) }}
       </template>
 
       <template #cell(create_time)="data">
@@ -95,7 +99,7 @@ export default {
       userList: [],
       userListFields: [
         { key: 'selection', label: '' },
-        { key: 'registration_id', label: 'registration ID' },
+        'index',
         { key: 'username', label: 'Username' },
         { key: 'create_time', label: 'Create Time' },
         { key: 'last_login', label: 'Last Login' },
@@ -176,8 +180,8 @@ export default {
         this.selectedUserIDs = []
       } else {
         for (const users of this.usersPerPage) {
-          if (this.selectedUserIDs.indexOf(users.id) === -1) {
-            this.selectedUserIDs.push(users.id)
+          if (this.selectedUserIDs.indexOf(users.registration_id) === -1) {
+            this.selectedUserIDs.push(users.registration_id)
           }
         }
       }
