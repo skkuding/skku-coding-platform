@@ -2,42 +2,37 @@
   <b-row
     type="flex"
     cols = "1"
-    id="dashboard"
+    id="assignment-list"
   >
     <b-col>
       <b-card title="Assignments">
         <div class="table">
           <b-table
-            borderless
             hover
             :items="assignmentList"
             :fields="assignmentField"
-            :current-page="updateAssignmentList"
+            :current-page="currentAssignmentList"
             head-variant="light"
           >
             <template #cell(show_detail)="row">
-              <b-button size="sm" @click="updateAssignmentProblem(row.item.id);row.toggleDetails()" class="mb-2">
-                <b-icon icon="caret-right-fill" aria-hidden="true"></b-icon>
+              <b-button size="sm" variant="light" @click="updateAssignmentProblem(row.item)">
+                <b-icon :icon="row.item._showDetails ? 'caret-down-fill':'caret-right-fill'" aria-hidden="true"></b-icon>
               </b-button>
             </template>
             <template v-slot:row-details="row">
               <b-table
-                borderless
                 hover
                 :items="row.item.problemList"
                 :fields="problemField"
               >
-                <template #cell(number)="data">
+                <template v-slot:cell(number)="data">
                   {{ data.item.number }}
                 </template>
-                <template #cell(type)="data">
-                  {{ data.item.type }}
-                </template>
-                <template #cell(title)="data">
+                <template v-slot:cell(title)="data">
                   {{ data.item.title }}
                 </template>
-                <template #cell(submission)="data">
-                  {{ data.item.submission }}
+                <template v-slot:cell(submission)="data">
+                  {{ data.item.accepted_number }} / {{ data.item.submission_number }}
                 </template>
                 <template #cell(operation)="data">
                   <div>
@@ -67,12 +62,11 @@
               >
                 +problem<br>From SKKU coding platform
               </b-button>
-              <import-public-problem-modal></import-public-problem-modal>
               <b-button
                 size="sm"
                 variant="primary"
                 class="mr-2"
-                @click.native="createAssignmentProblem(row.item.id)"
+                @click="createAssignmentProblem(row.item.id)"
               >
                 +problem<br>Create a new problem
               </b-button>
@@ -94,7 +88,6 @@
             <template #cell(status)="data">
               <b-icon
                 icon="circle-fill"
-                class="mb-2"
                 :style="'color:' + assignmentStatus(data.item.status).color"
               >
               </b-icon>
@@ -107,11 +100,6 @@
                   icon="pencil"
                   @click.native="editAssignment()"
                 />
-                <!-- <create-assignment-modal
-                  :lecture-id="lectureId"
-                  :modal-type="modalType"
-                  @update="showAssignmentList"
-                ></create-assignment-modal> -->
                 <icon-btn
                   name="Delete Assignment"
                   icon="trash"
@@ -124,15 +112,16 @@
         <b-button
           variant="primary"
           class="mb-2"
-          @click.native="createAssignment()"
+          @click="createAssignment()"
         >
           +Create
         </b-button>
         <create-assignment-modal
           :lecture-id="lectureId"
           :modal-type="modalType"
-          @update="showAssignmentList"
+          @update="getAssignmentList"
         ></create-assignment-modal>
+        <import-public-problem-modal></import-public-problem-modal>
         <div v-if="!assignmentList.length" v-text="center-align">
           No Assignment
         </div>
@@ -185,12 +174,8 @@ export default {
       ],
       problemField: [
         {
-          key: 'number',
+          key: 'id',
           label: '#'
-        },
-        {
-          key: 'type',
-          label: 'Type'
         },
         {
           key: 'title',
@@ -198,7 +183,7 @@ export default {
         },
         {
           key: 'submission',
-          lable: 'Submission'
+          label: 'Accepted/All submission'
         },
         'Operation'
       ]
@@ -206,13 +191,15 @@ export default {
   },
   async mounted () {
     this.lectureId = this.$route.params.lectureId
+    this.routeName = this.$route.name
     console.log(this.lectureId)
     const res = await api.getAssignmentList(this.lectureId)
     this.assignmentList = res.data.data.results
   },
   methods: {
-    async showAssignmentList () {
-      api.getAssignmentList(this.lectureId)
+    async getAssignmentList () {
+      const res = await api.getAssignmentList(this.lectureId)
+      this.assignmentList = res.data.data.results
     },
     async createAssignment () {
       this.modalType = 'create'
@@ -223,21 +210,29 @@ export default {
       this.$bvModal.show('create-assignment')
     },
     async showAssignmentProblemList (assignmentId) {
-      api.getAssignmentProblemList(assignmentId)
+      api.getAssignmentProblem(assignmentId)
     },
-    async updateAssignmentProblem (assignmentId) {
-      const res = await api.getAssignmentProblemList(assignmentId)
-      for (let i = 0; i < this.assignmentList.length; i++) {
-        if (this.assignmentList[i].id === assignmentId) {
-          this.assignmentList[i].problemList = res.data.data.results
-        }
-        console.log(this.assignmentList[i])
+    async updateAssignmentProblem (item) {
+      console.log('update assignment problem call')
+      console.log(item)
+      if (item._showDetails) {
+        item._showDetails = false
+        console.log(item.id + ' close')
+      } else if (item.problemList) {
+        this.$set(item, '_showDetails', true)
+        console.log('data exists ' + item.id + ' open')
+      } else {
+        const res = await api.getAssignmentProblem(item.id)
+        item.problemList = res.data.data.results
+        await this.showAssignmentProblemList(item.id)
+        this.$set(item, '_showDetails', true)
+        console.log('data downloaded ' + item.id + ' open')
       }
-      await this.showAssignmentProblemList(assignmentId)
     },
-    createAssignmentProblem () {
+    createAssignmentProblem (assignmentId) {
+      console.log('route name' + this.routeName + 'assignmentId' + assignmentId)
       if (this.routeName === 'lecture-assignment-list') {
-        this.$router.push({ name: 'create-lecture-problem' })
+        this.$router.push({ name: 'create-lecture-problem', params: { assignmentId: assignmentId } })
       }
     },
     editAssignmentProblem (problemId) {
@@ -254,7 +249,7 @@ export default {
       try {
         await this.$confirm('Sure to delete this assignment? The associated submissions will be deleted as well.', 'Delete Assignment', 'warning', false)
         api.deleteAssignment(this.lectureId, assignmentId)
-        await this.showAssignmentList(this.lectureId)
+        await this.getAssignmentList(this.lectureId)
       } catch (err) {
       }
     },
@@ -279,7 +274,8 @@ export default {
         course_id: res.course.id,
         content: res.content,
         start_time: res.start_time,
-        end_time: res.end_time
+        end_time: res.end_time,
+        visible: res.visible
       }
       await api.editAssignment(data)
     }
@@ -292,5 +288,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  #assignment-list {
+    margin: auto;
+    flex:1 0;
+    max-width: 1300px;
+  }
 </style>
