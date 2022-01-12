@@ -2,7 +2,11 @@
   <div class="flex-grow-1 mx-2">
     <b-breadcrumb :items="pageLocations" class="mt-3"></b-breadcrumb>
     <Panel :title="'Assignment'+assignmentId+' - '+problemId+' '+problemTitle">
+      <div v-if="!submissionList.length">
+        No Submissions exists
+      </div>
       <b-table
+        v-else
         ref="table"
         :items="submissionList"
         :fields="field"
@@ -18,44 +22,42 @@
           {{row.item.name}}
         </template>
 
-        <template #head(code)="row">
+        <template #head(detail)="row">
           <span>
             {{row.label}}
-            <icon-btn icon="download" varient="outline-*" @click.native="download()"/>
+            <icon-btn icon="download" variant="outline-*" @click.native="$bvModal.show('download-submissions-option')"/>
           </span>
         </template>
 
-        <template #cell(code)="row">
-          <b-button v-b-modal.submission-detail-modal> <!-- id를 어떻게 잘 바꿔서 모달이 하나만 뜨게 하자 -->
+        <template #cell(detail)="row">
+          <b-button @click="showSubmissionDetail(row.item)" variant="light" size="sm">
             <b-icon
-              :icon="row.item.code ? 'code' : 'dash'"
-              variant="outline-*"
+              icon="code"
             />
           </b-button>
-          <!-- <Modal :problemID="problemId"/> -->
         </template>
 
-        <template #cell(score)="row">
-          <b-row style="max-width: 100%" >
-            <div v-if="newScore" style="margin-top: 6px">
-              {{newScore}} / {{row.item.total_score}}
-            </div>
-            <div v-if="!newScore" style="margin: 6px 12px">
-              {{row.item.user_score ? row.item.user_score : '- '}} / {{row.item.total_score}}
-            </div>
-            <b-button :pressed.sync="press" variant="outline-*">
-              <b-icon icon="pencil" />
+        <template #cell(problem)="row">
+          <div v-if="!row.item.press" style="margin-top: 6px">
+            {{ row.item.statistic_info.score || ' - '}} / {{ row.item.problem }}
+            <b-button @click="$set(row.item, 'press', true)" variant="light" press="false" size="sm">
+              <b-icon icon="pencil"/>
             </b-button>
-            <div v-if="press" style="margin-left: 12px">
-              <b-form-input
-                v-model="newScore"
-                :id="'input-new-score'+row.item.student_id"
-                style="padding-left: 12px"
-              >
-              {{newScore}} / {{row.item.total_score}} <!-- api로 점수 바꾸기 -->
-              </b-form-input>
-            </div>
-          </b-row>
+          </div>
+          <b-form inline v-else style="margin: 6px 12px" >
+            <b-form-input
+              v-model="row.item.newScore"
+              :id="'input-new-score' + row.item.student_id"
+              style="padding-left: 12px; width:53px"
+            ></b-form-input>
+            / {{ row.item.problem }}
+            <b-button @click="$set(row.item, 'press', false)" variant="light" press="false">
+              <b-icon icon="x"/>
+            </b-button>
+            <b-button v-if="row.item.press" @click="editSubmissionScore(row.item.id, row.item.newScore, row)" variant="light">
+              <b-icon-check/>
+            </b-button>
+          </b-form>
         </template>
       </b-table>
       <div class="panel-options">
@@ -67,37 +69,46 @@
         />
       </div>
     </Panel>
+    <b-modal id="download-submissions-option" title="Download All Submissions" @ok="downloadAllSubmissions">
+      Select download options and click ok to download All Submissions.
+      <b-form-checkbox v-model="downloadExcludeAdmin">
+        Exclude Admin submissions
+      </b-form-checkbox>
+      <b-form-checkbox v-model="downloadOnlyLastSubmissions">
+        Get only last submissions
+      </b-form-checkbox>
+    </b-modal>
+    <submission-detail-modal :submission_detail="submissionDetail"/>
   </div>
 </template>
 
 <script>
 import IconBtn from '../../components/btn/IconBtn.vue'
-// import Modal from '../components/modal.vue'
+import SubmissionDetailModal from './SubmissionDetail.vue'
 import api from '../../api.js'
-// import utils from '@/utils/utils'
+import utils from '@/utils/utils'
+
 export default {
   name: 'ProblemGrade',
   components: {
-    IconBtn
-    // Modal
+    IconBtn,
+    SubmissionDetailModal
   },
   data () {
     return {
       problemId: 'A',
-      assignmentId: 1,
-      lectureId: 3,
-      problemTitle: '가파른 경사',
+      assignmentId: 0,
+      lectureId: 0,
+      problemTitle: 'Have to be changed',
       pageSize: 10,
       total: 1,
       currentPage: 0,
-      press: false,
-      newScore: 0,
-      submissionlist: [],
+      submissionList: [],
       field: [
-        { key: 'studentId', label: 'Student ID' },
-        { key: 'name', label: 'Name' },
-        { key: 'code', label: 'Code' },
-        { key: 'score', label: 'Score' }
+        { key: 'user_id', label: 'Student ID' },
+        { key: 'username', label: 'Name' },
+        { key: 'detail', label: 'Detail' },
+        { key: 'problem', label: 'Score' }
       ],
       pageLocations: [
         {
@@ -111,7 +122,10 @@ export default {
         {
           text: this.$route.params.problemId + ' - '
         }
-      ]
+      ],
+      downloadExcludeAdmin: false,
+      downloadOnlyLastSubmissions: false,
+      submissionDetail: {}
     }
   },
   watch: {
@@ -119,33 +133,46 @@ export default {
   async created () {
     const res = await api.getAssignmentSubmission(this.$route.params.assignmentId, this.$route.params.problemId, 0, 250)
     this.submissionList = res.data.data.results
+    for (const submission of this.submissionList) {
+      this.$set(submission, 'press', false)
+    }
   },
   mounted () {
+    this.lectureId = this.$route.params.lectureId
+    this.assignmentId = this.$route.params.assignmentId
+    this.problemId = this.$route.params.problemId
+    this.problemTitle = this.$route.params.problemInfo
     this.pageLocations[2].text += this.problemTitle
-    this.init()
-    this.getSubmissionList()
+    // this.getSubmissionList()
   },
   methods: {
-    init () {
-      // this.$route.assignmentId
-    },
-    // downloadAll () {
-
-    // },
-    download () {
-      // const url = `/prof/download_submissions?contest_id=${this.currentId}&exclude_admin=${excludeAdmin}`
-      // utils.downloadFile(url)
-      // admin은 api가 있기했다
+    async downloadAllSubmissions () {
+      const url = '/lecture/professor/download_submissions?problem_id=' + this.problemId + '&assignment_id=' + this.assignmentId + '&exclude_admin=' + Number(this.downloadExcludeAdmin) + '&last_submission=' + Number(this.downloadOnlyLastSubmissions)
+      utils.downloadFile(url)
+      this.downloadOnlyLastSubmissions = false
+      this.downloadExcludeAdmin = false
     },
     goCode (id) {
-      this.$router.push({ name: 'announcement', params: { id } }) // 길을 잃었다~ 어딜가야 할까~~
+      this.$router.push({ name: 'announcement', params: { id } })
     },
     currentChange (page) {
       this.currentPage = page
       this.getSubmissionList(page)
     },
-    getSubmissionList (page) {
-      // const res = api.SubmissionList(this.pageSize, (page-1)*this.pageSize, this.pageInfo.assignment_id, this.pageInfo.problem_id)
+    async editSubmissionScore (submissionId, newScore, row) {
+      const data = {
+        id: submissionId,
+        score: newScore
+      }
+      const res = await api.editSubmissionScore(data)
+      this.$set(row.item.statistic_info, 'score', res.data.data.statistic_info.score)
+      this.$set(row.item, 'press', false)
+    },
+    showSubmissionDetail (submissionDetail) {
+      this.submissionDetail = submissionDetail
+      this.$nextTick(function () {
+        this.$bvModal.show('submission-detail-modal')
+      })
     }
   },
   computed: {

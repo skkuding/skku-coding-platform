@@ -187,9 +187,6 @@ export default {
       }
     })
   },
-  // getSubmissionList (){
-
-  // },
   getContestAnnouncementList (contestID) {
     return ajax('admin/contest/announcement', 'get', {
       params: {
@@ -423,6 +420,22 @@ export default {
   getDashboardInfo (limit, offset) {
     const params = { limit, offset }
     return ajax('/professor/professor_dashboard_info', 'get', {
+      params
+    })
+  },
+  editSubmissionScore (data) {
+    return ajax('/edit_submission_score', 'put', {
+      data
+    })
+  },
+  downloadSubmissions (assignmentId, problemId, excludeAdmin, lastSubmission) {
+    const params = {
+      assignment_id: assignmentId,
+      problem_id: problemId,
+      exclude_admin: excludeAdmin,
+      last_submission: lastSubmission
+    }
+    return ajax('/lecture/professor/download_submissions', 'get', {
       params
     })
   }
