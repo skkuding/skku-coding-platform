@@ -26,7 +26,7 @@ export default {
     return ajax('languages/', 'get')
   },
   getAssignmentSubmission (assignmentId, problemId, offset, limit) {
-    return ajax('/assignment_submissions_professor/', 'get', {
+    return ajax('assignment_submissions_professor/', 'get', {
       params: {
         assignment_id: assignmentId,
         problem_id: problemId,
@@ -75,103 +75,103 @@ export default {
   },
   getCourseList (courseId, limit, offset) {
     const params = { id: courseId, limit, offset }
-    return ajax('/lecture/professor/course/', 'get', {
+    return ajax('lecture/professor/course/', 'get', {
       params
     })
   },
   getBookmarkCourseList (courseId, limit, offset) {
     const params = { course_id: courseId, limit, offset }
-    return ajax('/lecture/professor/bookmark_course_list/', 'get', {
+    return ajax('lecture/professor/bookmark_course_list/', 'get', {
       params
     })
   },
   setBookmark (courseID) {
-    return ajax('/lecture/professor/bookmark_course/', 'put', {
+    return ajax('lecture/professor/bookmark_course/', 'put', {
       data: {
         course_id: courseID
       }
     })
   },
   createCourse (data) {
-    return ajax('/lecture/professor/course/', 'post', {
+    return ajax('lecture/professor/course/', 'post', {
       data
     })
   },
   getCourseStudents (courseId, limit, offset) {
     const params = { course_id: courseId, limit, offset }
-    return ajax('/lecture/professor/course/students/', 'get', {
+    return ajax('lecture/professor/course/students/', 'get', {
       params: params
     })
   },
   registerStudent (data) {
-    return ajax('/lecture/professor/course/students/', 'post', {
+    return ajax('lecture/professor/course/students/', 'post', {
       data
     })
   },
   deleteStudent (registrationId) {
     const params = { registration_id: registrationId }
-    return ajax('/lecture/professor/course/students/', 'delete', {
+    return ajax('lecture/professor/course/students/', 'delete', {
       params: params
     })
   },
   getAssignmentList (courseId, assignmentId, limit, offset) {
     const params = { course_id: courseId, assignment_id: assignmentId, limit, offset }
-    return ajax('/lecture/professor/course/assignment/', 'get', {
+    return ajax('lecture/professor/course/assignment/', 'get', {
       params: params
     })
   },
   createAssignment (data) {
-    return ajax('/lecture/professor/course/assignment/', 'post', {
+    return ajax('lecture/professor/course/assignment/', 'post', {
       data
     })
   },
   editAssignment (data) {
-    return ajax('/lecture/professor/course/assignment/', 'put', {
+    return ajax('lecture/professor/course/assignment/', 'put', {
       data
     })
   },
   deleteAssignment (courseId, assignmentId) {
     const params = { course_id: courseId, assignment_id: assignmentId }
-    return ajax('/lecture/professor/course/assignment/', 'delete', {
+    return ajax('lecture/professor/course/assignment/', 'delete', {
       params: params
     })
   },
   // only assignmentId param => return problemList instead
   getAssignmentProblem (assignmentId, problemId) {
     const params = { problem_id: problemId, assignment_id: assignmentId }
-    return ajax('/lecture/professor/course/assignment/problem/', 'get', {
+    return ajax('lecture/professor/course/assignment/problem/', 'get', {
       params: params
     })
   },
   createAssignmentProblem (data) {
-    return ajax('/lecture/professor/course/assignment/problem/', 'post', {
+    return ajax('lecture/professor/course/assignment/problem/', 'post', {
       data
     })
   },
   editAssignmentProblem (data) {
-    return ajax('/lecture/professor/course/assignment/problem/', 'put', {
+    return ajax('lecture/professor/course/assignment/problem/', 'put', {
       data
     })
   },
   deleteAssignmentProblem (id) {
     const params = { id: id }
-    return ajax('/lecture/professor/course/assignment/problem/', 'delete', {
+    return ajax('lecture/professor/course/assignment/problem/', 'delete', {
       params: params
     })
   },
   addProblemFromPublic (data) {
-    return ajax('/lecture/professor/course/assignment/add_problem_from_public/', 'post', {
+    return ajax('lecture/professor/course/assignment/add_problem_from_public/', 'post', {
       data
     })
   },
   getDashboardInfo (limit, offset) {
     const params = { limit, offset }
-    return ajax('/professor/professor_dashboard_info/', 'get', {
+    return ajax('professor/professor_dashboard_info/', 'get', {
       params
     })
   },
   editSubmissionScore (data) {
-    return ajax('/edit_submission_score/', 'put', {
+    return ajax('edit_submission_score/', 'put', {
       data
     })
   }
@@ -204,7 +204,7 @@ async function ajax (url, method, options) {
       }
       throw res
     } else {
-      if (method !== 'get' && url !== '/lecture/professor/course/students') {
+      if (method !== 'get' && url !== 'lecture/professor/course/students/') {
         Vue.prototype.$success('Succeeded')
       }
       return res
