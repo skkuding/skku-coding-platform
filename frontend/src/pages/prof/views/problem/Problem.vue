@@ -348,7 +348,6 @@
       <b-row>
         <b-col cols="6" v-if="testcase_file_upload">
           <b-form-file
-            multiple
             v-model="testcaseFile"
             :state="Boolean(testcaseFile)"
           ></b-form-file>
@@ -487,7 +486,8 @@ export default {
         { key: 'output_name', label: 'Output' },
         { key: 'score', label: 'Score' }
       ],
-      search: ''
+      search: '',
+      assignmentId: ''
     }
   },
   async mounted () {
@@ -525,11 +525,11 @@ export default {
       source: '',
       io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
     }
-    const assignmentId = this.$route.params.assignmentId
-    if (assignmentId) {
-      this.problem.assignment_id = this.reProblem.assignment_id = assignmentId
+    this.assignmentId = this.$route.params.assignmentId
+    if (this.assignmentId) {
+      this.problem.assignment_id = this.reProblem.assignment_id = this.assignmentId
       this.disableRuleType = true
-      const res = await api.getAssignmentList(null, assignmentId)
+      const res = await api.getAssignmentList(null, this.assignmentId)
       this.assignment = res.data.data
     }
     this.problem.spj_language = 'C'
@@ -538,7 +538,7 @@ export default {
     // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
     if (this.mode === 'edit') {
       this.title = 'Edit Problem'
-      const problemRes = await api.getAssignmentProblem(this.$route.params.problemId)
+      const problemRes = await api.getAssignmentProblem(this.assignemntId, this.$route.params.problemId)
       const data = problemRes.data.data
       if (!data.spj_code) {
         data.spj_code = ''
@@ -549,7 +549,7 @@ export default {
       this.testCaseUploaded = true
       const testcaseRes = await api.getTestCase(this.$route.params.problemId)
       const testcaseData = testcaseRes.data.data
-      this.problem.testcases = this.problem.testcases.concat(testcaseData.testcase)
+      this.problem.testcases = this.problem.testcases.concat(testcaseData.testcases)
       if (testcaseData.spj === 'True') this.problem.spj = true
       else this.problem.spj = testcaseData.spj === 'True'
     } else {
@@ -584,13 +584,16 @@ export default {
       }
       this.template = data
     },
-    'problem.spj_language' (newVal) {
+    'problem.spj_language' () {
+      if (!this.allLanguage.spj_languages) {
+        return
+      }
       this.spjMode = this.allLanguage.spj_languages.find(item => {
         return item.name === this.problem.spj_language
       }).content_type
     },
     'testcaseFile' () {
-      // this.uploadTestcase()
+      this.uploadTestcase()
     }
   },
   methods: {
@@ -658,21 +661,17 @@ export default {
         return
       }
       try {
-        const response = await api.uploadTestcase({
-          file: this.testcaseFile,
-          spj: this.problem.spj
-        })
-        this.uploadSucceeded(response)
+        const formData = new FormData()
+        const blob = new Blob([this.testcaseFile])
+        formData.append('spj', this.problem.spj)
+        formData.append('file', blob, this.testcaseFile.name)
+        const res = await api.uploadTestCase(formData)
+        this.uploadSucceeded(res)
       } catch (err) {
-        this.uploadFailed()
       }
     },
     uploadSucceeded (response) {
-      if (response.error) {
-        this.$error(response.data)
-        return
-      }
-      const fileList = response.data.info
+      const fileList = response.data.data.info
       for (const file of fileList) {
         file.score = (100 / fileList.length).toFixed(0)
         if (!file.output_name && this.problem.spj) {
@@ -681,10 +680,7 @@ export default {
       }
       this.problem.test_case_score = fileList
       this.testCaseUploaded = true
-      this.problem.test_case_id = response.data.id
-    },
-    uploadFailed () {
-      this.$error('Upload failed')
+      this.problem.test_case_id = response.data.data.id
     },
     async compileSPJ () {
       const data = {
@@ -803,13 +799,13 @@ export default {
           this.testCaseUploaded = true
           this.problem.test_case_id = response.data.data.id
           await api[funcName](this.problem)
-          this.$router.push({ name: 'lecture-assignment-list', params: { assignmentId: this.$route.params.assignmentId } })
+          this.$router.push({ name: 'lecture-assignment-list', params: { assignmentId: this.assignmentId } })
         } catch (err) {
         }
       } else {
         try {
           await api[funcName](this.problem)
-          this.$router.push({ name: 'lecture-assignment-list', params: { assignmentId: this.$route.params.assignmentId } })
+          this.$router.push({ name: 'lecture-assignment-list', params: { assignmentId: this.assignmentId } })
         } catch (err) {
         }
       }
