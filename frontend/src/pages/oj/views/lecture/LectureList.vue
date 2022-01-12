@@ -160,6 +160,7 @@ export default {
       font-size: 22px;
       display: flex;
       justify-content: space-between;
+      word-break: keep-all;
     }
     &__info {
       margin-bottom: 10px;
