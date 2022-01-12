@@ -7,7 +7,7 @@
     @ok="submitRegistration"
     scrollable
   >
-    <p>Register students to {{ lectureTitle }}</p>
+    <p>Register students to {{ courseTitle }}</p>
     <div v-if="showErrorResult" class="text-danger" >
       <p style="font-size: 18px;" >Registration Error! Please Try Again</p>
       <p>{{ getUserNotExistUserList }}</p>
@@ -50,7 +50,7 @@ export default {
   components: {
   },
   props: [
-    'lecture-title'
+    'course-title'
   ],
   data () {
     return {
@@ -68,14 +68,14 @@ export default {
         { text: 'Fall', value: 2 },
         { text: 'Winter', value: 3 }
       ],
-      lectureId: null,
+      courseId: null,
       showErrorResult: false,
       userNotExistUserList: [],
       alreadyRegisteredUserList: []
     }
   },
   mounted () {
-    this.lectureId = this.$route.params.lectureId
+    this.courseId = this.$route.params.courseId
   },
   methods: {
     resetModal () {
@@ -90,7 +90,7 @@ export default {
       this.showErrorResult = false
       const data = {
         username: this.form.studentIds.filter(studentId => (studentId.value !== '')).map(studentId => studentId.value),
-        course_id: this.$route.params.lectureId
+        course_id: this.$route.params.courseId
       }
       const res = await api.registerStudent(data)
       if (!res.data.error && !res.data.data) {

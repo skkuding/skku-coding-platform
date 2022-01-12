@@ -61,7 +61,7 @@
     <b-row cols="2" h-align="around">
       <b-col col="3">
         <b-button v-b-modal.register-new-user>+ Register New Students</b-button>
-        <register-new-user-modal :lecture-title="lectureTitle" @update="currentChange(currentPage)"></register-new-user-modal>
+        <register-new-user-modal :course-title="courseTitle" @update="currentChange(currentPage)"></register-new-user-modal>
       </b-col>
       <b-col class="panel-options" col="5">
         <b-pagination
@@ -86,7 +86,7 @@ export default {
     RegisterNewUserModal
   },
   props: [
-    'lecture-title'
+    'course-title'
   ],
   data () {
     return {
@@ -124,13 +124,13 @@ export default {
         { value: 'All', text: 'All' }
       ],
       selectedUserIDs: [],
-      lectureId: null,
+      courseId: null,
       mounted: false
     }
   },
   async mounted () {
     this.mounted = true
-    this.lectureId = this.$route.params.lectureId
+    this.courseId = this.$route.params.courseId
     await this.getUserList(1)
   },
   methods: {
@@ -143,7 +143,7 @@ export default {
     },
     async getUserList (page) {
       try {
-        const res = await api.getCourseStudents(this.lectureId, this.pageSize, (page - 1) * this.pageSize)
+        const res = await api.getCourseStudents(this.courseId, this.pageSize, (page - 1) * this.pageSize)
         this.total = res.data.data.total
         this.userList = res.data.data.results.map(result => Object({
           registration_id: result.id,

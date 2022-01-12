@@ -7,7 +7,7 @@
       id="dashboard"
     >
       <b-col>
-        <user-list :lecture-title="title"></user-list>
+        <user-list :course-title="title"></user-list>
       </b-col>
     </b-row>
     <b-row
@@ -28,7 +28,7 @@
           :current-page="updateCurrentPage"
         >
           <template #cell(title)="data">
-            <b-link :to="{ name: 'lecture-assignment-list', params: { lectureId: data.item.course.id, assignmentAnchor: data.item.id } }"> {{ data.value }}</b-link>
+            <b-link :to="{ name: 'course-assignment-list', params: { courseId: data.item.course.id, assignmentAnchor: data.item.id } }"> {{ data.value }}</b-link>
           </template>
           <template #cell(status)="data">
             <b-button
@@ -64,7 +64,7 @@
 import api from '../../api.js'
 import UserList from '../users/UserList.vue'
 export default {
-  name: 'LectureDashboard',
+  name: 'CourseDashboard',
   components: {
     UserList
   },
@@ -78,7 +78,7 @@ export default {
       },
       pageSize: 5,
       currentPage: 1,
-      lectureId: null,
+      courseId: null,
       createdBy: {},
       title: '',
       courseCode: '',
@@ -88,7 +88,7 @@ export default {
       pageLocations: [
         {
           text: '',
-          to: '/lecture/' + this.$route.params.lectureId + '/dashboard'
+          to: '/course/' + this.$route.params.courseId + '/dashboard'
         },
         {
           text: 'Dashboard'
@@ -113,9 +113,9 @@ export default {
     }
   },
   async mounted () {
-    this.lectureId = this.$route.params.lectureId
+    this.courseId = this.$route.params.courseId
     try {
-      const res = await api.getCourseList(this.lectureId)
+      const res = await api.getCourseList(this.courseId)
       this.createdBy = res.data.data.created_by
       this.title = res.data.data.title
       this.courseCode = res.data.data.course_code
@@ -136,7 +136,7 @@ export default {
     async getAssignmentList (page) {
       this.loading = true
       try {
-        const res = await api.getAssignmentList(this.lectureId, null, this.pageSize, (page - 1) * this.pageSize)
+        const res = await api.getAssignmentList(this.courseId, null, this.pageSize, (page - 1) * this.pageSize)
         this.total = res.data.data.total
         this.assignmentList = res.data.data.results
       } catch (err) {
@@ -144,10 +144,10 @@ export default {
         this.loading = false
       }
     },
-    async updateLectureList () {
+    async updateCourseList () {
       try {
         const res = await api.getCourseList()
-        this.lectureList = res.data.data.results
+        this.courseList = res.data.data.results
       } catch (err) {
       }
     }

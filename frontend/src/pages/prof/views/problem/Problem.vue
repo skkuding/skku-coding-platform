@@ -523,19 +523,19 @@ export default {
       assignmentId: '',
       pageLocations: [
         {
-          text: this.$route.params.lectureInfo,
-          to: '/lecture/' + this.$route.params.lectureId + '/dashboard'
+          text: this.$route.params.courseInfo,
+          to: '/course/' + this.$route.params.courseId + '/dashboard'
         },
         {
           text: this.$route.params.assignmentInfo,
-          to: '/lecture/' + this.$route.params.lectureId + '/assignment'
+          to: '/course/' + this.$route.params.courseId + '/assignment'
         }
       ]
     }
   },
   async mounted () {
     this.routeName = this.$route.name
-    if (this.routeName === 'edit-lecture-problem') {
+    if (this.routeName === 'edit-course-problem') {
       this.mode = 'edit'
     } else {
       this.mode = 'add'
@@ -825,8 +825,8 @@ export default {
         }
       }
       const funcName = {
-        'create-lecture-problem': 'createAssignmentProblem',
-        'edit-lecture-problem': 'editAssignmentProblem'
+        'create-course-problem': 'createAssignmentProblem',
+        'edit-course-problem': 'editAssignmentProblem'
       }[this.routeName]
       if (funcName === 'editAssignmentProblem') {
         this.problem.assignment_id = this.assignment.id
@@ -848,13 +848,13 @@ export default {
           this.testCaseUploaded = true
           this.problem.test_case_id = response.data.data.id
           await api[funcName](this.problem)
-          this.$router.push({ name: 'lecture-assignment-list', params: { assignmentId: this.assignmentId } })
+          this.$router.push({ name: 'course-assignment-list', params: { assignmentId: this.assignmentId } })
         } catch (err) {
         }
       } else {
         try {
           await api[funcName](this.problem)
-          this.$router.push({ name: 'lecture-assignment-list', params: { assignmentId: this.assignmentId } })
+          this.$router.push({ name: 'course-assignment-list', params: { assignmentId: this.assignmentId } })
         } catch (err) {
         }
       }

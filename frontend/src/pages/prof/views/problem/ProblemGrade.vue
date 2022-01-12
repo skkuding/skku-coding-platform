@@ -98,7 +98,7 @@ export default {
     return {
       problemId: 'A',
       assignmentId: 0,
-      lectureId: 0,
+      courseId: 0,
       problemTitle: 'Have to be changed',
       pageSize: 10,
       total: 1,
@@ -112,12 +112,12 @@ export default {
       ],
       pageLocations: [
         {
-          text: this.$route.params.lectureInfo,
-          to: '/lecture/' + this.$route.params.lectureId + '/dashboard'
+          text: this.$route.params.courseInfo,
+          to: '/course/' + this.$route.params.courseId + '/dashboard'
         },
         {
           text: this.$route.params.assignmentInfo,
-          to: '/lecture/' + this.$route.params.lectureId + '/assignment'
+          to: '/course/' + this.$route.params.courseId + '/assignment'
         },
         {
           text: this.$route.params.problemId + ' - '
@@ -138,7 +138,7 @@ export default {
     }
   },
   mounted () {
-    this.lectureId = this.$route.params.lectureId
+    this.courseId = this.$route.params.courseId
     this.assignmentId = this.$route.params.assignmentId
     this.problemId = this.$route.params.problemId
     this.problemTitle = this.$route.params.problemInfo
