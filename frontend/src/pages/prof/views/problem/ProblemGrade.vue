@@ -121,7 +121,7 @@ export default {
     this.submissionList = res.data.data.results
   },
   mounted () {
-    this.pageLocations += this.problemTitle
+    this.pageLocations[2].text += this.problemTitle
     this.init()
     this.getSubmissionList()
   },

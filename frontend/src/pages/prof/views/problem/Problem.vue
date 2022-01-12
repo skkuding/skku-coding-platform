@@ -1,5 +1,6 @@
 <template>
-  <div class="problem" style="flex: 1 0 auto">
+  <div class="flex-grow-1 mx-2 problem">
+    <b-breadcrumb :items="pageLocations" class="mt-3"></b-breadcrumb>
     <Panel :title="title">
       <b-row>
         <b-col cols="3">
@@ -487,7 +488,17 @@ export default {
         { key: 'score', label: 'Score' }
       ],
       search: '',
-      assignmentId: ''
+      assignmentId: '',
+      pageLocations: [
+        {
+          text: this.$route.params.lectureInfo,
+          to: '/lecture/' + this.$route.params.lectureId + '/dashboard'
+        },
+        {
+          text: this.$route.params.assignmentInfo,
+          to: '/lecture/' + this.$route.params.lectureId + '/assignment'
+        }
+      ]
     }
   },
   async mounted () {
@@ -552,11 +563,19 @@ export default {
       this.problem.testcases = this.problem.testcases.concat(testcaseData.testcases)
       if (testcaseData.spj === 'True') this.problem.spj = true
       else this.problem.spj = testcaseData.spj === 'True'
+      this.pageLocations.push({
+        text: this.$route.params.problemId + ' - ' + this.problem.title
+      }, {
+        text: 'Edit problem'
+      })
     } else {
       this.title = 'Add Problem'
       for (const item of allLanguage.languages) {
         this.problem.languages.push(item.name)
       }
+      this.pageLocations.push({
+        text: 'Create Problem'
+      })
     }
   },
   watch: {
