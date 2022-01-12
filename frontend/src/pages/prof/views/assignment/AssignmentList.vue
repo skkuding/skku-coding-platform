@@ -15,17 +15,29 @@
             head-variant="light"
           >
             <template #cell(show_detail)="row">
-              <b-button size="sm" @click="row.toggleDetails" class="mb-2">
+              <b-button size="sm" @click="updateAssignmentProblem(row.item.id);row.toggleDetails()" class="mb-2">
                 <b-icon icon="caret-right-fill" aria-hidden="true"></b-icon>
               </b-button>
             </template>
-            <template #row-details>
+            <template v-slot:row-details="row">
               <b-table
                 borderless
                 hover
-                :items="problemList"
+                :items="row.item.problemList"
                 :fields="problemField"
               >
+                <template #cell(number)="data">
+                  {{ data.item.number }}
+                </template>
+                <template #cell(type)="data">
+                  {{ data.item.type }}
+                </template>
+                <template #cell(title)="data">
+                  {{ data.item.title }}
+                </template>
+                <template #cell(submission)="data">
+                  {{ data.item.submission }}
+                </template>
                 <template #cell(operation)>
                   <div>
                     <icon-btn
@@ -50,9 +62,9 @@
               <b-button size="sm" variant="primary" class="mr-2">
                 +problem<br>Create a new problem
               </b-button>
-              <div v-if="!problemList.length" v-text="center-align">
+              <!--<div v-if="!problemList.length" v-text="center-align">
                 No Problem
-              </div>
+              </div>-->
             </template>
             <template #cell(title)="data">
               {{ data.item.title }}
@@ -174,11 +186,27 @@ export default {
     this.assignmentList = res.data.data.results
   },
   methods: {
-    async updateAssignmentList () {
+    async showAssignmentList () {
       api.getAssignmentList(this.lectureId)
+    },
+    async showAssignmentProblemList (assignmentId) {
+      api.getAssignmentProblemList(assignmentId)
+    },
+    async updateAssignmentProblem (assignmentId) {
+      const res = await api.getAssignmentProblemList(assignmentId)
+      for (let i = 0; i < this.assignmentList.length; i++) {
+        if (this.assignmentList[i].id === assignmentId) {
+          this.assignmentList[i].problemList = res.data.data.results
+        }
+        console.log(this.assignmentList[i])
+      }
+      await this.showAssignmentProblemList(assignmentId)
     }
   },
   computed: {
+    updateAssignmentList () {
+      return this.showAssignmentList(this.lectureId)
+    }
   }
 }
 </script>
