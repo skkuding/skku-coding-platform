@@ -52,7 +52,7 @@ export default new VueRouter({
         },
         {
           path: '/lecture/:lectureId/QnA',
-          name: 'create-contest',
+          name: 'QnA',
           component: QnA
         }
       ]

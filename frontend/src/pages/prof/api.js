@@ -287,11 +287,6 @@ export default {
       data
     })
   },
-  addProblemFromPublic (data) {
-    return ajax('admin/contest/add_problem_from_public', 'post', {
-      data
-    })
-  },
   getReleaseNotes () {
     return ajax('admin/versions', 'get')
   },
@@ -413,6 +408,11 @@ export default {
     const params = { id: id }
     return ajax('/lecture/professor/course/assignment/problem', 'delete', {
       params: params
+    })
+  },
+  addProblemFromPublic (data) {
+    return ajax('/lecture/professor/course/assignment/add_problem_from_public', 'post', {
+      data
     })
   }
 }

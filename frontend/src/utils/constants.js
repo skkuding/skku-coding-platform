@@ -146,13 +146,6 @@ export const ASSIGNMENT_SUBMISSION_STATUS_REVERSE = {
   // #D75B66 #23345C #F1BA48 #BD8A44
 }
 
-export const ASSIGNMENT_STATUS_REVERSE = {
-  1: 'Not Started',
-  0: 'Underway',
-  '-1': 'Ended'
-  // #D75B66 #23345C #F1BA48 #BD8A44
-}
-
 export const ASSIGNMENT_STATUS = {
   1: 'Not Started',
   0: 'Underway',

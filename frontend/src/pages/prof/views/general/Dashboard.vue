@@ -64,7 +64,7 @@
           :current-page="updateCurrentPage"
         >
           <template #cell(title)="data">
-            <b-link :to="'/lecture/' + data.item.course.id + '/assignment#' + data.item.id"> {{ data.value }}</b-link>
+            <b-link :to="{ name: 'lecture-assignment-list', params: { lectureId: data.item.course.id, assignmentAnchor: data.item.id } }"> {{ data.value }}</b-link>
           </template>
           <template #cell(status)="data">
             <b-button

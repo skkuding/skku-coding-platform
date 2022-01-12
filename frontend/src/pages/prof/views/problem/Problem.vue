@@ -525,10 +525,6 @@ export default {
       source: '',
       io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
     }
-    if (this.$route.params.problemId) {
-      const res = await api.getPublicProblemDetail
-      console.log(this.$route.params.problemId + res) // Need revise
-    }
     const assignmentId = this.$route.params.assignmentId
     if (assignmentId) {
       this.problem.assignment_id = this.reProblem.assignment_id = assignmentId
