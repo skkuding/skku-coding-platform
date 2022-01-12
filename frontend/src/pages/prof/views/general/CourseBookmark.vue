@@ -1,9 +1,10 @@
 <template>
   <div class="flex-grow-1 mx-2">
+    <b-breadcrumb :items="pageLocations" class="mt-3"></b-breadcrumb>
     <b-row
       type="flex"
       cols = "1"
-      id="dashboard"
+      id="bookmark-course-list"
     >
       <b-card title="All Course" class="admin-info drop-shadow-custom">
         <b-table
@@ -27,14 +28,6 @@
             {{data.item.registered_year + '-' + semesterStr[data.value]}}
           </template>
         </b-table>
-        <div class="panel-options">
-          <b-pagination
-            v-model="currentPage"
-            :per-page="pageSize"
-            :total-rows="total"
-            style="position: absolute; right: 20px; top: 15px;"
-          />
-        </div>
       </b-card>
     </b-row>
   </div>
@@ -47,15 +40,22 @@ export default {
   name: 'CourseBookmark',
   data () {
     return {
-      pageSize: 10,
-      currentPage: 1,
       bookmarkList: [],
       bookmarkIDList: [],
       courseList: [],
       courseListFields: [
         'title', 'semester'
       ],
-      semesterStr: ['Spring', 'Summer', 'Fall', 'Winter']
+      semesterStr: ['Spring', 'Summer', 'Fall', 'Winter'],
+      pageLocations: [
+        {
+          text: 'Dashboard',
+          to: '/dashboard'
+        },
+        {
+          text: 'All courses'
+        }
+      ]
     }
   },
   computed: {
@@ -64,7 +64,7 @@ export default {
     try {
       const res = await api.getBookmarkCourseList(null, 250, 0)
       this.bookmarkList = res.data.data.results
-      for (var course of this.bookmarkList) {
+      for (const course of this.bookmarkList) {
         (this.bookmarkIDList).push(course.id)
       }
       const resp = await api.getCourseList()
@@ -84,15 +84,17 @@ export default {
       for (var course of this.bookmarkList) {
         (this.bookmarkIDList).push(course.id)
       }
+      this.$parent.updateSidebar += 1
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  @font-face {
-    font-family: Manrope_bold;
-    src: url('../../../../fonts/Manrope-Bold.ttf');
+  #bookmark-course-list {
+    margin: auto;
+    flex:1 0;
+    max-width: 1300px;
   }
   .drop-shadow-custom {
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
@@ -100,7 +102,7 @@ export default {
   .bookmark {
     &__btn ::v-deep {
       background-color: transparent;
-      border: transparent 1px solid;
+      border: 1px solid transparent;
       color: #7A7C7B;
     }
     &__btn:hover, __btn:active ::v-deep{
