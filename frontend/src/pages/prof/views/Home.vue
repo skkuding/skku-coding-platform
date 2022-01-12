@@ -144,7 +144,8 @@ export default {
   #content-app {
     padding-left: 15px;
     display: flex;
-    flex: 1 1
+    flex: 1 1;
+    justify-content: center;
   }
 
   .footer {

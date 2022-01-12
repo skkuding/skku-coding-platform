@@ -1,74 +1,82 @@
 <template>
-  <div class="flex-grow-1 mx-2">
+  <div class="flex-grow-1 mx-2" style="max-width: 1300px;">
     <b-breadcrumb :items="pageLocations" class="mt-3"></b-breadcrumb>
-    <Panel :title="'Assignment'+assignmentId+' - '+problemId+' '+problemTitle">
-      <div v-if="!submissionList.length">
-        No Submissions exists
-      </div>
-      <b-table
-        v-else
-        ref="table"
-        :items="submissionList"
-        :fields="field"
-        :per-page="pageSize"
-        :current-page="updateCurrentPage"
-        style="width: 100%"
-      >
-        <template #cell(studentId)="row">
-          {{row.item.student_id}}
-        </template>
-
-        <template #cell(name)="row">
-          {{row.item.name}}
-        </template>
-
-        <template #head(detail)="row">
-          <span>
-            {{row.label}}
-            <icon-btn icon="download" variant="outline-*" @click.native="$bvModal.show('download-submissions-option')"/>
-          </span>
-        </template>
-
-        <template #cell(detail)="row">
-          <b-button @click="showSubmissionDetail(row.item)" variant="light" size="sm">
-            <b-icon
-              icon="code"
-            />
-          </b-button>
-        </template>
-
-        <template #cell(score)="row">
-          <div v-if="!row.item.press" style="margin-top: 6px">
-            {{ row.item.statistic_info.score || ' - '}} / 100
-            <b-button @click="$set(row.item, 'press', true)" variant="light" press="false" size="sm">
-              <b-icon icon="pencil"/>
-            </b-button>
+    <b-row
+      type="flex"
+      cols = "1"
+      id="problem-grade"
+    >
+      <b-col>
+        <Panel :title="'Assignment'+assignmentId+' - '+problemId+' '+problemTitle">
+          <div v-if="!submissionList.length">
+            No Submissions exists
           </div>
-          <b-form inline v-else style="margin: 6px 12px" >
-            <b-form-input
-              v-model="row.item.newScore"
-              :id="'input-new-score' + row.item.student_id"
-              style="padding-left: 12px; width:53px"
-            ></b-form-input>
-            / 100
-            <b-button @click="$set(row.item, 'press', false)" variant="light" press="false">
-              <b-icon icon="x"/>
-            </b-button>
-            <b-button v-if="row.item.press" @click="editSubmissionScore(row.item.id, row.item.newScore, row)" variant="light">
-              <b-icon-check/>
-            </b-button>
-          </b-form>
-        </template>
-      </b-table>
-      <div class="panel-options">
-        <b-pagination
-          v-model="currentPage"
-          :per-page="pageSize"
-          :total-rows="total"
-          style="position: absolute; right: 20px; top: 15px;"
-        />
-      </div>
-    </Panel>
+          <b-table
+            v-else
+            ref="table"
+            :items="submissionList"
+            :fields="field"
+            :per-page="pageSize"
+            :current-page="updateCurrentPage"
+            style="width: 100%"
+          >
+            <template #cell(studentId)="row">
+              {{row.item.student_id}}
+            </template>
+
+            <template #cell(name)="row">
+              {{row.item.name}}
+            </template>
+
+            <template #head(detail)="row">
+              <span>
+                {{row.label}}
+                <icon-btn icon="download" variant="outline-*" @click.native="$bvModal.show('download-submissions-option')"/>
+              </span>
+            </template>
+
+            <template #cell(detail)="row">
+              <b-button @click="showSubmissionDetail(row.item)" variant="light" size="sm">
+                <b-icon
+                  icon="code"
+                />
+              </b-button>
+            </template>
+
+            <template #cell(score)="row">
+              <div v-if="!row.item.press" style="margin-top: 6px">
+                {{ row.item.statistic_info.score || ' - '}} / 100
+                <b-button @click="$set(row.item, 'press', true)" variant="light" press="false" size="sm">
+                  <b-icon icon="pencil"/>
+                </b-button>
+              </div>
+              <b-form inline v-else style="margin: 6px 12px" >
+                <b-form-input
+                  v-model="row.item.newScore"
+                  :id="'input-new-score' + row.item.student_id"
+                  style="padding-left: 12px; width:53px"
+                ></b-form-input>
+                / 100
+                <b-button @click="$set(row.item, 'press', false)" variant="light" press="false">
+                  <b-icon icon="x"/>
+                </b-button>
+                <b-button v-if="row.item.press" @click="editSubmissionScore(row.item.id, row.item.newScore, row)" variant="light">
+                  <b-icon-check/>
+                </b-button>
+              </b-form>
+            </template>
+          </b-table>
+          <div class="panel-options">
+            <b-pagination
+              v-model="currentPage"
+              :per-page="pageSize"
+              :total-rows="total"
+              style="position: absolute; right: 20px; top: 15px;"
+            />
+          </div>
+        </Panel>
+      </b-col>
+    </b-row>
     <b-modal id="download-submissions-option" title="Download All Submissions" @ok="downloadAllSubmissions">
       Select download options and click ok to download All Submissions.
       <b-form-checkbox v-model="downloadExcludeAdmin">
@@ -180,4 +188,9 @@ export default {
 </script>
 
 <style  scoped lang="scss">
+  #problem-grade {
+    margin: auto;
+    flex:1 0;
+    max-width: 1300px;
+  }
 </style>

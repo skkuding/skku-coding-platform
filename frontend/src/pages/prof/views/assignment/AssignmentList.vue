@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-grow-1 mx-2">
+  <div class="flex-grow-1 mx-2" style="max-width: 1300px;">
     <b-breadcrumb :items="pageLocations" class="mt-3"></b-breadcrumb>
     <b-row
       type="flex"
