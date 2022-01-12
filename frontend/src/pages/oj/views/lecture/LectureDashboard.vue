@@ -9,6 +9,7 @@
       v-model="value"
       class="border rounded p-2 calendar"
       :date-info-fn="dateClass"
+      @context="onContext"
       selected-variant="success"
       nav-button-variant="secondary"
       locale="en"
@@ -16,8 +17,8 @@
     </b-col>
     <b-col>
       <b-card :title= "value" class = "card h-100">
-        <b-button class ="AssignmentName w-100" @click="goAssignmentDetail" variant = "outline-light">
-          Assignment 3
+        <b-button v-if = assignmentExists() class ="AssignmentName w-100" @click="goAssignmentDetail(assignmentFind().id)" variant = "outline-light">
+          {{ assignmentFind().title }}
         </b-button>
       </b-card>
     </b-col>
@@ -41,6 +42,7 @@ export default {
     return {
       value: '',
       courseID: '',
+      context: '',
       lecture: {
         title: '',
         course_code: '',
@@ -50,7 +52,9 @@ export default {
         created_by: ''
       },
       assignment: [],
-      datepick: []
+      datepick: [],
+      assignmentnums: [],
+      assignmentflag: false
     }
   },
   async mounted () {
@@ -71,20 +75,46 @@ export default {
         name: 'lecture-assignment'
       })
     },
-    async goAssignmentDetail () {
+    async goAssignmentDetail (id) {
       await this.$router.push({
-        name: 'lecture-assignment-detail'
+        name: 'lecture-assignment-detail',
+        params: { courseID: this.courseID, assignmentID: id }
       })
     },
     dateClass (ymd, date) {
       const moment = require('moment')
-      for (var i in this.assignment) {  
+      for (var i in this.assignment) {
+        this.assignmentnums.push(i)
         this.datepick.push(moment(date).isBetween(this.assignment[i].start_time, this.assignment[i].end_time) ? date : '')
       }
       for (var j in this.datepick) {
         if (moment(this.datepick[j]).isSame(date)) {
           return 'AssignmentDates'
         }
+      }
+    },
+    onContext (ctx) {
+      this.context = ctx
+    },
+    assignmentFind () {
+      const moment = require('moment')
+      for (var i in this.datepick) {
+        if (moment(this.datepick[i]).isSame(this.value)) {
+          return this.assignment[this.assignmentnums[i]]
+        }
+      }
+    },
+    assignmentExists () {
+      const moment = require('moment')
+      var flag = false
+      for (var i in this.datepick) {
+        if (moment(this.datepick[i]).isSame(this.value)) {
+          flag = true
+          return true
+        }
+      }
+      if (flag === false) {
+        return false
       }
     }
   },
@@ -106,7 +136,7 @@ export default {
     color: #7C7A7B;
     display:inline;
     position:relative;
-    top:24px;
+    top:36px;
   }
   .dashboard-list-card {
     margin:0 auto;
