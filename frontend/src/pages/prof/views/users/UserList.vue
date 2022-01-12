@@ -37,30 +37,30 @@
       <template #cell(selection)="row">
         <b-form-checkbox
           v-model="selectedUserIDs"
-          :value="row.item.id"
+          :value="row.item.registration_id"
         >
         </b-form-checkbox>
       </template>
 
-      <template #cell(create_time)="row">
-        {{ row.item.create_time | localtime }}
+      <template #cell(create_time)="data">
+        {{ data.item.create_time ? data.item.create_time.split(/[T]|[.]/).slice(0,2).join(' ') : 'No data' }}
       </template>
 
-      <template #cell(last_login)="row">
-        {{ row.item.last_login | 'No data'}}
+      <template #cell(last_login)="data">
+        {{ data.item.last_login ? data.item.last_login.split(/[T]|[.]/).slice(0,2).join(' ') : 'No data'}}
       </template>
 
       <template #cell(Option)="row">
         <icon-btn
           name="Delete"
           icon="trash"
-          @click.native="deleteUsers([row.item.id])"
+          @click.native="deleteUsers([row.item.registration_id])"
         />
       </template>
     </b-table>
     <b-row cols="2" h-align="around">
       <b-col col="3">
-        <b-button v-b-modal.register-new-user>+ Register New User</b-button>
+        <b-button v-b-modal.register-new-user>+ Register New Students</b-button>
         <register-new-user-modal :lecture-title="lectureTitle" @update="currentChange(currentPage)"></register-new-user-modal>
       </b-col>
       <b-col class="panel-options" col="5">
@@ -95,19 +95,18 @@ export default {
       userList: [],
       userListFields: [
         { key: 'selection', label: '' },
-        { key: 'id', label: 'registration ID' },
-        { key: 'user.username', label: 'Username' },
-        { key: 'user.create_time', label: 'Create Time' },
-        { key: 'user.last_login', label: 'Last Login' },
-        { key: 'user.real_name', label: 'Real Name' },
-        { key: 'user.email', label: 'Email' },
-        { key: 'user.admin_type', label: 'User Type' },
-        { key: 'user.major', label: 'User Major' },
+        { key: 'registration_id', label: 'registration ID' },
+        { key: 'username', label: 'Username' },
+        { key: 'create_time', label: 'Create Time' },
+        { key: 'last_login', label: 'Last Login' },
+        { key: 'real_name', label: 'Real Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'admin_type', label: 'User Type' },
+        { key: 'major', label: 'User Major' },
         { key: 'Option', label: 'Option', thClass: 'userTable' }
       ],
       usersPerPage: [],
       user: {},
-      loadingTable: false,
       currentPage: 1,
       adminTypeOptions: [
         { value: 'Regular User', text: 'Regular User' },
@@ -144,21 +143,17 @@ export default {
     },
     // 사용자 목록 가져 오기
     async getUserList (page) {
-      this.loadingTable = true
       try {
-        const data = {
-          course_id: this.lectureId,
-          offset: (page - 1) * this.pageSize,
-          limit: this.pageSize
-        }
-        console.log(data)
         const res = await api.getCourseStudents(this.lectureId, this.pageSize, (page - 1) * this.pageSize)
-        console.log(res)
         this.total = res.data.data.total
-        this.userList = res.data.data.results
+        this.userList = res.data.data.results.map(result => Object({
+          registration_id: result.id,
+          course: result.course,
+          ...result.user
+        }))
+        console.log(this.userList)
       } catch (err) {
-      } finally {
-        this.loadingTable = false
+        console.error(err)
       }
     },
     async deleteUsers (registrationIds) {
