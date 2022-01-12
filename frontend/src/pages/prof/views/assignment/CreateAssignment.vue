@@ -197,7 +197,6 @@ export default {
   },
   watch: {
     async modalTypeOrAssignmentId () {
-      console.log('edit-assignment-called')
       if (this.modalType === 'edit') {
         this.resetModal()
         this.modalTitle = 'Edit Assignment'

@@ -128,13 +128,11 @@ export default {
       this.registeredTerms = Array.from(registeredTerms).map(term =>
         JSON.parse(term)
       )
-      console.log(this.registeredTerms)
       this.lectures = lectures
     }
   },
   watch: {
     'update' () {
-      console.log('update sidebar')
       this.groupLectures()
     }
   }

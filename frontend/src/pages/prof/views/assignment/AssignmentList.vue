@@ -335,7 +335,6 @@ export default {
         await api.deleteAssignment(this.lectureId, assignmentId)
         this.getAssignmentList()
       } catch (err) {
-        console.log(err)
       }
     },
     async deleteAssignmentProblem (assignmentId, problemId) {
@@ -344,7 +343,6 @@ export default {
         await api.deleteAssignmentProblem(problemId)
         await this.updateAssignmentProblemList(assignmentId)
       } catch (err) {
-        console.log(err)
       }
     },
     assignmentStatus (status) {

@@ -125,10 +125,6 @@ export default {
     } catch (err) {
       this.$error(err)
     }
-    console.log(
-      this.createdBy + this.title + this.courseCode +
-      this.classNumber + this.registeredYear + this.semester
-    )
     this.getAssignmentList(1)
     this.pageLocations[0].text = this.title + '_' + this.courseCode + '-' + this.classNumber
   },
@@ -144,7 +140,6 @@ export default {
         this.total = res.data.data.total
         this.assignmentList = res.data.data.results
       } catch (err) {
-        console.log(err)
       } finally {
         this.loading = false
       }
@@ -154,7 +149,6 @@ export default {
         const res = await api.getCourseList()
         this.lectureList = res.data.data.results
       } catch (err) {
-        console.log(err)
       }
     }
   },
