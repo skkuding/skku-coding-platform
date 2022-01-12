@@ -57,7 +57,7 @@
         </b-button>
       </b-card>
     </b-col>
-    <register-new-course-modal @newCourseCreated="updateCourseList"></register-new-course-modal>
+    <course-modal @submitCourseData="updateCourseList" :mode="mode"/>
     <b-col
       :sm="12"
       :xs="12"
@@ -111,13 +111,13 @@ import { mapGetters } from 'vuex'
 import browserDetector from 'browser-detect'
 import InfoCard from '@prof/components/infoCard.vue'
 import api from '../../api.js'
-import RegisterNewCourseModal from './RegisterNewCourse.vue'
+import CourseModal from './CourseModal.vue'
 
 export default {
   name: 'Dashboard',
   components: {
     InfoCard,
-    RegisterNewCourseModal
+    CourseModal
   },
   data () {
     return {
@@ -151,7 +151,8 @@ export default {
       session: {},
       semester: ['Spring', 'Summer', 'Fall', 'Winter'],
       currentYear: '',
-      currentSemester: ''
+      currentSemester: '',
+      mode: 'create'
     }
   },
   async mounted () {
@@ -219,7 +220,9 @@ export default {
     async updateCourseList () {
       try {
         const res = await api.getBookmarkCourseList()
-        this.courseList = res.data.data.results
+        res.data.data.results.map(course => {
+          this.courseList.push(course.course)
+        })
         this.$parent.updateSidebar += 1
       } catch (err) {
       }

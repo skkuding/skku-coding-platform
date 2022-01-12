@@ -98,6 +98,17 @@ export default {
       data
     })
   },
+  editCourse (data) {
+    return ajax('lecture/professor/course/', 'put', {
+      data
+    })
+  },
+  deleteCourse (id) {
+    const params = { id: id }
+    return ajax('lecture/professor/course/', 'delete', {
+      params: params
+    })
+  },
   getCourseStudents (courseId, limit, offset) {
     const params = { course_id: courseId, limit, offset }
     return ajax('lecture/professor/course/students/', 'get', {
