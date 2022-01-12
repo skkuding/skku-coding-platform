@@ -1,26 +1,26 @@
 <template>
-  <!-- Please split into many componenets !-->
-  <div>
-    <b-list-group>
-      <b-list-group-item
-        to="/lecture/1"
-        class="list-group"
-      >
-        Lecture Dashboard
-      </b-list-group-item>
-      <b-list-group-item
-        to="/lecture/1/assignment"
-        class="list-group"
-      >
-        Lecture Assignments
-      </b-list-group-item>
-      <b-list-group-item
-        to="/lecture/1/question"
-        class="list-group"
-      >
-        QnA
-      </b-list-group-item>
-    </b-list-group>
+  <div class="lecture-list-card font-bold">
+    <div class="top-bar mb-5" style="margin-top:4px;">
+      <h2 class = "title">Lectures</h2>
+    </div>
+    <div class = "table lecture-list-table mt-4" >
+      <b-table
+      id="lecturelist"
+      :items="items"
+      :per-page="perPage"
+      head-variant="light"
+      :current-page="currentPage"
+      @row-clicked = "goDashboard"></b-table>
+    </div>
+    <div class="pagination">
+    <b-pagination
+      v-model="currentPage"
+      :total-rows="rows"
+      :per-page="perPage"
+      aria-controls="lecturelist"
+      align="right"
+    ></b-pagination>
+    </div>
   </div>
 </template>
 
@@ -32,17 +32,63 @@ export default {
   },
   data () {
     return {
+      perPage: 10,
+      currentPage: 1,
+      items: [
+        { subject: '프로그래밍 기초와 실습', semester: '2021 spring' },
+        { subject: '공학 컴퓨터 프로그래밍', semester: '2021 fall' }
+      ]
     }
   },
   async mounted () {
   },
   methods: {
+    async goDashboard () {
+      await this.$router.push({
+        name: 'lecture-dashboard'
+      })
+    }
   },
   computed: {
+    rows () {
+      return this.items.length
+    }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  .font-bold {
+    font-family: manrope_bold;
+  }
+  .lecture-list-card{
+    margin:0 auto;
+    width:70%;
+    font-family:Manrope;
+    .lecture-list-table{
+      width: 95%;
+      margin: 0 auto;
+    }
+  }
+  .table {
+    width:95% !important;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .title {
+    margin-bottom:0;
+    color: #7C7A7B;
+    display:inline;
+    position:relative;
+    top:36px;
+    }
+  div {
+    &.pagination{
+      margin-right: 5%;
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
   // Be careful of common css selector in admin/oj
 </style>
