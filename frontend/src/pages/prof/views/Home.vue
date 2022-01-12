@@ -42,7 +42,7 @@
           name="fadeInUp"
           mode="out-in"
         >
-          <router-view />
+          <router-view :key="$route.path"/>
         </transition>
       </div>
 
