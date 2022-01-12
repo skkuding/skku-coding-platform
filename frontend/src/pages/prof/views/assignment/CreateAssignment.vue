@@ -12,15 +12,15 @@
         label="Assignment Title"
         label-for="input-assignment-title"
         required
-        :state="form.assignmentTitle !== ''"
+        :state="form.title !== ''"
         invalid-feedback="Assignment Title is required"
       >
         <b-form-input
           id="input-assignment-title"
-          v-model="form.assignmentTitle"
+          v-model="form.title"
           placeholder="Enter Title"
           required
-          :state="form.assignmentTitle !== ''"
+          :state="form.title !== ''"
         ></b-form-input>
       </b-form-group>
       <b-form-group
@@ -31,13 +31,7 @@
         :state="form.content !== ''"
         invalid-feedback="Content is required"
       >
-        <b-form-input
-          id="input-assignment-content"
-          v-model="form.assignmentContent"
-          placeholder="Enter Content"
-          required
-          :state="form.content !== ''"
-        ></b-form-input>
+        <tiptap v-model="form.content"/>
       </b-form-group>
       <b-row>
         <b-col>
@@ -102,18 +96,23 @@
 </template>
 
 <script>
-// import api from '../../api.js'
+import api from '../../api.js'
+import Tiptap from '../../components/Tiptap.vue'
 export default {
   name: 'RegisterNewLectureModal',
   components: {
+    Tiptap
   },
+  props: [
+    'lecture-id'
+  ],
   data () {
     return {
       form: {
-        assignmentTitle: '',
+        title: '',
         content: '',
-        startTime: '',
-        endTime: ''
+        start_time: '',
+        end_time: ''
       },
       startDate: '',
       startTime: '',
@@ -122,9 +121,20 @@ export default {
     }
   },
   methods: {
-    async submitNewLecture () {
-      // await api.registerNewLecture(this.form)
-      alert(this.form)
+    async createNewAssignment () {
+      console.log(this.lectureId)
+      this.setStartTime()
+      this.setEndTime()
+      const data = {
+        title: this.form.title,
+        course_id: this.lectureId,
+        content: this.form.content,
+        start_time: this.form.start_time,
+        end_time: this.form.end_time
+      }
+      await api.createAssignment(data)
+      this.$emit('update')
+      console.log(data)
     },
     initTime () {
       ;[this.startDate, this.startTime] = this.form.start_time.split(/T|[+]/)

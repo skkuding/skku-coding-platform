@@ -318,7 +318,6 @@ export default {
     return ajax('admin/upload_file', 'post', {
       data
     })
-<<<<<<< HEAD
   },
   getCourseList (courseId, limit, offset) {
     const params = { id: courseId, limit, offset }
@@ -369,8 +368,44 @@ export default {
     return ajax('/lecture/professor/course/assignment', 'post', {
       data
     })
-=======
->>>>>>> Initiate lecture professor page
+  },
+  createAssignment (data) {
+    return ajax('/lecture/professor/course/assignment', 'post', {
+      data
+    })
+  },
+  editAssignment (data) {
+    return ajax('/lecture/professor/course/assignment', 'put', {
+      data
+    })
+  },
+  deleteAssignment (courseId, assignmentId) {
+    const params = { course_id: courseId, assignment_id: assignmentId }
+    return ajax('/lecture/professor/course/assignment', 'delete', {
+      params: params
+    })
+  },
+  getAssignmentProblemList (problemId, assignmentId) {
+    const params = { problem_id: problemId, assignment_id: assignmentId }
+    return ajax('/lecture/profressor/course/assignment/problem', 'get', {
+      params: params
+    })
+  },
+  createAssignmentProblem (data) {
+    return ajax('/lecture/profressor/course/assignment/problem', 'post', {
+      data
+    })
+  },
+  editAssignmentProblem (data) {
+    return ajax('/lecture/profressor/course/assignment/problem', 'put', {
+      data
+    })
+  },
+  deleteAssignmenProblem (id) {
+    const params = { id: id }
+    return ajax('/lecture/profressor/course/assignment/problem', 'delete', {
+      params: params
+    })
   }
 }
 
@@ -401,11 +436,7 @@ async function ajax (url, method, options) {
       }
       throw res
     } else {
-<<<<<<< HEAD
       if (method !== 'get' && url !== '/lecture/professor/course/students') {
-=======
-      if (method !== 'get') {
->>>>>>> Initiate lecture professor page
         Vue.prototype.$success('Succeeded')
       }
       return res
