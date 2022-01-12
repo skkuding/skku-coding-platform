@@ -55,7 +55,7 @@
 
 <script>
 import sidemenu from '@oj/components/Sidemenu.vue'
-import { ASSIGNMENT_STATUS_REVERSE, ASSIGNMENT_STATUS, ASSIGNMENT_SUBMISSION_STATUS, ASSIGNMENT_SUBMISSION_STATUS_REVERSE } from '@/utils/constants'
+import { ASSIGNMENT_STATUS_REVERSE, ASSIGNMENT_SUBMISSION_STATUS, ASSIGNMENT_SUBMISSION_STATUS_REVERSE } from '@/utils/constants'
 import api from '@oj/api'
 import moment from 'moment'
 
@@ -90,8 +90,6 @@ export default {
       ],
       assignments: [],
       assignment: '',
-      submission: '',
-      ASSIGNMENT_STATUS: ASSIGNMENT_STATUS,
       ASSIGNMENT_STATUS_REVERSE: ASSIGNMENT_STATUS_REVERSE,
       ASSIGNMENT_SUBMISSION_STATUS: ASSIGNMENT_SUBMISSION_STATUS,
       ASSIGNMENT_SUBMISSION_STATUS_REVERSE: ASSIGNMENT_SUBMISSION_STATUS_REVERSE
@@ -131,23 +129,6 @@ export default {
       return {
         name: ASSIGNMENT_STATUS_REVERSE[value].name,
         color: ASSIGNMENT_STATUS_REVERSE[value].color
-      }
-    },
-    assignmentSubmissionStatus (value) {
-      return {
-        name: ASSIGNMENT_SUBMISSION_STATUS_REVERSE[value].name,
-        color: ASSIGNMENT_SUBMISSION_STATUS_REVERSE[value].color
-      }
-    },
-    submissionStatus (accept, total) {
-      var _accept = accept * 1
-      var _total = total * 1
-      if (_accept === 0) {
-        return '1'
-      } else if (_accept === _total) {
-        return '0'
-      } else {
-        return '-1'
       }
     },
     sortAssignmentList (assignmentList) {
