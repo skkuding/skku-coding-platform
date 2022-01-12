@@ -21,7 +21,7 @@
           class="list-group-subitem"
         >
           <b-icon
-            :icon="click ? 'caret-right-fill' : 'caret-down-fill'"
+            icon="caret-right-fill"
             font-scale="1"
             style="margin-right: 8px; cursor:pointer;"
             v-b-toggle="String(term.registered_year) + '-' + String(term.semester)"
@@ -37,7 +37,7 @@
                 class="list-group-lecture"
               >
                 <b-icon
-                  :icon="click ? 'caret-right-fill' : 'caret-down-fill'"
+                  icon="caret-right-fill"
                   font-scale="1"
                   style="margin-right: 8px; cursor:pointer"
                   v-b-toggle="'inner'+lecture.id"
