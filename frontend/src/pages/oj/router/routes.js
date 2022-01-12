@@ -146,6 +146,12 @@ export default [
     component: LectureAssignmentDetail
   },
   {
+    name: 'lecture-assignment-problem-details',
+    path: '/lecture/:courseID/assignment/:assignmentID/problem/:problemID',
+    component: Problem,
+    meta: { title: 'Lecture Assignment Problem Details' }
+  },
+  {
     name: 'lecture-qna',
     path: '/lecture/:courseID/question',
     meta: { title: 'Lecture QnA' },

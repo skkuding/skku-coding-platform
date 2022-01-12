@@ -102,6 +102,50 @@ export const CONTEST_STATUS_REVERSE = {
   // #D75B66 #23345C #F1BA48 #BD8A44
 }
 
+export const ASSIGNMENT_STATUS = {
+  NOT_START: '1',
+  UNDERWAY: '0',
+  ENDED: '-1'
+}
+
+export const ASSIGNMENT_STATUS_REVERSE = {
+  1: {
+    name: 'Not Started',
+    color: '#5398D9'
+  },
+  0: {
+    name: 'Underway',
+    color: '#F1BA48'
+  },
+  '-1': {
+    name: 'Ended',
+    color: '#D75B66'
+  }
+  // #D75B66 #23345C #F1BA48 #BD8A44
+}
+
+export const ASSIGNMENT_SUBMISSION_STATUS = {
+  NOT_SUBMITTED: '1',
+  SUBMITTING: '0',
+  SUBMITTED: '-1'
+}
+
+export const ASSIGNMENT_SUBMISSION_STATUS_REVERSE = {
+  1: {
+    name: 'Not Submitted',
+    color: '#5398D9'
+  },
+  0: {
+    name: 'Submitting',
+    color: '#F1BA48'
+  },
+  '-1': {
+    name: 'Submitted',
+    color: '#D75B66'
+  }
+  // #D75B66 #23345C #F1BA48 #BD8A44
+}
+
 export const RULE_TYPE = {
   ACM: 'ACM',
   OI: 'OI'

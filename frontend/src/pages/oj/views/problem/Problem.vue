@@ -26,6 +26,18 @@
           <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
         </b-navbar-nav>
 
+        <b-navbar-nav v-else-if="$route.name && $route.name.indexOf('assignment') != -1">
+          <b-nav-item to="#">Assignment</b-nav-item>
+          <b-nav-item>
+            <b-icon icon="chevron-right"/>
+          </b-nav-item>
+          <b-nav-item to="#">{{this.assignment_name}}</b-nav-item>
+          <b-nav-item>
+            <b-icon icon="chevron-right"/>
+          </b-nav-item>
+          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+        </b-navbar-nav>
+
         <b-navbar-nav v-else>
           <b-nav-item>
             <b-icon icon="chevron-right"/>
@@ -257,6 +269,9 @@ export default {
       captchaSrc: '',
       contestID: '',
       problemID: '',
+      courseID: '',
+      assignmentID: '',
+      assignment_name: '',
       submitting: false,
 
       submissionId: '',
@@ -305,16 +320,32 @@ export default {
         }, 1000)
       }
     }
+    if (this.$route.params.assignmentID) {
+      this.route_name = this.$route.name
+      await this.getAssignmentProblems()
+      const res = await this.$store.dispatch('getLectureAssignment')
+      this.changeDomTitle({ title: res.data.data.title })
+      const data = res.data.data
+      this.assignment_name = data.title
+    }
   },
   methods: {
     ...mapActions(['changeDomTitle', 'changeModalStatus']),
     async init () {
       this.contestID = this.$route.params.contestID
       this.problemID = this.$route.params.problemID
+      this.assignmentID = this.$route.params.assignmentID
+      this.courseID = this.$route.params.courseID
+      const route = this.$route.name
+      var res
 
-      const res = this.$route.name === 'problem-details'
-        ? await api.getProblem(this.problemID)
-        : await api.getContestProblem(this.problemID, this.contestID)
+      if (route === 'problem-details') {
+        res = await api.getProblem(this.problemID)
+      } else if (route === 'contest-problem-details') {
+        res = await api.getContestProblem(this.problemID, this.contestID)
+      } else {
+        res = await api.getLectureAssignmentProblems(this.courseID, this.assignmentID, this.problemID)
+      }
 
       const problem = res.data.data
       this.changeDomTitle({ title: problem.title })
@@ -350,6 +381,9 @@ export default {
           this.addStatusColumn(this.ACMTableColumns, res.data.data)
         }
       }
+    },
+    async getAssignmentProblems () {
+      await this.$store.dispatch('getLectureAssignmentProblems')
     },
     async handleRoute (route) {
       await this.$router.push(route)
@@ -400,6 +434,7 @@ export default {
         const id = this.submissionId
         try {
           const res = await api.getSubmission(id)
+          console.log(res.data.data)
           this.result = res.data.data
           if (Object.keys(res.data.data.statistic_info).length !== 0) {
             this.submitting = false
@@ -428,7 +463,8 @@ export default {
         problem_id: this.problem.id,
         language: this.language,
         code: this.code,
-        contest_id: this.contestID
+        contest_id: this.contestID,
+        assignment_id: this.assignmentID
       }
       if (this.captchaRequired) {
         data.captcha = this.captchaCode
