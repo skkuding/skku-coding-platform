@@ -12,6 +12,7 @@
             hover
             :items="assignmentList"
             :fields="assignmentField"
+            :current-page="updateAssignmentList"
             head-variant="light"
           >
             <template #cell(show_detail)="row">
@@ -99,16 +100,18 @@
               </b-icon>
               {{ assignmentStatus(data.item.status).name }}
             </template>
-            <template #cell(operation)>
+            <template #cell(operation)="data">
               <div>
                 <icon-btn
-                  name="Edit"
+                  name="Edit Assignment"
                   icon="pencil"
+                  @click.native="editAssignment()"
                 />
-                <icon-btn
-                  name="Save"
-                  icon="box-arrow-in-down"
-                />
+                <create-assignment-modal
+                  :lecture-id="lectureId"
+                  :modal-type="modalType"
+                  @update="showAssignmentList"
+                ></create-assignment-modal>
                 <icon-btn
                   name="Delete Assignment"
                   icon="trash"
@@ -118,12 +121,17 @@
             </template>
           </b-table>
         </div>
-        <b-button variant="primary" class="mb-2" v-b-modal.createAssignment>
+        <b-button
+          variant="primary"
+          class="mb-2"
+          @click.native="createAssignment()"
+        >
           +Create
         </b-button>
         <create-assignment-modal
           :lecture-id="lectureId"
-          @update="updateAssignmentList"
+          :modal-type="modalType"
+          @update="showAssignmentList"
         ></create-assignment-modal>
         <div v-if="!assignmentList.length" v-text="center-align">
           No Assignment
@@ -146,11 +154,13 @@ export default {
     ImportPublicProblemModal
   },
   props: [
-    'lecture-id'
+    'lecture-id',
+    'modal-type'
   ],
   data () {
     return {
       ASSIGNMENT_STATUS_REVERSE: ASSIGNMENT_STATUS_REVERSE,
+      modalType: '',
       assignmentField: [
         {
           key: 'show_detail',
@@ -191,14 +201,6 @@ export default {
           lable: 'Submission'
         },
         'Operation'
-      ],
-      problemList: [
-        {
-          number: 'A',
-          type: 'Problem',
-          title: '가파른 경사',
-          submission: '58/60'
-        }
       ]
     }
   },
@@ -211,6 +213,14 @@ export default {
   methods: {
     async showAssignmentList () {
       api.getAssignmentList(this.lectureId)
+    },
+    async createAssignment () {
+      this.modalType = 'create'
+      this.$bvModal.show('createAssignment')
+    },
+    async editAssignment () {
+      this.modalType = 'edit'
+      this.$bvModal.show('createAssignment')
     },
     async showAssignmentProblemList (assignmentId) {
       api.getAssignmentProblemList(assignmentId)
@@ -262,7 +272,16 @@ export default {
         color: ASSIGNMENT_STATUS_REVERSE[status].color
       }
     },
-    async handleVisibleSwitch () {
+    async handleVisibleSwitch (res) {
+      const data = {
+        id: res.id,
+        title: res.title,
+        course_id: res.course.id,
+        content: res.content,
+        start_time: res.start_time,
+        end_time: res.end_time
+      }
+      await api.editAssignment(data)
     }
   },
   computed: {
