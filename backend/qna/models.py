@@ -17,7 +17,8 @@ class Question(models.Model):
     content = models.TextField()
     create_time = models.DateTimeField(auto_now_add=True)
     last_update_time = models.DateTimeField(auto_now=True)
-    status = models.BooleanField(default=0)
+    status = models.BooleanField(default=True)
+
     class Meta:
         db_table = "question"
         ordering = ("-create_time",)
