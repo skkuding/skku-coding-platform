@@ -177,14 +177,15 @@ export default {
       }
     })
   },
-  getContestList (offset, limit, keyword) {
-    const params = { paging: true, offset, limit }
-    if (keyword) {
-      params.keyword = keyword
-    }
-    return ajax('admin/contest', 'get', {
-      params: params
+  getContestList (id, offset, limit) {
+    return ajax('/assignment_submissions_professor/', 'get', {
+      params: {
+
+      }
     })
+  },
+  getSubmissionList (){
+
   },
   getContestAnnouncementList (contestID) {
     return ajax('admin/contest/announcement', 'get', {
@@ -301,6 +302,9 @@ export default {
     return ajax('admin/testcase_text', 'post', {
       data
     })
+  },
+  getCourseList () {
+    return ajax('lecture/course', 'get')
   },
   getTestCase (id) {
     return ajax('admin/testcase_text', 'get', {

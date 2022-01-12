@@ -36,7 +36,7 @@ export default new VueRouter({
           component: AssignmentList
         },
         {
-          path: '/lecture/:lectureId/problem/:problemId/grade',
+          path: '/lecture/:lectureId/assignment/:assignmentId/problem/:problemId/grade',
           name: 'lecture-problem-grade',
           component: ProblemGrade
         },
