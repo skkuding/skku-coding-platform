@@ -260,12 +260,17 @@ export default {
     })
   },
   getBookmarkCourseList () {
-    return ajax('lecture/bookmark_course_list/', 'get')
+    return ajax('lecture/course/', 'get', {
+      params: {
+        bookmark: true
+      }
+    })
   },
-  setBookmark (courseID) {
+  setBookmark (courseID, bookmark) {
     return ajax('lecture/bookmark_course/', 'put', {
       data: {
-        course_id: courseID
+        course_id: courseID,
+        bookmark: bookmark
       }
     })
   },
