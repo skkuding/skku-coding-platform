@@ -318,6 +318,7 @@ export default {
     return ajax('admin/upload_file', 'post', {
       data
     })
+<<<<<<< HEAD
   },
   getCourseList (courseId, limit, offset) {
     const params = { id: courseId, limit, offset }
@@ -368,6 +369,8 @@ export default {
     return ajax('/lecture/professor/course/assignment', 'post', {
       data
     })
+=======
+>>>>>>> Initiate lecture professor page
   }
 }
 
@@ -398,7 +401,11 @@ async function ajax (url, method, options) {
       }
       throw res
     } else {
+<<<<<<< HEAD
       if (method !== 'get' && url !== '/lecture/professor/course/students') {
+=======
+      if (method !== 'get') {
+>>>>>>> Initiate lecture professor page
         Vue.prototype.$success('Succeeded')
       }
       return res
