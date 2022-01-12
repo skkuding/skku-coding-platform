@@ -6,7 +6,8 @@ import Login from './general/Login.vue'
 import Home from './Home.vue'
 import QnA from './qna/QnA.vue'
 import ProblemGrade from './problem/ProblemGrade.vue'
+import LectureBookmark from './general/LectureBookmark.vue'
 
 export {
-  Dashboard, CourseDashboard, Problem, AssignmentList, Login, Home, QnA, ProblemGrade
+  Dashboard, CourseDashboard, Problem, AssignmentList, Login, Home, QnA, ProblemGrade, LectureBookmark
 }

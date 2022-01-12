@@ -370,7 +370,7 @@ export default {
         { key: 'create_time', label: 'Create Time' },
         { key: 'last_login', label: 'Last Login' },
         { key: 'real_name', label: 'Real Name' },
-        { key: 'email', label: 'Eamil' },
+        { key: 'email', label: 'Email' },
         { key: 'admin_type', label: 'User Type' },
         { key: 'major', label: 'User Major' },
         { key: 'Option', label: 'Option', thClass: 'userTable' }
