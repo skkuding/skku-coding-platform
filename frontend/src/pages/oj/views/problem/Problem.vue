@@ -304,386 +304,386 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import { types } from "@/store";
-import CodeMirror from "@oj/components/CodeMirror.vue";
-import storage from "@/utils/storage";
-import { FormMixin } from "@oj/components/mixins";
+import { mapGetters, mapActions } from 'vuex'
+import { types } from '@/store'
+import CodeMirror from '@oj/components/CodeMirror.vue'
+import storage from '@/utils/storage'
+import { FormMixin } from '@oj/components/mixins'
 import {
   JUDGE_STATUS,
   CONTEST_STATUS,
-  buildProblemCodeKey,
-} from "@/utils/constants";
-import api from "@oj/api";
-import ProblemSidebar from "./ProblemSidebar.vue";
-import moment from "moment";
-import register from "@oj/views/user/Register";
-import login from "@oj/views/user/Login";
-import profileSetting from "@oj/views/user/ProfileSetting";
+  buildProblemCodeKey
+} from '@/utils/constants'
+import api from '@oj/api'
+import ProblemSidebar from './ProblemSidebar.vue'
+import moment from 'moment'
+import register from '@oj/views/user/Register'
+import login from '@oj/views/user/Login'
+import profileSetting from '@oj/views/user/ProfileSetting'
 
 export default {
-  name: "ProblemDetails",
+  name: 'ProblemDetails',
   components: {
     CodeMirror,
     ProblemSidebar,
     login,
     register,
-    profileSetting,
+    profileSetting
   },
   mixins: [FormMixin],
-  data() {
+  data () {
     return {
       statusVisible: false,
       captchaRequired: false,
       graphVisible: false,
       submissionExists: false,
-      captchaCode: "",
-      captchaSrc: "",
-      contestID: "",
-      problemID: "",
-      courseID: "",
-      assignmentID: "",
-      assignment_name: "",
+      captchaCode: '',
+      captchaSrc: '',
+      contestID: '',
+      problemID: '',
+      courseID: '',
+      assignmentID: '',
+      assignment_name: '',
       submitting: false,
 
-      submissionId: "",
+      submissionId: '',
       submitted: false,
       result: {
-        result: 9,
+        result: 9
       },
       problem: {
-        title: "",
-        description: "",
-        hint: "",
-        my_status: "",
+        title: '',
+        description: '',
+        hint: '',
+        my_status: '',
         template: {},
         languages: [],
         created_by: {
-          username: "",
+          username: ''
         },
         tags: [],
-        io_mode: { io_mode: "Standard IO" },
+        io_mode: { io_mode: 'Standard IO' }
       },
 
       // CodeMirror
-      code: "",
-      language: "C++",
-      theme: "material",
-      theme_list: ["solarized", "monokai", "material"],
+      code: '',
+      language: 'C++',
+      theme: 'material',
+      theme_list: ['solarized', 'monokai', 'material'],
 
-      overlayShow: false,
-    };
+      overlayShow: false
+    }
   },
-  async mounted() {
-    this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false });
-    this.overlayShow = true;
-    await this.init();
-    this.overlayShow = false;
+  async mounted () {
+    this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
+    this.overlayShow = true
+    await this.init()
+    this.overlayShow = false
     if (this.$route.params.contestID) {
-      this.route_name = this.$route.name;
-      await this.getContestProblems();
-      const res = await this.$store.dispatch("getContest");
-      this.changeDomTitle({ title: res.data.data.title });
-      const data = res.data.data;
-      const endTime = moment(data.end_time);
+      this.route_name = this.$route.name
+      await this.getContestProblems()
+      const res = await this.$store.dispatch('getContest')
+      this.changeDomTitle({ title: res.data.data.title })
+      const data = res.data.data
+      const endTime = moment(data.end_time)
       if (endTime.isAfter(moment(data.now))) {
         this.timer = setInterval(() => {
-          this.$store.commit(types.NOW_ADD_1S);
-        }, 1000);
+          this.$store.commit(types.NOW_ADD_1S)
+        }, 1000)
       }
     }
     if (this.$route.params.assignmentID) {
-      this.route_name = this.$route.name;
-      await this.getAssignmentProblems();
-      const res = await this.$store.dispatch("getCourseAssignment");
-      this.changeDomTitle({ title: res.data.data.title });
-      const data = res.data.data;
-      this.assignment_name = data.title;
+      this.route_name = this.$route.name
+      await this.getAssignmentProblems()
+      const res = await this.$store.dispatch('getCourseAssignment')
+      this.changeDomTitle({ title: res.data.data.title })
+      const data = res.data.data
+      this.assignment_name = data.title
     }
   },
   methods: {
-    ...mapActions(["changeDomTitle", "changeModalStatus"]),
-    async init() {
-      this.contestID = this.$route.params.contestID;
-      this.problemID = this.$route.params.problemID;
-      this.assignmentID = this.$route.params.assignmentID;
-      this.courseID = this.$route.params.courseID;
-      const route = this.$route.name;
-      var res;
+    ...mapActions(['changeDomTitle', 'changeModalStatus']),
+    async init () {
+      this.contestID = this.$route.params.contestID
+      this.problemID = this.$route.params.problemID
+      this.assignmentID = this.$route.params.assignmentID
+      this.courseID = this.$route.params.courseID
+      const route = this.$route.name
+      var res
 
-      if (route === "contest-problem-details") {
-        res = await api.getContestProblem(this.problemID, this.contestID);
-      } else if (route === "lecture-assignment-problem-details") {
+      if (route === 'contest-problem-details') {
+        res = await api.getContestProblem(this.problemID, this.contestID)
+      } else if (route === 'lecture-assignment-problem-details') {
         res = await api.getCourseAssignmentProblem(
           this.assignmentID,
           this.problemID
-        );
+        )
       } else {
-        res = await api.getProblem(this.problemID);
+        res = await api.getProblem(this.problemID)
       }
 
-      const problem = res.data.data;
-      this.changeDomTitle({ title: problem.title });
+      const problem = res.data.data
+      this.changeDomTitle({ title: problem.title })
 
-      const res2 = await api.submissionExists(problem.id);
-      this.submissionExists = res2.data.data;
+      const res2 = await api.submissionExists(problem.id)
+      this.submissionExists = res2.data.data
 
-      problem.languages = problem.languages.sort();
-      this.problem = problem;
+      problem.languages = problem.languages.sort()
+      this.problem = problem
 
-      if (this.code === "") {
-        const userId = this.user.username;
-        let preferredLanguage = problem.languages[0];
-        const res3 = await api.getUserInfo(userId);
+      if (this.code === '') {
+        const userId = this.user.username
+        let preferredLanguage = problem.languages[0]
+        const res3 = await api.getUserInfo(userId)
 
-        const lang = res3.data.data?.language;
+        const lang = res3.data.data?.language
         if (lang !== null) {
           if (problem.languages.includes(lang)) {
-            preferredLanguage = lang;
+            preferredLanguage = lang
           }
         }
-        this.language = preferredLanguage;
-        const template = this.problem.template;
+        this.language = preferredLanguage
+        const template = this.problem.template
         if (template && template[this.language]) {
-          this.code = template[this.language];
+          this.code = template[this.language]
         }
       }
     },
-    async getContestProblems() {
-      const res = await this.$store.dispatch("getContestProblems");
+    async getContestProblems () {
+      const res = await this.$store.dispatch('getContestProblems')
       if (this.isAuthenticated) {
         if (
-          this.contestRuleType === "ACM" ||
+          this.contestRuleType === 'ACM' ||
           this.OIContestRealTimePermission
         ) {
-          this.addStatusColumn(this.ACMTableColumns, res.data.data);
+          this.addStatusColumn(this.ACMTableColumns, res.data.data)
         }
       }
     },
-    async getAssignmentProblems() {
-      await this.$store.dispatch("getCourseAssignmentProblemList");
+    async getAssignmentProblems () {
+      await this.$store.dispatch('getCourseAssignmentProblemList')
     },
-    async handleRoute(route) {
-      await this.$router.push(route);
+    async handleRoute (route) {
+      await this.$router.push(route)
     },
-    openWindow(route) {
-      window.open(route);
+    openWindow (route) {
+      window.open(route)
     },
     // User profile icon
-    handleBtnClick(mode) {
+    handleBtnClick (mode) {
       this.changeModalStatus({
         visible: true,
-        mode: mode,
-      });
+        mode: mode
+      })
     },
     // when reset button clicked
-    async onResetToTemplate() {
+    async onResetToTemplate () {
       const isConfirmed = await this.$bvModal.msgBoxConfirm(
-        "Are you sure you want to reset your code?"
-      );
+        'Are you sure you want to reset your code?'
+      )
       if (isConfirmed) {
-        const template = this.problem.template;
+        const template = this.problem.template
         if (template && template[this.language]) {
-          this.code = template[this.language];
+          this.code = template[this.language]
         } else {
-          this.code = "";
+          this.code = ''
         }
       }
     },
     // when language dropdown changed
-    onChangeLang(newLang) {
+    onChangeLang (newLang) {
       if (this.problem.template[newLang]) {
-        this.code = this.problem.template[newLang];
+        this.code = this.problem.template[newLang]
       } else {
-        this.code = "";
+        this.code = ''
       }
-      this.language = newLang;
+      this.language = newLang
     },
     // when theme dropdown changed
-    onChangeTheme(newTheme) {
-      this.theme = newTheme;
+    onChangeTheme (newTheme) {
+      this.theme = newTheme
     },
-    checkSubmissionStatus() {
+    checkSubmissionStatus () {
       // Use setTimeout to avoid some problems
       if (this.refreshStatus) {
         // If the previous submission status check has not stopped, stop
         // otherwise the timeout reference will be lost and unlimited requests
-        clearTimeout(this.refreshStatus);
+        clearTimeout(this.refreshStatus)
       }
       const checkStatus = async () => {
-        const id = this.submissionId;
+        const id = this.submissionId
         try {
-          const res = await api.getSubmission(id);
-          this.result = res.data.data;
+          const res = await api.getSubmission(id)
+          this.result = res.data.data
           if (Object.keys(res.data.data.statistic_info).length !== 0) {
-            this.submitting = false;
-            this.submitted = false;
-            clearTimeout(this.refreshStatus);
-            await this.init();
+            this.submitting = false
+            this.submitted = false
+            clearTimeout(this.refreshStatus)
+            await this.init()
           } else {
-            this.refreshStatus = setTimeout(checkStatus, 2000);
+            this.refreshStatus = setTimeout(checkStatus, 2000)
           }
         } catch (err) {
-          this.submitting = false;
-          clearTimeout(this.refreshStatus);
+          this.submitting = false
+          clearTimeout(this.refreshStatus)
         }
-      };
-      this.refreshStatus = setTimeout(checkStatus, 2000);
-    },
-    async submitCode() {
-      if (this.code.trim() === "") {
-        this.$error("Code can not be empty");
-        return;
       }
-      this.submissionId = "";
-      this.result = { result: 9 };
-      this.submitting = true;
+      this.refreshStatus = setTimeout(checkStatus, 2000)
+    },
+    async submitCode () {
+      if (this.code.trim() === '') {
+        this.$error('Code can not be empty')
+        return
+      }
+      this.submissionId = ''
+      this.result = { result: 9 }
+      this.submitting = true
       const data = {
         problem_id: this.problem.id,
         language: this.language,
         code: this.code,
         contest_id: this.contestID,
-        assignment_id: this.assignmentID,
-      };
+        assignment_id: this.assignmentID
+      }
       if (this.captchaRequired) {
-        data.captcha = this.captchaCode;
+        data.captcha = this.captchaCode
       }
       const submitFunc = async (data, detailsVisible) => {
-        this.statusVisible = true;
+        this.statusVisible = true
         try {
-          const res = await api.submitCode(data);
-          this.submissionId = res.data.data && res.data.data.submission_id;
+          const res = await api.submitCode(data)
+          this.submissionId = res.data.data && res.data.data.submission_id
           // Regularly check status
-          this.submitting = false;
-          this.submissionExists = true;
-          this.submitted = true;
-          this.checkSubmissionStatus();
+          this.submitting = false
+          this.submissionExists = true
+          this.submitted = true
+          this.checkSubmissionStatus()
         } catch (err) {
-          this.getCaptchaSrc();
-          if (err.data.data.startsWith("Captcha is required")) {
-            this.captchaRequired = true;
+          this.getCaptchaSrc()
+          if (err.data.data.startsWith('Captcha is required')) {
+            this.captchaRequired = true
           }
-          this.submitting = false;
-          this.statusVisible = false;
+          this.submitting = false
+          this.statusVisible = false
         }
-      };
+      }
       if (!this.OIContestRealTimePermission) {
         if (this.submissionExists) {
           const isConfirmed = await this.$bvModal.msgBoxConfirm(
-            "You have submission in this problem, sure to cover it?"
-          );
+            'You have submission in this problem, sure to cover it?'
+          )
           if (isConfirmed) {
-            await submitFunc(data, false);
+            await submitFunc(data, false)
           } else {
-            this.submitting = false;
+            this.submitting = false
           }
         } else {
-          await submitFunc(data, false);
+          await submitFunc(data, false)
         }
       } else {
-        await submitFunc(data, true);
+        await submitFunc(data, true)
       }
     },
-    async onMySubmissionClicked() {
-      await this.$refs.sidebar.onMySubmissionClicked({ ID: this.submissionId });
-      await this.$nextTick();
-      this.$refs.sidebar.codemirror_key += 1;
+    async onMySubmissionClicked () {
+      await this.$refs.sidebar.onMySubmissionClicked({ ID: this.submissionId })
+      await this.$nextTick()
+      this.$refs.sidebar.codemirror_key += 1
     },
-    async goAssignmentList() {
+    async goAssignmentList () {
       await this.$router.push({
-        name: "lecture-assignment",
+        name: 'lecture-assignment',
+        params: {
+          courseID: this.$route.params.courseID
+        }
+      })
+    },
+    async goAssignmentDetail () {
+      await this.$router.push({
+        name: 'lecture-assignment-detail',
         params: {
           courseID: this.$route.params.courseID,
-        },
-      });
-    },
-    async goAssignmentDetail() {
-      await this.$router.push({
-        name: "lecture-assignment-detail",
-        params: {
-          courseID: this.$route.params.courseID,
-          assignmentID: this.$route.params.assignmentID,
-        },
-      });
-    },
+          assignmentID: this.$route.params.assignmentID
+        }
+      })
+    }
   },
   computed: {
     ...mapGetters([
-      "isAuthenticated",
-      "contestRuleType",
-      "OIContestRealTimePermission",
+      'isAuthenticated',
+      'contestRuleType',
+      'OIContestRealTimePermission'
     ]),
     ...mapGetters([
-      "problemSubmitDisabled",
-      "contestRuleType",
-      "OIContestRealTimePermission",
-      "contestStatus",
+      'problemSubmitDisabled',
+      'contestRuleType',
+      'OIContestRealTimePermission',
+      'contestStatus'
     ]),
     // for header user dropdown
-    ...mapGetters(["website", "modalStatus", "user", "isAdminRole"]),
+    ...mapGetters(['website', 'modalStatus', 'user', 'isAdminRole']),
 
-    contest() {
-      return this.$store.state.contest.contest;
+    contest () {
+      return this.$store.state.contest.contest
     },
-    contestEnded() {
-      return this.contestStatus === CONTEST_STATUS.ENDED;
+    contestEnded () {
+      return this.contestStatus === CONTEST_STATUS.ENDED
     },
-    submissionStatus() {
+    submissionStatus () {
       return {
         text: JUDGE_STATUS[this.result.result].name,
-        color: JUDGE_STATUS[this.result.result].color,
-      };
+        color: JUDGE_STATUS[this.result.result].color
+      }
     },
-    submissionRoute() {
+    submissionRoute () {
       if (this.contestID) {
         return {
-          name: "contest-submission-list",
-          query: { problemID: this.problemID },
-        };
+          name: 'contest-submission-list',
+          query: { problemID: this.problemID }
+        }
       } else {
         return {
-          name: "submission-list",
-          query: { problemID: this.problemID },
-        };
+          name: 'submission-list',
+          query: { problemID: this.problemID }
+        }
       }
     },
     modalVisible: {
-      get() {
-        return this.modalStatus.visible;
+      get () {
+        return this.modalStatus.visible
       },
-      set(value) {
-        this.changeModalStatus({ visible: value });
-      },
-    },
+      set (value) {
+        this.changeModalStatus({ visible: value })
+      }
+    }
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave (to, from, next) {
     // Prevent constant requests after switching components
-    clearInterval(this.refreshStatus);
-    this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: true });
+    clearInterval(this.refreshStatus)
+    this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: true })
     storage.set(buildProblemCodeKey(this.problem._id, from.params.contestID), {
       code: this.code,
       language: this.language,
-      theme: this.theme,
-    });
-    next();
+      theme: this.theme
+    })
+    next()
   },
   watch: {
-    async $route() {
-      this.statusVisible = false;
-      this.code = "";
-      await this.init();
+    async $route () {
+      this.statusVisible = false
+      this.code = ''
+      await this.init()
     },
     contestEnded: function () {
-      this.$error("Contest has ended :<");
-    },
-  },
-  beforeDestroy() {
-    if (this.contestID) {
-      clearInterval(this.timer);
-      this.$store.commit(types.CLEAR_CONTEST);
+      this.$error('Contest has ended :<')
     }
   },
-};
+  beforeDestroy () {
+    if (this.contestID) {
+      clearInterval(this.timer)
+      this.$store.commit(types.CLEAR_CONTEST)
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
