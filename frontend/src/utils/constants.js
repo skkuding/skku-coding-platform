@@ -153,6 +153,29 @@ export const ASSIGNMENT_STATUS_REVERSE = {
   // #D75B66 #23345C #F1BA48 #BD8A44
 }
 
+export const ASSIGNMENT_STATUS = {
+  1: 'Not Started',
+  0: 'Underway',
+  '-1': 'Ended'
+  // #D75B66 #23345C #F1BA48 #BD8A44
+}
+
+export const ASSIGNMENT_STATUS_REVERSE = {
+  1: {
+    name: 'Not Started',
+    color: '#5398D9'
+  },
+  0: {
+    name: 'Underway',
+    color: '#F1BA48'
+  },
+  '-1': {
+    name: 'Ended',
+    color: '#D75B66'
+  }
+  // #D75B66 #23345C #F1BA48 #BD8A44
+}
+
 export const RULE_TYPE = {
   ACM: 'ACM',
   OI: 'OI'

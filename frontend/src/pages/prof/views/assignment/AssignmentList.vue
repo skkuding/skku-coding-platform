@@ -38,28 +38,41 @@
                 <template #cell(submission)="data">
                   {{ data.item.submission }}
                 </template>
-                <template #cell(operation)>
+                <template #cell(operation)="data">
                   <div>
                     <icon-btn
-                      name="Edit"
+                      name="Edit Problem"
                       icon="pencil"
+                      @click.native="editAssignmentProblem(data.item.id)"
                     />
                     <icon-btn
-                      name="Save"
-                      icon="box-arrow-in-down"
+                      name="Grade Problem"
+                      icon="check2-all"
+                      @click="gradeProblem(data.item.id)"
                     />
                     <icon-btn
-                      name="Delete Contest"
+                      name="Delete Problem"
                       icon="trash"
+                      @click.native="deleteAssignmentProblem(row.item.id, data.item.id)"
                     />
                   </div>
                 </template>
               </b-table>
-              <b-button size="sm" variant="warning" class="mr-2" v-b-modal.importProblem>
+              <b-button
+                size="sm"
+                variant="warning"
+                class="mr-2"
+                v-b-modal.importProblem
+              >
                 +problem<br>From SKKU coding platform
               </b-button>
               <import-public-problem-modal></import-public-problem-modal>
-              <b-button size="sm" variant="primary" class="mr-2">
+              <b-button
+                size="sm"
+                variant="primary"
+                class="mr-2"
+                @click.native="createAssignmentProblem(row.item.id)"
+              >
                 +problem<br>Create a new problem
               </b-button>
               <!--<div v-if="!problemList.length" v-text="center-align">
@@ -69,15 +82,22 @@
             <template #cell(title)="data">
               {{ data.item.title }}
             </template>
-            <template #cell(visible)>
-              <b-form-checkbox switch size="sm"></b-form-checkbox>
+            <template #cell(visible)="data">
+              <b-form-checkbox
+                switch
+                v-model="data.item.visible"
+                @change="handleVisibleSwitch(data.item)"
+              >
+              </b-form-checkbox>
             </template>
-            <template #cell(status)>
+            <template #cell(status)="data">
               <b-icon
                 icon="circle-fill"
                 class="mb-2"
+                :style="'color:' + assignmentStatus(data.item.status).color"
               >
               </b-icon>
+              {{ assignmentStatus(data.item.status).name }}
             </template>
             <template #cell(operation)>
               <div>
@@ -90,8 +110,9 @@
                   icon="box-arrow-in-down"
                 />
                 <icon-btn
-                  name="Delete Contest"
+                  name="Delete Assignment"
                   icon="trash"
+                  @click.native="deleteAssignment(data.item.id)"
                 />
               </div>
             </template>
@@ -116,6 +137,7 @@
 import api from '../../api.js'
 import CreateAssignmentModal from './CreateAssignment.vue'
 import ImportPublicProblemModal from './ImportPublicProblem.vue'
+import { ASSIGNMENT_STATUS_REVERSE } from '@/utils/constants'
 
 export default {
   name: 'AssignmentList',
@@ -128,6 +150,7 @@ export default {
   ],
   data () {
     return {
+      ASSIGNMENT_STATUS_REVERSE: ASSIGNMENT_STATUS_REVERSE,
       assignmentField: [
         {
           key: 'show_detail',
@@ -201,6 +224,45 @@ export default {
         console.log(this.assignmentList[i])
       }
       await this.showAssignmentProblemList(assignmentId)
+    },
+    createAssignmentProblem () {
+      if (this.routeName === 'lecture-assignment-list') {
+        this.$router.push({ name: 'create-lecture-problem' })
+      }
+    },
+    editAssignmentProblem (problemId) {
+      if (this.routeName === 'lecture-assignment-list') {
+        this.$router.push({ name: 'edit-lecture-problem', params: { problemId } })
+      }
+    },
+    gradeProblem (problemId) {
+      if (this.routeName === 'lecture-assignment-list') {
+        this.$router.push({ name: 'lecture-problem-grade', params: { problemId } })
+      }
+    },
+    async deleteAssignment (assignmentId) {
+      try {
+        await this.$confirm('Sure to delete this assignment? The associated submissions will be deleted as well.', 'Delete Assignment', 'warning', false)
+        api.deleteAssignment(this.lectureId, assignmentId)
+        await this.showAssignmentList(this.lectureId)
+      } catch (err) {
+      }
+    },
+    async deleteAssignmentProblem (assignmentId, problemId) {
+      try {
+        await this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', 'warning', false)
+        api.deleteAssignmentProblem(problemId)
+        await this.updateAssignmentProblem(assignmentId)
+      } catch (err) {
+      }
+    },
+    assignmentStatus (status) {
+      return {
+        name: ASSIGNMENT_STATUS_REVERSE[status].name,
+        color: ASSIGNMENT_STATUS_REVERSE[status].color
+      }
+    },
+    async handleVisibleSwitch () {
     }
   },
   computed: {
