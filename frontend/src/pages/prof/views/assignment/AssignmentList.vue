@@ -50,7 +50,7 @@
                       <icon-btn
                         name="Grade Problem"
                         icon="check2-all"
-                        @click.native="gradeProblem(row.item, data.item.id)"
+                        @click.native="gradeProblem(row.item, data.item)"
                       />
                       <icon-btn
                         name="Delete Problem"
@@ -309,16 +309,17 @@ export default {
         })
       }
     },
-    gradeProblem (assignment, problemId) {
+    gradeProblem (assignment, problem) {
       if (this.routeName === 'lecture-assignment-list') {
         this.$router.push({
           name: 'lecture-problem-grade',
           params: {
             lectureId: this.lectureId,
             assignmentId: assignment.id,
-            problemId: problemId,
+            problemId: problem.id,
             lectureInfo: this.pageLocations[0].text,
-            assignmentInfo: assignment.title
+            assignmentInfo: assignment.title,
+            problemInfo: problem.title
           }
         })
       }

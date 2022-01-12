@@ -134,11 +134,11 @@ export default {
       assignmentListFields: [
         {
           key: 'title',
-          label: ''
+          label: 'Assignement title'
         },
         {
           key: 'course.title',
-          label: ''
+          label: 'Course'
         }
       ],
       assignmentList: [

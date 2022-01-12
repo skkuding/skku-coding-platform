@@ -170,7 +170,8 @@ export default {
         course_id: this.newAssignmentCourseId,
         content: '232323',
         start_time: '2021-08-22T04:55:17.644Z',
-        end_time: '2021-08-23T04:55:17.644Z'
+        end_time: '2021-08-23T04:55:17.644Z',
+        visible: true
       }
       api.postAssignment(data)
     }
