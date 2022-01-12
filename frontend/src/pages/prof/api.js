@@ -401,7 +401,7 @@ export default {
       data
     })
   },
-  deleteAssignmenProblem (id) {
+  deleteAssignmentProblem (id) {
     const params = { id: id }
     return ajax('/lecture/profressor/course/assignment/problem', 'delete', {
       params: params
