@@ -201,7 +201,12 @@ export default {
         problem_id: this.form.selectedProblemId,
         display_id: this.form.displayId
       }
-      await profApi.addProblemFromPublic(data)
+      try {
+        await profApi.addProblemFromPublic(data)
+      } catch (err) {
+      }
+      this.$set(this.form, 'selectedProblemId', null)
+      this.$set(this.form, 'displayId', '')
       this.$emit('update')
     }
   },
