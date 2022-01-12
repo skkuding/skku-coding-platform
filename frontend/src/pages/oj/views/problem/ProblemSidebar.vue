@@ -257,8 +257,10 @@ export default {
       this.assignmentID = this.$route.params.assignmentID
       await this.getCourseAssignmentProblemList()
     }
-    this.submission_table_fields.unshift('Problem')
-    this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
+    if (this.$route.params.contestID || this.$route.params.assignmentID) {
+      this.submission_table_fields.unshift('Problem')
+      this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
+    }
     this.initProblemTitles()
   },
   methods: {

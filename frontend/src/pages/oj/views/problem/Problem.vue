@@ -393,12 +393,12 @@ export default {
       }
     }
     if (this.$route.params.assignmentID) {
-      this.route_name = this.$route.name
-      await this.getAssignmentProblems()
-      const res = await this.$store.dispatch('getCourseAssignment')
-      this.changeDomTitle({ title: res.data.data.title })
-      const data = res.data.data
-      this.assignment_name = data.title
+      this.route_name = this.$route.name;
+      await this.getAssignmentProblems();
+      const res = await this.$store.dispatch("getCourseAssignment");
+      this.changeDomTitle({ title: res.data.data.title });
+      const data = res.data.data;
+      this.assignment_name = data.title;
     }
   },
   methods: {
@@ -411,19 +411,15 @@ export default {
       const route = this.$route.name;
       var res;
 
-      if (route === "problem-details") {
-        res = await api.getProblem(this.problemID);
-      } else if (route === "contest-problem-details") {
+      if (route === "contest-problem-details") {
         res = await api.getContestProblem(this.problemID, this.contestID);
-      } else {
-<<<<<<< HEAD
-        res = await api.getLectureAssignmentProblem(
+      } else if (route === "lecture-assignment-problem-details") {
+        res = await api.getCourseAssignmentProblem(
           this.assignmentID,
           this.problemID
         );
-=======
-        res = await api.getCourseAssignmentProblem(this.assignmentID, this.problemID)
->>>>>>> 9ea51ce (Fix words and typo)
+      } else {
+        res = await api.getProblem(this.problemID);
       }
 
       const problem = res.data.data;
@@ -464,13 +460,8 @@ export default {
         }
       }
     },
-<<<<<<< HEAD
     async getAssignmentProblems() {
-      await this.$store.dispatch("getLectureAssignmentProblemList");
-=======
-    async getAssignmentProblems () {
-      await this.$store.dispatch('getCourseAssignmentProblemList')
->>>>>>> 9ea51ce (Fix words and typo)
+      await this.$store.dispatch("getCourseAssignmentProblemList");
     },
     async handleRoute(route) {
       await this.$router.push(route);
