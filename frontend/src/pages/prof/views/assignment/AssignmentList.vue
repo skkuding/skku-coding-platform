@@ -45,7 +45,7 @@
                       <icon-btn
                         name="Edit Problem"
                         icon="pencil"
-                        @click.native="editAssignmentProblem(row.item.id, data.item.id)"
+                        @click.native="editAssignmentProblem(row.item, data.item.id)"
                       />
                       <icon-btn
                         name="Grade Problem"
@@ -73,7 +73,7 @@
                     size="sm"
                     style="background-color: #E9A05A; border-color: unset"
                     class="mr-2 text-light"
-                    @click="createAssignmentProblem(row.item.id)"
+                    @click="createAssignmentProblem(row.item)"
                   >
                     +problem<br>Create a new problem
                   </b-button>
@@ -283,16 +283,29 @@ export default {
         this.$set(item, '_showDetails', true)
       }
     },
-    createAssignmentProblem (assignmentId) {
+    createAssignmentProblem (assignment) {
       if (this.routeName === 'lecture-assignment-list') {
-        this.$router.push({ name: 'create-lecture-problem', params: { assignmentId: assignmentId } })
+        this.$router.push({
+          name: 'create-lecture-problem',
+          params: {
+            assignmentId: assignment.id,
+            lectureInfo: this.pageLocations[0].text,
+            assignmentInfo: assignment.title
+          }
+        })
       }
     },
-    editAssignmentProblem (assignmentId, problemId) {
+    editAssignmentProblem (assignment, problemId) {
       if (this.routeName === 'lecture-assignment-list') {
         this.$router.push({
           name: 'edit-lecture-problem',
-          params: { lectureId: this.lectureId, assignmentId: assignmentId, problemId: problemId }
+          params: {
+            lectureId: this.lectureId,
+            assignmentId: assignment.id,
+            problemId: problemId,
+            lectureInfo: this.pageLocations[0].text,
+            assignmentInfo: assignment.title
+          }
         })
       }
     },
