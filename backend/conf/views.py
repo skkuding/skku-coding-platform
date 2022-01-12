@@ -26,7 +26,7 @@ from options.options import SysOptions
 from problem.models import Problem
 from submission.models import Submission
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer
-from utils.decorators import super_admin_required
+from utils.decorators import super_admin_required, admin_role_required
 from utils.shortcuts import send_email
 from utils.xss_filter import XSSHtml
 from .models import JudgeServer
