@@ -9,7 +9,6 @@
       :lg="4"
       id="first-col"
     >
-      <!-- <img id="coding-platform-logo" src="@/assets/logos/codingPlatformLogo.png" alt="coding-platform-logo"> -->
       <b-card class="admin-info drop-shadow-custom" :title="'Welcome, Prof. ' + user.username">
         <b-card-text>
           Last login
@@ -29,12 +28,6 @@
           class="info-item drop-shadow-custom"
           :value="infoData.user_count"
         />
-        <!-- <info-card
-          color="#8DC63F"
-          message="Assignments Submissions Today"
-          class="info-item drop-shadow-custom"
-          :value="infoData.today_submission_count"
-        /> -->
         <info-card
           color="#28A5FF"
           message="Assignments"
@@ -62,10 +55,6 @@
       :lg="8"
     >
       <b-card class="admin-info drop-shadow-custom" title="Assignments">
-        <b-input placeholder="Course id for new assignment -- !!! for debugging!!!" v-model="newAssignmentCourseId" type="number"></b-input>
-        <b-button variant="primary" @click="newAssignment">
-          + New Assignment For debugging
-        </b-button>
         <b-table
           borderless
           hover
@@ -121,7 +110,6 @@ export default {
   },
   data () {
     return {
-      newAssignmentCourseId: null, // for debugging
       ASSIGNMENT_STATUS_REVERSE: {
         1: 'Not Started',
         0: 'Underway',
@@ -159,7 +147,7 @@ export default {
   },
   async mounted () {
     try {
-      const resp = await api.getAssignmentList() // 추후 api 바꿔야함
+      const resp = await api.getAssignmentList()
       this.infoData.assignment_count = resp.data.data.total
     } catch (err) {
     }
@@ -175,7 +163,7 @@ export default {
       console.log(err)
     }
     for (const lecture of this.lectureList) {
-      const resp = await api.getCourseStudentTotal(lecture.id, 1) // 추후 api 바꿔야함
+      const resp = await api.getCourseStudentTotal(lecture.id, 1)
       this.infoData.user_count += resp.data.data.total_students
     }
     // try {
@@ -191,7 +179,7 @@ export default {
       await this.getAssignmentList(page)
     },
     async getAssignmentList (page) {
-      this.loading = true // api.getAssignmentList (courseId, assignmentId, limit, offset)
+      this.loading = true
       try {
         const res = await api.getAssignmentList(null, null, this.pageSize, (page - 1) * this.pageSize)
         this.total = res.data.data.total
@@ -218,16 +206,6 @@ export default {
       } catch (err) {
         console.log(err)
       }
-    },
-    async newAssignment () { // only for debugging
-      const data = {
-        title: 'programming',
-        course_id: this.newAssignmentCourseId,
-        content: '232323',
-        start_time: '2021-08-22T04:55:17.644Z',
-        end_time: '2021-08-23T04:55:17.644Z'
-      }
-      api.postAssignment(data)
     }
   },
   computed: {
