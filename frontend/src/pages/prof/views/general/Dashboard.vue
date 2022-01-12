@@ -147,14 +147,9 @@ export default {
     }
   },
   async mounted () {
-    // try {
-    //   const resp = await api.getAssignmentList()
-    //   this.infoData.assignment_count = resp.data.data.total
-    // } catch (err) {
-    // }
     try {
-      const resp = await api.getSessions()
-      this.parseSession(resp.data.data)
+      const res = await api.getSessions()
+      this.parseSession(res.data.data)
     } catch (err) {
     }
     try {
@@ -164,7 +159,6 @@ export default {
         this.$error('Since there are too much lectures, failed to get all lecture list')
       }
     } catch (err) {
-      console.log(err)
     }
     const res = await api.getDashboardInfo()
     this.infoData.user_count = res.data.data.student_count
@@ -186,7 +180,6 @@ export default {
         this.total = res.data.data.underway_assignments.total
         this.assignmentList = res.data.data.underway_assignments.results
       } catch (err) {
-        console.log(err)
       }
     },
     parseSession (sessions) {
@@ -203,9 +196,7 @@ export default {
         const res = await api.getCourseList()
         this.lectureList = res.data.data.results
         this.$parent.updateSidebar += 1
-        console.log('change into' + this.$parent.updateSidebar)
       } catch (err) {
-        console.log(err)
       }
     }
   },

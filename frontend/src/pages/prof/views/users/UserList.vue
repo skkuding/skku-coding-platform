@@ -151,13 +151,10 @@ export default {
           course: result.course,
           ...result.user
         }))
-        console.log(this.userList)
       } catch (err) {
-        console.error(err)
       }
     },
     async deleteUsers (registrationIds) {
-      console.log(registrationIds)
       const sure = await this.$bvModal.msgBoxConfirm('Sure to delete Users? All Associated submissions and informations will be deleted', {
         title: 'Are you sure?',
         size: 'md',

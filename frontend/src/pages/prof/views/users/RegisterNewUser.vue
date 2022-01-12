@@ -113,7 +113,6 @@ export default {
           try {
             this.form.studentIds = results.data.flat().map(studentId => Object({ value: studentId }))
           } catch (error) {
-            console.log(error)
           }
         },
         error: (error) => {
