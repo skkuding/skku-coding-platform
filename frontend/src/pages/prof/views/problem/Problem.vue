@@ -503,7 +503,6 @@ export default {
       template: {},
       title: '',
       spjMode: '',
-      disableRuleType: false,
       routeName: '',
       error: {
         tags: '',
@@ -548,7 +547,6 @@ export default {
     } else {
       this.mode = 'add'
     }
-    const res = await api.getLanguages()
     this.problem = this.reProblem = {
       _id: '',
       title: '',
@@ -579,11 +577,12 @@ export default {
     this.assignmentId = this.$route.params.assignmentId
     if (this.assignmentId) {
       this.problem.assignment_id = this.reProblem.assignment_id = this.assignmentId
-      this.disableRuleType = true
       const res = await api.getAssignmentList(null, this.assignmentId)
       this.assignment = res.data.data
     }
     this.problem.spj_language = 'C'
+
+    const res = await api.getLanguages()
     const allLanguage = res.data.data
     this.allLanguage = allLanguage
     // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
@@ -736,7 +735,7 @@ export default {
           file.output_name = '-'
         }
       }
-      this.problem.test_case_score = fileList
+      this.$set(this.problem, 'test_case_score', fileList)
       this.testCaseUploaded = true
       this.problem.test_case_id = response.data.data.id
     },
