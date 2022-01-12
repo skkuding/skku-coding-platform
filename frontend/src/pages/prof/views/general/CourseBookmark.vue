@@ -5,12 +5,12 @@
       cols = "1"
       id="dashboard"
     >
-      <b-card title="All Lecture" class="admin-info drop-shadow-custom">
+      <b-card title="All Course" class="admin-info drop-shadow-custom">
         <b-table
           borderless
           hover
-          :fields="lectureListFields"
-          :items="lectureList"
+          :fields="courseListFields"
+          :items="courseList"
           :per-page="pageSize"
           :current-page="updateCurrentPage"
         >
@@ -44,15 +44,15 @@
 import api from '../../api.js'
 
 export default {
-  name: 'LectureBookmark',
+  name: 'CourseBookmark',
   data () {
     return {
       pageSize: 10,
       currentPage: 1,
       bookmarkList: [],
       bookmarkIDList: [],
-      lectureList: [],
-      lectureListFields: [
+      courseList: [],
+      courseListFields: [
         'title', 'semester'
       ],
       semesterStr: ['Spring', 'Summer', 'Fall', 'Winter']
@@ -68,7 +68,7 @@ export default {
         (this.bookmarkIDList).push(course.id)
       }
       const resp = await api.getCourseList()
-      this.lectureList = resp.data.data.results
+      this.courseList = resp.data.data.results
     } catch (err) {
     }
   },

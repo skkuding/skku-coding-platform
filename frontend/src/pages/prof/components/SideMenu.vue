@@ -142,7 +142,7 @@ export default {
     },
     async goBookmark () {
       await this.$router.push({
-        name: 'lecture-bookmark'
+        name: 'course-bookmark'
       })
     }
   },

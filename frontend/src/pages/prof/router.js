@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import {
-  Login, Home, Dashboard, CourseDashboard, LectureBookmark, AssignmentList, Problem, ProblemGrade, QnA
+  Login, Home, Dashboard, CourseDashboard, CourseBookmark, AssignmentList, Problem, ProblemGrade, QnA
 } from './views'
 Vue.use(VueRouter)
 
@@ -31,9 +31,9 @@ export default new VueRouter({
           component: CourseDashboard
         },
         {
-          path: '/lecture/professor/bookmark_course',
-          name: 'lecture-bookmark',
-          component: LectureBookmark
+          path: '/course/professor/bookmark_course',
+          name: 'course-bookmark',
+          component: CourseBookmark
         },
         {
           path: '/course/:courseId/assignment',
