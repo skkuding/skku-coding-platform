@@ -70,6 +70,7 @@ class BookmarkCourseSerializer(serializers.Serializer):
     course_id = serializers.IntegerField()
     bookmark = serializers.BooleanField()
 
+
 class UserListSerializer(serializers.ModelSerializer):
     user = UserAdminSerializer()
 
