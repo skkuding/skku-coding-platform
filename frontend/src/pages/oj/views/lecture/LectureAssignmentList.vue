@@ -10,24 +10,21 @@
           hover
           :items="assignments"
           :fields="assignmentListFields"
+          :per-page="perPage"
+          :current-page="currentPage"
           head-variant="light"
           class="table"
           @row-clicked="goAssignment"
+          style = "cursor: pointer;"
         >
-          <template #cell(title)="data">
-            {{ data.value }}
-            <b-badge
-              variant="light"
-              style="border: solid 1px #EDECEC; margin-left: 16px;"
+          <template #cell(status)="data">
+            <b-icon
+              icon="circle-fill"
+              scale="0.7"
+              :style="'color:' + assignmentStatus(data.value).color"
             >
-              <b-icon
-                icon="circle-fill"
-                scale="0.7"
-                :style="'color:' + assignmentStatus(data.item.status).color"
-              >
-              </b-icon>
-              {{ assignmentStatus(data.item.status).name }}
-            </b-badge>
+            </b-icon>
+            {{ assignmentStatus(data.value).name }}
           </template>
           <template #cell(accepted_problem)="data">
             <span v-if="data.item.accepted_problem === 0">Not Accepted</span>
@@ -38,9 +35,9 @@
       <div class="pagination">
         <b-pagination
           v-model="currentPage"
-          :total-rows="assignment.length"
+          :total-rows="this.assignments.length"
           :per-page="perPage"
-          limit="3"
+          limit='3'
         ></b-pagination>
       </div>
     </article>
@@ -61,13 +58,16 @@ export default {
   },
   data () {
     return {
-      page: 1,
+      perPage: 10,
+      currentPage: 1,
+      total: 0,
       courseID: '',
       assignmentListFields: [
         {
           key: 'title',
           label: 'Assignment'
         },
+        'status',
         {
           key: 'end_time',
           label: 'Due',
@@ -92,10 +92,10 @@ export default {
   async mounted () {
     this.courseID = this.$route.params.courseID
     this.route_name = this.$route.name
-    const res = await api.getLectureAssignmentList(this.courseID)
-    this.assignments = res.data.data.results
-    console.log(res)
-    console.log(res.data.data.results)
+    try {
+      await this.getLectureAssignmentList(1)
+    } catch (err) {
+    }
   },
   methods: {
     async goAssignment (assignment) {
@@ -103,10 +103,18 @@ export default {
       this.listVisible = false
       await this.$router.push({ name: 'lecture-assignment-detail', params: { assignmentID: assignment.id } })
     },
-    async getLectureAssignmentList () {
-      const res = await this.$store.dispatch('getLectureAssignmentList')
-      this.assignments = res.data.data.results
-      console.log(this.assignments)
+    async getLectureAssignmentList (page) {
+      try {
+        const res = await api.getLectureAssignmentList(this.courseID, (page - 1) * this.perPage, 250)
+        this.assignments = res.data.data.results
+        this.total = res.data.data.total
+      } catch (err) {
+      }
+    },
+    async currentChange (page) {
+      this.courseID = this.$route.params.courseID
+      this.currentPage = page
+      await this.getLectureAssignmentList(page)
     },
     assignmentStatus (value) {
       return {

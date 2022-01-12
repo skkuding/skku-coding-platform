@@ -6,11 +6,10 @@
         <div class="assignment-title">{{ assignment.title }}</div>
         <div class="assignment-info">
           {{ formatTime(assignment.start_time) + ' ~ ' + formatTime(assignment.end_time) }}
-          <!-- <b-badge class="due"> {{ '- ' +  this.$store.state.now }}</b-badge> -->
         </div>
       </section>
       <section class="assignment-container">
-        <p class="assignment__content" v-dompurify-html="assignment.content"></p>
+        <p class="assignment__content" v-dompurify-html="assignment.content" v-katex:auto></p>
         <div class="table">
           <b-table
             hover
@@ -18,6 +17,7 @@
             :fields="assignmentProblemListFields"
             head-variant="light"
             class="table"
+            style = "cursor: pointer;"
             @row-clicked="goAssignmentProblem"
           >
             <template #cell(total_score)="data">
@@ -26,14 +26,6 @@
           </b-table>
         </div>
       </section>
-      <div class="pagination">
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="assignment.length"
-          :per-page="perPage"
-          limit="3"
-        ></b-pagination>
-      </div>
     </article>
   </div>
 </template>
@@ -59,7 +51,6 @@ export default {
           key: '_id',
           label: '#'
         },
-        'type',
         'title',
         {
           key: 'total_score',
@@ -77,19 +68,7 @@ export default {
     try {
       await this.getLectureAssignment()
       await this.getLectureAssignmentProblems()
-      // this.changeDomTitle({ title: res.data.data.title })
-      // const data = res.data.data
-      // this.assignment = data
-      // const endTime = moment(data.end_time)
-      // if (endTime.isAfter(moment(data.now))) {
-      //   this.timer = setInterval(() => {
-      //     // this.due = endTime.diff(this.state.now, 'minutes')
-      //     // console.log('now :' + now + ' due: ' + this.due)
-      //     this.$store.commit(types.NOW_ADD_1S)
-      //   }, 1000)
-      // }
     } catch (err) {
-      console.log(err)
     }
   },
   methods: {
@@ -100,7 +79,6 @@ export default {
         this.assignment = data
         this.changeDomTitle({ title: data.title })
       } catch (err) {
-        console.log(err)
       }
     },
     async getLectureAssignmentProblems () {
