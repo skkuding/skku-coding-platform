@@ -1,7 +1,7 @@
 <template>
   <b-modal
   id="createAssignment"
-  title="Create New Assignment"
+  :title="modalTitle"
   size="lg"
   @ok="createNewAssignment"
   @cancel="cancelCreation"
@@ -104,7 +104,8 @@ export default {
     Tiptap
   },
   props: [
-    'lecture-id'
+    'lecture-id',
+    'modal-type'
   ],
   data () {
     return {
@@ -122,7 +123,6 @@ export default {
   },
   methods: {
     async createNewAssignment () {
-      console.log(this.lectureId)
       this.setStartTime()
       this.setEndTime()
       const data = {
@@ -134,7 +134,14 @@ export default {
       }
       await api.createAssignment(data)
       this.$emit('update')
-      console.log(data)
+    },
+    resetModal () {
+      this.form.title = ''
+      this.form.content = ''
+      this.startDate = ''
+      this.startTime = ''
+      this.endDate = ''
+      this.endTime = ''
     },
     initTime () {
       ;[this.startDate, this.startTime] = this.form.start_time.split(/T|[+]/)
@@ -148,6 +155,13 @@ export default {
     }
   },
   computed: {
+    modalTitle () {
+      if (this.modalType === 'create') {
+        return 'Create New Assignmemt'
+      } else {
+        return 'Edit Assignment'
+      }
+    }
   }
 }
 </script>
