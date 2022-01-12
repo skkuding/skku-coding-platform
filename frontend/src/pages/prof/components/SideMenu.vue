@@ -39,7 +39,7 @@
                   style="margin-right: 8px; cursor:pointer"
                   v-b-toggle="'inner'+lecture.id"
                 />
-                <span v-b-toggle="'inner'+lecture.id">{{lecture.title}}_{{lecture.course_code}}_{{lecture.class_number}}</span>
+                <span v-b-toggle="'inner'+lecture.id">{{lecture.title}}_{{lecture.course_code}}-{{lecture.class_number}}</span>
               </b-list-group-item>
 
               <b-collapse :id="'inner'+lecture.id" role="tabpanel">
