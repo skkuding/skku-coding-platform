@@ -27,17 +27,35 @@
           <template #cell()="data">
             {{data.item.course.registered_year + '-' + semesterStr[data.value]}}
           </template>
+          <template #cell(option)="data">
+            <icon-btn
+              name="Edit"
+              icon="clipboard-plus"
+              v-b-modal.registerNew
+              @click.native="updateCourseId(data.item.course.id)"
+            />
+            <icon-btn
+              name="Delete"
+              icon="trash"
+              @click.native="deleteCourse(data.item.course.id)"
+            />
+          </template>
         </b-table>
       </b-card>
+      <course-modal :mode="mode" :courseId="courseId" @submitCourseData="updateCourseList" :key="modalKey"/>
     </b-row>
   </div>
 </template>
 
 <script>
 import api from '../../api.js'
+import CourseModal from './CourseModal.vue'
 
 export default {
   name: 'CourseBookmark',
+  components: {
+    CourseModal
+  },
   data () {
     return {
       courseList: [],
@@ -49,7 +67,8 @@ export default {
         {
           label: 'semester',
           key: 'course.semester'
-        }
+        },
+        'option'
       ],
       semesterStr: ['Spring', 'Summer', 'Fall', 'Winter'],
       pageLocations: [
@@ -60,19 +79,25 @@ export default {
         {
           text: 'All courses'
         }
-      ]
+      ],
+      mode: 'edit',
+      courseId: null,
+      modalKey: 0
     }
   },
   computed: {
   },
   async mounted () {
-    try {
-      const resp = await api.getCourseList()
-      this.courseList = resp.data.data.results
-    } catch (err) {
-    }
+    await this.init()
   },
   methods: {
+    async init () {
+      try {
+        const resp = await api.getCourseList()
+        this.courseList = resp.data.data.results
+      } catch (err) {
+      }
+    },
     setIcon (bookmark) {
       return bookmark ? 'bookmark-fill' : 'bookmark'
     },
@@ -80,6 +105,25 @@ export default {
       this.courseList[index].bookmark = !bookmark
       await api.setBookmark(courseID, !bookmark)
       this.$parent.updateSidebar += 1
+    },
+    async deleteCourse (courseId) {
+      await api.deleteCourse(courseId)
+      await this.init()
+    },
+    async updateCourseId (courseId) {
+      this.courseId = courseId
+      this.modalKey += 1
+    },
+    async updateCourseList () {
+      await this.init()
+      // try {
+      //   const res = await api.getCourseList()
+      //   res.data.data.results.map(course => {
+      //     this.courseList.push(course.course)
+      //   })
+      //   this.$parent.updateSidebar += 1
+      // } catch (err) {
+      // }
     }
   }
 }

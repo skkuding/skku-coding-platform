@@ -1,10 +1,9 @@
 <template>
-  <!-- Please split into many componenets !-->
   <b-modal
     id="registerNew"
-    title="Register New Course"
+    :title="modalTitle"
     size="lg"
-    @ok="submitNewCourse"
+    @ok="submitCourse"
     @cancel="cancelRegistration"
   >
     <b-form>
@@ -114,6 +113,7 @@
 import api from '../../api.js'
 export default {
   name: 'RegisterNewCourseModal',
+  props: ['mode', 'courseId'],
   components: {
   },
   data () {
@@ -131,7 +131,31 @@ export default {
         { text: 'Summer', value: 1 },
         { text: 'Fall', value: 2 },
         { text: 'Winter', value: 3 }
-      ]
+      ],
+      modalTitle: ''
+    }
+  },
+  async mounted () {
+    if (this.mode === 'create') {
+      this.modalTitle = 'Register New Course'
+      this.form = {
+        courseTitle: '',
+        courseCode: '',
+        classNumber: null,
+        year: null,
+        semester: null
+      }
+    } else {
+      this.modalTitle = 'Edit Course'
+      const res = await api.getCourseList(this.courseId)
+      const course = res.data.data
+      this.form = {
+        courseTitle: course.title,
+        courseCode: course.course_code,
+        classNumber: course.class_number,
+        year: course.registered_year,
+        semester: course.semester
+      }
     }
   },
   methods: {
@@ -144,17 +168,29 @@ export default {
         semester: null
       }
     },
-    async submitNewCourse (bvModalEvt) {
+    async submitCourse (bvModalEvt) {
       bvModalEvt.preventDefault()
-      const data = {
-        title: this.form.courseTitle,
-        course_code: this.form.courseCode,
-        class_number: this.form.classNumber,
-        registered_year: this.form.year,
-        semester: this.form.semester
+      if (this.mode === 'create') {
+        const data = {
+          title: this.form.courseTitle,
+          course_code: this.form.courseCode,
+          class_number: this.form.classNumber,
+          registered_year: this.form.year,
+          semester: this.form.semester
+        }
+        await api.createCourse(data)
+      } else {
+        const data = {
+          id: this.courseId,
+          title: this.form.courseTitle,
+          course_code: this.form.courseCode,
+          class_number: this.form.classNumber,
+          registered_year: this.form.year,
+          semester: this.form.semester
+        }
+        await api.editCourse(data)
       }
-      await api.createCourse(data)
-      this.$emit('newCourseCreated')
+      this.$emit('submitCourseData')
       this.$nextTick(() => {
         this.$bvModal.hide('registerNew')
       })
