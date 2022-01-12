@@ -436,7 +436,7 @@
                 size="sm"
                 v-model="row.item.score"
                 :placeholder="Score"
-                :disabled="problem.rule_type !== 'OI'"
+                :disabled="problem.rule_type !== 'ASSIGNMENT'"
               />
             </template>
           </b-table>
@@ -563,7 +563,7 @@ export default {
       spj_compile_ok: false,
       test_case_id: '',
       test_case_score: [],
-      rule_type: 'ACM',
+      rule_type: 'ASSIGNMENT',
       hint: '',
       source: '',
       io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
@@ -805,7 +805,7 @@ export default {
         this.$error(this.error.testCase)
         return
       }
-      if (this.problem.rule_type === 'OI') {
+      if (this.problem.rule_type === 'ASSIGNMENT') {
         for (const item of this.problem.test_case_score) {
           try {
             if (parseInt(item.score) <= 0) {
