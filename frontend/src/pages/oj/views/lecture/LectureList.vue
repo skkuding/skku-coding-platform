@@ -7,11 +7,12 @@
       <b-table
       hover
       id="lecturelist"
-      :items="items"
+      :items="lectureList"
+      :fields="lectureTableColumns"
       :per-page="perPage"
       head-variant="light"
       :current-page="currentPage"
-      @row-clicked = "goDashboard"></b-table>
+      @row-clicked = "goLectureDashboard"></b-table>
     </div>
     <div class="pagination">
     <b-pagination
@@ -26,6 +27,8 @@
 </template>
 
 <script>
+import api from '@oj/api'
+
 export default {
   name: 'LectureList',
   components: {
@@ -35,24 +38,41 @@ export default {
     return {
       perPage: 10,
       currentPage: 1,
-      items: [
+      lectureList: [
         { subject: '프로그래밍 기초와 실습', semester: '2021 spring' },
-        { subject: '공학 컴퓨터 프로그래밍', semester: '2021 fall' }
+        { subject: '공학 컴퓨터 프로그래밍', semester: '2021 fall' } //test
+      ],
+      lectureTableColumns: [
+        {
+          label: 'Subject',
+          key: 'title'
+        },
+        {
+          label: 'Semester',
+          key: 'semester'
+        }
       ]
     }
   },
   async mounted () {
+    try {
+      const resp = await api.getLectureList()
+      const data = resp.data.data
+      this.lectureList = data.results
+    } catch (err) {
+    }
   },
   methods: {
-    async goDashboard () {
+    async goLectureDashboard (item) {
       await this.$router.push({
-        name: 'lecture-dashboard'
+        name: 'lecture-dashboard',
+        params: { courseID: item.id }
       })
     }
   },
   computed: {
     rows () {
-      return this.items.length
+      return this.lectureList.length
     }
   }
 }

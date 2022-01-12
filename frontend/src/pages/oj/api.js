@@ -253,6 +253,9 @@ export default {
   },
   getBannerImage () {
     return ajax('banner/', 'get')
+  },
+  getLectureList (data) {
+    return ajax('lecture/course', 'get')
   }
 }
 
