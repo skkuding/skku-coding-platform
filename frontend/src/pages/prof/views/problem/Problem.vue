@@ -44,8 +44,16 @@
         <b-col>
           <p class="labels">
             <span class="text-danger">*</span> Description
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.description_preview>Preview</b-button>
           </p>
           <tiptap v-model="problem.description"></tiptap>
+          <b-modal id="description_preview" title="Description Preview" hide-footer>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.description"></p>
+              </div>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
 
@@ -53,8 +61,16 @@
         <b-col>
           <p class="labels">
             <span class="text-danger">*</span> Input Description
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.input_description_preview>Preview</b-button>
           </p>
           <tiptap v-model="problem.input_description"></tiptap>
+          <b-modal id="input_description_preview" title="Input Description Preview" hide-footer>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.input_description"></p>
+              </div>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
 
@@ -62,8 +78,16 @@
         <b-col>
           <p class="labels">
             <span class="text-danger">*</span> Output Description
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.output_description_preview>Preview</b-button>
           </p>
           <tiptap v-model="problem.output_description"></tiptap>
+          <b-modal id="output_description_preview" title="Output Description Preview" hide-footer>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.output_description"></p>
+              </div>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
 
@@ -236,8 +260,16 @@
         <b-col>
           <p class="labels">
             Hint
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.hintpreview>Preview</b-button>
           </p>
           <tiptap v-model="problem.hint" placeholder=""></tiptap>
+          <b-modal id="hintpreview" title="Hint Preview" hide-footer>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.hint"></p>
+              </div>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
 

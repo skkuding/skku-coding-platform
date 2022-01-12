@@ -1,54 +1,32 @@
 <template>
-  <b-form-gorup>
+  <b-form-group>
+    <p class="labels text-center">
+      Put LaTeX in the following format to use LaTeX in our editor.<br/>
+    \( ... \), $$ ... $$, \[ ... \]<br/>
+    For example, \( \pm\sqrt{a^2 + b^2}  \) or $$ \pm\sqrt{a^2 + b^2} $$
+    </p>
     <p class="labels">
       Input
     </p>
     <b-form-textarea
       v-model="input"
       style="margin-bottom: 24px"
-      @keyup.enter.native="changeInput"
       rows="4"
     >
     </b-form-textarea>
-
     <p class="labels">
       Output
     </p>
-    <div v-dompurify-html="text" />
-  </b-form-gorup>
+    <katex-element :expression="this.input" :throw-on-error="false" />
+  </b-form-group>
 </template>
 
 <script>
-import katex from 'katex'
 export default {
   name: '',
   data () {
     return {
-      input: 'c = \\pm\\sqrt{a^2 + b^2}',
-      text: ''
-    }
-  },
-  mounted () {
-    this.text = this.renderTex(this.input)
-  },
-  methods: {
-    renderTex (data) {
-      return katex.renderToString(data, {
-        displayMode: true,
-        throwOnError: false
-      })
-    },
-    changeInput () {
-      try {
-        this.text = this.renderTex(this.input)
-      } catch (e) {
-        this.text = '<p style="text-align: center"><span style="color:red">Error Input</span></p>'
-      }
-    }
-  },
-  watch: {
-    'input' () {
-      this.changeInput()
+      input: 'c = \\pm\\sqrt{a^2 + b^2}'
     }
   }
 }
