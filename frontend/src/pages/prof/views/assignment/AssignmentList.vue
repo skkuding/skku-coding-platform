@@ -107,11 +107,11 @@
                   icon="pencil"
                   @click.native="editAssignment()"
                 />
-                <create-assignment-modal
+                <!-- <create-assignment-modal
                   :lecture-id="lectureId"
                   :modal-type="modalType"
                   @update="showAssignmentList"
-                ></create-assignment-modal>
+                ></create-assignment-modal> -->
                 <icon-btn
                   name="Delete Assignment"
                   icon="trash"
@@ -216,11 +216,11 @@ export default {
     },
     async createAssignment () {
       this.modalType = 'create'
-      this.$bvModal.show('createAssignment')
+      this.$bvModal.show('create-assignment')
     },
     async editAssignment () {
       this.modalType = 'edit'
-      this.$bvModal.show('createAssignment')
+      this.$bvModal.show('create-assignment')
     },
     async showAssignmentProblemList (assignmentId) {
       api.getAssignmentProblemList(assignmentId)

@@ -1,6 +1,6 @@
 <template>
   <b-modal
-  id="createAssignment"
+  id="create-assignment"
   :title="modalTitle"
   size="lg"
   @ok="createNewAssignment"
