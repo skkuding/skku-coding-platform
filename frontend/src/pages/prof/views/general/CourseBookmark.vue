@@ -18,9 +18,9 @@
           <template #cell(title)="data">
             <b-button
               class="bookmark__btn"
-              @click="setBookmark(data.item.id)"
+              @click="setBookmark(data.item.id, data.item.bookmark)"
             >
-              <b-icon :icon="setIcon(data.item.id)"/>
+              <b-icon :icon="setIcon(data.item.bookmark)"/>
             </b-button>
             {{data.value + '  ( ' + data.item.course_code + '-' + data.item.class_number + ' ) '}}
           </template>
@@ -40,8 +40,6 @@ export default {
   name: 'CourseBookmark',
   data () {
     return {
-      bookmarkList: [],
-      bookmarkIDList: [],
       courseList: [],
       courseListFields: [
         'title', 'semester'
@@ -62,28 +60,17 @@ export default {
   },
   async mounted () {
     try {
-      const res = await api.getBookmarkCourseList(null, 250, 0)
-      this.bookmarkList = res.data.data.results
-      for (const course of this.bookmarkList) {
-        (this.bookmarkIDList).push(course.id)
-      }
       const resp = await api.getCourseList()
       this.courseList = resp.data.data.results
     } catch (err) {
     }
   },
   methods: {
-    setIcon (id) {
-      return (this.bookmarkIDList).includes(id) ? 'bookmark-fill' : 'bookmark'
+    setIcon (bookmark) {
+      return bookmark ? 'bookmark-fill' : 'bookmark'
     },
-    async setBookmark (courseID) {
-      await api.setBookmark(courseID)
-      const resp = await api.getBookmarkCourseList(null, 250, 0)
-      this.bookmarkList = resp.data.data.results
-      this.bookmarkIDList = []
-      for (var course of this.bookmarkList) {
-        (this.bookmarkIDList).push(course.id)
-      }
+    async setBookmark (courseID, bookmark) {
+      await api.setBookmark(courseID, !bookmark)
       this.$parent.updateSidebar += 1
     }
   }

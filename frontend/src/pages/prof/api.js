@@ -80,15 +80,16 @@ export default {
     })
   },
   getBookmarkCourseList (courseId, limit, offset) {
-    const params = { course_id: courseId, limit, offset }
-    return ajax('lecture/professor/bookmark_course_list/', 'get', {
+    const params = { id: courseId, limit, offset, bookmark: true }
+    return ajax('lecture/professor/course/', 'get', {
       params
     })
   },
-  setBookmark (courseID) {
+  setBookmark (courseID, bookmark) {
     return ajax('lecture/professor/bookmark_course/', 'put', {
       data: {
-        course_id: courseID
+        course_id: courseID,
+        bookmark: bookmark
       }
     })
   },
