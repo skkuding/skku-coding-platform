@@ -9,7 +9,7 @@
       :lg="4"
       id="first-col"
     >
-      <img id="coding-platform-logo" src="@/assets/logos/codingPlatformLogo.png" alt="coding-platform-logo">
+      <!-- <img id="coding-platform-logo" src="@/assets/logos/codingPlatformLogo.png" alt="coding-platform-logo"> -->
       <b-card class="admin-info drop-shadow-custom" :title="'Welcome, Prof. ' + user.username">
         <b-card-text>
           Last login
