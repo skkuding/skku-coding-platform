@@ -16,6 +16,18 @@
           </li>
         </ul>
       </b-row>
+      <b-row class="sidebar-row bottom-border" v-else-if="$route.name && $route.name.indexOf('assignment') != -1">
+        <h2>
+          <b-icon class="sidebar-icon" icon="hash" scale="1.3" shift-v="1"/>
+          Problem List
+        </h2>
+        <ul id="problem-list">
+          <li v-for="(assignmentProblem, index) of assignmentProblems" :key="index"
+            @click="()=>goLectureAssignmentProblem(assignmentProblem._id)">
+            {{assignmentProblem.title}}
+          </li>
+        </ul>
+      </b-row>
       <b-row class="sidebar-row">
         <h2 v-if="contestID" v-b-modal.clarifications-modal @click="getContestAnnouncementList">
           <b-icon class="sidebar-icon" icon="question-circle" scale="1.2"/>
@@ -184,12 +196,14 @@ export default {
   props: ['hide', 'contestID', 'problemID'],
   data () {
     return {
+      assignmentID: '',
       clarifications: [],
       my_submissions: [],
       all_submissions: [],
       submission_detail: {},
 
       // Map (key: problem id, value: problem title)
+      assignmentProblems: [],
       problem_titles: {},
       clarifications_table_fields: [
         'Problem',
@@ -239,15 +253,17 @@ export default {
   async mounted () {
     if (this.$route.params.contestID) {
       await this.getContestProblems()
-      this.submission_table_fields.unshift('Problem')
-      this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
+    } else if (this.$route.params.assignmentID) {
+      this.assignmentID = this.$route.params.assignmentID
+      await this.getLectureAssignmentProblems()
     }
+    this.submission_table_fields.unshift('Problem')
+    this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
     this.initProblemTitles()
   },
   methods: {
     async getContestProblems () {
       const res = await this.$store.dispatch('getContestProblems')
-
       if (this.isAuthenticated) {
         if (this.contestRuleType === 'ACM') {
           this.addStatusColumn(this.ACMTableColumns, res.data.data)
@@ -256,9 +272,22 @@ export default {
         }
       }
     },
+    async getLectureAssignmentProblems () {
+      try {
+        const res = await this.$store.dispatch('getLectureAssignmentProblems')
+        this.assignmentProblems = res.data.data.results
+      } catch (err) {
+      }
+    },
     initProblemTitles () {
-      for (let i = 0; i < this.contestProblems.length; i++) {
-        this.problem_titles[this.contestProblems[i]._id] = this.contestProblems[i].title
+      if (this.$route.params.contestID) {
+        for (let i = 0; i < this.contestProblems.length; i++) {
+          this.problem_titles[this.contestProblems[i]._id] = this.contestProblems[i].title
+        }
+      } else if (this.$route.params.assignmentID) {
+        for (let i = 0; i < this.assignmentProblems.length; i++) {
+          this.problem_titles[this.assignmentProblems[i]._id] = this.assignmentProblems[i].title
+        }
       }
     },
     async getContestAnnouncementList () {
@@ -293,11 +322,20 @@ export default {
         username: '',
         page: 1,
         contest_id: this.contestID,
-        problem_id: this.problemID
+        problem_id: this.problemID,
+        assignment_id: this.assignmentID
       }
       params.contest_id = this.contestID
       params.problem_id = this.problemID
-      const func = this.contestID ? 'getContestSubmissionList' : 'getSubmissionList'
+      params.assignment_id = this.assignmentID
+      var func
+      if (this.contestID) {
+        func = 'getContestSubmissionList'
+      } else if (this.assignmentID) {
+        func = 'getAssignmentSubmissionList'
+      } else {
+        func = 'getSubmissionList'
+      }
 
       // offset, limit, params
       const result = await api[func](0, 100, params)
@@ -310,7 +348,7 @@ export default {
           User: v.username,
           Result: JUDGE_STATUS[v.result].name
         }
-        if (this.contestID) {
+        if (this.contestID || this.assignmentID) {
           info.Problem = this.problem_titles[v.problem]
         }
         return info
@@ -322,6 +360,16 @@ export default {
         name: 'contest-problem-details',
         params: {
           contestID: this.$route.params.contestID,
+          problemID: problemID
+        }
+      })
+    },
+    async goLectureAssignmentProblem (problemID) {
+      await this.$router.push({
+        name: 'lecture-assignment-problem-details',
+        params: {
+          courseId: this.$route.params.courseID,
+          assignmentID: this.$route.params.assignmentID,
           problemID: problemID
         }
       })
@@ -378,7 +426,8 @@ export default {
   },
   computed: {
     ...mapState({
-      contestProblems: state => state.contest.contestProblems
+      contestProblems: state => state.contest.contestProblems,
+      assignmentProblems: state => state.contest.assignmentProblems
     }),
     // Modal table pagination variable
     clarifications_rows () {
@@ -418,6 +467,7 @@ export default {
 
       #problem-list {
         margin-left: 30px;
+        cursor: pointer;
 
         li {
           list-style-type: none;
