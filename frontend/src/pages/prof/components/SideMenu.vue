@@ -23,7 +23,7 @@
           <b-icon
             :icon="click ? 'caret-right-fill' : 'caret-down-fill'"
             font-scale="1"
-            style="margin-right: 8px; cursor:pointer"
+            style="margin-right: 8px; cursor:pointer;"
             v-b-toggle="String(term.registered_year) + '-' + String(term.semester)"
           />
           <span v-b-toggle="String(term.registered_year) + '-' + String(term.semester)"> {{term.registered_year}} {{semester_name[term.semester]}} </span>
@@ -53,7 +53,7 @@
                   <b-icon
                     icon="record-fill"
                     font-scale="0.5"
-                    style="margin-right: 8px;"
+                    style="margin-right: 8px; vertical-align:1px"
                   />
                   Dashboard
                 </b-list-group-item>
@@ -64,7 +64,7 @@
                   <b-icon
                     icon="record-fill"
                     font-scale="0.5"
-                    style="margin-right: 8px "
+                    style="margin-right: 8px; vertical-align:1px "
                   />
                   Assignments
                 </b-list-group-item>
@@ -75,7 +75,7 @@
                   <b-icon
                     icon="record-fill"
                     font-scale="0.5"
-                    style="margin-right: 8px"
+                    style="margin-right: 8px; vertical-align:1px"
                   />
                   Questions
                 </b-list-group-item>
