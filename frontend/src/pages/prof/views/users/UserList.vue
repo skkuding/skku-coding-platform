@@ -158,7 +158,7 @@ export default {
       }
     },
     async deleteUsers (registrationIds) {
-      const sure = await this.$bvModal.msgBoxConfirm('Sure to delete Users? All Associated submissions and informations will be deleted', {
+      const sure = await this.$bvModal.msgBoxConfirm('Sure to delete the user? All Associated submissions and informations will be deleted', {
         title: 'Are you sure?',
         size: 'md',
         centered: true
