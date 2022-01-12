@@ -64,7 +64,7 @@ export default {
     this.route_name = this.$route.name
     try {
       await this.getLectureAssignment()
-      await this.getLectureAssignmentProblems()
+      await this.getLectureAssignmentProblemList()
     } catch (err) {
     }
   },
@@ -78,9 +78,9 @@ export default {
       } catch (err) {
       }
     },
-    async getLectureAssignmentProblems () {
+    async getLectureAssignmentProblemList () {
       try {
-        const res = await this.$store.dispatch('getLectureAssignmentProblems')
+        const res = await this.$store.dispatch('getLectureAssignmentProblemList')
         const data = res.data.data.results
         this.assignmentProblems = data
       } catch (err) {

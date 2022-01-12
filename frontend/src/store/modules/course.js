@@ -45,9 +45,9 @@ const actions = {
     commit(types.NOW, { now: moment(assignment.now) })
     return res
   },
-  async getLectureAssignmentProblems ({ commit, rootState }) {
+  async getLectureAssignmentProblemList ({ commit, rootState }) {
     try {
-      const res = await api.getLectureAssignmentProblems(rootState.route.params.courseID, rootState.route.params.assignmentID)
+      const res = await api.getLectureAssignmentProblemList(rootState.route.params.courseID, rootState.route.params.assignmentID)
       commit(types.CHANGE_ASSIGNMENT_PROBLEMS, { assignmentProblems: res.data.data })
       return res
     } catch (err) {

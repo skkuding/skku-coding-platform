@@ -292,7 +292,7 @@ export default {
       }
     })
   },
-  getLectureAssignmentProblems (courseID, assignmentID) {
+  getLectureAssignmentProblemList (courseID, assignmentID) {
     return ajax('lecture/course/assignment/problem', 'get', {
       params: {
         course_id: courseID,
