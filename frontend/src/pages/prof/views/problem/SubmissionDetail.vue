@@ -94,7 +94,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  /deep/ .modal {
+  ::v-deep .modal {
     .modal-dialog {
       min-width: 1200px;
 
@@ -201,11 +201,11 @@ export default {
             }
           }
 
-          /deep/ #submission-source-code .CodeMirror-sizer {
+          #submission-source-code::v-deep .CodeMirror-sizer {
             margin-left: 38px !important;
           }
 
-          /deep/ #submission-source-code .CodeMirror-gutter-wrapper {
+          #submission-source-code::v-deep .CodeMirror-gutter-wrapper {
             left: -38px !important;
           }
 
