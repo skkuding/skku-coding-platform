@@ -1,12 +1,14 @@
 <template>
   <b-row
     type="flex"
-    cols = "2"
     id="dashboard"
   >
     <b-col
+      :sm="12"
+      :xs="12"
       :md="5"
       :lg="4"
+      :xl="4"
       id="first-col"
     >
       <b-card class="admin-info drop-shadow-custom" :title="'Welcome, Prof. ' + user.username">
@@ -57,8 +59,11 @@
     </b-col>
     <register-new-course-modal @newCourseCreated="updateCourseList"></register-new-course-modal>
     <b-col
+      :sm="12"
+      :xs="12"
       :md="7"
       :lg="8"
+      :xl="8"
     >
       <b-card class="admin-info drop-shadow-custom" title="Underway Assignments">
         <b-table
@@ -281,7 +286,7 @@ export default {
     justify-content: flex-start;
     flex-wrap: wrap;
     .info-item {
-      flex: 1 0 auto;
+      flex: 1 1 auto;
       min-width: 200px;
       margin-bottom: 10px;
     }
