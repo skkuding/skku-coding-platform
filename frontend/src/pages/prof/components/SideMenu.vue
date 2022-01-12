@@ -151,7 +151,9 @@ export default {
       this.courses.forEach(course => {
         if (String(course.id) === String(this.$route.params.courseId)) {
           const id = String(course.registered_year) + '-' + String(course.semester)
-          this.$refs[id][0].show = true
+          for (const courseRef of this.$refs[id]) {
+            courseRef.show = true
+          }
           this.$refs['inner' + course.id][0].show = true
         }
       })
