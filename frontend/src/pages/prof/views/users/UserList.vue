@@ -1,5 +1,5 @@
 <template>
-  <Panel title="Users">
+  <Panel title="Students">
     <div slot="header">
       <b-row align-v="center"  style="margin: 0px">
         <b-col cols="6" >
