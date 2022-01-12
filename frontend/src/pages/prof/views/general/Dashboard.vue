@@ -42,7 +42,7 @@
         />
       </div>
       <b-card title="My Course" class="admin-info drop-shadow-custom">
-        2021 Summer
+        {{ currentSemester }}
         <b-list-group>
           <b-list-group-item
             v-for="(course,index) in courseList"
@@ -143,7 +143,8 @@ export default {
       ],
       assignmentList: [
       ],
-      session: {}
+      session: {},
+      currentSemester: ''
     }
   },
   async mounted () {
@@ -167,6 +168,16 @@ export default {
     this.assignmentList = res.data.data.underway_assignments.results
     if (res.data.data.underway_assignments.results < res.data.data.underway_assignments.total) {
       this.$error('Since the amount of underway assignment exceeds system limit, failed to load all underway assignments.')
+    }
+    const now = new Date()
+    this.currentSemester = now.getFullYear()
+    const nowMonth = now.getMonth()
+    if (nowMonth >= 8) {
+      this.currentSemester += ' Fall'
+    } else if (nowMonth >= 2 && nowMonth <= 5) {
+      this.currentSemester += ' Spring'
+    } else {
+      this.currentSemester += ' Summer/Winter'
     }
   },
   methods: {
@@ -225,11 +236,6 @@ export default {
     },
     updateCurrentPage () {
       return this.currentChange(this.currentPage)
-    },
-    currentSemester () {
-      const now = new Date()
-      const year = now.getFullYear()
-      return year
     }
   }
 }
