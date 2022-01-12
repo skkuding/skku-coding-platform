@@ -28,8 +28,7 @@
 
         <div v-for="(course,index) in courses" :key="index">
           <div v-if="term.registered_year === course.registered_year && term.semester === course.semester">
-
-            <b-collapse :id="String(term.registered_year) + '-' + String(term.semester)">
+            <b-collapse :id="String(term.registered_year) + '-' + String(term.semester)" :ref="String(term.registered_year) + '-' + String(term.semester)">
               <b-list-group-item
                 class="list-group-course"
               >
@@ -42,7 +41,7 @@
                 <span v-b-toggle="'inner'+course.id">{{course.title}}_{{course.course_code}}-{{course.class_number}}</span>
               </b-list-group-item>
 
-              <b-collapse :id="'inner'+course.id" role="tabpanel">
+              <b-collapse :id="'inner'+course.id" :ref="'inner'+course.id" role="tabpanel">
                 <b-list-group-item
                   :to="'/course/'+course.id+'/dashboard'"
                   class="list-group-inner"
@@ -142,6 +141,15 @@ export default {
   watch: {
     'update' () {
       this.groupCourses()
+    },
+    '$route' () {
+      this.courses.forEach(course => {
+        if (String(course.id) === String(this.$route.params.courseId)) {
+          const id = String(course.registered_year) + '-' + String(course.semester)
+          this.$refs[id][0].show = true
+          this.$refs['inner' + course.id][0].show = true
+        }
+      })
     }
   }
 }
