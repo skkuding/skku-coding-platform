@@ -81,11 +81,14 @@
         </div>
       </div>
     </b-list-group>
-    <b-button variant="light" id="put-in-button" @click="$emit('hide')">
+    <b-button size="sm" variant="light" id="put-in-button" @click="$emit('hide')">
       <b-icon-box-arrow-left>
     </b-button>
-    <b-button variant="primary" id="new-course-button" v-b-modal.registerNew>
+    <b-button size="sm" variant="primary" id="new-course-button" v-b-modal.registerNew>
       + New Course
+    </b-button>
+    <b-button size="sm" variant="primary" id="all-course-button" @click="goBookmark">
+      + All Course
     </b-button>
     <register-new-course-modal @newCourseCreated="groupCourses"></register-new-course-modal>
   </div>
@@ -122,7 +125,7 @@ export default {
       this.sideMenuShow = false
     },
     async groupCourses () {
-      const res = await api.getCourseList()
+      const res = await api.getBookmarkCourseList(null, 250, 0)
       const courses = res.data.data.results
       // Make registered term unique list
       const registeredTerms = new Set()
@@ -136,6 +139,11 @@ export default {
         JSON.parse(term)
       )
       this.courses = courses
+    },
+    async goBookmark () {
+      await this.$router.push({
+        name: 'lecture-bookmark'
+      })
     }
   },
   watch: {
@@ -205,12 +213,17 @@ export default {
   }
   #put-in-button {
     bottom: 0px;
-    left: 0px;
+    left: 10px;
     position: fixed;
   }
   #new-course-button {
     bottom: 0px;
     left: 50px;
+    position: fixed;
+  }
+  #all-course-button {
+    bottom: 0px;
+    left: 160px;
     position: fixed;
   }
 </style>
