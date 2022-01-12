@@ -16,11 +16,11 @@
     <div style="font-size: 20px;" class="mb-3">
       <b>Enter Student ID </b>
       <div class="float-right">
-        <label class="students-button" for="input-file">
+        <label class="students-button" for="input-file" title="Register with csv file">
           <b-icon-cloud-arrow-up></b-icon-cloud-arrow-up>
         </label>
         <input ref="uploadStudentsInput" @change="uploadStudentsFromCSV" type="file" id="input-file" accept=".csv" style="display: none;"/>
-        <button type="button" @click="addStudent" class="students-button">
+        <button type="button" @click="addStudent" class="students-button" title="Add empty student block" >
           <b-icon-person-plus></b-icon-person-plus>
         </button>
       </div>

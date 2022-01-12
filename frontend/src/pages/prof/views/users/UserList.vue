@@ -43,11 +43,11 @@
       </template>
 
       <template #cell(create_time)="data">
-        {{ data.item.create_time ? data.item.create_time.split(/[T]|[.]/).slice(0,2).join(' ') : 'No data' }}
+        {{ data.item.create_time ? data.item.create_time.split(/[T]|[.]|[+]/).slice(0,2).join(' ') : 'No data' }}
       </template>
 
       <template #cell(last_login)="data">
-        {{ data.item.last_login ? data.item.last_login.split(/[T]|[.]/).slice(0,2).join(' ') : 'No data'}}
+        {{ data.item.last_login ? data.item.last_login.split(/[T]|[.]|[+]/).slice(0,2).join(' ') : 'No data'}}
       </template>
 
       <template #cell(Option)="row">

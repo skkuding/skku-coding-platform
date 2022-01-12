@@ -92,7 +92,7 @@ import { ProblemMixin } from '@oj/components/mixins'
 import { DIFFICULTY_COLOR } from '@/utils/constants'
 
 export default {
-  name: 'problemList',
+  name: 'ImportPublicProblem',
   mixins: [ProblemMixin],
   props: ['assignmentId'],
   data () {

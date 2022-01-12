@@ -10,26 +10,26 @@
         <b-card title="Assignments" class="drop-shadow-custom">
           <div class="table">
             <b-table
-              hover
               :items="assignmentList"
               :fields="assignmentField"
               :current-page="currentAssignmentList"
               head-variant="light"
+              @row-clicked="toggleAssignmentProblem"
+              :tbody-tr-class="'assignment-table-body'"
             >
               <template #cell(show_detail)="row">
-                <b-button size="sm" variant="light" @click="toggleAssignmentProblem(row.item)">
-                  <b-icon :icon="row.item._showDetails ? 'caret-down-fill':'caret-right-fill'" aria-hidden="true"></b-icon>
-                </b-button>
+                <b-icon :icon="row.item._showDetails ? 'caret-down-fill':'caret-right-fill'" aria-hidden="true"></b-icon>
               </template>
-              <template v-slot:row-details="row">
+              <template v-slot:row-details="row" style="padding-left:50px; padding-right:50px">
                 <div v-if="!row.item.problemList.length">
                   No Problem data! Please add some problems
                 </div>
                 <b-table
                   v-else
-                  hover
                   :items="row.item.problemList"
                   :fields="problemField"
+                  no-border-collapse
+                  class="px-5"
                 >
                   <template v-slot:cell(number)="data">
                     {{ data.item.number }}
@@ -91,12 +91,17 @@
                 </b-form-checkbox>
               </template>
               <template #cell(status)="data">
-                <b-icon
-                  icon="circle-fill"
-                  :style="'color:' + assignmentStatus(data.item.status).color"
+                <div
+                  v-b-popover.hover.top="data.item.start_time.split(/[T]|[.]|[+]/).slice(0,2).join(' ') + ' ~ ' + data.item.end_time.split(/[T]|[.]|[+]/).slice(0,2).join(' ')"
+                  style="width: fit-content; cursor: pointer"
                 >
-                </b-icon>
-                {{ assignmentStatus(data.item.status).name }}
+                  <b-icon
+                    icon="circle-fill"
+                    :style="'color:' + assignmentStatus(data.item.status).color"
+                  >
+                  </b-icon>
+                  {{ assignmentStatus(data.item.status).name }}
+                </div>
               </template>
               <template #cell(operation)="data">
                 <div>
@@ -381,5 +386,13 @@ export default {
   }
   .drop-shadow-custom {
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  }
+</style>
+<style lang="scss">
+  .assignment-table-body:not(.b-table-details) {
+    cursor: pointer;
+  }
+  .assignment-table-body:not(.b-table-details):hover {
+    background-color: #d6d6d6
   }
 </style>
