@@ -319,13 +319,54 @@ export default {
       data
     })
   },
-  getAssignmentList (courseId, offset, limit) {
-    const params = { paging: true, offset, limit }
-    if (courseId) {
-      params.keyword = courseId
-    }
-    return ajax('lecture/professor/course/assignment', 'get', {
+  getCourseList (courseId, limit, offset) {
+    const params = { id: courseId, limit, offset }
+    return ajax('/lecture/professor/course/', 'get', {
+      params
+    })
+  },
+  createCourse (data) {
+    return ajax('/lecture/professor/course/', 'post', {
+      data
+    })
+  },
+  getAssignmentList (courseId, assignmentId, limit, offset) {
+    const params = { course_id: courseId, assignment_id: assignmentId, limit, offset }
+    return ajax('/lecture/professor/course/assignment', 'get', {
       params: params
+    })
+  },
+  getCourseStudents (courseId, limit, offset) {
+    const params = { course_id: courseId, limit, offset }
+    return ajax('/lecture/professor/course/students', 'get', {
+      params: params
+    })
+  },
+  getCourseStudentTotal (courseId, count) {
+    const params = { course_id: courseId, count }
+    return ajax('/lecture/professor/course/students', 'get', {
+      params: params
+    })
+  },
+  registerStudent (data) {
+    return ajax('/lecture/professor/course/students', 'post', {
+      data
+    })
+  },
+  deleteStudent (registrationId) {
+    const params = { registration_id: registrationId }
+    return ajax('/lecture/professor/course/students', 'delete', {
+      params: params
+    })
+  },
+  editStudent (data) {
+    return ajax('/lecture/professor/course/students', 'delete', {
+      data
+    })
+  },
+  postAssignment (data) { // 테스트용 api
+    return ajax('/lecture/professor/course/assignment', 'post', {
+      data
     })
   }
 }
@@ -357,7 +398,7 @@ async function ajax (url, method, options) {
       }
       throw res
     } else {
-      if (method !== 'get') {
+      if (method !== 'get' && url !== '/lecture/professor/course/students') {
         Vue.prototype.$success('Succeeded')
       }
       return res

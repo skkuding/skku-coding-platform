@@ -5,71 +5,60 @@
     title="Register New Students"
     size="md"
     @ok="submitRegistration"
-    @cancel="cancelRegistration"
     scrollable
   >
-    <p style="font-size: 22px;">
-      <b>Lecture Title: 공학컴퓨터 프로그래밍</b>
-    </p>
-    <div style="font-size: 22px;" class="mb-3">
-      <b>Student ID </b>
+    <p>Register students to {{ lectureTitle }}</p>
+    <div v-if="showErrorResult" class="text-danger" >
+      <p style="font-size: 18px;" >Registration Error! Please Try Again</p>
+      <p>{{ getUserNotExistUserList }}</p>
+      <p>{{ getAlreadyRegisteredUserList }}</p>
+    </div>
+    <div style="font-size: 20px;" class="mb-3">
+      <b>Enter Student ID </b>
       <div class="float-right">
-        <b-button type="button" @click="registerByCSVFile" variant="outline-info" title="" sqaured >
+        <label class="students-button" for="input-file">
           <b-icon-cloud-arrow-up></b-icon-cloud-arrow-up>
-        </b-button>
-        <b-button type="button" variant="outline-info" sqaured>
+        </label>
+        <input ref="uploadStudentsInput" @change="uploadStudentsFromCSV" type="file" id="input-file" accept=".csv" style="display: none;"/>
+        <button type="button" @click="addStudent" class="students-button">
           <b-icon-person-plus></b-icon-person-plus>
-        </b-button>
+        </button>
       </div>
     </div>
     <b-form>
-      <!-- <b-form-group
-        id="input-group-student-id"
-        label="Student ID"
-        label-for="input-student-id"
-        required
-        :state="form.lectureTitle !== ''"
-      >
-      valid-feedback="Checked"
-        invalid-feedback="Invalid Student Id" -->
-        <b-form-input
-          v-for="studentId in form.studentIds" :key="studentId.id"
-          id="input-student-id"
-          v-model="studentId.value"
-          required
-          :state="studentId.value !== '' "
-          class="mb-2"
-        ></b-form-input>
-        <b-form-file
-          v-if="!uploadUsers.length"
-          v-model="uploadUsersFile"
-          accept=".csv"
-        ></b-form-file>
-      <!-- </b-form-group> -->
+      <b-form-input
+        v-for="(studentId, index) in form.studentIds" :key="index"
+        v-model="studentId.value"
+        class="mb-2"
+        type="number"
+      ></b-form-input>
     </b-form>
+    <template #modal-footer="{ ok }">
+      <b-button size="sm" variant="success" @click="ok()">
+        Register all
+      </b-button>
+    </template>
   </b-modal>
 </template>
 
 <script>
-// import api from '../../api.js'
+import api from '../../api.js'
 import papa from 'papaparse'
 
 export default {
   name: 'RegisterNewUserModal',
   components: {
   },
+  props: [
+    'lecture-title'
+  ],
   data () {
     return {
       form: {
-        lectureId: 1,
-        studentIds: [{
-          id: 1,
-          value: '2020311666'
-        },
-        {
-          id: 2,
-          value: '2020311667'
-        }
+        studentIds: [
+          {
+            value: ''
+          }
         ]
       },
       semesters: [
@@ -78,50 +67,109 @@ export default {
         { text: 'Summer', value: 1 },
         { text: 'Fall', value: 2 },
         { text: 'Winter', value: 3 }
-      ]
+      ],
+      lectureId: null,
+      showErrorResult: false,
+      userNotExistUserList: [],
+      alreadyRegisteredUserList: []
     }
   },
+  mounted () {
+    this.lectureId = this.$route.params.lectureId
+  },
   methods: {
-    submitRegistration () {
-      // await api.registerNewLecture(this.form)
-      alert(this.form)
+    async submitRegistration (bvModalEvt) {
+      bvModalEvt.preventDefault()
+      this.showErrorResult = false
+      const data = {
+        username: this.form.studentIds.filter(studentId => (studentId.value !== '')).map(studentId => studentId.value),
+        course_id: this.$route.params.lectureId
+      }
+      const res = await api.registerStudent(data)
+      if (!res.data.error && !res.data.data) {
+        this.$success('Registration Succeeded')
+        this.$emit('update')
+        this.$nextTick(() => {
+          this.$bvModal.hide('register-new-user')
+        })
+      } else {
+        this.$error('Registration Failed! Please try again')
+        this.showErrorResult = true
+        this.userNotExistUserList = res.data.data.user_not_exist
+        this.alreadyRegisteredUserList = res.data.data.already_registered_user
+      }
     },
-    cancelRegistration () {
-      // await api.registerNewLecture(this.form)
-    },
-    handleUsersCSV (file) {
+    handleStudentsCSV (file) {
       papa.parse(file, {
         complete: (results) => {
-          const data = results.data.filter(user => {
-            return user[0] && user[1] && user[2]
-          })
-          const delta = results.data.length - data.length
-          if (delta > 0) {
-            this.$warning(delta + ' users have been filtered due to empty value')
+          try {
+            this.form.studentIds = results.data.flat().map(studentId => Object({ value: studentId }))
+          } catch (error) {
+            console.log(error)
           }
-          this.uploadUsersCurrentPage = 1
-          this.uploadUsers = data
-          this.uploadUsersPage = data.slice(0, this.uploadUsersPageSize)
         },
         error: (error) => {
           this.$error(error)
         }
       })
     },
-    registerStudentsByFile () {
-      if (this.form.studentIds.length !== 0) {
-        const sure = this.$bvModal.msgBoxConfirm('Are you sure?')
+    async uploadStudentsFromCSV (evt) {
+      if (evt.target.files.length !== 0 && this.form.studentIds.length !== 1 && this.form.studentIds[1] !== '') {
+        const sure = await this.$bvModal.msgBoxConfirm('Sure to upload student ID by csv file? It will override current student ID inputs', {
+          title: 'Are you sure?',
+          size: 'md',
+          centered: true
+        })
         if (sure === true) {
-          this.handleStudentsCSV()
+          this.handleStudentsCSV(evt.target.files[0])
         }
+      } else {
+        this.handleStudentsCSV(evt.target.files[0])
       }
+      this.$refs.uploadStudentsInput.value = null
+    },
+    addStudent () {
+      this.form.studentIds.push({
+        value: ''
+      })
     }
   },
   computed: {
+    getUserNotExistUserList () {
+      let errorMsg = ''
+      if (this.userNotExistUserList !== null && this.userNotExistUserList.length !== 0) {
+        errorMsg += 'User does not exist: ' + this.userNotExistUserList.join(', ')
+      }
+      return errorMsg
+    },
+    getAlreadyRegisteredUserList () {
+      let errorMsg = ''
+      if (this.alreadyRegisteredUserList !== null && this.alreadyRegisteredUserList.length !== 0) {
+        errorMsg += 'Already Registered User Found: ' + this.alreadyRegisteredUserList.join(', ')
+      }
+      return errorMsg
+    }
   }
 }
 </script>
-
-<style lang="scss">
+<style>
+  #register-new-user___BV_modal_title_{
+    font-size: 24px
+  }
+</style>
+<style lang="scss" scoped>
   // Be careful of common css selector in admin/oj
+  .students-button {
+    all: unset;
+    border-radius: 4px;
+    color: #212529;
+    cursor: pointer;
+    height: 33px;
+    padding: 0px 9px 0px 9px;
+  }
+  .students-button:hover {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
 </style>

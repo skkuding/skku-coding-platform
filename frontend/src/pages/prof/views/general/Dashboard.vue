@@ -29,20 +29,21 @@
           class="info-item drop-shadow-custom"
           :value="infoData.user_count"
         />
-        <info-card
+        <!-- <info-card
           color="#8DC63F"
           message="Assignments Submissions Today"
           class="info-item drop-shadow-custom"
           :value="infoData.today_submission_count"
-        />
+        /> -->
         <info-card
           color="#28A5FF"
-          message="Underway Assignments"
+          message="Assignments"
           class="info-item drop-shadow-custom"
-          :value="infoData.recent_contest_count"
+          :value="infoData.assignment_count"
         />
       </div>
-      <b-card title="My Lecture - 2021 Summer" class="admin-info drop-shadow-custom">
+      <b-card title="My Lecture" class="admin-info drop-shadow-custom">
+        2021 Summer
         <b-list-group>
           <b-list-group-item
             v-for="(lecture,index) in lectureList"
@@ -55,12 +56,16 @@
         </b-button>
       </b-card>
     </b-col>
-    <register-new-lecture-modal></register-new-lecture-modal>
+    <register-new-lecture-modal @newLectureCreated="updateLectureList"></register-new-lecture-modal>
     <b-col
       :md="7"
       :lg="8"
     >
-      <b-card class="admin-info drop-shadow-custom" title="Underway Assignments">
+      <b-card class="admin-info drop-shadow-custom" title="Assignments">
+        <b-input placeholder="Course id for new assignment -- !!! for debugging!!!" v-model="newAssignmentCourseId" type="number"></b-input>
+        <b-button variant="primary" @click="newAssignment">
+          + New Assignment For debugging
+        </b-button>
         <b-table
           borderless
           hover
@@ -69,6 +74,24 @@
           :per-page="pageSize"
           :current-page="updateCurrentPage"
         >
+          <template #cell(title)="data">
+            <b-link :to="'/lecture/' + data.item.course.id + '/assignment#' + data.item.id"> {{ data.value }}</b-link>
+          </template>
+          <template #cell(status)="data">
+            <b-button
+              size="sm"
+              :variant="
+                data.item.status === '-1'
+                  ? 'outline-danger'
+                  : data.item.status === '0'
+                  ? 'outline-success'
+                  : 'outline-primary'
+              "
+              disabled
+            >
+              {{ ASSIGNMENT_STATUS_REVERSE[data.item.status] }}
+            </b-button>
+          </template>
         </b-table>
         <div class="panel-options">
           <b-pagination
@@ -98,42 +121,22 @@ export default {
   },
   data () {
     return {
+      newAssignmentCourseId: null, // for debugging
+      ASSIGNMENT_STATUS_REVERSE: {
+        1: 'Not Started',
+        0: 'Underway',
+        '-1': 'Ended'
+      },
       pageSize: 10,
       currentPage: 1,
       infoData: {
         user_count: 0,
         recent_contest_count: 0,
         today_submission_count: 0,
-        judge_server_count: 0,
+        assignment_count: 0,
         env: {}
       },
       lectureList: [
-        {
-          id: 1,
-          title: 'Programming Basics',
-          course_code: 'GEDT018',
-          class_number: 41,
-          created_by: {
-            id: 1,
-            username: 'youngHoon',
-            real_name: '김영훈'
-          },
-          registered_year: '2021',
-          semester: 1
-        },
-        {
-          id: 2,
-          title: 'Programming Advanced',
-          course_code: 'GEDT019',
-          class_number: 41,
-          created_by: {
-            id: 1,
-            username: 'youngHoon',
-            real_name: '김영훈'
-          },
-          registered_year: '2021',
-          semester: 1
-        }
       ],
       assignmentListFields: [
         {
@@ -143,73 +146,44 @@ export default {
         {
           key: 'course.title',
           label: ''
+        },
+        {
+          key: 'status',
+          label: ''
         }
       ],
       assignmentList: [
-        {
-          id: 1,
-          title: '1주차 과제',
-          content: '<p>1주차 과제입니다.</p>',
-          created_by: {
-            id: 2,
-            username: 'youngHoon',
-            real_name: '김영훈'
-          },
-          course: {
-            id: 1,
-            title: 'Programming Basics',
-            course_code: 'GEDT018',
-            class_number: 41,
-            registered_year: '2021',
-            semester: 1
-          },
-          start_time: '2021-08-23T18:25:43+09:00',
-          end_time: '2021-08-25T19:25:43+09:00',
-          status: '-1',
-          submitted_problem: 8,
-          total_problem: 10
-        },
-        {
-          id: 2,
-          title: '2주차 과제',
-          content: '<p>2주차 과제입니다. </p>',
-          created_by: {
-            id: 2,
-            username: 'youngHoon',
-            real_name: '김영훈'
-          },
-          course: {
-            id: 1,
-            title: 'Computer Engineering',
-            course_code: 'GEDT018',
-            class_number: 41,
-            registered_year: '2021',
-            semester: 1
-          },
-          start_time: '2021-08-17T18:25:43+09:00',
-          end_time: '2021-08-23T19:25:43+09:00',
-          status: '0',
-          submitted_problem: 8,
-          total_problem: 10
-        }
       ],
-      lectureListTotal: 2,
       session: {}
     }
   },
   async mounted () {
     try {
-      const resp = await api.getDashboardInfo()
-      this.infoData = resp.data.data
+      const resp = await api.getAssignmentList() // 추후 api 바꿔야함
+      this.infoData.assignment_count = resp.data.data.total
     } catch (err) {
     }
-
     try {
       const resp = await api.getSessions()
       this.parseSession(resp.data.data)
     } catch (err) {
     }
-    await this.getAssignmentList(this.currentPage)
+    try {
+      const res = await api.getCourseList()
+      this.lectureList = res.data.data.results
+    } catch (err) {
+      console.log(err)
+    }
+    for (const lecture of this.lectureList) {
+      const resp = await api.getCourseStudentTotal(lecture.id, 1) // 추후 api 바꿔야함
+      this.infoData.user_count += resp.data.data.total_students
+    }
+    // try {
+    //   const res = await api.getAssignmentList()
+    //   this.assignmentList = res.data.data.results
+    // } catch (err) {
+    //   console.log(err)
+    // }
   },
   methods: {
     async currentChange (page) {
@@ -217,9 +191,9 @@ export default {
       await this.getAssignmentList(page)
     },
     async getAssignmentList (page) {
-      this.loading = true
+      this.loading = true // api.getAssignmentList (courseId, assignmentId, limit, offset)
       try {
-        const res = await api.getAssignmentList(false, (page - 1) * this.pageSize, this.pageSize)
+        const res = await api.getAssignmentList(null, null, this.pageSize, (page - 1) * this.pageSize)
         this.total = res.data.data.total
         this.assignmentList = res.data.data.results
       } catch (err) {
@@ -236,6 +210,24 @@ export default {
         })[0]
       }
       this.session = session
+    },
+    async updateLectureList () {
+      try {
+        const res = await api.getCourseList()
+        this.lectureList = res.data.data.results
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async newAssignment () { // only for debugging
+      const data = {
+        title: 'programming',
+        course_id: this.newAssignmentCourseId,
+        content: '232323',
+        start_time: '2021-08-22T04:55:17.644Z',
+        end_time: '2021-08-23T04:55:17.644Z'
+      }
+      api.postAssignment(data)
     }
   },
   computed: {
