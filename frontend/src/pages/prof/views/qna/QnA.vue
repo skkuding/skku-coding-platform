@@ -1,10 +1,10 @@
 <template>
-  <div class="contest-list-card font-bold">
+  <!-- <div class="contest-list-card font-bold">
     <div class="top-bar mb-4">
       <h2 class="title">All Contest</h2>
-    </div>
-    <b-card >
-      <div class="table">
+    </div> -->
+    <b-card title="QnA feature will be provided soon" style="flex: 1 0 auto">
+      <!-- <div class="table">
         <b-table
           hover
           :items="qna"
@@ -19,10 +19,9 @@
       <div
         v-if="!qnalist.length"
       >
-        No Question
-      </div>
+      </div> -->
     </b-card>
-    <div class="pagination">
+    <!-- <div class="pagination">
       <b-pagination
         v-model="currentPage"
         :total-rows="contest.length"
@@ -30,7 +29,7 @@
         limit="3"
       ></b-pagination>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -43,9 +42,6 @@ export default {
   },
   data () {
     return {
-      qnafield: ['Title', 'Status', 'Date'],
-      qnalist: [
-      ]
     }
   },
   async mounted () {
