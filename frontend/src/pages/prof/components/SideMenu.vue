@@ -85,13 +85,21 @@
     <b-button variant="light" id="put-in-button" @click="$emit('hide')">
       <b-icon-box-arrow-left>
     </b-button>
+    <b-button variant="primary" id="new-course-button" v-b-modal.registerNew>
+      + New Course
+    </b-button>
+    <register-new-course-modal @newCourseCreated="groupCourses"></register-new-course-modal>
   </div>
 </template>
 
 <script>
 import api from '../api.js'
+import RegisterNewCourse from '../views/general/RegisterNewCourse.vue'
 export default {
   name: 'SideMenu',
+  components: [
+    RegisterNewCourse
+  ],
   data () {
     return {
       currentPath: '',
@@ -190,6 +198,11 @@ export default {
   #put-in-button {
     bottom: 0px;
     left: 0px;
+    position: fixed;
+  }
+  #new-course-button {
+    bottom: 0px;
+    left: 50px;
     position: fixed;
   }
 </style>
