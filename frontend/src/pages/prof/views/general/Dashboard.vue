@@ -29,10 +29,16 @@
           :value="infoData.user_count"
         />
         <info-card
-          color="#28A5FF"
-          message="Assignments"
+          color="#8DC63F"
+          message="Submissions Today"
           class="info-item drop-shadow-custom"
-          :value="infoData.assignment_count"
+          :value="infoData.today_submission_count"
+        />
+        <info-card
+          color="#28A5FF"
+          message="Underway Assignments"
+          class="info-item drop-shadow-custom"
+          :value="infoData.underway_assignments_count"
         />
       </div>
       <b-card title="My Lecture" class="admin-info drop-shadow-custom">
@@ -54,7 +60,7 @@
       :md="7"
       :lg="8"
     >
-      <b-card class="admin-info drop-shadow-custom" title="Assignments">
+      <b-card class="admin-info drop-shadow-custom" title="Underway Assignments">
         <b-table
           borderless
           hover
@@ -119,9 +125,8 @@ export default {
       currentPage: 1,
       infoData: {
         user_count: 0,
-        recent_contest_count: 0,
         today_submission_count: 0,
-        assignment_count: 0,
+        underway_assignments_count: 0,
         env: {}
       },
       lectureList: [
@@ -134,10 +139,6 @@ export default {
         {
           key: 'course.title',
           label: ''
-        },
-        {
-          key: 'status',
-          label: ''
         }
       ],
       assignmentList: [
@@ -146,32 +147,43 @@ export default {
     }
   },
   async mounted () {
-    try {
-      const resp = await api.getAssignmentList()
-      this.infoData.assignment_count = resp.data.data.total
-    } catch (err) {
-    }
+    // try {
+    //   const resp = await api.getAssignmentList()
+    //   this.infoData.assignment_count = resp.data.data.total
+    // } catch (err) {
+    // }
     try {
       const resp = await api.getSessions()
       this.parseSession(resp.data.data)
     } catch (err) {
     }
     try {
-      const res = await api.getCourseList()
+      const res = await api.getCourseList(null, 250, 0)
       this.lectureList = res.data.data.results
+      if (res.data.data.total > 250) {
+        this.$error('Since there are too much lectures, failed to get all lecture list')
+      }
     } catch (err) {
       console.log(err)
     }
-    for (const lecture of this.lectureList) {
-      const resp = await api.getCourseStudentTotal(lecture.id, 1)
-      this.infoData.user_count += resp.data.data.total_students
-    }
+    // for (const lecture of this.lectureList) {
+    //   const resp = await api.getCourseStudentTotal(lecture.id, 1)
+    //   this.infoData.user_count += resp.data.data.total_students
+    // }
     // try {
     //   const res = await api.getAssignmentList()
     //   this.assignmentList = res.data.data.results
     // } catch (err) {
     //   console.log(err)
     // }
+    const res = await api.getDashboardInfo()
+    this.infoData.user_count = res.data.data.student_count
+    this.infoData.today_submission_count = res.data.data.today_submission_count
+    this.infoData.underway_assignments_count = res.data.data.underway_assignments.total
+    this.assignmentList = res.data.data.underway_assignments.results
+    if (res.data.data.underway_assignments.results < res.data.data.underway_assignments.total) {
+      this.$error('Since the amount of underway assignment exceeds system limit, failed to load all underway assignments.')
+    }
   },
   methods: {
     async currentChange (page) {
@@ -179,15 +191,12 @@ export default {
       await this.getAssignmentList(page)
     },
     async getAssignmentList (page) {
-      this.loading = true
       try {
-        const res = await api.getAssignmentList(null, null, this.pageSize, (page - 1) * this.pageSize)
-        this.total = res.data.data.total
-        this.assignmentList = res.data.data.results
+        const res = await api.getDashboardInfo(this.pageSize, (page - 1) * this.pageSize)
+        this.total = res.data.data.underway_assignments.total
+        this.assignmentList = res.data.data.underway_assignments.results
       } catch (err) {
         console.log(err)
-      } finally {
-        this.loading = false
       }
     },
     parseSession (sessions) {
