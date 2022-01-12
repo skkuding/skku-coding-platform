@@ -21,7 +21,8 @@ import {
   LectureAssignmentList,
   LectureAssignmentDetail,
   LectureQna,
-  LectureQnaDetail
+  LectureQnaDetail,
+  LectureBookmark
 } from '../views'
 
 export default [
@@ -126,6 +127,12 @@ export default [
     path: '/lecture',
     meta: { title: 'Lecture List' },
     component: LectureList
+  },
+  {
+    name: 'lecture-bookmark',
+    path: '/lecture/bookmark_course_list',
+    meta: { title: 'Lecture Bookmark' },
+    component: LectureBookmark
   },
   {
     name: 'lecture-dashboard',

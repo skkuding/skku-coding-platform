@@ -254,12 +254,22 @@ export default {
   getBannerImage () {
     return ajax('banner/', 'get')
   },
-  getLectureList (data) {
+  getLectureList () {
     return ajax('lecture/course', 'get')
   },
   getLecture (courseID) {
     return ajax('lecture/course', 'get', {
       params: {
+        course_id: courseID
+      }
+    })
+  },
+  getBookmarkLectureList () {
+    return ajax('lecture/bookmark_course_list', 'get')
+  },
+  setBookmark (courseID) {
+    return ajax('lecture/bookmark_course', 'put', {
+      data: {
         course_id: courseID
       }
     })
