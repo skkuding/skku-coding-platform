@@ -143,7 +143,6 @@ export default {
     this.problemId = this.$route.params.problemId
     this.problemTitle = this.$route.params.problemInfo
     this.pageLocations[2].text += this.problemTitle
-    // this.getSubmissionList()
   },
   methods: {
     async downloadAllSubmissions () {

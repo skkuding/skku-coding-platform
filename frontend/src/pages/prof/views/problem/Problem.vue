@@ -617,7 +617,6 @@ export default {
     },
     'problem.languages' (newVal) {
       const data = {}
-      // use deep copy to avoid infinite loop
       const languages = JSON.parse(JSON.stringify(newVal)).sort()
       for (const item of languages) {
         if (this.template[item] === undefined) {
@@ -829,7 +828,6 @@ export default {
         'create-lecture-problem': 'createAssignmentProblem',
         'edit-lecture-problem': 'editAssignmentProblem'
       }[this.routeName]
-      // edit contest problem 时, assignment_id会被后来的请求覆盖掉
       if (funcName === 'editAssignmentProblem') {
         this.problem.assignment_id = this.assignment.id
       }

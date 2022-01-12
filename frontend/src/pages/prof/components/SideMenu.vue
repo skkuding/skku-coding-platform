@@ -115,7 +115,7 @@ export default {
       this.sideMenuShow = false
     },
     async groupLectures () {
-      const res = await api.getCourseList() // id, limit, offset=0
+      const res = await api.getCourseList()
       const lectures = res.data.data.results
       // Make registered term unique list
       const registeredTerms = new Set()

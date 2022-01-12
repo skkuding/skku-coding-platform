@@ -217,7 +217,6 @@ export default {
   async mounted () {
     this.lectureId = this.$route.params.lectureId
     this.routeName = this.$route.name
-    // get course information
     try {
       const res = await api.getCourseList(this.lectureId)
       this.createdBy = res.data.data.created_by
@@ -228,7 +227,6 @@ export default {
       this.semester = res.data.data.semester
     } catch (err) {
     }
-    // get assignment list of the course
     try {
       const res = await api.getAssignmentList(this.lectureId)
       this.assignmentList = res.data.data.results.map(assignment => Object.assign(assignment, { _showDetails: false }))
@@ -242,9 +240,7 @@ export default {
           assignment._showDetails = true
         }
       }
-      // this.assignmentList[0]._showDetails = true
     }
-    // set breadcrumb navigation
     this.pageLocations[0].text = this.title + '_' + this.courseCode + '-' + this.classNumber
   },
   methods: {
@@ -270,11 +266,6 @@ export default {
           this.$set(this.assignmentList[i], '_showDetails', true)
         }
       }
-      // this.assignmentList.forEach(assignment => {
-      //   if (assignment.id === assignmentId) {
-      //     assignment.problemList = res.data.data.results
-      //   }
-      // })
     },
     async toggleAssignmentProblem (item) {
       if (item._showDetails) {
@@ -284,7 +275,6 @@ export default {
       } else {
         const res = await api.getAssignmentProblem(item.id)
         item.problemList = res.data.data.results
-        // await this.updateAssignmentProblemList(item.id)
         this.$set(item, '_showDetails', true)
       }
     },

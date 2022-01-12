@@ -167,5 +167,4 @@ export default {
 </script>
 
 <style lang="scss">
-  // Be careful of common css selector in admin/oj
 </style>
