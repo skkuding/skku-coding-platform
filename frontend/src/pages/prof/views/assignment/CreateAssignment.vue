@@ -3,7 +3,7 @@
   id="create-assignment"
   :title="modalTitle"
   size="lg"
-  @ok="createNewAssignment"
+  @ok="(modalType === 'create') ? createNewAssignment() : editAssignment()"
   @cancel="cancelCreation"
   >
     <b-form>
@@ -91,6 +91,15 @@
           </b-form-group>
         </b-col>
       </b-row>
+      <b-form-group
+        v-if="modalType==='create'"
+        id="input-group-visible"
+        label="Visible"
+        label-for="input-group-visible"
+      >
+        <b-form-checkbox id="input-group-visible" v-model="form.visible" switch>
+        </b-form-checkbox>
+      </b-form-group>
     </b-form>
   </b-modal>
 </template>
@@ -105,15 +114,19 @@ export default {
   },
   props: [
     'lecture-id',
-    'modal-type'
+    'modal-type',
+    'assignment-id'
   ],
   data () {
     return {
+      modalTitle: '',
       form: {
+        id: '',
         title: '',
         content: '',
         start_time: '',
-        end_time: ''
+        end_time: '',
+        visible: undefined
       },
       startDate: '',
       startTime: '',
@@ -130,9 +143,25 @@ export default {
         course_id: this.lectureId,
         content: this.form.content,
         start_time: this.form.start_time,
-        end_time: this.form.end_time
+        end_time: this.form.end_time,
+        visible: this.form.visible
       }
       await api.createAssignment(data)
+      this.$emit('update')
+    },
+    async editAssignment () {
+      this.setStartTime()
+      this.setEndTime()
+      const data = {
+        id: this.form.id,
+        title: this.form.title,
+        course_id: this.lectureId,
+        content: this.form.content,
+        start_time: this.form.start_time,
+        end_time: this.form.end_time,
+        visible: this.form.visible
+      }
+      await api.editAssignment(data)
       this.$emit('update')
     },
     resetModal () {
@@ -143,23 +172,34 @@ export default {
       this.endDate = ''
       this.endTime = ''
     },
-    initTime () {
-      ;[this.startDate, this.startTime] = this.form.start_time.split(/T|[+]/)
-      ;[this.endDate, this.endTime] = this.form.end_time.split(/T|[+]/)
-    },
     setStartTime () {
       this.form.start_time = this.startDate + ' ' + this.startTime
     },
     setEndTime () {
       this.form.end_time = this.endDate + ' ' + this.endTime
+    },
+    async getAssignmentDetail () {
+      const res = await api.getAssignmentList(this.lectureId, this.assignmentId)
+      this.form.title = res.data.data.title
+      this.form.content = res.data.data.content
+      ;[this.startDate, this.startTime] = res.data.data.start_time.split(/T|[+]/)
+      ;[this.endDate, this.endTime] = res.data.data.end_time.split(/T|[+]/)
+      this.startTime = this.startTime.split('.')[0]
+      this.endTime = this.endTime.split('.')[0]
+      this.form.visible = res.data.data.visible
+      this.form.id = res.data.data.id
     }
   },
-  computed: {
-    modalTitle () {
-      if (this.modalType === 'create') {
-        return 'Create New Assignmemt'
+  watch: {
+    async 'modalType' () {
+      console.log('edit-assignment-called')
+      if (this.modalType === 'edit') {
+        this.resetModal()
+        this.modalTitle = 'Edit Assignment'
+        this.getAssignmentDetail()
       } else {
-        return 'Edit Assignment'
+        this.resetModal()
+        this.modalTitle = 'Create New Assignment'
       }
     }
   }

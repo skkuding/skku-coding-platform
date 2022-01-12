@@ -17,7 +17,7 @@
               head-variant="light"
             >
               <template #cell(show_detail)="row">
-                <b-button size="sm" variant="light" @click="updateAssignmentProblem(row.item)">
+                <b-button size="sm" variant="light" @click="toggleAssignmentProblem(row.item)">
                   <b-icon :icon="row.item._showDetails ? 'caret-down-fill':'caret-right-fill'" aria-hidden="true"></b-icon>
                 </b-button>
               </template>
@@ -65,7 +65,7 @@
                     size="sm"
                     style="background-color: #4891FE; border-color: unset;"
                     class="mr-2 text-light"
-                    v-b-modal.import-public-problem-modal
+                    @click="showImportPublicProblemModal(row.item.id)"
                   >
                     +problem<br>From SKKU coding platform
                   </b-button>
@@ -103,7 +103,7 @@
                   <icon-btn
                     name="Edit Assignment"
                     icon="pencil"
-                    @click.native="editAssignment()"
+                    @click.native="editAssignment(data.item.id)"
                   />
                   <icon-btn
                     name="Delete Assignment"
@@ -122,11 +122,12 @@
             +Create
           </b-button>
           <create-assignment-modal
+            :assignment-id="selectedAssignmentId"
             :lecture-id="lectureId"
             :modal-type="modalType"
             @update="getAssignmentList"
           ></create-assignment-modal>
-          <import-public-problem-modal></import-public-problem-modal>
+          <import-public-problem-modal :assignment-id="selectedAssignmentId" @update="updateAssignmentProblemList"></import-public-problem-modal>
           <div v-if="!assignmentList.length">
             No Assignment
           </div>
@@ -154,7 +155,6 @@ export default {
   ],
   data () {
     return {
-      ASSIGNMENT_STATUS_REVERSE: ASSIGNMENT_STATUS_REVERSE,
       modalType: '',
       pageLocations: [
         {
@@ -201,13 +201,15 @@ export default {
           label: 'Accepted rate'
         },
         'Operation'
-      ]
+      ],
+      selectedAssignmentId: null
     }
   },
   async mounted () {
     this.lectureId = this.$route.params.lectureId
     this.routeName = this.$route.name
     console.log(this.lectureId)
+    // get course information
     try {
       const res = await api.getCourseList(this.lectureId)
       this.createdBy = res.data.data.created_by
@@ -218,11 +220,25 @@ export default {
       this.semester = res.data.data.semester
     } catch (err) {
     }
+    // get assignment list of the course
     try {
       const res = await api.getAssignmentList(this.lectureId)
-      this.assignmentList = res.data.data.results
+      this.assignmentList = res.data.data.results.map(assignment => Object.assign(assignment, { _showDetails: false }))
     } catch (err) {
     }
+    if (this.$route.params.assignmentAnchor) {
+      console.log('11')
+      for (const assignment of this.assignmentList) {
+        console.log('22 ' + assignment.id + ' ' + this.$route.params.assignmentAnchor)
+        if (assignment.id === this.$route.params.assignmentAnchor) {
+          const res = await api.getAssignmentProblem(assignment.id)
+          assignment.problemList = res.data.data.results
+          assignment._showDetails = true
+        }
+      }
+      // this.assignmentList[0]._showDetails = true
+    }
+    // set breadcrumb navigation
     this.pageLocations[0].text = this.title + '_' + this.courseCode + '-' + this.classNumber
   },
   methods: {
@@ -234,14 +250,16 @@ export default {
       this.modalType = 'create'
       this.$bvModal.show('create-assignment')
     },
-    async editAssignment () {
+    async editAssignment (assignmentId) {
       this.modalType = 'edit'
-      this.$bvModal.show('create-assignment')
+      this.selectedAssignmentId = assignmentId
+      console.log('edit-assignment-call')
+      await this.$bvModal.show('create-assignment')
     },
-    async showAssignmentProblemList (assignmentId) {
+    async updateAssignmentProblemList (assignmentId) {
       api.getAssignmentProblem(assignmentId)
     },
-    async updateAssignmentProblem (item) {
+    async toggleAssignmentProblem (item) {
       console.log('update assignment problem call')
       console.log(item)
       if (item._showDetails) {
@@ -253,7 +271,7 @@ export default {
       } else {
         const res = await api.getAssignmentProblem(item.id)
         item.problemList = res.data.data.results
-        await this.showAssignmentProblemList(item.id)
+        await this.updateAssignmentProblemList(item.id)
         this.$set(item, '_showDetails', true)
         console.log('data downloaded ' + item.id + ' open')
       }
@@ -298,7 +316,7 @@ export default {
       try {
         await this.$confirm('Sure to delete this problem? The associated submissions will be deleted as well.', 'Delete Problem', 'warning', false)
         api.deleteAssignmentProblem(problemId)
-        await this.updateAssignmentProblem(assignmentId)
+        await this.updateAssignmentProblemList(assignmentId)
       } catch (err) {
       }
     },
@@ -319,6 +337,10 @@ export default {
         visible: res.visible
       }
       await api.editAssignment(data)
+    },
+    showImportPublicProblemModal (assignmentId) {
+      this.selectedAssignmentId = assignmentId
+      this.$bvModal.show('import-public-problem-modal')
     }
   },
   computed: {

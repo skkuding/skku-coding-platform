@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="import-public-problem-modal" @ok="goCreateProblem" size="xl" class="font-bold">
+  <b-modal id="import-public-problem-modal" @ok="goCreateProblem" title="Add problem from SKKU coding platform" size="xl" class="font-bold">
     <div class="top-bar mb-4" style="margin-top:4px;">
       <h2 class="title">Problem List</h2>
       <div class="problem-list-table">
@@ -75,22 +75,33 @@
         limit="3"
       ></b-pagination>
     </div>
+    <template #modal-footer="{ ok }">
+      <b-form-input v-model="form.displayId" placeholder="Enter display ID"></b-form-input>
+      <b-button size="md" variant="success" @click="ok()">
+        Add
+      </b-button>
+    </template>
   </b-modal>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import api from '@oj/api'
+import profApi from '@prof/api'
 import { ProblemMixin } from '@oj/components/mixins'
 import { DIFFICULTY_COLOR } from '@/utils/constants'
 
 export default {
   name: 'problemList',
   mixins: [ProblemMixin],
+  props: ['assignmentId'],
   data () {
     return {
-      selectedProblemId: null,
-      perPage: 20,
+      form: {
+        selectedProblemId: null,
+        displayId: ''
+      },
+      perPage: 7,
       currentPage: 1,
       checked: false,
       problemList: [],
@@ -178,15 +189,28 @@ export default {
       await this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
     },
     selectProblem (item) {
-      this.selectedProblemId = item._id
+      this.form.selectedProblemId = item._id
     },
     goCreateProblem () {
-      this.$router.push({
-        name: 'create-lecture-problem',
-        params: {
-          problemId: this.selectedProblemId
-        }
-      })
+      if (this.form.selectProblemId === null || this.form.displayId === '') {
+        this.$error('Select Problem and enter display ID!')
+        return
+      }
+      const data = {
+        assignment_id: this.assignmentId,
+        problem_id: this.form.selectedProblemId,
+        display_id: this.form.displayId
+      }
+      profApi.addProblemFromPublic(data)
+      this.$emit('update')
+      // this.$router.push({
+      //   name: 'create-lecture-problem',
+      //   params: {
+      //     publicProblemId: this.form.selectedProblemId,
+      //     lectureId: this.$route.params.lectureId,
+      //     assignmentId: this.assignmentId
+      //   }
+      // })
     }
   },
   watch: {
@@ -211,7 +235,7 @@ export default {
     color: #7C7A7B;
     display:inline;
     position:relative;
-    top:36px;
+    float: left;
   }
   .problem-list-card{
     font-family:Manrope;
