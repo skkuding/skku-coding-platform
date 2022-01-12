@@ -107,6 +107,7 @@ export default {
     this.currentPath = this.$route.path
     this.groupLectures()
   },
+  props: ['update'],
   computed: {
   },
   methods: {
@@ -129,6 +130,12 @@ export default {
       )
       console.log(this.registeredTerms)
       this.lectures = lectures
+    }
+  },
+  watch: {
+    'update' () {
+      console.log('update sidebar')
+      this.groupLectures()
     }
   }
 }

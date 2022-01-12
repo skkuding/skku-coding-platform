@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <side-menu @hide="showSideMenu=false" v-show="showSideMenu"/>
+    <side-menu @hide="showSideMenu=false" v-show="showSideMenu" :update="updateSidebar"/>
     <div style="flex: 1 1 auto">
       <div id="prof-header">
         <b-button
@@ -86,7 +86,8 @@ export default {
   data () {
     return {
       showSideMenu: true,
-      version: process.env.VERSION
+      version: process.env.VERSION,
+      updateSidebar: 0
     }
   },
   methods: {
