@@ -7,16 +7,6 @@
       class="info-card-container"
     >
       <b-col
-        cols="4"
-        :style="{'background-color': color, 'font-size': iconSize}"
-      >
-        <b-icon
-          class="info-card-icon"
-          v-bind:icon="icon"
-        ></b-icon>
-      </b-col>
-      <b-col
-        cols="8"
         class="info-card-text"
       >
         <p :style="textStyle" class="p-header">

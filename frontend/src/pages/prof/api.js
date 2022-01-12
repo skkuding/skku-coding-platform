@@ -290,9 +290,9 @@ export default {
   getReleaseNotes () {
     return ajax('admin/versions', 'get')
   },
-  getDashboardInfo () {
-    return ajax('admin/dashboard_info', 'get')
-  },
+  // getDashboardInfo () {
+  //   return ajax('admin/dashboard_info', 'get')
+  // },
   getSessions () {
     return ajax('sessions', 'get')
   },
@@ -418,6 +418,12 @@ export default {
   addProblemFromPublic (data) {
     return ajax('/lecture/professor/course/assignment/add_problem_from_public', 'post', {
       data
+    })
+  },
+  getDashboardInfo (limit, offset) {
+    const params = { limit, offset }
+    return ajax('/professor/professor_dashboard_info', 'get', {
+      params
     })
   }
 }
