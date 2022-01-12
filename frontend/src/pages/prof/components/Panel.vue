@@ -1,17 +1,17 @@
 <template>
   <div
-    class="panel"
+    class="panel drop-shadow-custom"
     :class="{'small': small}"
   >
     <header>
-      <div class="title">
+      <h4 class="title">
         <template v-if="$slots.title">
           <slot name="title" />
         </template>
         <template v-else>
           {{ title }}
         </template>
-      </div>
+      </h4>
 
       <div class="header_right">
         <slot name="header" />
@@ -59,8 +59,8 @@ export default {
         margin: 0;
         color: #333;
         border-color: #ddd;
-        font-size: 18px;
-        font-weight: 300;
+        font-size: 1.5rem;
+        font-weight: 500;
         letter-spacing: 0.025em;
         height: 60px;
         line-height: 45px;
@@ -79,6 +79,9 @@ export default {
     .body {
       padding: 15px;
     }
+  }
+  .drop-shadow-custom {
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,.25));
   }
 </style>
 <style lang="scss">

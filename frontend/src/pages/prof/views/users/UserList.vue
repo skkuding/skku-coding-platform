@@ -1,18 +1,19 @@
 <template>
   <Panel title="Users">
     <div slot="header">
-      <b-row align-v="center" align-h="center" style="margin: 0px">
-        <b-col cols="3" style="padding: 0px">
+      <b-row align-v="center"  style="margin: 0px">
+        <b-col cols="6" >
           <b-button
             :disabled="!selectedUserIDs.length"
             variant="danger"
             size="sm"
+            style="min-width:90px"
             @click="deleteUsers(selectedUserIDs)"
           >
             <b-icon icon="trash-fill"></b-icon> Delete
           </b-button>
         </b-col>
-        <b-col cols="3" style="padding: 0px">
+        <b-col cols="6" >
           <b-button
             variant="outline-primary"
             size="sm"
@@ -20,12 +21,6 @@
           >
             Select All
           </b-button>
-        </b-col>
-        <b-col cols="6" style="padding: 0px">
-          <b-form-input
-            v-model="keyword"
-            placeholder="Keywords"
-          />
         </b-col>
       </b-row>
     </div>
@@ -52,15 +47,10 @@
       </template>
 
       <template #cell(last_login)="row">
-        {{ row.item.last_login | localtime }}
+        {{ row.item.last_login | 'No data'}}
       </template>
 
       <template #cell(Option)="row">
-        <icon-btn
-          name="Edit"
-          icon="clipboard-plus"
-          @click.native="openUserDialog(row.item.id)"
-        />
         <icon-btn
           name="Delete"
           icon="trash"
@@ -71,7 +61,7 @@
     <b-row cols="2" h-align="around">
       <b-col col="3">
         <b-button v-b-modal.register-new-user>+ Register New User</b-button>
-        <register-new-user-modal></register-new-user-modal>
+        <register-new-user-modal :lecture-title="lectureTitle" @update="currentChange(currentPage)"></register-new-user-modal>
       </b-col>
       <b-col class="panel-options" col="5">
         <b-pagination
@@ -95,39 +85,30 @@ export default {
   components: {
     RegisterNewUserModal
   },
+  props: [
+    'lecture-title'
+  ],
   data () {
     return {
-      pageSize: 10,
+      pageSize: 5,
       total: 0,
       userList: [],
       userListFields: [
         { key: 'selection', label: '' },
-        { key: 'id', label: 'ID' },
-        { key: 'username', label: 'Username' },
-        { key: 'create_time', label: 'Create Time' },
-        { key: 'last_login', label: 'Last Login' },
-        { key: 'real_name', label: 'Real Name' },
-        { key: 'email', label: 'Eamil' },
-        { key: 'admin_type', label: 'User Type' },
-        { key: 'major', label: 'User Major' },
+        { key: 'id', label: 'registration ID' },
+        { key: 'user.username', label: 'Username' },
+        { key: 'user.create_time', label: 'Create Time' },
+        { key: 'user.last_login', label: 'Last Login' },
+        { key: 'user.real_name', label: 'Real Name' },
+        { key: 'user.email', label: 'Email' },
+        { key: 'user.admin_type', label: 'User Type' },
+        { key: 'user.major', label: 'User Major' },
         { key: 'Option', label: 'Option', thClass: 'userTable' }
       ],
       usersPerPage: [],
-      uploadUsersFile: null,
-      uploadUsers: [],
-      uploadUsersPage: [],
-      uploadUsersPageFields: [
-        { key: 'Username', label: 'Username', thClass: 'uploadUserTable' },
-        { key: 'Password', label: 'Password', thClass: 'uploadUserTable' },
-        { key: 'Email', label: 'Email', thClass: 'uploadUserTable' }
-      ],
-      uploadUsersCurrentPage: 1,
-      uploadUsersPageSize: 15,
-      keyword: '',
-      showUserDialog: false,
       user: {},
       loadingTable: false,
-      currentPage: 0,
+      currentPage: 1,
       adminTypeOptions: [
         { value: 'Regular User', text: 'Regular User' },
         { value: 'Admin', text: 'Admin' },
@@ -143,38 +124,36 @@ export default {
         { value: 'Own', text: 'Own' },
         { value: 'All', text: 'All' }
       ],
-      selectedUserIDs: []
+      selectedUserIDs: [],
+      lectureId: null,
+      mounted: false
     }
   },
   async mounted () {
+    this.mounted = true
+    this.lectureId = this.$route.params.lectureId
     await this.getUserList(1)
   },
   methods: {
-    async currentChange (page) {
-      this.currentPage = page
-      await this.getUserList(page)
-    },
-    // 사용자 정보 수정을 위해 제출
-    async saveUser () {
-      try {
-        await api.editUser(this.user)
-        // 업데이트 목록
-        await this.getUserList(this.currentPage)
-        this.showUserDialog = false
-      } catch (err) {
+    currentChange (page) {
+      if (!this.mounted) {
+        return
       }
-    },
-    // 사용자 대화 상자 열기
-    async openUserDialog (id) {
-      this.showUserDialog = true
-      const res = await api.getUser(id)
-      this.user = res.data.data
+      this.currentPage = page
+      this.getUserList(page)
     },
     // 사용자 목록 가져 오기
     async getUserList (page) {
       this.loadingTable = true
       try {
-        const res = await api.getUserList((page - 1) * this.pageSize, this.pageSize, this.keyword)
+        const data = {
+          course_id: this.lectureId,
+          offset: (page - 1) * this.pageSize,
+          limit: this.pageSize
+        }
+        console.log(data)
+        const res = await api.getCourseStudents(this.lectureId, this.pageSize, (page - 1) * this.pageSize)
+        console.log(res)
         this.total = res.data.data.total
         this.userList = res.data.data.results
       } catch (err) {
@@ -182,34 +161,24 @@ export default {
         this.loadingTable = false
       }
     },
-    async deleteUsers (ids) {
-      try {
-        await this.$confirm('Sure to delete the user? The associated resources created by this user will be deleted as well, like problem, contest, announcement, etc.', 'confirm', 'warning', false)
-      } catch (err) {
-      }
-      try {
-        await api.deleteUsers(ids.join(','))
-      } catch (err) {
-      } finally {
+    async deleteUsers (registrationIds) {
+      console.log(registrationIds)
+      const sure = await this.$bvModal.msgBoxConfirm('Sure to delete Users? All Associated submissions and informations will be deleted', {
+        title: 'Are you sure?',
+        size: 'md',
+        centered: true
+      })
+      if (sure === true) {
+        for (const registrationId of registrationIds) {
+          try {
+            await api.deleteStudent(registrationId)
+          } catch (error) {
+            this.$error(error)
+          }
+        }
         await this.getUserList(this.currentPage)
         this.selectedUserIDs = []
       }
-    },
-    compareNumber (start, end) {
-      start *= 1
-      end *= 1
-      return end - start
-    },
-    async handleUsersUpload () {
-      try {
-        await api.importUsers(this.uploadUsers)
-        await this.getUserList(1)
-        this.handleResetData()
-      } catch (err) {
-      }
-    },
-    handleResetData () {
-      this.uploadUsers = []
     },
     selectAll () {
       if (this.selectedUserIDs.length === this.usersPerPage.length) {
@@ -226,24 +195,6 @@ export default {
   computed: {
     updateCurrentPage () {
       return this.currentChange(this.currentPage)
-    }
-  },
-  watch: {
-    'keyword' () {
-      this.currentChange(1)
-    },
-    'user.admin_type' () {
-      if (this.user.admin_type === 'Super Admin') {
-        this.user.problem_permission = 'All'
-      } else if (this.user.admin_type === 'Regular User') {
-        this.user.problem_permission = 'None'
-      }
-    },
-    'uploadUsersCurrentPage' (page) {
-      this.uploadUsersPage = this.uploadUsers.slice((page - 1) * this.uploadUsersPageSize, page * this.uploadUsersPageSize)
-    },
-    'uploadUsersFile' () {
-      this.handleUsersCSV(this.uploadUsersFile)
     }
   }
 }
