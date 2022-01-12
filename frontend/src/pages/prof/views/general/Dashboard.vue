@@ -41,21 +41,21 @@
           :value="infoData.underway_assignments_count"
         />
       </div>
-      <b-card title="My Lecture" class="admin-info drop-shadow-custom">
+      <b-card title="My Course" class="admin-info drop-shadow-custom">
         2021 Summer
         <b-list-group>
           <b-list-group-item
-            v-for="(lecture,index) in lectureList"
-            :to="'lecture/'+ lecture.id +'/dashboard'"
-            :key="index">{{ lecture.title + '_' + lecture.course_code + '-' + lecture.class_number }}
+            v-for="(course,index) in courseList"
+            :to="'course/'+ course.id +'/dashboard'"
+            :key="index">{{ course.title + '_' + course.course_code + '-' + course.class_number }}
           </b-list-group-item>
         </b-list-group>
         <b-button variant="primary" class="float-right" v-b-modal.registerNew>
-          + New Lecture
+          + New Course
         </b-button>
       </b-card>
     </b-col>
-    <register-new-lecture-modal @newLectureCreated="updateLectureList"></register-new-lecture-modal>
+    <register-new-course-modal @newCourseCreated="updateCourseList"></register-new-course-modal>
     <b-col
       :md="7"
       :lg="8"
@@ -70,7 +70,7 @@
           :current-page="updateCurrentPage"
         >
           <template #cell(title)="data">
-            <b-link :to="{ name: 'lecture-assignment-list', params: { lectureId: data.item.course.id, assignmentAnchor: data.item.id } }"> {{ data.value }}</b-link>
+            <b-link :to="{ name: 'course-assignment-list', params: { courseId: data.item.course.id, assignmentAnchor: data.item.id } }"> {{ data.value }}</b-link>
           </template>
           <template #cell(status)="data">
             <b-button
@@ -106,13 +106,13 @@ import { mapGetters } from 'vuex'
 import browserDetector from 'browser-detect'
 import InfoCard from '@prof/components/infoCard.vue'
 import api from '../../api.js'
-import RegisterNewLectureModal from './RegisterNewLecture.vue'
+import RegisterNewCourseModal from './RegisterNewCourse.vue'
 
 export default {
   name: 'Dashboard',
   components: {
     InfoCard,
-    RegisterNewLectureModal
+    RegisterNewCourseModal
   },
   data () {
     return {
@@ -129,7 +129,7 @@ export default {
         underway_assignments_count: 0,
         env: {}
       },
-      lectureList: [
+      courseList: [
       ],
       assignmentListFields: [
         {
@@ -154,9 +154,9 @@ export default {
     }
     try {
       const res = await api.getCourseList(null, 250, 0)
-      this.lectureList = res.data.data.results
+      this.courseList = res.data.data.results
       if (res.data.data.total > 250) {
-        this.$error('Since there are too much lectures, failed to get all lecture list')
+        this.$error('Since there are too much courses, failed to get all course list')
       }
     } catch (err) {
     }
@@ -191,10 +191,10 @@ export default {
       }
       this.session = session
     },
-    async updateLectureList () {
+    async updateCourseList () {
       try {
         const res = await api.getCourseList()
-        this.lectureList = res.data.data.results
+        this.courseList = res.data.data.results
         this.$parent.updateSidebar += 1
       } catch (err) {
       }

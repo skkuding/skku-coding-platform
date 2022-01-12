@@ -128,7 +128,7 @@
           </b-button>
           <create-assignment-modal
             :assignment-id="selectedAssignmentId"
-            :lecture-id="lectureId"
+            :course-id="courseId"
             :modal-type="modalType"
             @update="getAssignmentList"
           ></create-assignment-modal>
@@ -159,7 +159,7 @@ export default {
     ImportPublicProblemModal
   },
   props: [
-    'lecture-id',
+    'course-id',
     'modal-type'
   ],
   data () {
@@ -168,7 +168,7 @@ export default {
       pageLocations: [
         {
           text: '',
-          to: '/lecture/' + this.$route.params.lectureId + '/dashboard'
+          to: '/course/' + this.$route.params.courseId + '/dashboard'
         },
         {
           text: 'Assignments'
@@ -215,10 +215,10 @@ export default {
     }
   },
   async mounted () {
-    this.lectureId = this.$route.params.lectureId
+    this.courseId = this.$route.params.courseId
     this.routeName = this.$route.name
     try {
-      const res = await api.getCourseList(this.lectureId)
+      const res = await api.getCourseList(this.courseId)
       this.createdBy = res.data.data.created_by
       this.title = res.data.data.title
       this.courseCode = res.data.data.course_code
@@ -228,7 +228,7 @@ export default {
     } catch (err) {
     }
     try {
-      const res = await api.getAssignmentList(this.lectureId)
+      const res = await api.getAssignmentList(this.courseId)
       this.assignmentList = res.data.data.results.map(assignment => Object.assign(assignment, { _showDetails: false }))
     } catch (err) {
     }
@@ -245,7 +245,7 @@ export default {
   },
   methods: {
     async getAssignmentList () {
-      const res = await api.getAssignmentList(this.lectureId)
+      const res = await api.getAssignmentList(this.courseId)
       this.assignmentList = res.data.data.results
     },
     async createAssignment () {
@@ -279,40 +279,40 @@ export default {
       }
     },
     createAssignmentProblem (assignment) {
-      if (this.routeName === 'lecture-assignment-list') {
+      if (this.routeName === 'course-assignment-list') {
         this.$router.push({
-          name: 'create-lecture-problem',
+          name: 'create-course-problem',
           params: {
             assignmentId: assignment.id,
-            lectureInfo: this.pageLocations[0].text,
+            courseInfo: this.pageLocations[0].text,
             assignmentInfo: assignment.title
           }
         })
       }
     },
     editAssignmentProblem (assignment, problemId) {
-      if (this.routeName === 'lecture-assignment-list') {
+      if (this.routeName === 'course-assignment-list') {
         this.$router.push({
-          name: 'edit-lecture-problem',
+          name: 'edit-course-problem',
           params: {
-            lectureId: this.lectureId,
+            courseId: this.courseId,
             assignmentId: assignment.id,
             problemId: problemId,
-            lectureInfo: this.pageLocations[0].text,
+            courseInfo: this.pageLocations[0].text,
             assignmentInfo: assignment.title
           }
         })
       }
     },
     gradeProblem (assignment, problem) {
-      if (this.routeName === 'lecture-assignment-list') {
+      if (this.routeName === 'course-assignment-list') {
         this.$router.push({
-          name: 'lecture-problem-grade',
+          name: 'course-problem-grade',
           params: {
-            lectureId: this.lectureId,
+            courseId: this.courseId,
             assignmentId: assignment.id,
             problemId: problem.id,
-            lectureInfo: this.pageLocations[0].text,
+            courseInfo: this.pageLocations[0].text,
             assignmentInfo: assignment.title,
             problemInfo: problem.title
           }
@@ -322,7 +322,7 @@ export default {
     async deleteAssignment (assignmentId) {
       try {
         await this.$confirm('Sure to delete this assignment? The associated submissions will be deleted as well.', 'Delete Assignment', 'warning', false)
-        await api.deleteAssignment(this.lectureId, assignmentId)
+        await api.deleteAssignment(this.courseId, assignmentId)
         this.getAssignmentList()
       } catch (err) {
       }
@@ -360,7 +360,7 @@ export default {
   },
   computed: {
     updateAssignmentList () {
-      return this.showAssignmentList(this.lectureId)
+      return this.showAssignmentList(this.courseId)
     }
   }
 }

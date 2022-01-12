@@ -26,25 +26,25 @@
           <span v-b-toggle="String(term.registered_year) + '-' + String(term.semester)"> {{term.registered_year}} {{semester_name[term.semester]}} </span>
         </b-list-group-item>
 
-        <div v-for="(lecture,index) in lectures" :key="index">
-          <div v-if="term.registered_year === lecture.registered_year && term.semester === lecture.semester">
+        <div v-for="(course,index) in courses" :key="index">
+          <div v-if="term.registered_year === course.registered_year && term.semester === course.semester">
 
             <b-collapse :id="String(term.registered_year) + '-' + String(term.semester)">
               <b-list-group-item
-                class="list-group-lecture"
+                class="list-group-course"
               >
                 <b-icon
                   icon="caret-right-fill"
                   font-scale="1"
                   style="margin-right: 8px; cursor:pointer"
-                  v-b-toggle="'inner'+lecture.id"
+                  v-b-toggle="'inner'+course.id"
                 />
-                <span v-b-toggle="'inner'+lecture.id">{{lecture.title}}_{{lecture.course_code}}-{{lecture.class_number}}</span>
+                <span v-b-toggle="'inner'+course.id">{{course.title}}_{{course.course_code}}-{{course.class_number}}</span>
               </b-list-group-item>
 
-              <b-collapse :id="'inner'+lecture.id" role="tabpanel">
+              <b-collapse :id="'inner'+course.id" role="tabpanel">
                 <b-list-group-item
-                  :to="'/lecture/'+lecture.id+'/dashboard'"
+                  :to="'/course/'+course.id+'/dashboard'"
                   class="list-group-inner"
                 >
                   <b-icon
@@ -55,7 +55,7 @@
                   Dashboard
                 </b-list-group-item>
                 <b-list-group-item
-                  :to="'/lecture/'+lecture.id+'/assignment'"
+                  :to="'/course/'+course.id+'/assignment'"
                   class="list-group-inner"
                 >
                   <b-icon
@@ -66,7 +66,7 @@
                   Assignments
                 </b-list-group-item>
                 <b-list-group-item
-                  :to="'/lecture/'+lecture.id+'/qna'"
+                  :to="'/course/'+course.id+'/qna'"
                   class="list-group-inner"
                 >
                   <b-icon
@@ -98,14 +98,14 @@ export default {
       registeredTerms: [],
       click: true,
       semester_name: ['Spring', 'Summer', 'Fall', 'Winter'],
-      lectures: [],
-      lectureNumber: 1,
+      courses: [],
+      courseNumber: 1,
       sideMenuShow: true
     }
   },
   mounted () {
     this.currentPath = this.$route.path
-    this.groupLectures()
+    this.groupCourses()
   },
   props: ['update'],
   computed: {
@@ -114,26 +114,26 @@ export default {
     putMenuInside () {
       this.sideMenuShow = false
     },
-    async groupLectures () {
+    async groupCourses () {
       const res = await api.getCourseList()
-      const lectures = res.data.data.results
+      const courses = res.data.data.results
       // Make registered term unique list
       const registeredTerms = new Set()
-      lectures.forEach(lecture => {
+      courses.forEach(course => {
         registeredTerms.add(JSON.stringify({
-          semester: lecture.semester,
-          registered_year: lecture.registered_year
+          semester: course.semester,
+          registered_year: course.registered_year
         }))
       })
       this.registeredTerms = Array.from(registeredTerms).map(term =>
         JSON.parse(term)
       )
-      this.lectures = lectures
+      this.courses = courses
     }
   },
   watch: {
     'update' () {
-      this.groupLectures()
+      this.groupCourses()
     }
   }
 }
@@ -180,7 +180,7 @@ export default {
     padding: 10px 16px 10px 30px;
     font-size: 15px;
   }
-  .list-group-lecture {
+  .list-group-course {
     padding: 5px 16px 5px 50px;
     font-size: 15px;
   }

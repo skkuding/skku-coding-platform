@@ -113,7 +113,7 @@ export default {
     Tiptap
   },
   props: [
-    'lectureId',
+    'courseId',
     'modalType',
     'assignmentId'
   ],
@@ -140,7 +140,7 @@ export default {
       this.setEndTime()
       const data = {
         title: this.form.title,
-        course_id: this.lectureId,
+        course_id: this.courseId,
         content: this.form.content,
         start_time: this.form.start_time,
         end_time: this.form.end_time,
@@ -155,7 +155,7 @@ export default {
       const data = {
         id: this.form.id,
         title: this.form.title,
-        course_id: this.lectureId,
+        course_id: this.courseId,
         content: this.form.content,
         start_time: this.form.start_time,
         end_time: this.form.end_time,
@@ -179,7 +179,7 @@ export default {
       this.form.end_time = this.endDate + ' ' + this.endTime
     },
     async getAssignmentDetail () {
-      const res = await api.getAssignmentList(this.lectureId, this.assignmentId)
+      const res = await api.getAssignmentList(this.courseId, this.assignmentId)
       this.form.title = res.data.data.title
       this.form.content = res.data.data.content
       ;[this.startDate, this.startTime] = res.data.data.start_time.split(/T|[+]/)

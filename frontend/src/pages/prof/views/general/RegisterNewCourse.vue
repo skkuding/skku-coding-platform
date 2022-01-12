@@ -2,27 +2,27 @@
   <!-- Please split into many componenets !-->
   <b-modal
     id="registerNew"
-    title="Register New Lecture"
+    title="Register New Course"
     size="lg"
-    @ok="submitNewLecture"
+    @ok="submitNewCourse"
     @cancel="cancelRegistration"
   >
     <b-form>
       <b-form-group
-        id="input-group-lecture-title"
-        label="Lecture Title"
-        label-for="input-lecture-title"
+        id="input-group-course-title"
+        label="Course Title"
+        label-for="input-course-title"
         required
-        :state="form.lectureTitle !== ''"
+        :state="form.courseTitle !== ''"
         valid-feedback="Checked"
-        invalid-feedback="Lecture Title is required"
+        invalid-feedback="Course Title is required"
       >
         <b-form-input
-          id="input-lecture-title"
-          v-model="form.lectureTitle"
+          id="input-course-title"
+          v-model="form.courseTitle"
           placeholder="Enter Title"
           required
-          :state="form.lectureTitle !== ''"
+          :state="form.courseTitle !== ''"
         ></b-form-input>
       </b-form-group>
       <b-row>
@@ -80,7 +80,7 @@
             <b-form-input
               id="input-year"
               v-model="form.year"
-              placeholder="Enter lecture's registered year"
+              placeholder="Enter course's registered year"
               required
               :state="form.year !== null"
               type="number"
@@ -113,13 +113,13 @@
 <script>
 import api from '../../api.js'
 export default {
-  name: 'RegisterNewLectureModal',
+  name: 'RegisterNewCourseModal',
   components: {
   },
   data () {
     return {
       form: {
-        lectureTitle: '',
+        courseTitle: '',
         courseCode: '',
         classNumber: null,
         year: null,
@@ -137,24 +137,24 @@ export default {
   methods: {
     init () {
       this.form = {
-        lectureTitle: '',
+        courseTitle: '',
         courseCode: '',
         classNumber: null,
         year: null,
         semester: null
       }
     },
-    async submitNewLecture (bvModalEvt) {
+    async submitNewCourse (bvModalEvt) {
       bvModalEvt.preventDefault()
       const data = {
-        title: this.form.lectureTitle,
+        title: this.form.courseTitle,
         course_code: this.form.courseCode,
         class_number: this.form.classNumber,
         registered_year: this.form.year,
         semester: this.form.semester
       }
       await api.createCourse(data)
-      this.$emit('newLectureCreated')
+      this.$emit('newCourseCreated')
       this.$nextTick(() => {
         this.$bvModal.hide('registerNew')
       })

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import {
-  Login, Home, Dashboard, LectureDashboard, AssignmentList, Problem, ProblemGrade, QnA
+  Login, Home, Dashboard, CourseDashboard, AssignmentList, Problem, ProblemGrade, QnA
 } from './views'
 Vue.use(VueRouter)
 
@@ -26,32 +26,32 @@ export default new VueRouter({
           component: Dashboard
         },
         {
-          path: '/lecture/:lectureId/dashboard',
-          name: 'lecture-dashboard',
-          component: LectureDashboard
+          path: '/course/:courseId/dashboard',
+          name: 'course-dashboard',
+          component: CourseDashboard
         },
         {
-          path: '/lecture/:lectureId/assignment',
-          name: 'lecture-assignment-list',
+          path: '/course/:courseId/assignment',
+          name: 'course-assignment-list',
           component: AssignmentList
         },
         {
-          path: '/lecture/:lectureId/assignment/:assignmentId/problem/:problemId/grade',
-          name: 'lecture-problem-grade',
+          path: '/course/:courseId/assignment/:assignmentId/problem/:problemId/grade',
+          name: 'course-problem-grade',
           component: ProblemGrade
         },
         {
-          path: '/lecture/:lectureId/assignment/:assignmentId/problem/create',
-          name: 'create-lecture-problem',
+          path: '/course/:courseId/assignment/:assignmentId/problem/create',
+          name: 'create-course-problem',
           component: Problem
         },
         {
-          path: '/lecture/:lectureId/assignment/:assignmentId/problem/:problemId/edit',
-          name: 'edit-lecture-problem',
+          path: '/course/:courseId/assignment/:assignmentId/problem/:problemId/edit',
+          name: 'edit-course-problem',
           component: Problem
         },
         {
-          path: '/lecture/:lectureId/QnA',
+          path: '/course/:courseId/QnA',
           name: 'QnA',
           component: QnA
         }
