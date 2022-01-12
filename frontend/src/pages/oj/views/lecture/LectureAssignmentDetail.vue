@@ -32,11 +32,8 @@
 
 <script>
 import Sidemenu from '@oj/components/Sidemenu.vue'
-// import { types } from '@/store'
-import moment from 'moment'
-import { mapActions, mapState } from 'vuex'
+import { mapActions } from 'vuex'
 import time from '@/utils/time'
-// import api from '@oj/api'
 
 export default {
   name: 'LectureAssignmentDetail',
@@ -99,28 +96,14 @@ export default {
         }
       })
     },
-    // remainEndTime (endTime) {
-    //   var due = moment(this.assignment.end_time).diff(moment(), 'minutes')
-    //   return time.utcToLocal(due, 'DD : hh : mm')
-    // },
     formatTime (timeValue) {
       return time.utcToLocal(timeValue, 'YYYY-M-D hh:mm')
-    },
-    formatTime2 (timeValue) {
-      return time.utcToLocal(timeValue, 'hh:mm:ss')
     },
     ...mapActions(['changeDomTitle'])
   },
   computed: {
   },
   watch: {
-    ...mapState({
-      now: state => state.assignment.now
-    }),
-    now: function () {
-      const endTime = moment(this.assignment.end_time)
-      return endTime.diff(this.$store.state.now, 'seconds')
-    }
   }
 }
 </script>
