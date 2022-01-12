@@ -1,87 +1,110 @@
 <template>
   <div id="container">
     <b-overlay
-    :show="overlayShow"
-    bg-color="#0B232F"
-    spinner-variant="primary"
-    spinner-type="grow"
-    spinner-small
-    rounded="sm">
+      :show="overlayShow"
+      bg-color="#0B232F"
+      spinner-variant="primary"
+      spinner-type="grow"
+      spinner-small
+      rounded="sm"
+    >
       <b-navbar id="main-header" type="dark">
         <b-navbar-brand to="/">
           <div class="logo-img">
-            <img src="@/assets/logos/logo.svg" alt=""/>
+            <img src="@/assets/logos/logo.svg" alt="" />
           </div>
         </b-navbar-brand>
 
-        <b-navbar-nav v-if="$route.name && $route.name.indexOf('contest') != -1">
+        <b-navbar-nav
+          v-if="$route.name && $route.name.indexOf('contest') != -1"
+        >
           <b-nav-item to="/contest">Contests</b-nav-item>
           <b-nav-item>
-            <b-icon icon="chevron-right"/>
+            <b-icon icon="chevron-right" />
           </b-nav-item>
-          <b-nav-item :to="'/contest/' + this.contestID">{{problem.contest_name}}</b-nav-item>
+          <b-nav-item :to="'/contest/' + this.contestID">{{
+            problem.contest_name
+          }}</b-nav-item>
           <b-nav-item>
-            <b-icon icon="chevron-right"/>
+            <b-icon icon="chevron-right" />
           </b-nav-item>
-          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+          <b-nav-item to="#" active>{{ problem.title }}</b-nav-item>
         </b-navbar-nav>
 
-        <b-navbar-nav v-else-if="$route.name && $route.name.indexOf('assignment') != -1">
-          <b-nav-item to="#">Assignment</b-nav-item>
+        <b-navbar-nav
+          v-else-if="$route.name && $route.name.indexOf('assignment') != -1"
+        >
+          <b-nav-item @click="goAssignmentList">Assignment</b-nav-item>
           <b-nav-item>
-            <b-icon icon="chevron-right"/>
+            <b-icon icon="chevron-right" />
           </b-nav-item>
-          <b-nav-item to="#">{{this.assignment_name}}</b-nav-item>
+          <b-nav-item @click="goAssignmentDetail">{{
+            this.assignment_name
+          }}</b-nav-item>
           <b-nav-item>
-            <b-icon icon="chevron-right"/>
+            <b-icon icon="chevron-right" />
           </b-nav-item>
-          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+          <b-nav-item active>{{ problem.title }}</b-nav-item>
         </b-navbar-nav>
 
         <b-navbar-nav v-else>
           <b-nav-item>
-            <b-icon icon="chevron-right"/>
+            <b-icon icon="chevron-right" />
           </b-nav-item>
-          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+          <b-nav-item to="#" active>{{ problem.title }}</b-nav-item>
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
           <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
             <template slot="button-content">
-              <b-icon icon="person" scale="1.5"/>
+              <b-icon icon="person" scale="1.5" />
             </template>
-            <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
-            <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
+            <b-dropdown-item @click="handleBtnClick('login')"
+              >Sign In</b-dropdown-item
+            >
+            <b-dropdown-item @click="handleBtnClick('register')"
+              >Register</b-dropdown-item
+            >
           </b-nav-item-dropdown>
           <b-nav-item-dropdown v-else no-caret right>
             <template slot="button-content">
-              <b-icon icon="person" scale="1.5"/>
+              <b-icon icon="person" scale="1.5" />
             </template>
-            <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
+            <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')"
+              >Management</b-dropdown-item
+            >
             <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
             <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-navbar>
-      <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
-        <component
-          :is="modalStatus.mode"
-          v-if="modalVisible"
-        />
+      <b-modal
+        v-model="modalVisible"
+        hide-footer
+        centered
+        modal-class="modal-med"
+      >
+        <component :is="modalStatus.mode" v-if="modalVisible" />
       </b-modal>
-      <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
+      <b-modal
+        id="setting"
+        size="xl"
+        hide-footer
+        centered
+        modal-class="modal-med modal-big"
+      >
         <profileSetting></profileSetting>
       </b-modal>
 
       <b-navbar id="inner-header" type="dark">
         <b-navbar-nav>
           <b-nav-item class="menu-icon" active>
-            <b-icon icon="list" scale="1.4" v-b-toggle.sidebar/>
+            <b-icon icon="list" scale="1.4" v-b-toggle.sidebar />
           </b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav>
           <b-nav-item to="#" class="active-link problem-title" active>
-            {{problem.title}}
+            {{ problem.title }}
           </b-nav-item>
         </b-navbar-nav>
 
@@ -89,42 +112,57 @@
           <b-nav-item v-if="statusVisible">
             <template>
               <div @click.stop="onMySubmissionClicked">
-                <b-badge
-                  class="statusBadge"
-                  variant="light"
-                >
-                  <b-icon id="badgeIcon" icon="circle-fill" :class="[submissionStatus.color]" scale="0.9"/>
+                <b-badge class="statusBadge" variant="light">
+                  <b-icon
+                    id="badgeIcon"
+                    icon="circle-fill"
+                    :class="[submissionStatus.color]"
+                    scale="0.9"
+                  />
                   {{ submissionStatus.text }}
                 </b-badge>
               </div>
             </template>
           </b-nav-item>
           <b-nav-item v-else-if="problem.my_status === 0">
-            <b-badge
-              class="statusBadge"
-              variant="light"
-            >
-              <b-icon id="badgeIcon" icon="circle-fill" class="green" scale="0.9"/>
+            <b-badge class="statusBadge" variant="light">
+              <b-icon
+                id="badgeIcon"
+                icon="circle-fill"
+                class="green"
+                scale="0.9"
+              />
               You have solved the problem
             </b-badge>
           </b-nav-item>
-          <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
-            <b-badge
-              class="statusBadge"
-              variant="light"
-            >
-              <b-icon id="badgeIcon" icon="circle-fill" class="green" scale="0.9"/>
+          <b-nav-item
+            v-else-if="
+              this.contestID && !OIContestRealTimePermission && submissionExists
+            "
+          >
+            <b-badge class="statusBadge" variant="light">
+              <b-icon
+                id="badgeIcon"
+                icon="circle-fill"
+                class="green"
+                scale="0.9"
+              />
               You have submitted a solution
             </b-badge>
           </b-nav-item>
           <b-nav-item v-if="captchaRequired">
-            <img :src="captchaSrc" id="captcha-img">
+            <img :src="captchaSrc" id="captcha-img" />
             <b-button @click="getCaptchaSrc">Refresh</b-button>
-            <b-form-input v-model="captchaCode" id="captcha-code"/>
+            <b-form-input v-model="captchaCode" id="captcha-code" />
           </b-nav-item>
           <b-nav-item>
-            <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
-              <b-icon icon="arrow-clockwise" scale="1.1"/>
+            <b-button
+              v-b-tooltip.hover
+              class="btn-reset"
+              title="Click to reset your code"
+              @click="onResetToTemplate"
+            >
+              <b-icon icon="arrow-clockwise" scale="1.1" />
             </b-button>
           </b-nav-item>
           <!-- <b-nav-item>
@@ -134,7 +172,8 @@
             </b-button>
           </b-nav-item> -->
           <b-nav-item>
-            <b-button class="btn-submit"
+            <b-button
+              class="btn-submit"
               :disabled="(contestID && problemSubmitDisabled) || submitted"
               @click="submitCode"
             >
@@ -142,18 +181,34 @@
             </b-button>
           </b-nav-item>
           <b-nav-item>
-            <b-dropdown split class="dropdown" :text="language" @change="onChangeLang">
-              <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
-                @click="()=>onChangeLang(lang)">
-                {{lang}}
+            <b-dropdown
+              split
+              class="dropdown"
+              :text="language"
+              @change="onChangeLang"
+            >
+              <b-dropdown-item
+                v-for="(lang, index) of problem.languages"
+                :key="index"
+                @click="() => onChangeLang(lang)"
+              >
+                {{ lang }}
               </b-dropdown-item>
             </b-dropdown>
           </b-nav-item>
           <b-nav-item>
-            <b-dropdown split class="dropdown" :text="theme" @change="onChangeTheme">
-              <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
-                @click="()=>onChangeTheme(theme)">
-                {{theme}}
+            <b-dropdown
+              split
+              class="dropdown"
+              :text="theme"
+              @change="onChangeTheme"
+            >
+              <b-dropdown-item
+                v-for="(theme, index) of theme_list"
+                :key="index"
+                @click="() => onChangeTheme(theme)"
+              >
+                {{ theme }}
               </b-dropdown-item>
             </b-dropdown>
           </b-nav-item>
@@ -175,19 +230,22 @@
 
           <div v-for="(sample, index) of problem.samples" :key="index">
             <h2>
-              Sample Input {{index + 1}}
+              Sample Input {{ index + 1 }}
               <a v-clipboard:copy="sample.input">
-                <b-icon id="clipboard1" icon="clipboard" class="copy-icon" scale="0.8"/>
+                <b-icon
+                  id="clipboard1"
+                  icon="clipboard"
+                  class="copy-icon"
+                  scale="0.8"
+                />
               </a>
               <b-tooltip target="clipboard1" placement="top" triggers="hover">
                 Copy
               </b-tooltip>
             </h2>
-            <pre class="sample-io">{{sample.input}}</pre>
-            <h2>
-              Sample Output {{index + 1}}
-            </h2>
-            <pre class="sample-io">{{sample.output}}</pre>
+            <pre class="sample-io">{{ sample.input }}</pre>
+            <h2>Sample Output {{ index + 1 }}</h2>
+            <pre class="sample-io">{{ sample.output }}</pre>
             <div class="blank-line"></div>
           </div>
 
@@ -196,7 +254,12 @@
             <p v-dompurify-html="problem.hint" v-katex:auto></p>
           </div>
           <b-table
-            :items="[{time_limit:problem.time_limit + ' ms', memory_limit:problem.memory_limit + ' MB'}]"
+            :items="[
+              {
+                time_limit: problem.time_limit + ' ms',
+                memory_limit: problem.memory_limit + ' MB',
+              },
+            ]"
             :fields="['time_limit', 'memory_limit']"
             class="text-light"
           >
@@ -228,7 +291,12 @@
       </b-row>
       <b-sidebar id="sidebar" no-header backdrop>
         <template #default="{ hide }">
-          <ProblemSidebar ref="sidebar" :hide="hide" :contestID="contestID" :problemID="problemID"/>
+          <ProblemSidebar
+            ref="sidebar"
+            :hide="hide"
+            :contestID="contestID"
+            :problemID="problemID"
+          />
         </template>
       </b-sidebar>
     </b-overlay>
@@ -236,565 +304,611 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { types } from '@/store'
-import CodeMirror from '@oj/components/CodeMirror.vue'
-import storage from '@/utils/storage'
-import { FormMixin } from '@oj/components/mixins'
-import { JUDGE_STATUS, CONTEST_STATUS, buildProblemCodeKey } from '@/utils/constants'
-import api from '@oj/api'
-import ProblemSidebar from './ProblemSidebar.vue'
-import moment from 'moment'
-import register from '@oj/views/user/Register'
-import login from '@oj/views/user/Login'
-import profileSetting from '@oj/views/user/ProfileSetting'
+import { mapGetters, mapActions } from "vuex";
+import { types } from "@/store";
+import CodeMirror from "@oj/components/CodeMirror.vue";
+import storage from "@/utils/storage";
+import { FormMixin } from "@oj/components/mixins";
+import {
+  JUDGE_STATUS,
+  CONTEST_STATUS,
+  buildProblemCodeKey,
+} from "@/utils/constants";
+import api from "@oj/api";
+import ProblemSidebar from "./ProblemSidebar.vue";
+import moment from "moment";
+import register from "@oj/views/user/Register";
+import login from "@oj/views/user/Login";
+import profileSetting from "@oj/views/user/ProfileSetting";
 
 export default {
-  name: 'ProblemDetails',
+  name: "ProblemDetails",
   components: {
     CodeMirror,
     ProblemSidebar,
     login,
     register,
-    profileSetting
+    profileSetting,
   },
   mixins: [FormMixin],
-  data () {
+  data() {
     return {
       statusVisible: false,
       captchaRequired: false,
       graphVisible: false,
       submissionExists: false,
-      captchaCode: '',
-      captchaSrc: '',
-      contestID: '',
-      problemID: '',
-      courseID: '',
-      assignmentID: '',
-      assignment_name: '',
+      captchaCode: "",
+      captchaSrc: "",
+      contestID: "",
+      problemID: "",
+      courseID: "",
+      assignmentID: "",
+      assignment_name: "",
       submitting: false,
 
-      submissionId: '',
+      submissionId: "",
       submitted: false,
       result: {
-        result: 9
+        result: 9,
       },
       problem: {
-        title: '',
-        description: '',
-        hint: '',
-        my_status: '',
+        title: "",
+        description: "",
+        hint: "",
+        my_status: "",
         template: {},
         languages: [],
         created_by: {
-          username: ''
+          username: "",
         },
         tags: [],
-        io_mode: { io_mode: 'Standard IO' }
+        io_mode: { io_mode: "Standard IO" },
       },
 
       // CodeMirror
-      code: '',
-      language: 'C++',
-      theme: 'material',
-      theme_list: ['solarized', 'monokai', 'material'],
+      code: "",
+      language: "C++",
+      theme: "material",
+      theme_list: ["solarized", "monokai", "material"],
 
-      overlayShow: false
-    }
+      overlayShow: false,
+    };
   },
-  async mounted () {
-    this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
-    this.overlayShow = true
-    await this.init()
-    this.overlayShow = false
+  async mounted() {
+    this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false });
+    this.overlayShow = true;
+    await this.init();
+    this.overlayShow = false;
     if (this.$route.params.contestID) {
-      this.route_name = this.$route.name
-      await this.getContestProblems()
-      const res = await this.$store.dispatch('getContest')
-      this.changeDomTitle({ title: res.data.data.title })
-      const data = res.data.data
-      const endTime = moment(data.end_time)
+      this.route_name = this.$route.name;
+      await this.getContestProblems();
+      const res = await this.$store.dispatch("getContest");
+      this.changeDomTitle({ title: res.data.data.title });
+      const data = res.data.data;
+      const endTime = moment(data.end_time);
       if (endTime.isAfter(moment(data.now))) {
         this.timer = setInterval(() => {
-          this.$store.commit(types.NOW_ADD_1S)
-        }, 1000)
+          this.$store.commit(types.NOW_ADD_1S);
+        }, 1000);
       }
     }
     if (this.$route.params.assignmentID) {
-      this.route_name = this.$route.name
-      await this.getAssignmentProblems()
-      const res = await this.$store.dispatch('getLectureAssignment')
-      this.changeDomTitle({ title: res.data.data.title })
-      const data = res.data.data
-      this.assignment_name = data.title
+      this.route_name = this.$route.name;
+      await this.getAssignmentProblems();
+      const res = await this.$store.dispatch("getLectureAssignment");
+      this.changeDomTitle({ title: res.data.data.title });
+      const data = res.data.data;
+      this.assignment_name = data.title;
     }
   },
   methods: {
-    ...mapActions(['changeDomTitle', 'changeModalStatus']),
-    async init () {
-      this.contestID = this.$route.params.contestID
-      this.problemID = this.$route.params.problemID
-      this.assignmentID = this.$route.params.assignmentID
-      this.courseID = this.$route.params.courseID
-      const route = this.$route.name
-      var res
+    ...mapActions(["changeDomTitle", "changeModalStatus"]),
+    async init() {
+      this.contestID = this.$route.params.contestID;
+      this.problemID = this.$route.params.problemID;
+      this.assignmentID = this.$route.params.assignmentID;
+      this.courseID = this.$route.params.courseID;
+      const route = this.$route.name;
+      var res;
 
-      if (route === 'problem-details') {
-        res = await api.getProblem(this.problemID)
-      } else if (route === 'contest-problem-details') {
-        res = await api.getContestProblem(this.problemID, this.contestID)
+      if (route === "problem-details") {
+        res = await api.getProblem(this.problemID);
+      } else if (route === "contest-problem-details") {
+        res = await api.getContestProblem(this.problemID, this.contestID);
       } else {
-        res = await api.getLectureAssignmentProblems(this.courseID, this.assignmentID, this.problemID)
+        res = await api.getLectureAssignmentProblem(
+          this.assignmentID,
+          this.problemID
+        );
       }
 
-      const problem = res.data.data
-      this.changeDomTitle({ title: problem.title })
+      const problem = res.data.data;
+      this.changeDomTitle({ title: problem.title });
 
-      const res2 = await api.submissionExists(problem.id)
-      this.submissionExists = res2.data.data
+      const res2 = await api.submissionExists(problem.id);
+      this.submissionExists = res2.data.data;
 
-      problem.languages = problem.languages.sort()
-      this.problem = problem
+      problem.languages = problem.languages.sort();
+      this.problem = problem;
 
-      if (this.code === '') {
-        const userId = this.user.username
-        let preferredLanguage = problem.languages[0]
-        const res3 = await api.getUserInfo(userId)
+      if (this.code === "") {
+        const userId = this.user.username;
+        let preferredLanguage = problem.languages[0];
+        const res3 = await api.getUserInfo(userId);
 
-        const lang = res3.data.data?.language
+        const lang = res3.data.data?.language;
         if (lang !== null) {
           if (problem.languages.includes(lang)) {
-            preferredLanguage = lang
+            preferredLanguage = lang;
           }
         }
-        this.language = preferredLanguage
-        const template = this.problem.template
+        this.language = preferredLanguage;
+        const template = this.problem.template;
         if (template && template[this.language]) {
-          this.code = template[this.language]
+          this.code = template[this.language];
         }
       }
     },
-    async getContestProblems () {
-      const res = await this.$store.dispatch('getContestProblems')
+    async getContestProblems() {
+      const res = await this.$store.dispatch("getContestProblems");
       if (this.isAuthenticated) {
-        if (this.contestRuleType === 'ACM' || this.OIContestRealTimePermission) {
-          this.addStatusColumn(this.ACMTableColumns, res.data.data)
+        if (
+          this.contestRuleType === "ACM" ||
+          this.OIContestRealTimePermission
+        ) {
+          this.addStatusColumn(this.ACMTableColumns, res.data.data);
         }
       }
     },
-    async getAssignmentProblems () {
-      await this.$store.dispatch('getLectureAssignmentProblems')
+    async getAssignmentProblems() {
+      await this.$store.dispatch("getLectureAssignmentProblems");
     },
-    async handleRoute (route) {
-      await this.$router.push(route)
+    async handleRoute(route) {
+      await this.$router.push(route);
     },
-    openWindow (route) {
-      window.open(route)
+    openWindow(route) {
+      window.open(route);
     },
     // User profile icon
-    handleBtnClick (mode) {
+    handleBtnClick(mode) {
       this.changeModalStatus({
         visible: true,
-        mode: mode
-      })
+        mode: mode,
+      });
     },
     // when reset button clicked
-    async onResetToTemplate () {
-      const isConfirmed = await this.$bvModal.msgBoxConfirm('Are you sure you want to reset your code?')
+    async onResetToTemplate() {
+      const isConfirmed = await this.$bvModal.msgBoxConfirm(
+        "Are you sure you want to reset your code?"
+      );
       if (isConfirmed) {
-        const template = this.problem.template
+        const template = this.problem.template;
         if (template && template[this.language]) {
-          this.code = template[this.language]
+          this.code = template[this.language];
         } else {
-          this.code = ''
+          this.code = "";
         }
       }
     },
     // when language dropdown changed
-    onChangeLang (newLang) {
+    onChangeLang(newLang) {
       if (this.problem.template[newLang]) {
-        this.code = this.problem.template[newLang]
+        this.code = this.problem.template[newLang];
       } else {
-        this.code = ''
+        this.code = "";
       }
-      this.language = newLang
+      this.language = newLang;
     },
     // when theme dropdown changed
-    onChangeTheme (newTheme) {
-      this.theme = newTheme
+    onChangeTheme(newTheme) {
+      this.theme = newTheme;
     },
-    checkSubmissionStatus () {
+    checkSubmissionStatus() {
       // Use setTimeout to avoid some problems
       if (this.refreshStatus) {
         // If the previous submission status check has not stopped, stop
         // otherwise the timeout reference will be lost and unlimited requests
-        clearTimeout(this.refreshStatus)
+        clearTimeout(this.refreshStatus);
       }
       const checkStatus = async () => {
-        const id = this.submissionId
+        const id = this.submissionId;
         try {
-          const res = await api.getSubmission(id)
-          console.log(res.data.data)
-          this.result = res.data.data
+          const res = await api.getSubmission(id);
+          this.result = res.data.data;
           if (Object.keys(res.data.data.statistic_info).length !== 0) {
-            this.submitting = false
-            this.submitted = false
-            clearTimeout(this.refreshStatus)
-            await this.init()
+            this.submitting = false;
+            this.submitted = false;
+            clearTimeout(this.refreshStatus);
+            await this.init();
           } else {
-            this.refreshStatus = setTimeout(checkStatus, 2000)
+            this.refreshStatus = setTimeout(checkStatus, 2000);
           }
         } catch (err) {
-          this.submitting = false
-          clearTimeout(this.refreshStatus)
+          this.submitting = false;
+          clearTimeout(this.refreshStatus);
         }
-      }
-      this.refreshStatus = setTimeout(checkStatus, 2000)
+      };
+      this.refreshStatus = setTimeout(checkStatus, 2000);
     },
-    async submitCode () {
-      if (this.code.trim() === '') {
-        this.$error('Code can not be empty')
-        return
+    async submitCode() {
+      if (this.code.trim() === "") {
+        this.$error("Code can not be empty");
+        return;
       }
-      this.submissionId = ''
-      this.result = { result: 9 }
-      this.submitting = true
+      this.submissionId = "";
+      this.result = { result: 9 };
+      this.submitting = true;
       const data = {
         problem_id: this.problem.id,
         language: this.language,
         code: this.code,
         contest_id: this.contestID,
-        assignment_id: this.assignmentID
-      }
+        assignment_id: this.assignmentID,
+      };
       if (this.captchaRequired) {
-        data.captcha = this.captchaCode
+        data.captcha = this.captchaCode;
       }
       const submitFunc = async (data, detailsVisible) => {
-        this.statusVisible = true
+        this.statusVisible = true;
         try {
-          const res = await api.submitCode(data)
-          this.submissionId = res.data.data && res.data.data.submission_id
+          const res = await api.submitCode(data);
+          this.submissionId = res.data.data && res.data.data.submission_id;
           // Regularly check status
-          this.submitting = false
-          this.submissionExists = true
-          this.submitted = true
-          this.checkSubmissionStatus()
+          this.submitting = false;
+          this.submissionExists = true;
+          this.submitted = true;
+          this.checkSubmissionStatus();
         } catch (err) {
-          this.getCaptchaSrc()
-          if (err.data.data.startsWith('Captcha is required')) {
-            this.captchaRequired = true
+          this.getCaptchaSrc();
+          if (err.data.data.startsWith("Captcha is required")) {
+            this.captchaRequired = true;
           }
-          this.submitting = false
-          this.statusVisible = false
+          this.submitting = false;
+          this.statusVisible = false;
         }
-      }
+      };
       if (!this.OIContestRealTimePermission) {
         if (this.submissionExists) {
-          const isConfirmed = await this.$bvModal.msgBoxConfirm('You have submission in this problem, sure to cover it?')
+          const isConfirmed = await this.$bvModal.msgBoxConfirm(
+            "You have submission in this problem, sure to cover it?"
+          );
           if (isConfirmed) {
-            await submitFunc(data, false)
+            await submitFunc(data, false);
           } else {
-            this.submitting = false
+            this.submitting = false;
           }
         } else {
-          await submitFunc(data, false)
+          await submitFunc(data, false);
         }
       } else {
-        await submitFunc(data, true)
+        await submitFunc(data, true);
       }
     },
-    async onMySubmissionClicked () {
-      await this.$refs.sidebar.onMySubmissionClicked({ ID: this.submissionId })
-      await this.$nextTick()
-      this.$refs.sidebar.codemirror_key += 1
-    }
+    async onMySubmissionClicked() {
+      await this.$refs.sidebar.onMySubmissionClicked({ ID: this.submissionId });
+      await this.$nextTick();
+      this.$refs.sidebar.codemirror_key += 1;
+    },
+    async goAssignmentList() {
+      await this.$router.push({
+        name: "lecture-assignment",
+        params: {
+          courseID: this.$route.params.courseID,
+        },
+      });
+    },
+    async goAssignmentDetail() {
+      await this.$router.push({
+        name: "lecture-assignment-detail",
+        params: {
+          courseID: this.$route.params.courseID,
+          assignmentID: this.$route.params.assignmentID,
+        },
+      });
+    },
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'contestRuleType', 'OIContestRealTimePermission']),
-    ...mapGetters(['problemSubmitDisabled', 'contestRuleType', 'OIContestRealTimePermission', 'contestStatus']),
+    ...mapGetters([
+      "isAuthenticated",
+      "contestRuleType",
+      "OIContestRealTimePermission",
+    ]),
+    ...mapGetters([
+      "problemSubmitDisabled",
+      "contestRuleType",
+      "OIContestRealTimePermission",
+      "contestStatus",
+    ]),
     // for header user dropdown
-    ...mapGetters(['website', 'modalStatus', 'user', 'isAdminRole']),
+    ...mapGetters(["website", "modalStatus", "user", "isAdminRole"]),
 
-    contest () {
-      return this.$store.state.contest.contest
+    contest() {
+      return this.$store.state.contest.contest;
     },
-    contestEnded () {
-      return this.contestStatus === CONTEST_STATUS.ENDED
+    contestEnded() {
+      return this.contestStatus === CONTEST_STATUS.ENDED;
     },
-    submissionStatus () {
+    submissionStatus() {
       return {
         text: JUDGE_STATUS[this.result.result].name,
-        color: JUDGE_STATUS[this.result.result].color
-      }
+        color: JUDGE_STATUS[this.result.result].color,
+      };
     },
-    submissionRoute () {
+    submissionRoute() {
       if (this.contestID) {
-        return { name: 'contest-submission-list', query: { problemID: this.problemID } }
+        return {
+          name: "contest-submission-list",
+          query: { problemID: this.problemID },
+        };
       } else {
-        return { name: 'submission-list', query: { problemID: this.problemID } }
+        return {
+          name: "submission-list",
+          query: { problemID: this.problemID },
+        };
       }
     },
     modalVisible: {
-      get () {
-        return this.modalStatus.visible
+      get() {
+        return this.modalStatus.visible;
       },
-      set (value) {
-        this.changeModalStatus({ visible: value })
-      }
-    }
+      set(value) {
+        this.changeModalStatus({ visible: value });
+      },
+    },
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     // Prevent constant requests after switching components
-    clearInterval(this.refreshStatus)
-    this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: true })
+    clearInterval(this.refreshStatus);
+    this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: true });
     storage.set(buildProblemCodeKey(this.problem._id, from.params.contestID), {
       code: this.code,
       language: this.language,
-      theme: this.theme
-    })
-    next()
+      theme: this.theme,
+    });
+    next();
   },
   watch: {
-    async '$route' () {
-      this.statusVisible = false
-      this.code = ''
-      await this.init()
+    async $route() {
+      this.statusVisible = false;
+      this.code = "";
+      await this.init();
     },
     contestEnded: function () {
-      this.$error('Contest has ended :<')
+      this.$error("Contest has ended :<");
+    },
+  },
+  beforeDestroy() {
+    if (this.contestID) {
+      clearInterval(this.timer);
+      this.$store.commit(types.CLEAR_CONTEST);
     }
   },
-  beforeDestroy () {
-    if (this.contestID) {
-      clearInterval(this.timer)
-      this.$store.commit(types.CLEAR_CONTEST)
-    }
-  }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-  @font-face {
-    font-family: 'Manrope';
-    src: url("../../../../fonts/Manrope-Bold.ttf");
+@font-face {
+  font-family: "Manrope";
+  src: url("../../../../fonts/Manrope-Bold.ttf");
+}
+
+$main-header-height: 60px;
+$inner-header-height: 58px;
+
+* {
+  font-family: "Manrope", sans-serif;
+}
+
+#container {
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+}
+
+#main-header {
+  background: #0b232f;
+  height: #{$main-header-height};
+}
+
+.logo-img {
+  display: block;
+  width: 31px;
+  height: 36px;
+  filter: invert(100%) sepia(92%) saturate(0%) hue-rotate(62deg)
+    brightness(110%) contrast(101%);
+}
+
+#inner-header {
+  height: #{$inner-header-height};
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 15px;
+  background: #173747;
+  border-bottom: 1px solid #3b4f56;
+
+  .menu-icon {
+    margin-right: 10px;
   }
 
-  $main-header-height: 60px;
-  $inner-header-height: 58px;
+  .active-link {
+    a {
+      margin-top: 9px;
+    }
 
-  * {
-    font-family: 'Manrope', sans-serif;
+    height: 58px;
+    border-bottom: 2px solid white;
+    font-size: 18px;
   }
 
-  #container {
-    display: flex;
-    flex-flow: column;
-    height: 100vh;
+  .statusBadge {
+    font-size: 12px;
+    padding: 6px 10px;
+    color: #4f4f4f;
   }
 
-  #main-header {
-    background: #0B232F;
-    height: #{$main-header-height};
+  #badgeIcon {
+    margin-right: 8px;
   }
 
-  .logo-img {
-    display:block;
-    width:31px;
-    height:36px;
-    filter: invert(100%) sepia(92%) saturate(0%) hue-rotate(62deg) brightness(110%) contrast(101%);
+  .yellow {
+    color: #feb144;
+  }
+  .red {
+    color: #ff6663;
+  }
+  .green {
+    color: #9ee09e;
+  }
+  .blue {
+    color: #9ec1cf;
   }
 
-  #inner-header {
-    height: #{$inner-header-height};
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 15px;
-    background: #173747;
-    border-bottom: 1px solid #3B4F56;
-
-    .menu-icon {
-      margin-right: 10px;
-    }
-
-    .active-link {
-      a {
-        margin-top: 9px;
-      }
-
-      height: 58px;
-      border-bottom: 2px solid white;
-      font-size: 18px;
-    }
-
-    .statusBadge {
-      font-size: 12px;
-      padding: 6px 10px;
-      color: #4F4F4F;
-    }
-
-    #badgeIcon {
-      margin-right: 8px;
-    }
-
-    .yellow {
-      color: #FEB144;
-    }
-    .red {
-      color: #ff6663;
-    }
-    .green {
-      color: #9EE09E;
-    }
-    .blue {
-      color: #9EC1CF;
-    }
-
-    .dropdown {
-      min-width: 125px;
-    }
-
-    .dropdown::v-deep button{
-      background: #45576C;
-    }
-
-    .dropdown::v-deep ul {
-      background: #45576C;
-
-      li a {
-        color: white;
-      }
-
-      li a:hover {
-        background: #2F3B49;
-      }
-    }
+  .dropdown {
+    min-width: 125px;
   }
 
-  #problem-container {
-    padding: 0;
-    margin: 0;
-    flex: 1 1 auto;
+  .dropdown::v-deep button {
+    background: #45576c;
+  }
 
-    #problem-description {
-      background: #173747;
-      border-right: 1px solid #3B4F56;
-      padding-left: 20px;
+  .dropdown::v-deep ul {
+    background: #45576c;
+
+    li a {
       color: white;
-      height: calc(100vh - #{$main-header-height} - #{$inner-header-height});
-      overflow: auto;
+    }
 
-      h2 {
-        font-size: 20px;
-        margin-top: 25px;
-        margin-bottom: 15px;
+    li a:hover {
+      background: #2f3b49;
+    }
+  }
+}
+
+#problem-container {
+  padding: 0;
+  margin: 0;
+  flex: 1 1 auto;
+
+  #problem-description {
+    background: #173747;
+    border-right: 1px solid #3b4f56;
+    padding-left: 20px;
+    color: white;
+    height: calc(100vh - #{$main-header-height} - #{$inner-header-height});
+    overflow: auto;
+
+    h2 {
+      font-size: 20px;
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 15px;
+      // margin-bottom: 40px;
+    }
+
+    .description-io {
+      @import "@/styles/tiptapview.scss";
+      code {
+        background-color: #0d0d0d;
+        color: #fff;
       }
 
-      p {
-        font-size: 15px;
-        // margin-bottom: 40px;
+      pre {
+        background: #24272d;
+        font-family: "Manrope", monospace;
       }
 
-      .description-io {
-        @import '@/styles/tiptapview.scss';
-        code {
-          background-color: #0D0D0D;
-          color: #FFF;
-        }
-
-        pre {
-          background: #24272D;
-          font-family: 'Manrope', monospace;
-        }
-
-        blockquote {
-          border-left: 2px solid rgba(#fcfcfc, 0.5);
-          padding-left: 1rem;
-        }
-
-        hr {
-          border-top: 2px solid rgba(#fcfcfc, 0.5);
-        }
+      blockquote {
+        border-left: 2px solid rgba(#fcfcfc, 0.5);
+        padding-left: 1rem;
       }
 
-      .copy-icon {
-        position: absolute;
-        right: 17px;
-      }
-
-      .sample-io {
-        min-height: 90px;
-        padding: 12px;
-        border-radius: 5px;
-        background: #24272D;
-        color: white;
-      }
-
-      .blank-line {
-        margin-bottom: 70px;
+      hr {
+        border-top: 2px solid rgba(#fcfcfc, 0.5);
       }
     }
 
-    #captcha-img {
-      height: 38px;
+    .copy-icon {
+      position: absolute;
+      right: 17px;
     }
 
-    #captcha-code {
-      display: inline-block;
-      width: 150px;
+    .sample-io {
+      min-height: 90px;
+      padding: 12px;
+      border-radius: 5px;
+      background: #24272d;
+      color: white;
     }
 
-    #console {
-      display: flex;
+    .blank-line {
+      margin-bottom: 70px;
+    }
+  }
+
+  #captcha-img {
+    height: 38px;
+  }
+
+  #captcha-code {
+    display: inline-block;
+    width: 150px;
+  }
+
+  #console {
+    display: flex;
+    padding: 0;
+    flex-flow: column;
+    background: #24272d;
+    height: calc(100vh - #{$main-header-height} - #{$inner-header-height});
+
+    #editor {
+      margin: 0;
       padding: 0;
-      flex-flow: column;
-      background: #24272D;
-      height: calc(100vh - #{$main-header-height} - #{$inner-header-height});
+      flex: 1 1 auto;
+      overflow: auto;
+    }
 
-      #editor {
+    #io {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 40%;
+      flex: 0 1 500px;
+      border-top: 1px solid #3b4f56;
+      display: flex;
+      flex-flow: column;
+
+      * {
         margin: 0;
         padding: 0;
-        flex: 1 1 auto;
-        overflow: auto;
       }
 
-      #io {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 40%;
-        flex: 0 1 500px;
-        border-top: 1px solid #3B4F56;
-        display: flex;
-        flex-flow: column;
+      .right-border {
+        border-right: 1px solid #3b4f56;
+      }
 
-        * {
-          margin: 0;
-          padding: 0;
+      .io-header {
+        flex: 0 1 auto;
+        color: #829bb5;
+        border-bottom: 1px solid #3b4f56;
+
+        .io-header-cell {
+          padding: 3px 15px;
         }
+      }
 
-        .right-border {
-          border-right: 1px solid #3B4F56;
-        }
+      .io-content {
+        flex: 1 1 auto;
+        color: white;
 
-        .io-header {
-          flex: 0 1 auto;
-          color: #829BB5;
-          border-bottom: 1px solid #3B4F56;
-
-          .io-header-cell {
-            padding: 3px 15px;
-          }
-        }
-
-        .io-content {
-          flex: 1 1 auto;
-          color: white;
-
-          .io-content-cell {
-            padding: 10px 15px;
-          }
+        .io-content-cell {
+          padding: 10px 15px;
         }
       }
     }
   }
+}
 </style>
