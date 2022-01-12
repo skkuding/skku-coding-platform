@@ -212,6 +212,8 @@ export default {
       try {
         const res = await api.getCourseList()
         this.lectureList = res.data.data.results
+        this.$parent.updateSidebar += 1
+        console.log('change into' + this.$parent.updateSidebar)
       } catch (err) {
         console.log(err)
       }
@@ -242,6 +244,11 @@ export default {
     },
     updateCurrentPage () {
       return this.currentChange(this.currentPage)
+    },
+    currentSemester () {
+      const now = new Date()
+      const year = now.getFullYear()
+      return year
     }
   }
 }
