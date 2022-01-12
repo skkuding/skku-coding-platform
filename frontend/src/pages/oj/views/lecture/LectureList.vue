@@ -24,7 +24,7 @@
       <b-card
         v-for="(lecture,index) in lectureList"
         :key="index"
-        style="width: 300px; margin: 35px 35px 0 0; cursor: pointer;"
+        style="width: 230px; margin: 25px 25px 0 0; cursor: pointer;"
       >
         <!-- @click="goAssignmentList(lecture.course.id)" -->
         <b-card-text class="lecture-card__card">
@@ -206,21 +206,21 @@ export default {
       color: #7C7A7B;
     }
     &__cardcolor {
-      height: 150px;
+      height: 135px;
       border-radius: 8px 8px 0 0;
     }
     &__lectureInfo {
-      padding: 30px;
+      padding: 25px;
     }
     &__title {
-      font-size: 22px;
+      font-size: 16px;
       display: flex;
       justify-content: space-between;
       word-break: keep-all;
     }
     &__info {
       margin-bottom: 10px;
-      font-size: 14px;
+      font-size: 12px;
     }
     &__btn ::v-deep {
       background-color: transparent;
