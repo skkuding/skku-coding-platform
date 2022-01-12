@@ -255,7 +255,7 @@ export default {
       await this.getContestProblems()
     } else if (this.$route.params.assignmentID) {
       this.assignmentID = this.$route.params.assignmentID
-      await this.getLectureAssignmentProblems()
+      await this.getLectureAssignmentProblemList()
     }
     this.submission_table_fields.unshift('Problem')
     this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
@@ -272,9 +272,9 @@ export default {
         }
       }
     },
-    async getLectureAssignmentProblems () {
+    async getLectureAssignmentProblemList () {
       try {
-        const res = await this.$store.dispatch('getLectureAssignmentProblems')
+        const res = await this.$store.dispatch('getLectureAssignmentProblemList')
         this.assignmentProblems = res.data.data.results
       } catch (err) {
       }

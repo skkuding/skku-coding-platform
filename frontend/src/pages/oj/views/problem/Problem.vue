@@ -461,7 +461,7 @@ export default {
       }
     },
     async getAssignmentProblems() {
-      await this.$store.dispatch("getLectureAssignmentProblems");
+      await this.$store.dispatch("getLectureAssignmentProblemList");
     },
     async handleRoute(route) {
       await this.$router.push(route);
