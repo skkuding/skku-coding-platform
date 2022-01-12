@@ -92,12 +92,12 @@
         </b-col>
       </b-row>
       <b-form-group
-        v-if="modalType==='create'"
+        v-if="modalType === 'create'"
         id="input-group-visible"
         label="Visible"
-        label-for="input-group-visible"
+        label-for="input-visible"
       >
-        <b-form-checkbox id="input-group-visible" v-model="form.visible" switch>
+        <b-form-checkbox id="input-visible" v-model="form.visible" style="pointer:" switch>
         </b-form-checkbox>
       </b-form-group>
     </b-form>
@@ -108,7 +108,7 @@
 import api from '../../api.js'
 import Tiptap from '../../components/Tiptap.vue'
 export default {
-  name: 'RegisterNewLectureModal',
+  name: 'CreateAssignmentModal',
   components: {
     Tiptap
   },

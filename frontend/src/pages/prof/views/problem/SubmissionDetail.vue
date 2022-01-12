@@ -11,10 +11,10 @@
         :items="[submission_detail]"
         :fields="submission_info_table_fields">
         <template #cell(create_time)="data">
-          <span>{{data.item.create_time.split(/[T]|[.]/).slice(0,2).join(' ')}}</span>
+          <span>{{data.item.create_time.split(/[T]|[.]|[+]/).slice(0,2).join(' ')}}</span>
         </template>
         <template #cell(result)="data">
-          <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
+          <span :style="'color: '+resultTextColor(data.item.result)">{{getJudgeStatus(data.item.result)}}</span>
         </template>
       </b-table>
     </div>
@@ -23,7 +23,7 @@
     </div>
     <div id="submission-source-code">
       <h3>Source Code</h3>
-      <p>({{submission_detail.info.data.memory}} Bytes)</p>
+      <p>({{ getCodeSize(submission_detail.code) }} Bytes)</p>
       <CodeMirror
         readOnly
         :key="codemirror_key"
@@ -33,11 +33,12 @@
     </div>
     <div id="submission-detail-table">
       <b-table class="align-center"
+        v-if="submission_detail.info"
         :items="submission_detail.info.data"
         :per-page="5"
         :fields="submission_detail_table_fields">
         <template #cell(result)="data">
-          <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
+          <span :style="'color: '+resultTextColor(data.item.result)">{{getJudgeStatus(data.item.result)}}</span>
         </template>
       </b-table>
     </div>
@@ -45,7 +46,7 @@
 </template>
 <script>
 import CodeMirror from '@oj/components/CodeMirror.vue'
-// import { JUDGE_STATUS } from '@/utils/constants'
+import { JUDGE_STATUS } from '@/utils/constants'
 
 export default {
   name: 'SubmissionDetailModal',
@@ -74,10 +75,17 @@ export default {
   },
   methods: {
     resultTextColor (result) {
-      return result === 'Accepted' ? '#8DC63F' : '#FF4F28'
+      return JUDGE_STATUS[result].color
     },
     rerenderCodemirror () {
       this.codemirror_key += 1
+    },
+    getJudgeStatus (result) {
+      return JUDGE_STATUS[result].name
+    },
+    getCodeSize (code) {
+      const blob = new Blob([code]).size
+      return blob
     }
   },
   computed: {

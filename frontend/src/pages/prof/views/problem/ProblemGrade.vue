@@ -37,9 +37,9 @@
           </b-button>
         </template>
 
-        <template #cell(problem)="row">
+        <template #cell(score)="row">
           <div v-if="!row.item.press" style="margin-top: 6px">
-            {{ row.item.statistic_info.score || ' - '}} / {{ row.item.problem }}
+            {{ row.item.statistic_info.score || ' - '}} / 100
             <b-button @click="$set(row.item, 'press', true)" variant="light" press="false" size="sm">
               <b-icon icon="pencil"/>
             </b-button>
@@ -50,7 +50,7 @@
               :id="'input-new-score' + row.item.student_id"
               style="padding-left: 12px; width:53px"
             ></b-form-input>
-            / {{ row.item.problem }}
+            / 100
             <b-button @click="$set(row.item, 'press', false)" variant="light" press="false">
               <b-icon icon="x"/>
             </b-button>
@@ -108,7 +108,7 @@ export default {
         { key: 'user_id', label: 'Student ID' },
         { key: 'username', label: 'Name' },
         { key: 'detail', label: 'Detail' },
-        { key: 'problem', label: 'Score' }
+        { key: 'score', label: 'Score' }
       ],
       pageLocations: [
         {
