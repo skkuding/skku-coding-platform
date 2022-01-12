@@ -17,7 +17,6 @@
             :items="submissionList"
             :fields="field"
             :per-page="pageSize"
-            :current-page="updateCurrentPage"
             style="width: 100%"
           >
             <template #cell(studentId)="row">
@@ -69,14 +68,6 @@
               </b-form>
             </template>
           </b-table>
-          <div class="panel-options">
-            <b-pagination
-              v-model="currentPage"
-              :per-page="pageSize"
-              :total-rows="total"
-              style="position: absolute; right: 20px; top: 15px;"
-            />
-          </div>
         </Panel>
       </b-col>
     </b-row>
@@ -109,9 +100,7 @@ export default {
       assignmentId: 0,
       courseId: 0,
       problemTitle: 'Have to be changed',
-      pageSize: 10,
-      total: 1,
-      currentPage: 0,
+      pageSize: 250,
       submissionList: [],
       field: [
         { key: 'user_id', label: 'Student ID' },
