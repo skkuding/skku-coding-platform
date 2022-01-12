@@ -8,8 +8,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import filters from '@/utils/filters'
 import router from './router'
-import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
-import VueAnalytics from 'vue-analytics'
 import 'katex/dist/katex.min.css'
 import VueKatex from 'vue-katex'
 import VueSimpleAlert from 'vue-simple-alert'
@@ -23,11 +21,6 @@ import Cancel from './components/btn/Cancel.vue'
 // register global utility filters.
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
-})
-
-Vue.use(VueAnalytics, {
-  id: GOOGLE_ANALYTICS_ID,
-  router
 })
 
 Vue.use(BootstrapVue)
