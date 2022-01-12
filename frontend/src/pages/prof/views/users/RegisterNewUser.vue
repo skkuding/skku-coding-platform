@@ -164,7 +164,7 @@ export default {
     font-size: 24px
   }
 </style>
-<style lang="scss" scoped>
+<style lang="scss">
   .students-button {
     all: unset;
     border-radius: 4px;

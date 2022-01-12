@@ -31,12 +31,14 @@
             <template #head(detail)="row">
               <span>
                 {{row.label}}
-                <icon-btn icon="download" variant="outline-*" @click.native="$bvModal.show('download-submissions-option')"/>
+                <b-button class="students-button" style="height: unset;" @click="$bvModal.show('download-submissions-option')">
+                  <b-icon icon="download"/>
+                </b-button>
               </span>
             </template>
 
             <template #cell(detail)="row">
-              <b-button @click="showSubmissionDetail(row.item)" variant="light" size="sm">
+              <b-button @click="showSubmissionDetail(row.item)" class="students-button">
                 <b-icon
                   icon="code"
                 />
@@ -44,23 +46,24 @@
             </template>
 
             <template #cell(score)="row">
-              <div v-if="!row.item.press" style="margin-top: 6px">
+              <div v-if="!row.item.press">
                 {{ row.item.statistic_info.score || ' - '}} / 100
-                <b-button @click="$set(row.item, 'press', true)" variant="light" press="false" size="sm">
+                <b-button @click="$set(row.item, 'press', true)" class="students-button" variant="light" press="false" size="sm">
                   <b-icon icon="pencil"/>
                 </b-button>
               </div>
-              <b-form inline v-else style="margin: 6px 12px" >
+              <b-form inline v-else >
                 <b-form-input
                   v-model="row.item.newScore"
                   :id="'input-new-score' + row.item.student_id"
                   style="padding-left: 12px; width:53px"
+                  size="sm"
                 ></b-form-input>
                 / 100
-                <b-button @click="$set(row.item, 'press', false)" variant="light" press="false">
+                <b-button @click="$set(row.item, 'press', false)" class="students-button"  variant="light" press="false">
                   <b-icon icon="x"/>
                 </b-button>
-                <b-button v-if="row.item.press" @click="editSubmissionScore(row.item.id, row.item.newScore, row)" variant="light">
+                <b-button v-if="row.item.press" class="students-button" @click="editSubmissionScore(row.item.id, row.item.newScore, row)" variant="light">
                   <b-icon-check/>
                 </b-button>
               </b-form>
@@ -91,7 +94,6 @@
 </template>
 
 <script>
-import IconBtn from '../../components/btn/IconBtn.vue'
 import SubmissionDetailModal from './SubmissionDetail.vue'
 import api from '../../api.js'
 import utils from '@/utils/utils'
@@ -99,7 +101,6 @@ import utils from '@/utils/utils'
 export default {
   name: 'ProblemGrade',
   components: {
-    IconBtn,
     SubmissionDetailModal
   },
   data () {
