@@ -117,11 +117,8 @@ export default {
     async getLectureAssignmentList (page) {
       try {
         const res = await api.getLectureAssignmentList(this.courseID, (page - 1) * this.perPage, 250)
-        const assignments = res.data.data.results
+        this.sortAssignmentList(res.data.data.results)
         this.total = res.data.data.total
-        const underwayAssignment = assignments.filter(assignment => assignment.status === '0')
-        const notUnderwayAssignment = assignments.filter(assignment => assignment.status !== '0')
-        this.assignments = underwayAssignment.concat(notUnderwayAssignment)
       } catch (err) {
       }
     },
@@ -152,6 +149,21 @@ export default {
       } else {
         return '-1'
       }
+    },
+    sortAssignmentList (assignmentList) {
+      assignmentList.sort(function (a, b) {
+        const aDue = a.end_time
+        const bDue = b.end_time
+        const result = moment(aDue).isAfter(bDue)
+        if (result === true) {
+          return 1
+        } else {
+          return -1
+        }
+      })
+      const underwayAssignment = assignmentList.filter(assignment => assignment.status === '0')
+      const notUnderwayAssignment = assignmentList.filter(assignment => assignment.status !== '0')
+      this.assignments = underwayAssignment.concat(notUnderwayAssignment)
     }
   },
   computed: {

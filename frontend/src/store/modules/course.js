@@ -29,9 +29,14 @@ const mutations = {
 
 const actions = {
   async getLectureAssignmentList ({ rootState }) {
-    const res = await api.getLectureAssignmentList(rootState.route.params.courseID)
-    this.commit(types.CHANGE_ASSIGNMENTLIST, { assignmentList: res.data.data })
-    return res
+    try {
+      const res = await api.getLectureAssignmentList(rootState.route.params.courseID)
+      this.commit(types.CHANGE_ASSIGNMENTLIST, { assignmentList: res.data.data })
+      return res
+    } catch (err) {
+      this.commit(types.CHANGE_ASSIGNMENTLIST, { assignmentList: [] })
+      throw err
+    }
   },
   async getLectureAssignment ({ commit, rootState }) {
     const res = await api.getLectureAssignment(rootState.route.params.courseID, rootState.route.params.assignmentID)
