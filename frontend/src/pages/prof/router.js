@@ -41,12 +41,12 @@ export default new VueRouter({
           component: ProblemGrade
         },
         {
-          path: '/lecture/:lectureId/problem/create',
+          path: '/lecture/:lectureId/assignment/:assignmentId/problem/create',
           name: 'create-lecture-problem',
           component: Problem
         },
         {
-          path: '/lecture/:lectureId/problem/:problemId/edit',
+          path: '/lecture/:lectureId/assignment/:assignmentId/problem/:problemId/edit',
           name: 'edit-lecture-problem',
           component: Problem
         },
