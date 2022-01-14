@@ -16,7 +16,6 @@ from drf_yasg import openapi
 from requests.exceptions import RequestException
 from rest_framework.parsers import MultiPartParser, JSONParser
 
-from account.decorators import super_admin_required
 from account.models import User
 from contest.models import Contest
 from judge.dispatcher import process_pending_task
@@ -24,7 +23,8 @@ from options.options import SysOptions
 from problem.models import Problem
 from submission.models import Submission
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer
-from utils.shortcuts import send_email, get_env
+from utils.decorators import super_admin_required
+from utils.shortcuts import send_email
 from utils.xss_filter import XSSHtml
 from .models import JudgeServer
 from .serializers import (CreateEditWebsiteConfigSerializer,
@@ -287,9 +287,5 @@ class DashboardInfoAPI(APIView):
             "user_count": User.objects.count(),
             "recent_contest_count": recent_contest_count,
             "today_submission_count": today_submission_count,
-            "judge_server_count": judge_server_count,
-            "env": {
-                "FORCE_HTTPS": get_env("FORCE_HTTPS", default=False),
-                "STATIC_CDN_HOST": get_env("STATIC_CDN_HOST", default="")
-            }
+            "judge_server_count": judge_server_count
         })

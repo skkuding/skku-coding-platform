@@ -1,10 +1,12 @@
+asgiref==3.4.1
 attrs==20.3.0
 certifi==2020.12.5
 chardet==4.0.0
+click==8.0.1
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==5.4
-Django==2.2.24
+Django==3.2.5
 django-dbconn-retry==0.1.5
 django-dramatiq==0.9.1
 django-redis==4.12.1
@@ -17,6 +19,7 @@ flake8==3.8.4
 flake8-coding==1.3.2
 flake8-quotes==3.2.0
 gunicorn==20.0.4
+h11==0.12.0
 idna==2.10
 inflection==0.5.1
 itypes==1.2.0
@@ -26,7 +29,7 @@ jsonschema==3.2.0
 MarkupSafe==1.1.1
 mccabe==0.6.1
 packaging==20.9
-Pillow==8.2.0
+Pillow==8.3.2
 prometheus-client==0.9.0
 psycopg2-binary==2.8.6
 pycodestyle==2.6.0
@@ -36,13 +39,13 @@ pyrsistent==0.17.3
 python-dateutil==2.8.1
 pytz==2020.5
 PyYAML==5.4.1
-raven==6.10.0
 redis==3.5.3
 requests==2.25.1
 ruamel.yaml==0.16.12
 ruamel.yaml.clib==0.2.2
 six==1.15.0
-sqlparse==0.4.1
+sqlparse==0.4.2
 uritemplate==3.0.1
 urllib3==1.26.5
+uvicorn==0.15.0
 XlsxWriter==1.3.7

@@ -479,9 +479,6 @@ export default {
     async deleteUsers (ids) {
       try {
         await this.$confirm('Sure to delete the user? The associated resources created by this user will be deleted as well, like problem, contest, announcement, etc.', 'confirm', 'warning', false)
-      } catch (err) {
-      }
-      try {
         await api.deleteUsers(ids.join(','))
       } catch (err) {
       } finally {
@@ -516,7 +513,7 @@ export default {
           })
           const delta = results.data.length - data.length
           if (delta > 0) {
-            this.$warning(delta + ' users have been filtered due to empty value')
+            this.$error(delta + ' users have been filtered due to empty value')
           }
           this.uploadUsersCurrentPage = 1
           this.uploadUsers = data

@@ -19,7 +19,7 @@ print(f"Coverage: {is_coverage}")
 print(f"Module: {(test_module if test_module else 'All')}")
 
 print("running flake8...")
-if os.system("flake8 --statistics ."):
+if os.system("flake8 --statistics --config .flake8 ."):
     exit()
 
 ret = os.system(f'coverage run --include="$PWD/*" manage.py test {test_module} --settings={setting}')

@@ -24,13 +24,6 @@ if [ ! -f "$SSL/server.key" ]; then
 fi
 
 cd $APP/deploy/nginx
-ln -sf locations.conf https_locations.conf
-if [ -z "$FORCE_HTTPS" ]; then
-    ln -sf locations.conf http_locations.conf
-else
-    ln -sf https_redirect.conf http_locations.conf
-fi
-
 if [ ! -z "$LOWER_IP_HEADER" ]; then
     sed -i "s/__IP_HEADER__/\$http_$LOWER_IP_HEADER/g" api_proxy.conf;
 else
@@ -44,13 +37,6 @@ if [ -z "$MAX_WORKER_NUM" ]; then
     else
         export MAX_WORKER_NUM=$(($CPU_CORE_NUM))
     fi
-fi
-
-cd $APP/dist
-if [ ! -z "$STATIC_CDN_HOST" ]; then
-    find . -name "*.*" -type f -exec sed -i "s/__STATIC_CDN_HOST__/\/$STATIC_CDN_HOST/g" {} \;
-else
-    find . -name "*.*" -type f -exec sed -i "s/__STATIC_CDN_HOST__\///g" {} \;
 fi
 
 cd $APP

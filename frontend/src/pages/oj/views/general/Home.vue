@@ -14,6 +14,7 @@
           :items="announcements"
           :fields="announcement_fields"
           @row-clicked="goAnnouncement"
+          class="post-card-table"
         >
           <template #table-colgroup="">
             <col style="width: 40px">
@@ -40,6 +41,7 @@
           :items="contests"
           :fields="contest_fields"
           @row-clicked="goContest"
+          class="post-card-table"
         >
           <template #table-colgroup>
             <col style="width: 40px">
@@ -208,6 +210,9 @@ export default {
     margin-top: 30px;
     height: 255px;
     width: 45%;
+    &-table {
+      cursor: pointer;
+    }
   }
 
   .post-card-header {
@@ -230,7 +235,7 @@ export default {
     }
   }
 
-  /deep/ .table {
+  ::v-deep .table {
     tr {
       outline: none;
       font-size: 16px;

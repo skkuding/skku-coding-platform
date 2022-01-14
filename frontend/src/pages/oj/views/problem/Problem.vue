@@ -1,200 +1,225 @@
 <template>
   <div id="container">
-    <b-navbar id="main-header" type="dark">
-      <b-navbar-brand to="/">
-        <div class="logo-img">
-          <img src="@/assets/logos/logo.svg" alt=""/>
-        </div>
-      </b-navbar-brand>
+    <b-overlay
+    :show="overlayShow"
+    bg-color="#0B232F"
+    spinner-variant="primary"
+    spinner-type="grow"
+    spinner-small
+    rounded="sm">
+      <b-navbar id="main-header" type="dark">
+        <b-navbar-brand to="/">
+          <div class="logo-img">
+            <img src="@/assets/logos/logo.svg" alt=""/>
+          </div>
+        </b-navbar-brand>
 
-      <b-navbar-nav v-if="$route.name && $route.name.indexOf('contest') != -1">
-        <b-nav-item to="#">Contests</b-nav-item>
-        <b-nav-item>
-          <b-icon icon="chevron-right"/>
-        </b-nav-item>
-        <b-nav-item to="#">{{problem.contest_name}}</b-nav-item>
-        <b-nav-item>
-          <b-icon icon="chevron-right"/>
-        </b-nav-item>
-        <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
-      </b-navbar-nav>
+        <b-navbar-nav v-if="$route.name && $route.name.indexOf('contest') != -1">
+          <b-nav-item to="/contest">Contests</b-nav-item>
+          <b-nav-item>
+            <b-icon icon="chevron-right"/>
+          </b-nav-item>
+          <b-nav-item :to="'/contest/' + this.contestID">{{problem.contest_name}}</b-nav-item>
+          <b-nav-item>
+            <b-icon icon="chevron-right"/>
+          </b-nav-item>
+          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+        </b-navbar-nav>
 
-      <b-navbar-nav v-else>
-        <b-nav-item>
-          <b-icon icon="chevron-right"/>
-        </b-nav-item>
-        <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
-      </b-navbar-nav>
+        <b-navbar-nav v-else>
+          <b-nav-item>
+            <b-icon icon="chevron-right"/>
+          </b-nav-item>
+          <b-nav-item to="#" active>{{problem.title}}</b-nav-item>
+        </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
-          <template slot="button-content">
-            <b-icon icon="person" scale="1.5"/>
-          </template>
-          <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
-          <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item-dropdown v-else no-caret right>
-          <template slot="button-content">
-            <b-icon icon="person" scale="1.5"/>
-          </template>
-          <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
-          <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
-          <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-navbar-nav>
-    </b-navbar>
-    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
-      <component
-        :is="modalStatus.mode"
-        v-if="modalVisible"
-      />
-    </b-modal>
-    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
-      <profileSetting></profileSetting>
-    </b-modal>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
+            <template slot="button-content">
+              <b-icon icon="person" scale="1.5"/>
+            </template>
+            <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
+            <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
+          </b-nav-item-dropdown>
+          <b-nav-item-dropdown v-else no-caret right>
+            <template slot="button-content">
+              <b-icon icon="person" scale="1.5"/>
+            </template>
+            <b-dropdown-item v-if="isAdminRole" @click="openWindow('/admin/')">Management</b-dropdown-item>
+            <b-dropdown-item v-else v-b-modal.setting>Setting</b-dropdown-item>
+            <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
+      </b-navbar>
+      <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
+        <component
+          :is="modalStatus.mode"
+          v-if="modalVisible"
+        />
+      </b-modal>
+      <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
+        <profileSetting></profileSetting>
+      </b-modal>
 
-    <b-navbar id="inner-header" type="dark">
-      <b-navbar-nav>
-        <b-nav-item class="menu-icon" active>
-          <b-icon icon="list" scale="1.4" v-b-toggle.sidebar/>
-        </b-nav-item>
-      </b-navbar-nav>
-      <b-navbar-nav>
-        <b-nav-item to="#" class="active-link problem-title" active>
-          {{problem.title}}
-        </b-nav-item>
-      </b-navbar-nav>
+      <b-navbar id="inner-header" type="dark">
+        <b-navbar-nav>
+          <b-nav-item class="menu-icon" active>
+            <b-icon icon="list" scale="1.4" v-b-toggle.sidebar/>
+          </b-nav-item>
+        </b-navbar-nav>
+        <b-navbar-nav>
+          <b-nav-item to="#" class="active-link problem-title" active>
+            {{problem.title}}
+          </b-nav-item>
+        </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item v-if="statusVisible">
-          <template v-if="!this.contestID || (this.contestID && OIContestRealTimePermission)">
-            <Tag
-              type="dot"
-              :color="submissionStatus.color"
-              @click.native="()=>{$refs.sidebar.onMySubmissionClicked({ID:submissionId})}"
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item v-if="statusVisible">
+            <template>
+              <div @click.stop="onMySubmissionClicked">
+                <b-badge
+                  class="statusBadge"
+                  variant="light"
+                >
+                  <b-icon id="badgeIcon" icon="circle-fill" :class="[submissionStatus.color]" scale="0.9"/>
+                  {{ submissionStatus.text }}
+                </b-badge>
+              </div>
+            </template>
+          </b-nav-item>
+          <b-nav-item v-else-if="problem.my_status === 0">
+            <b-badge
+              class="statusBadge"
+              variant="light"
             >
-              {{ submissionStatus.text }}
-            </Tag>
-          </template>
-          <template v-else-if="this.contestID && !OIContestRealTimePermission">
-            <Tag type="dot" color="green">Submitted Succesfully</Tag>
-          </template>
-        </b-nav-item>
-        <b-nav-item v-else-if="problem.my_status === 0">
-          <Tag type="dot" color="green">You have solved the problem</Tag>
-        </b-nav-item>
-        <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
-          <Tag type="dot" color="green">You have submitted a solution</Tag>
-        </b-nav-item>
-        <b-nav-item v-if="captchaRequired">
-          <img :src="captchaSrc" id="captcha-img">
-          <b-button @click="getCaptchaSrc">Refresh</b-button>
-          <b-form-input v-model="captchaCode" id="captcha-code"/>
-        </b-nav-item>
-        <b-nav-item>
-          <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
-            <b-icon icon="arrow-clockwise" scale="1.1"/>
-          </b-button>
-        </b-nav-item>
-        <b-nav-item>
-          <b-button class="btn">
-            <b-icon icon="play" scale="1.4"/>
-            Run
-          </b-button>
-        </b-nav-item>
-        <b-nav-item>
-          <b-button class="btn-submit"
-            :disabled="(contestID && problemSubmitDisabled) || submitted"
-            @click="submitCode"
+              <b-icon id="badgeIcon" icon="circle-fill" class="green" scale="0.9"/>
+              You have solved the problem
+            </b-badge>
+          </b-nav-item>
+          <b-nav-item v-else-if="this.contestID && !OIContestRealTimePermission && submissionExists">
+            <b-badge
+              class="statusBadge"
+              variant="light"
+            >
+              <b-icon id="badgeIcon" icon="circle-fill" class="green" scale="0.9"/>
+              You have submitted a solution
+            </b-badge>
+          </b-nav-item>
+          <b-nav-item v-if="captchaRequired">
+            <img :src="captchaSrc" id="captcha-img">
+            <b-button @click="getCaptchaSrc">Refresh</b-button>
+            <b-form-input v-model="captchaCode" id="captcha-code"/>
+          </b-nav-item>
+          <b-nav-item>
+            <b-button v-b-tooltip.hover class="btn-reset" title="Click to reset your code" @click="onResetToTemplate">
+              <b-icon icon="arrow-clockwise" scale="1.1"/>
+            </b-button>
+          </b-nav-item>
+          <!-- <b-nav-item>
+            <b-button class="btn">
+              <b-icon icon="play" scale="1.4"/>
+              Run
+            </b-button>
+          </b-nav-item> -->
+          <b-nav-item>
+            <b-button class="btn-submit"
+              :disabled="(contestID && problemSubmitDisabled) || submitted"
+              @click="submitCode"
+            >
+              <span>Submit</span>
+            </b-button>
+          </b-nav-item>
+          <b-nav-item>
+            <b-dropdown split class="dropdown" :text="language" @change="onChangeLang">
+              <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
+                @click="()=>onChangeLang(lang)">
+                {{lang}}
+              </b-dropdown-item>
+            </b-dropdown>
+          </b-nav-item>
+          <b-nav-item>
+            <b-dropdown split class="dropdown" :text="theme" @change="onChangeTheme">
+              <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
+                @click="()=>onChangeTheme(theme)">
+                {{theme}}
+              </b-dropdown-item>
+            </b-dropdown>
+          </b-nav-item>
+        </b-navbar-nav>
+      </b-navbar>
+
+      <b-row id="problem-container">
+        <b-col id="problem-description" cols="5">
+          <div class="description-io">
+            <h2>Description</h2>
+            <p v-dompurify-html="problem.description" v-katex:auto></p>
+            <div class="blank-line"></div>
+            <h2>Input</h2>
+            <p v-dompurify-html="problem.input_description" v-katex:auto></p>
+            <h2>Output</h2>
+            <p v-dompurify-html="problem.output_description" v-katex:auto></p>
+            <div class="blank-line"></div>
+          </div>
+
+          <div v-for="(sample, index) of problem.samples" :key="index">
+            <h2>
+              Sample Input {{index + 1}}
+              <a v-clipboard:copy="sample.input">
+                <b-icon id="clipboard1" icon="clipboard" class="copy-icon" scale="0.8"/>
+              </a>
+              <b-tooltip target="clipboard1" placement="top" triggers="hover">
+                Copy
+              </b-tooltip>
+            </h2>
+            <pre class="sample-io">{{sample.input}}</pre>
+            <h2>
+              Sample Output {{index + 1}}
+            </h2>
+            <pre class="sample-io">{{sample.output}}</pre>
+            <div class="blank-line"></div>
+          </div>
+
+          <div v-if="problem.hint">
+            <h2>Hint</h2>
+            <p v-dompurify-html="problem.hint" v-katex:auto></p>
+          </div>
+          <b-table
+            :items="[{time_limit:problem.time_limit + ' ms', memory_limit:problem.memory_limit + ' MB'}]"
+            :fields="['time_limit', 'memory_limit']"
+            class="text-light"
           >
-            <span>Submit</span>
-          </b-button>
-        </b-nav-item>
-        <b-nav-item>
-          <b-dropdown split class="dropdown" :text="language" @change="onChangeLang">
-            <b-dropdown-item v-for="(lang, index) of problem.languages" :key="index"
-              @click="()=>onChangeLang(lang)">
-              {{lang}}
-            </b-dropdown-item>
-          </b-dropdown>
-        </b-nav-item>
-        <b-nav-item>
-          <b-dropdown split class="dropdown" :text="theme" @change="onChangeTheme">
-            <b-dropdown-item v-for="(theme, index) of theme_list" :key="index"
-              @click="()=>onChangeTheme(theme)">
-              {{theme}}
-            </b-dropdown-item>
-          </b-dropdown>
-        </b-nav-item>
-      </b-navbar-nav>
-    </b-navbar>
-
-    <b-row id="problem-container">
-      <b-col id="problem-description" cols="5">
-        <div class="description-io" v-katex>
-          <h2>Description</h2>
-          <p v-dompurify-html="problem.description"></p>
-          <div class="blank-line"></div>
-          <h2>Input</h2>
-          <p v-dompurify-html="problem.input_description"></p>
-          <h2>Output</h2>
-          <p v-dompurify-html="problem.output_description"></p>
-          <div class="blank-line"></div>
-        </div>
-
-        <div v-for="(sample, index) of problem.samples" :key="index">
-          <h2>
-            Sample Input {{index + 1}}
-            <a v-clipboard:copy="sample.input">
-              <b-icon id="clipboard1" icon="clipboard" class="copy-icon" scale="0.8"/>
-            </a>
-            <b-tooltip target="clipboard1" placement="top" triggers="hover">
-              Copy
-            </b-tooltip>
-          </h2>
-          <pre class="sample-io">{{sample.input}}</pre>
-          <h2>
-            Sample Output {{index + 1}}
-          </h2>
-          <pre class="sample-io">{{sample.output}}</pre>
-          <div class="blank-line"></div>
-        </div>
-
-        <div v-if="problem.hint" v-katex>
-          <h2>Hint</h2>
-          <p v-dompurify-html="problem.hint"></p>
-        </div>
-      </b-col>
-      <b-col id="console" cols="7">
-        <b-row id="editor">
-          <CodeMirror
-            :value.sync="code"
-            :language="language"
-            :theme="theme"
-          />
-        </b-row>
-        <!-- <b-row id="io">
-          <b-row class="io-header">
-            <b-col class="io-header-cell right-border">Input</b-col>
-            <b-col class="io-header-cell">Output</b-col>
+          </b-table>
+        </b-col>
+        <b-col id="console" cols="7">
+          <b-row id="editor">
+            <CodeMirror
+              :value.sync="code"
+              :language="language"
+              :theme="theme"
+            />
           </b-row>
-          <b-row class="io-content">
-            <b-col class="io-content-cell right-border">
-              <pre></pre>
-            </b-col>
-            <b-col class="io-content-cell">
-              <pre></pre>
-            </b-col>
-          </b-row>
-        </b-row> -->
-      </b-col>
-    </b-row>
-    <b-sidebar id="sidebar" no-header backdrop>
-      <template #default="{ hide }">
-        <ProblemSidebar ref="sidebar" :hide="hide" :contestID="contestID" :problemID="problemID"/>
-      </template>
-    </b-sidebar>
+          <!-- <b-row id="io">
+            <b-row class="io-header">
+              <b-col class="io-header-cell right-border">Input</b-col>
+              <b-col class="io-header-cell">Output</b-col>
+            </b-row>
+            <b-row class="io-content">
+              <b-col class="io-content-cell right-border">
+                <pre></pre>
+              </b-col>
+              <b-col class="io-content-cell">
+                <pre></pre>
+              </b-col>
+            </b-row>
+          </b-row> -->
+        </b-col>
+      </b-row>
+      <b-sidebar id="sidebar" no-header backdrop>
+        <template #default="{ hide }">
+          <ProblemSidebar ref="sidebar" :hide="hide" :contestID="contestID" :problemID="problemID"/>
+        </template>
+      </b-sidebar>
+    </b-overlay>
   </div>
 </template>
 
@@ -257,12 +282,16 @@ export default {
       code: '',
       language: 'C++',
       theme: 'material',
-      theme_list: ['solarized', 'monokai', 'material']
+      theme_list: ['solarized', 'monokai', 'material'],
+
+      overlayShow: false
     }
   },
   async mounted () {
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: false })
+    this.overlayShow = true
     await this.init()
+    this.overlayShow = false
     if (this.$route.params.contestID) {
       this.route_name = this.$route.name
       await this.getContestProblems()
@@ -280,7 +309,6 @@ export default {
   methods: {
     ...mapActions(['changeDomTitle', 'changeModalStatus']),
     async init () {
-      this.$Loading.start()
       this.contestID = this.$route.params.contestID
       this.problemID = this.$route.params.problemID
 
@@ -288,7 +316,6 @@ export default {
         ? await api.getProblem(this.problemID)
         : await api.getContestProblem(this.problemID, this.contestID)
 
-      this.$Loading.finish()
       const problem = res.data.data
       this.changeDomTitle({ title: problem.title })
 
@@ -303,7 +330,7 @@ export default {
         let preferredLanguage = problem.languages[0]
         const res3 = await api.getUserInfo(userId)
 
-        const lang = res3.data.data.language
+        const lang = res3.data.data?.language
         if (lang !== null) {
           if (problem.languages.includes(lang)) {
             preferredLanguage = lang
@@ -343,23 +370,16 @@ export default {
       })
     },
     // when reset button clicked
-    onResetToTemplate () {
-      this.$Modal.confirm({
-        content: 'Are you sure you want to reset your code?',
-        onOk: () => {
-          const template = this.problem.template_code
-          if (template && template[this.language]) {
-            var templateCode = ''
-            for (var t in template[this.language]) {
-              templateCode += template[this.language][t].code
-              templateCode += '\n'
-            }
-            this.code = templateCode
-          } else {
-            this.code = ''
-          }
+    async onResetToTemplate () {
+      const isConfirmed = await this.$bvModal.msgBoxConfirm('Are you sure you want to reset your code?')
+      if (isConfirmed) {
+        const template = this.problem.template
+        if (template && template[this.language]) {
+          this.code = template[this.language]
+        } else {
+          this.code = ''
         }
-      })
+      }
     },
     // when language dropdown changed
     onChangeLang (newLang) {
@@ -432,13 +452,6 @@ export default {
           // Regularly check status
           this.submitting = false
           this.submissionExists = true
-          if (!detailsVisible) {
-            this.$Modal.success({
-              title: 'Success',
-              content: 'Submit code successfully'
-            })
-            return
-          }
           this.submitted = true
           this.checkSubmissionStatus()
         } catch (err) {
@@ -450,28 +463,25 @@ export default {
           this.statusVisible = false
         }
       }
-      if (this.contestRuleType === 'OI' && !this.OIContestRealTimePermission) {
+      if (!this.OIContestRealTimePermission) {
         if (this.submissionExists) {
-          this.$Modal.confirm({
-            title: '',
-            content: '<h3>' + 'You have submission in this problem, sure to cover it?' + '<h3>',
-            onOk: () => {
-              // Temporarily solve the conflict between the dialog box
-              // and the prompt dialog box behind (otherwise it will flash by)
-              setTimeout(async () => {
-                await submitFunc(data, false)
-              }, 1000)
-            },
-            onCancel: () => {
-              this.submitting = false
-            }
-          })
+          const isConfirmed = await this.$bvModal.msgBoxConfirm('You have submission in this problem, sure to cover it?')
+          if (isConfirmed) {
+            await submitFunc(data, false)
+          } else {
+            this.submitting = false
+          }
         } else {
           await submitFunc(data, false)
         }
       } else {
         await submitFunc(data, true)
       }
+    },
+    async onMySubmissionClicked () {
+      await this.$refs.sidebar.onMySubmissionClicked({ ID: this.submissionId })
+      await this.$nextTick()
+      this.$refs.sidebar.codemirror_key += 1
     }
   },
   computed: {
@@ -521,6 +531,8 @@ export default {
   },
   watch: {
     async '$route' () {
+      this.statusVisible = false
+      this.code = ''
       await this.init()
     },
     contestEnded: function () {
@@ -536,11 +548,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @font-face {
     font-family: 'Manrope';
     src: url("../../../../fonts/Manrope-Bold.ttf");
   }
+
+  $main-header-height: 60px;
+  $inner-header-height: 58px;
+
   * {
     font-family: 'Manrope', sans-serif;
   }
@@ -553,6 +569,7 @@ export default {
 
   #main-header {
     background: #0B232F;
+    height: #{$main-header-height};
   }
 
   .logo-img {
@@ -563,7 +580,7 @@ export default {
   }
 
   #inner-header {
-    height: 58px;
+    height: #{$inner-header-height};
     padding-top: 0px;
     padding-bottom: 0px;
     padding-left: 15px;
@@ -584,15 +601,38 @@ export default {
       font-size: 18px;
     }
 
+    .statusBadge {
+      font-size: 12px;
+      padding: 6px 10px;
+      color: #4F4F4F;
+    }
+
+    #badgeIcon {
+      margin-right: 8px;
+    }
+
+    .yellow {
+      color: #FEB144;
+    }
+    .red {
+      color: #ff6663;
+    }
+    .green {
+      color: #9EE09E;
+    }
+    .blue {
+      color: #9EC1CF;
+    }
+
     .dropdown {
       min-width: 125px;
     }
 
-    /deep/ .dropdown button{
+    .dropdown::v-deep button{
       background: #45576C;
     }
 
-    /deep/ .dropdown ul {
+    .dropdown::v-deep ul {
       background: #45576C;
 
       li a {
@@ -615,6 +655,8 @@ export default {
       border-right: 1px solid #3B4F56;
       padding-left: 20px;
       color: white;
+      height: calc(100vh - #{$main-header-height} - #{$inner-header-height});
+      overflow: auto;
 
       h2 {
         font-size: 20px;
@@ -624,7 +666,7 @@ export default {
 
       p {
         font-size: 15px;
-        margin-bottom: 40px;
+        // margin-bottom: 40px;
       }
 
       .description-io {
@@ -681,11 +723,13 @@ export default {
       padding: 0;
       flex-flow: column;
       background: #24272D;
+      height: calc(100vh - #{$main-header-height} - #{$inner-header-height});
 
       #editor {
         margin: 0;
         padding: 0;
         flex: 1 1 auto;
+        overflow: auto;
       }
 
       #io {

@@ -1,5 +1,5 @@
 from django.db import models
-from utils.models import JSONField
+from django.db.models import JSONField
 
 from account.models import User
 from contest.models import Contest

@@ -3,10 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from '@/store'
 import VueClipboard from 'vue-clipboard2'
-import VueAnalytics from 'vue-analytics'
 import VueSimpleAlert from 'vue-simple-alert'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
-import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
@@ -19,7 +17,8 @@ import '@/styles/bootstrap.scss'
 import '@/styles/common.scss'
 
 import highlight from '@/plugins/highlight'
-import katex from '@/plugins/katex'
+import 'katex/dist/katex.min.css'
+import VueKatex from 'vue-katex'
 import filters from '@/utils/filters.js'
 
 // register global utility filters.
@@ -35,13 +34,9 @@ Vue.use(BootstrapVueIcons)
 
 Vue.use(VueClipboard)
 Vue.use(highlight)
-Vue.use(katex)
+Vue.use(VueKatex)
 Vue.use(VueSimpleAlert)
 Vue.use(VueDOMPurifyHTML)
-Vue.use(VueAnalytics, {
-  id: GOOGLE_ANALYTICS_ID,
-  router
-})
 
 Vue.config.devtools = process.env.NODE_ENV !== 'production'
 

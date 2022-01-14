@@ -1,6 +1,5 @@
 <template>
   <div class="problem">
-
     <Panel :title="title">
       <b-row>
         <b-col cols="3">
@@ -44,8 +43,16 @@
         <b-col>
           <p class="labels">
             <span class="text-danger">*</span> Description
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.description_preview>Preview</b-button>
           </p>
-          <tiptap v-model="problem.description"></tiptap>
+          <tiptap v-model="problem.description" ></tiptap>
+          <b-modal id="description_preview" title="Description Preview" hide-footer>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.description"></p>
+              </div>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
 
@@ -53,8 +60,16 @@
         <b-col>
           <p class="labels">
             <span class="text-danger">*</span> Input Description
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.input_description_preview>Preview</b-button>
           </p>
           <tiptap v-model="problem.input_description"></tiptap>
+          <b-modal id="input_description_preview" title="Input Description Preview" hide-footer>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.input_description"></p>
+              </div>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
 
@@ -62,8 +77,16 @@
         <b-col>
           <p class="labels">
             <span class="text-danger">*</span> Output Description
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.output_description_preview>Preview</b-button>
           </p>
           <tiptap v-model="problem.output_description"></tiptap>
+          <b-modal id="output_description_preview" title="Output Description Preview" hide-footer>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.output_description"></p>
+              </div>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
 
@@ -236,8 +259,16 @@
         <b-col>
           <p class="labels">
             Hint
+            <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.hintpreview>Preview</b-button>
           </p>
           <tiptap v-model="problem.hint" placeholder=""></tiptap>
+          <b-modal id="hintpreview" title="Hint Preview" hide-footer>
+            <template #default>
+              <div v-katex:auto>
+                <p v-dompurify-html="problem.hint"></p>
+              </div>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
 
@@ -349,14 +380,13 @@
       <b-row>
         <b-col cols="6" v-if="testcase_file_upload">
           <b-form-file
-            multiple
             v-model="testcaseFile"
             :state="Boolean(testcaseFile)"
           ></b-form-file>
         </b-col>
       </b-row>
 
-      <div v-if="!testcase_file_upload">
+      <div v-if="!testcase_file_upload && !textsizeOver50mb">
         <b-form-group v-for="(testcase, index) in problem.testcases" :key="'testcase'+index">
           <Accordion :title="'Testcase' + (index + 1)">
             <b-button variant="danger" size="sm" slot="header" @click="deleteTestCase(index)">
@@ -429,6 +459,7 @@ import tiptap from '../../components/Tiptap'
 import Accordion from '../../components/Accordion'
 import CodeMirror from '../../components/CodeMirror'
 import api from '../../api'
+
 export default {
   name: 'Problem',
   components: {
@@ -457,6 +488,8 @@ export default {
       },
       testCaseUploaded: false,
       testcase_file_upload: false,
+      testcaseLoaded: true,
+      textsizeOver50mb: true,
       allLanguage: {},
       inputVisible: false,
       tagInput: '',
@@ -553,13 +586,21 @@ export default {
       data.testcases = []
       this.problem = data
       this.testCaseUploaded = true
-      const testcaseRes = await api.getTestCase(this.$route.params.problemID)
+      this.testcaseLoaded = false
+      const testcaseRes = await api.getTestCase(this.$route.params.problemId)
       const testcaseData = testcaseRes.data.data
-      this.problem.testcases = this.problem.testcases.concat(testcaseData.testcase)
+      if (testcaseRes.headers['content-length'] <= 50000000) {
+        this.problem.testcases = this.problem.testcases.concat(testcaseData.testcases)
+        this.textsizeOver50mb = false
+      } else {
+        this.testcase_file_upload = true
+      }
       if (testcaseData.spj === 'True') this.problem.spj = true
       else this.problem.spj = testcaseData.spj === 'True'
+      this.testcaseLoaded = true
     } else {
       this.title = 'Add Problem'
+      this.textsizeOver50mb = false
       for (const item of allLanguage.languages) {
         this.problem.languages.push(item.name)
       }
@@ -596,7 +637,7 @@ export default {
       }).content_type
     },
     'testcaseFile' () {
-      // this.uploadTestcase()
+      this.uploadTestcase()
     }
   },
   methods: {
@@ -664,21 +705,17 @@ export default {
         return
       }
       try {
-        const response = await api.uploadTestcase({
-          file: this.testcaseFile,
-          spj: this.problem.spj
-        })
-        this.uploadSucceeded(response)
+        const formData = new FormData()
+        const blob = new Blob([this.testcaseFile])
+        formData.append('spj', this.problem.spj)
+        formData.append('file', blob, this.testcaseFile.name)
+        const res = await api.uploadTestCase(formData)
+        this.uploadSucceeded(res)
       } catch (err) {
-        this.uploadFailed()
       }
     },
     uploadSucceeded (response) {
-      if (response.error) {
-        this.$error(response.data)
-        return
-      }
-      const fileList = response.data.info
+      const fileList = response.data.data.info
       for (const file of fileList) {
         file.score = (100 / fileList.length).toFixed(0)
         if (!file.output_name && this.problem.spj) {
@@ -687,10 +724,7 @@ export default {
       }
       this.problem.test_case_score = fileList
       this.testCaseUploaded = true
-      this.problem.test_case_id = response.data.id
-    },
-    uploadFailed () {
-      this.$error('Upload failed')
+      this.problem.test_case_id = response.data.data.id
     },
     async compileSPJ () {
       const data = {
@@ -719,6 +753,10 @@ export default {
       }
     },
     async submit () {
+      if (!this.testcaseLoaded) {
+        this.$error('Test case is not loaded yet')
+        return
+      }
       if (!this.problem.samples.length) {
         this.$error('Sample is required')
         return
@@ -752,6 +790,9 @@ export default {
         return
       }
       if (!this.testcase_file_upload) {
+        if (this.textsizeOver50mb) {
+          this.$error('User written testcase cannot be larger than 50MB. Please use file upload instead.')
+        }
         for (const testcase of this.problem.testcases) {
           if (!testcase.input || !testcase.output) {
             this.$error('Testcase input and output is required')
@@ -795,37 +836,40 @@ export default {
         'create-contest-problem': 'createContestProblem',
         'edit-contest-problem': 'editContestProblem'
       }[this.routeName]
-      // edit contest problem 时, contest_id会被后来的请求覆盖掉
+
       if (funcName === 'editContestProblem') {
         this.problem.contest_id = this.contest.id
       }
       if (!this.testcase_file_upload) {
-        try {
-          const response = await api.createTestCase({
-            testcases: this.problem.testcases,
-            spj: this.problem.spj
-          })
-          const fileList = response.data.data.info
-          for (const file of fileList) {
-            file.score = (100 / fileList.length).toFixed(0)
-            if (!file.output_name && this.problem.spj) {
-              file.output_name = '-'
+        if (!this.textsizeOver50mb) {
+          try {
+            const response = await api.createTestCase({
+              testcases: this.problem.testcases,
+              spj: this.problem.spj
+            })
+            const fileList = response.data.data.info
+            for (const file of fileList) {
+              file.score = (100 / fileList.length).toFixed(0)
+              if (!file.output_name && this.problem.spj) {
+                file.output_name = '-'
+              }
             }
-          }
-          this.problem.test_case_score = fileList
-          this.testCaseUploaded = true
-          this.problem.test_case_id = response.data.data.id
-          await api[funcName](this.problem)
+            this.problem.test_case_score = fileList
+            this.testCaseUploaded = true
+            this.problem.test_case_id = response.data.data.id
+            await api[funcName](this.problem)
 
-          if (['create-contest-problem', 'edit-contest-problem'].includes(this.routeName)) {
-            this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })
-          } else {
-            this.$router.push({ name: 'problem-list' })
+            if (['create-contest-problem', 'edit-contest-problem'].includes(this.routeName)) {
+              this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })
+            } else {
+              this.$router.push({ name: 'problem-list' })
+            }
+          } catch (err) {
           }
-        } catch (err) {
         }
       } else {
         try {
+          this.problem.testcases = null
           await api[funcName](this.problem)
           if (['create-contest-problem', 'edit-contest-problem'].includes(this.routeName)) {
             this.$router.push({ name: 'contest-problem-list', params: { contestId: this.$route.params.contestId } })

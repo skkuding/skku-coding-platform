@@ -140,6 +140,9 @@
             </template>
           </b-table>
         </div>
+        <div id="submission-compile-error-message" v-if="compile_error_message_show">
+          <p class="text-danger"> Compile error message: {{ submission_detail.statistic_info.err_info }} </p>
+        </div>
         <div id="submission-source-code">
           <h3>Source Code</h3>
           <p>({{submission_detail.bytes}} Bytes)</p>
@@ -154,7 +157,8 @@
           <b-table class="align-center"
             :items="submission_detail.testcases"
             :per-page="submission_detail_table_rows"
-            :fields="submission_detail_table_fields">
+            :fields="submission_detail_table_fields"
+            v-show="submission_detail.testcases">
             <template #cell(result)="data">
               <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
             </template>
@@ -225,6 +229,7 @@ export default {
       all_submissions_page: 1,
 
       submission_detail_modal_show: false,
+      compile_error_message_show: false,
 
       // for re-rendering when codemirror content is ready
       codemirror_key: 1
@@ -287,7 +292,7 @@ export default {
       const func = this.contestID ? 'getContestSubmissionList' : 'getSubmissionList'
 
       // offset, limit, params
-      const result = await api[func](0, 1000, params)
+      const result = await api[func](0, 100, params)
       const data = result.data.data
       const submissions = data.results.map(v => {
         var info = {
@@ -335,7 +340,7 @@ export default {
         create_time: time.utcToLocal(data.create_time, 'YYYY-MM-DD HH:mm'),
         result: JUDGE_STATUS[data.result].name,
         bytes: new Blob([data.code]).size,
-        testcases: data.info.data.map(
+        testcases: data.info && data.info.data && data.info.data.map(
           tc => {
             return {
               title: tc.test_case,
@@ -346,6 +351,7 @@ export default {
           }
         )
       }
+      this.compile_error_message_show = data.result === 'Compile Error'
 
       if (data.info && data.info.data) {
         // score exist means the submission is OI problem submission
@@ -410,6 +416,7 @@ export default {
           margin-top: 10px;
           margin-bottom: 20px;
           font-size: 18px;
+          cursor: pointer;
         }
       }
     }
@@ -419,7 +426,7 @@ export default {
     }
   }
 
-  /deep/ .modal {
+  ::v-deep .modal {
     .modal-dialog {
       min-width: 1200px;
 
@@ -487,6 +494,7 @@ export default {
                 min-width: 100px;
                 padding: 15px 25px;
                 border-top: 1px solid #3B4F56;
+                cursor: pointer;
               }
             }
           }
@@ -508,6 +516,10 @@ export default {
             }
           }
 
+          #submission-compile-error-message {
+            padding: 20px 50px;
+          }
+
           #submission-source-code {
             padding: 20px 50px;
             padding-bottom: 40px;
@@ -523,11 +535,11 @@ export default {
           }
 
           // occasional code indent css fix
-          /deep/ #submission-source-code .CodeMirror-sizer {
+          #submission-source-code::v-deep .CodeMirror-sizer {
             margin-left: 38px !important;
           }
 
-          /deep/ #submission-source-code .CodeMirror-gutter-wrapper {
+          #submission-source-code::v-deep .CodeMirror-gutter-wrapper {
             left: -38px !important;
           }
 
@@ -561,7 +573,7 @@ export default {
     }
   }
 
-  /deep/ .pagination {
+  ::v-deep .pagination {
     margin-left: 25px;
 
     .page-link {

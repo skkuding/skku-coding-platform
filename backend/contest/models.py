@@ -1,7 +1,7 @@
 from utils.constants import ContestRuleType  # noqa
 from django.db import models
 from django.utils.timezone import now
-from utils.models import JSONField
+from django.db.models import JSONField
 
 from utils.constants import ContestStatus, ContestType
 from account.models import User

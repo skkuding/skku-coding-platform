@@ -32,9 +32,6 @@ export default {
       document.body.removeChild(document.getElementById('app-loader'))
     } catch (e) {}
   },
-  mounted () {
-    this.getWebsiteConfig()
-  },
   methods: {
     copy () {
       this.$success('Email is copied')

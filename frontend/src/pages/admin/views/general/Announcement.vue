@@ -268,18 +268,33 @@ export default {
     openAnnouncementDialog (id) {
       this.showEditAnnouncementDialog = true
       if (id !== null) {
-        this.currentAnnouncementId = id
-        this.announcementDialogTitle = 'Edit Announcement'
-        this.announcementList.find(item => {
-          if (item.id === this.currentAnnouncementId) {
-            this.announcement.title = item.title
-            this.announcement.visible = item.visible
-            this.announcement.content = item.content
-            this.mode = 'edit'
-            return true
-          }
-          return false
-        })
+        if (this.contestID) {
+          this.currentAnnouncementId = id
+          this.announcementDialogTitle = 'Edit Clarification'
+          this.contestAnnouncementList.find(item => {
+            if (item.id === this.currentAnnouncementId) {
+              this.announcement.title = item.title
+              this.announcement.visible = item.visible
+              this.announcement.content = item.content
+              this.mode = 'edit'
+              return true
+            }
+            return false
+          })
+        } else {
+          this.currentAnnouncementId = id
+          this.announcementDialogTitle = 'Edit Announcement'
+          this.announcementList.find(item => {
+            if (item.id === this.currentAnnouncementId) {
+              this.announcement.title = item.title
+              this.announcement.visible = item.visible
+              this.announcement.content = item.content
+              this.mode = 'edit'
+              return true
+            }
+            return false
+          })
+        }
       } else {
         this.announcementDialogTitle = 'Create Announcement'
         this.announcement.title = ''

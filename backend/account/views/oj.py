@@ -16,9 +16,11 @@ from options.options import SysOptions
 from utils.api import APIView, validate_serializer
 from utils.captcha import Captcha
 from utils.shortcuts import rand_str
-from ..decorators import login_required
+from utils.cache import cache
+from utils.constants import CacheKey
+from utils.decorators import login_required
 from ..models import User, UserProfile
-from ..serializers import (ApplyResetPasswordSerializer, ResetPasswordSerializer,
+from ..serializers import (ApplyResetPasswordSerializer, DeleteAccountSerializer, ResetPasswordSerializer, SendEmailAuthSerializer,
                            UserChangePasswordSerializer, UserLoginSerializer,
                            UserRegisterSerializer, EmailAuthSerializer, UsernameOrEmailCheckSerializer,
                            UserChangeEmailSerializer)
@@ -52,6 +54,8 @@ class UserProfileAPI(APIView):
         username = request.GET.get("username")
         try:
             if username:
+                if not username == user.username:
+                    return self.error("You only can get your profile")
                 user = User.objects.get(username=username, is_disabled=False)
             else:
                 user = request.user
@@ -210,38 +214,51 @@ class UserRegisterAPI(APIView):
         data = request.data
         data["username"] = data["username"].lower()
         data["email"] = data["email"].lower()
-        captcha = Captcha(request)
-        if not captcha.check(data["captcha"]):
-            return self.error("Invalid captcha")
+
+        email_auth_token = data["token"]
+        token_cache_key = f"{CacheKey.auth_token_cache}:{email_auth_token}"
+        email_cache_key = f"{CacheKey.auth_email_cache}:{email_auth_token}"
+        auth_email = cache.get(email_cache_key)
+        if not cache.get(token_cache_key):
+            return self.error("Token does not exist")
+        if not data["email"] == auth_email:
+            return self.error("It is not authenticated email")
+
         if User.objects.filter(username=data["username"]).exists():
             return self.error("Username already exists")
         if not re.match(r"^20[0-9]{8}$", data["username"]):
             return self.error("Not student ID")
-        if User.objects.filter(email=data["email"]).exists():
-            return self.error("Email already exists")
-        if data["email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
-            return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
+
         user = User.objects.create(username=data["username"], email=data["email"], major=data["major"])
         user.set_password(data["password"])
-        user.has_email_auth = False
-        user.email_auth_token = rand_str()
+        user.has_email_auth = True
         user.save()
 
         UserProfile.objects.create(user=user)
 
-        render_data = {
-            "username": user.username,
-            "website_name": SysOptions.website_name,
-            "link": f"{SysOptions.website_base_url}/email-auth/{user.email_auth_token}"
-        }
-        email_html = render_to_string("email_auth.html", render_data)
-        send_email_async.send(from_name=SysOptions.website_name_shortcut,
-                              to_email=user.email,
-                              to_name=user.username,
-                              subject="Email Authentication",
-                              content=email_html)
-
+        cache.delete(token_cache_key)
+        cache.delete(email_cache_key)
         return self.success("Succeeded")
+
+
+class DeleteAccountAPI(APIView):
+    @swagger_auto_schema(
+        request_body=DeleteAccountSerializer,
+        operation_description="Check user password",
+    )
+    @validate_serializer(DeleteAccountSerializer)
+    @login_required
+    def post(self, request):
+        data = request.data
+        user = auth.authenticate(username=request.user.username,
+                                 email=data["email"],
+                                 password=data["password"])
+        if not user:
+            return self.error("Invalid email or password")
+        if request.user.is_super_admin():
+            return self.error("super admin account cannot be deleted")
+        User.objects.filter(id=request.user.id).delete()
+        return self.success()
 
 
 class EmailAuthAPI(APIView):
@@ -251,15 +268,59 @@ class EmailAuthAPI(APIView):
     )
     @validate_serializer(EmailAuthSerializer)
     def post(self, request):
-        data = request.data
-        try:
-            user = User.objects.get(email_auth_token=data["token"])
-        except User.DoesNotExist:
+        email_auth_token = request.data["token"]
+        token_cache_key = f"{CacheKey.auth_token_cache}:{email_auth_token}"
+        email_cache_key = f"{CacheKey.auth_email_cache}:{email_auth_token}"
+
+        if not cache.get(token_cache_key):
             return self.error("Token does not exist")
-        user.email_auth_token = None
-        user.has_email_auth = True
-        user.save()
-        return self.success("Succeeded")
+        email = cache.get(email_cache_key)
+
+        return self.success({"email": email})
+
+
+class SendEmailAuthAPI(APIView):
+    @swagger_auto_schema(
+        request_body=SendEmailAuthSerializer,
+        operation_description="Send email to authenticate user's email for register",
+    )
+    @validate_serializer(SendEmailAuthSerializer)
+    def post(self, request):
+        if request.user.is_authenticated:
+            return self.error("You have already logged in")
+        data = request.data
+        email = data["email"]
+        captcha = Captcha(request)
+        if not captcha.check(data["captcha"]):
+            return self.error("Invalid captcha")
+        if User.objects.filter(email=email).exists():
+            return self.error("Email already exists")
+        if email.split("@")[1] not in ("g.skku.edu", "skku.edu"):
+            return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
+
+        email_auth_token = rand_str()
+        token_cache_key = f"{CacheKey.auth_token_cache}:{email_auth_token}"
+        email_cache_key = f"{CacheKey.auth_email_cache}:{email_auth_token}"
+        if cache.get(token_cache_key):
+            cache.delete(token_cache_key)
+        if cache.get(email_cache_key):
+            cache.delete(email_cache_key)
+        cache.set(token_cache_key, email_auth_token, 1200)
+        cache.set(email_cache_key, email, 1200)
+
+        render_data = {
+            "username": email,
+            "website_name": SysOptions.website_name,
+            "link": f"{SysOptions.website_base_url}/register/{email_auth_token}"
+        }
+        email_html = render_to_string("email_auth.html", render_data)
+        send_email_async.send(from_name=SysOptions.website_name_shortcut,
+                              to_email=email,
+                              to_name=email,
+                              subject="Email Authentication",
+                              content=email_html)
+
+        return self.success()
 
 
 class UserChangeEmailAPI(APIView):

@@ -20,11 +20,21 @@ class UserRegisterSerializer(serializers.Serializer):
     password = serializers.CharField(min_length=6)
     email = serializers.EmailField(max_length=64)
     major = serializers.CharField(max_length=128)
-    captcha = serializers.CharField()
+    token = serializers.CharField()
+
+
+class DeleteAccountSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=64)
+    password = serializers.CharField(min_length=6)
 
 
 class EmailAuthSerializer(serializers.Serializer):
     token = serializers.CharField()
+
+
+class SendEmailAuthSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    captcha = serializers.CharField()
 
 
 class UserChangePasswordSerializer(serializers.Serializer):
@@ -99,7 +109,7 @@ class EditUserSerializer(serializers.Serializer):
 
 
 class EditUserSettingSerializer(serializers.Serializer):
-    major = serializers.CharField(max_length=128)
+    major = serializers.ChoiceField(choices=("Major", "Double Major", "Non-CS Major"))
 
 
 class EditUserProfileSerializer(serializers.Serializer):

@@ -93,7 +93,7 @@ export const CONTEST_STATUS_REVERSE = {
   },
   0: {
     name: 'Underway',
-    color: '#F1BA48'
+    color: '#8DC63F'
   },
   '-1': {
     name: 'Ended',
@@ -136,5 +136,3 @@ export function buildProblemCodeKey (problemID, contestID = null) {
   }
   return `${STORAGE_KEY.PROBLEM_CODE}_NaN_${problemID}`
 }
-
-export const GOOGLE_ANALYTICS_ID = 'UA-111499601-1'

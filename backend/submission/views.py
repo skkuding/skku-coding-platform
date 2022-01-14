@@ -3,15 +3,16 @@ import ipaddress
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from account.decorators import login_required, check_contest_permission
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
 from options.options import SysOptions
 # from judge.dispatcher import JudgeDispatcher
 from problem.models import Problem, ProblemRuleType
+from account.models import User, AdminType
 from utils.api import APIView, validate_serializer
 from utils.cache import cache
 from utils.captcha import Captcha
+from utils.decorators import login_required, check_contest_permission
 from utils.throttling import TokenBucket
 from .models import Submission
 from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
@@ -216,6 +217,11 @@ class SubmissionListAPI(APIView):
             submissions = submissions.filter(user_id=request.user.id)
         elif username:
             submissions = submissions.filter(username__icontains=username)
+        elif (myself and myself == "0") and not request.user.is_admin_role():
+            user_ids = submissions.values_list("user_id", flat=True)
+            users = User.objects.filter(id__in=user_ids, admin_type=AdminType.REGULAR_USER)
+            user_ids = users.values_list("id")
+            submissions = submissions.filter(user_id__in=user_ids)
         if result:
             submissions = submissions.filter(result=result)
         data = self.paginate_data(request, submissions)
@@ -290,6 +296,11 @@ class ContestSubmissionListAPI(APIView):
             submissions = submissions.filter(user_id=request.user.id)
         elif username:
             submissions = submissions.filter(username__icontains=username)
+        elif (myself and myself == "0") and not request.user.is_admin_role():
+            user_ids = submissions.values_list("user_id", flat=True)
+            users = User.objects.filter(id__in=user_ids, admin_type=AdminType.REGULAR_USER)
+            user_ids = users.values_list("id")
+            submissions = submissions.filter(user_id__in=user_ids)
         if result:
             submissions = submissions.filter(result=result)
 

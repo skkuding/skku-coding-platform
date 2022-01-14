@@ -40,7 +40,6 @@ export default {
     return {
       perPage: 10,
       currentPage: 1,
-      limit: 10,
       total: 10,
       btnLoading: false,
       announcements: [],
@@ -82,10 +81,10 @@ export default {
         await this.getAnnouncementList()
       }
     },
-    async getAnnouncementList (page = 1) {
+    async getAnnouncementList () {
       this.btnLoading = true
       try {
-        const res = await api.getAnnouncementList((page - 1) * this.limit, this.limit)
+        const res = await api.getAnnouncementList(0, 250)
         this.btnLoading = false
         this.announcements = res.data.data.results
         this.total = res.data.data.total
@@ -112,7 +111,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
@@ -129,9 +128,10 @@ export default {
   .title{
     color: #7C7A7B;
   }
-  .notice-list-card .table{
+  .table{
     width: 95% !important;
     margin: 0 auto;
+    cursor: pointer;
   }
   .no-announcement {
     text-align: center;

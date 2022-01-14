@@ -4,8 +4,11 @@ import {
   Announcement,
   ContestDetail,
   ContestList,
+  ContestProblemList,
+  ContestRanking,
   ApplyResetPassword,
   EmailAuth,
+  Register,
   Home,
   Logout,
   NotFound,
@@ -59,6 +62,12 @@ export default [
     component: EmailAuth
   },
   {
+    name: 'register',
+    path: '/register/:token',
+    meta: { title: 'Register' },
+    component: Register
+  },
+  {
     name: 'problem-list',
     path: '/problem',
     meta: { title: 'Problem List' },
@@ -87,6 +96,18 @@ export default [
     path: '/contest/:contestID/',
     component: ContestDetail,
     meta: { title: 'Contest Details' }
+  },
+  {
+    name: 'contest-problems',
+    path: '/contest/:contestID/problem',
+    component: ContestProblemList,
+    meta: { title: 'Contest Problems' }
+  },
+  {
+    name: 'contest-ranking',
+    path: '/contest/:contestID/rank/',
+    component: ContestRanking,
+    meta: { title: 'Contest Ranking' }
   },
   {
     name: 'profile-setting',

@@ -113,10 +113,13 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   #codemirror {
     width: 100%;
     height: 100%;
+  }
+  .CodeMirror * {
+    font-family: Menlo, Monaco, Consolas,"Courier New", monospace
   }
   .CodeMirror {
     height: 100% !important;

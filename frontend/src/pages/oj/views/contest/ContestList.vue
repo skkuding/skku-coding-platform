@@ -32,7 +32,7 @@
     <div class="pagination">
       <b-pagination
         v-model="currentPage"
-        :total-rows="contest.length"
+        :total-rows="contests.length"
         :per-page="perPage"
         limit="3"
       ></b-pagination>
@@ -51,7 +51,7 @@ export default {
   name: 'ContestList',
   async beforeRouteEnter (to, from, next) {
     try {
-      const res = await api.getContestList(0, 5)
+      const res = await api.getContestList(0, 1000)
       next((vm) => {
         vm.contests = res.data.data.results
         vm.total = res.data.data.total
@@ -62,6 +62,10 @@ export default {
   },
   data () {
     return {
+      limit: 200,
+      total: 0,
+      perPage: 5,
+      currentPage: 1,
       CONTEST_STATUS: CONTEST_STATUS,
       route_name: '',
       contestID: '',
@@ -71,7 +75,6 @@ export default {
         keyword: '',
         rule_type: ''
       },
-      total: 0,
       rows: '',
       contests: [],
       CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
@@ -110,10 +113,9 @@ export default {
       this.page = parseInt(route.page) || 1
       await this.getContestList()
     },
-    async getContestList (page = 1) {
-      const offset = (page - 1) * this.limit
+    async getContestList () {
       try {
-        const res = await api.getContestList(offset, this.limit, this.query)
+        const res = await api.getContestList(0, this.limit, this.query)
         this.contests = res.data.data.results
         this.total = res.data.data.total
       } catch (err) {
@@ -187,6 +189,7 @@ export default {
     .table{
       width: 95% !important;
       margin: 0 auto;
+      cursor: pointer;
     }
   }
   .top-bar {

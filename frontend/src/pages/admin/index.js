@@ -8,9 +8,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import filters from '@/utils/filters'
 import router from './router'
-import { GOOGLE_ANALYTICS_ID } from '@/utils/constants'
-import VueAnalytics from 'vue-analytics'
-import katex from '@/plugins/katex'
+import 'katex/dist/katex.min.css'
+import VueKatex from 'vue-katex'
 import VueSimpleAlert from 'vue-simple-alert'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 
@@ -24,15 +23,10 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 
-Vue.use(VueAnalytics, {
-  id: GOOGLE_ANALYTICS_ID,
-  router
-})
-
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 
-Vue.use(katex)
+Vue.use(VueKatex)
 Vue.use(VueSimpleAlert)
 Vue.use(VueDOMPurifyHTML)
 Vue.component(IconBtn.name, IconBtn)

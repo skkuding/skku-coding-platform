@@ -2,41 +2,31 @@
   <div class="contest-list-card font-bold">
     <div class="top-bar mb-4">
       <h2 class="title"> {{ contest.title }} </h2>
-      <div class="problem-list-table">
-        <div class="status-container">
-          <b-icon
-            icon="circle-fill"
-            shift-h="-2"
-            shift-v="-3"
-            class="mx-1"
-            :style="'color:' + contestStatus.color"
-          />
-          {{ contestStatus.name }}
-        </div>
-      </div>
+      <status-badge
+        style="margin-right: 40px;"
+        :status_name="contestStatus.name"
+        :status_color="contestStatus.color"
+        :status_endtime="contest.end_time"
+      ></status-badge>
     </div>
-    <div class="description">
-      <p v-dompurify-html="contest.description"></p>
-    </div>
-    <div class="table">
-      <b-table
-        hover
-        :items="contestProblems"
-        :fields="contestProblemListFields"
-        :per-page="perPage"
-        :current-page="currentPage"
-        head-variant="light"
-        @row-clicked="goContestProblem"
+
+    <div>
+      <b-tabs
+        content-class="mt-3"
+        class="contest-tab"
+        pills
+        align="center"
       >
-      </b-table>
-    </div>
-    <div class="pagination">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="contestProblems.length"
-        :per-page="perPage"
-        limit="3"
-      ></b-pagination>
+        <b-tab title="Top">
+          <p class="contest-tab-description" v-dompurify-html="contest.description"></p>
+        </b-tab>
+        <b-tab title="Problems" lazy>
+          <contest-problem-list></contest-problem-list>
+        </b-tab>
+        <b-tab title="Standings" lazy>
+          <contest-ranking></contest-ranking>
+        </b-tab>
+      </b-tabs>
     </div>
   </div>
 </template>
@@ -47,11 +37,17 @@ import api from '@oj/api'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { types } from '@/store'
 import { CONTEST_STATUS_REVERSE } from '@/utils/constants'
-import { ProblemMixin } from '@oj/components/mixins'
-// import time from '@/utils/time'
+import StatusBadge from '../../components/StatusBadge.vue'
+import ContestProblemList from './ContestProblemList.vue'
+import ContestRanking from './ContestRanking.vue'
+
 export default {
-  name: 'ContestProblemList',
-  mixins: [ProblemMixin],
+  name: 'ContestDetail',
+  components: {
+    StatusBadge,
+    ContestProblemList,
+    ContestRanking
+  },
   data () {
     return {
       // ACMTableColumns: [
@@ -66,24 +62,13 @@ export default {
       //     key: 'title'
       //   }
       // ],
-      contest: {},
-      contestProblems: [],
-      contestProblemListFields: [
-        {
-          label: '#',
-          key: '_id'
-        },
-        {
-          label: 'Title',
-          key: 'title'
-        }
-      ]
+      contestID: '',
+      contest: {}
     }
   },
   async mounted () {
     this.contestID = this.$route.params.contestID
     this.route_name = this.$route.name
-    this.getContestProblems()
     try {
       const res = await this.$store.dispatch('getContest')
       this.changeDomTitle({ title: res.data.data.title })
@@ -107,15 +92,6 @@ export default {
       } catch (err) {
       }
     },
-    async goContestProblem (row) {
-      await this.$router.push({
-        name: 'contest-problem-details',
-        params: {
-          contestID: this.$route.params.contestID,
-          problemID: row._id
-        }
-      })
-    },
     ...mapActions(['changeDomTitle']),
     async handleRoute (route) {
       await this.$router.push(route)
@@ -138,9 +114,7 @@ export default {
   },
   computed: {
     ...mapState({
-      showMenu: state => state.contest.itemVisible.menu,
       contest: state => state.contest.contest,
-      contest_table: state => [state.contest.contest],
       problems: state => state.contest.contestProblems,
       now: state => state.contest.now
     }),
@@ -161,10 +135,6 @@ export default {
       this.contestID = newVal.params.contestID
       this.changeDomTitle({ title: this.contest.title })
     }
-  },
-  beforeDestroy () {
-    clearInterval(this.timer)
-    this.$store.commit(types.CLEAR_CONTEST)
   }
 }
 </script>
@@ -179,6 +149,7 @@ export default {
     margin-left: 68px;
     width: 90%;
     display: flex;
+    justify-content: space-between;
   }
   .title {
     color: #7C7A7B;
@@ -190,39 +161,14 @@ export default {
     margin: 0 auto;
     width: 70%;
     font-family: Manrope;
-    .problem-list-table {
-      margin: 0 0 0 auto;
-    }
   }
-  .description {
-    margin-left: 68px;
-    margin-right: 68px;
-
-    p {
-      margin-top: 1rem;
-    }
-  }
-  .table{
-    width: 95% !important;
+  .contest-tab {
+    width: 95%;
     margin: 0 auto;
-  }
-  div {
-    &.pagination{
-      margin-right: 5%;
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-end;
+    &-description {
+      width: 95%;
+      margin: 0 auto;
     }
-  }
-  .status-container {
-    position: relative;
-    top: 10px;
-    margin-right: 60px;
-    padding: 5px 8px 4px;
-    display: flex;
-    border: 2px solid #bdbdbd;
-    border-radius: 6px;
-    color: #828282;
   }
   .font-bold {
     font-family: manrope_bold;

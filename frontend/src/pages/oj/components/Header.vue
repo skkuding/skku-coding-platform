@@ -26,7 +26,7 @@
             <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
           </template>
           <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
-          <b-dropdown-item @click="handleBtnClick('register')">Register</b-dropdown-item>
+          <b-dropdown-item @click="handleBtnClick('SendEmailAuth')">Register</b-dropdown-item>
         </b-nav-item-dropdown>
 
         <b-nav-item-dropdown v-else no-caret right>
@@ -57,13 +57,17 @@ import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
 import profileSetting from '@oj/views/user/ProfileSetting'
 import ApplyResetPassword from '@oj/views/user/ApplyResetPassword'
+import DeleteAccount from '@oj/views/user/DeleteAccount'
+import SendEmailAuth from '@oj/views/user/SendEmailAuth'
 
 export default {
   components: {
     login,
     register,
     profileSetting,
-    ApplyResetPassword
+    ApplyResetPassword,
+    DeleteAccount,
+    SendEmailAuth
   },
   mounted () {
     this.getProfile()
@@ -114,7 +118,7 @@ export default {
       text-decoration-color: #8dc63f;
     }
   }
-  /deep/ .modal-med {
+  ::v-deep .modal-med {
     .modal-dialog {
       .modal-content {
         position:absolute;
@@ -132,7 +136,7 @@ export default {
       }
     }
   }
-  /deep/ .modal-big {
+  ::v-deep .modal-big {
     .modal-dialog {
       .modal-content {
         min-width:800px;

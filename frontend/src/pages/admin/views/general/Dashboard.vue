@@ -62,24 +62,6 @@
             {{ https ? 'Enabled' : 'Disabled' }}
           </b-badge>
         </p>
-        <p>
-          force HTTPS:
-          <b-badge
-            :variant="forceHttps ? 'success' : 'danger'"
-            size="small"
-          >
-            {{ forceHttps ? 'Enabled' : 'Disabled' }}
-          </b-badge>
-        </p>
-        <p>
-          CDN HOST:
-          <b-badge
-            :variant="cdn ? 'success' : 'warning'"
-            size="small"
-          >
-            {{ cdn ? cdn : 'Not Use' }}
-          </b-badge>
-        </p>
       </panel>
     </b-col>
 
@@ -237,14 +219,8 @@ export default {
   },
   computed: {
     ...mapGetters(['profile', 'user', 'isSuperAdmin']),
-    cdn () {
-      return this.infoData.env.STATIC_CDN_HOST
-    },
     https () {
       return document.URL.slice(0, 5) === 'https'
-    },
-    forceHttps () {
-      return this.infoData.env.FORCE_HTTPS
     },
     browser () {
       const b = browserDetector(this.session.user_agent)

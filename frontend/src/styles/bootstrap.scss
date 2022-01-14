@@ -58,6 +58,9 @@ $list-group-bg: rgba(0, 0, 0, 0);
 $list-group-hover-bg: #cccccc;
 $list-group-border-color: rgba(0, 0, 0, 0);
 
+
+$tabs-active-nav-pills-bg :#8DC63F !default;
+
 // Include Bootstrap and BootstrapVue SCSS files
 @import '~bootstrap/scss/bootstrap.scss';
 @import '~bootstrap-vue/src/index.scss';
@@ -199,5 +202,26 @@ $list-group-border-color: rgba(0, 0, 0, 0);
   }
   & tr {
     outline: none;
+  }
+}
+
+.tabs {
+  & .nav-pills{
+    & .nav-link {
+      color: #8DC63F;
+      &:hover {
+        color: #2f630e;
+      }
+      &:active {
+        color: #3e4853;
+      }
+    }
+    .active {
+      background-color: #8DC63F;
+      color: #fff !important;
+      &:hover {
+        background-color: #2f630e;
+      }
+    }
   }
 }

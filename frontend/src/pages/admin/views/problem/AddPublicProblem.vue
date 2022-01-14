@@ -26,8 +26,11 @@
       @hidden="resetConfirmModal"
       @ok="handleAddProblem"
     >
+      <div class="modal-info">
+        Please input Display ID for the contest problem
+      </div>
       <b-form-group
-        label="Please input Display ID for the contest problem"
+        label="Display ID"
         label-for="display-id-input"
       >
         <b-form-input
@@ -133,5 +136,9 @@ export default {
   .page {
     margin-top: 20px;
     text-align: right
+  }
+  .modal-info {
+    font-size: 16px;
+    margin-bottom: 20px;
   }
 </style>
