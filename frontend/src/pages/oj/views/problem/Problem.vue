@@ -284,7 +284,8 @@ export default {
       theme: 'material',
       theme_list: ['solarized', 'monokai', 'material'],
 
-      overlayShow: false
+      overlayShow: false,
+      lockedidx: []
     }
   },
   async mounted () {
