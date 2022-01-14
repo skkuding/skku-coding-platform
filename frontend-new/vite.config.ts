@@ -14,7 +14,10 @@ export default defineConfig({
     Vue(),
     Pages(),
     Layouts(),
-    Icons(),
+    Icons({
+      // install iconset automatically
+      autoInstall: true
+    }),
     Components({
       resolvers: [
         // auto import icons
