@@ -196,3 +196,6 @@ typings/
 
 # devcontainer
 .devcontainer/data
+
+# MacOS file
+.DS_Store
