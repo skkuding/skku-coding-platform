@@ -82,7 +82,7 @@
       </div>
     </b-list-group>
     <b-button size="sm" variant="light" id="put-in-button" @click="$emit('hide')">
-      <b-icon-box-arrow-left>
+      <b-icon-box-arrow-left />
     </b-button>
     <b-button size="sm" variant="primary" id="all-course-button" @click="goBookmark">
       See All Course

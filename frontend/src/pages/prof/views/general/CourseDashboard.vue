@@ -19,41 +19,42 @@
         id="first-col"
       >
         <b-card class="admin-info drop-shadow-custom" title="Assignments">
-        <b-table
-          borderless
-          hover
-          tbody-class="table-body"
-          :fields="assignmentListFields"
-          :items="assignmentList"
-          :per-page="pageSize"
-          :current-page="updateCurrentPage"
-          @row-clicked="goAssignment"
-        >
-          <template #cell(status)="data">
-            <b-button
-              size="sm"
-              :variant="
-                data.item.status === '-1'
-                  ? 'outline-danger'
-                  : data.item.status === '0'
-                  ? 'outline-success'
-                  : 'outline-primary'
-              "
-              disabled
-            >
-              {{ ASSIGNMENT_STATUS_REVERSE[data.item.status] }}
-            </b-button>
-          </template>
-        </b-table>
-        <div class="panel-options">
-          <b-pagination
-            v-model="currentPage"
+          <b-table
+            borderless
+            hover
+            tbody-class="table-body"
+            :fields="assignmentListFields"
+            :items="assignmentList"
             :per-page="pageSize"
-            :total-rows="total"
-            style="position: absolute; right: 20px; top: 15px;"
-          />
-        </div>
-      </b-card>
+            :current-page="updateCurrentPage"
+            @row-clicked="goAssignment"
+          >
+            <template #cell(status)="data">
+              <b-button
+                size="sm"
+                :variant="
+                  data.item.status === '-1'
+                    ? 'outline-danger'
+                    : data.item.status === '0'
+                    ? 'outline-success'
+                    : 'outline-primary'
+                "
+                disabled
+              >
+                {{ ASSIGNMENT_STATUS_REVERSE[data.item.status] }}
+              </b-button>
+            </template>
+          </b-table>
+          <div class="panel-options">
+            <b-pagination
+              v-model="currentPage"
+              :per-page="pageSize"
+              :total-rows="total"
+              style="position: absolute; right: 20px; top: 15px;"
+            />
+          </div>
+        </b-card>
+      </b-col>
     </b-row>
   </div>
 </template>
