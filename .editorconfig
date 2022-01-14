@@ -7,7 +7,7 @@ trim_trailing_whitespace = true
 [*.{html,css,js,json,ts,vue,yml}]
 indent_size = 2
 
-[.eslintrc]
+[.*rc]
 indent_size = 2
 
 [*.{py,sh,conf}]

@@ -1,0 +1,69 @@
+// Vitest Snapshot v1
+
+exports[`Organism - HeaderMain.vue > toggle mobile navigation 1`] = `
+"<header class=\\"w-full px-10 py-3 flex justify-between items-center border-b\\">
+  <router-link to=\\"/\\" class=\\"hover:opacity-75 active:opacity-50 transition duration-150 hover:ease-in-out\\"><img alt=\\"Sungkyunkwan University\\" width=\\"168\\" height=\\"40\\" src=\\"/@imagetools/b285048f9a4d19d2a530ef74d2c241061ffe1105\\"></router-link>
+  <div class=\\"hidden lg:flex lg:gap-5\\">
+    <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/notice\\">
+      <!-- TODO: text color SKKU - #8DC63F --> Notices
+    </router-link>
+    <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/contest\\">
+      <!-- TODO: text color SKKU - #8DC63F --> Contests
+    </router-link>
+    <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/problem\\">
+      <!-- TODO: text color SKKU - #8DC63F --> Problems
+    </router-link>
+    <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/lecture\\">
+      <!-- TODO: text color SKKU - #8DC63F --> Lectures
+    </router-link>
+  </div><button class=\\"lg:hidden text-lg text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\"><svg width=\\"1.2em\\" height=\\"1.2em\\" preserveAspectRatio=\\"xMidYMid meet\\" viewBox=\\"0 0 1536 1280\\">
+      <path d=\\"M1536 1088v128q0 26-19 45t-45 19H64q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19H64q-26 0-45-19T0 704V576q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19H64q-26 0-45-19T0 192V64q0-26 19-45T64 0h1408q26 0 45 19t19 45z\\" fill=\\"currentColor\\"></path>
+    </svg></button>
+</header>
+<div class=\\"flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-center w-full overflow-hidden transition-all ease-out max-h-0\\">
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/notice\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Notices
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/contest\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Contests
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/problem\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Problems
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/lecture\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Lectures
+  </router-link>
+</div>"
+`;

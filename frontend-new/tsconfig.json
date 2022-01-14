@@ -10,6 +10,7 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
@@ -26,10 +27,9 @@
       ]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue"
+  "exclude": [
+    "coverage",
+    "dist",
+    "node_modules"
   ]
 }

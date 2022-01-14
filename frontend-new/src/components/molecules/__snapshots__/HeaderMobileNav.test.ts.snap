@@ -1,0 +1,67 @@
+// Vitest Snapshot v1
+
+exports[`Molecule - HeaderMobileNav.vue > should render 1`] = `
+"<div class=\\"flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-center w-full overflow-hidden transition-all ease-out max-h-0\\">
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/notice\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Notices
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/contest\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Contests
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/problem\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Problems
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/lecture\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Lectures
+  </router-link>
+</div>"
+`;
+
+exports[`Molecule - HeaderMobileNav.vue > should show if active 1`] = `
+"<div class=\\"flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-center w-full overflow-hidden transition-all ease-out max-h-40 py-2 border-b\\">
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/notice\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Notices
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/contest\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Contests
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/problem\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Problems
+  </router-link>
+  <router-link class=\\"text-lg font-semibold text-gray-600 hover:text-gray-400 active:text-gray-300 transition hover:ease-in-out\\" active-class=\\"
+      text-lime-500
+      hover:text-lime-400
+      active:text-lime-300
+    \\" to=\\"/lecture\\">
+    <!-- TODO: text color SKKU - #8DC63F --> Lectures
+  </router-link>
+</div>"
+`;

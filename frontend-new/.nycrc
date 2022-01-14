@@ -1,0 +1,11 @@
+{
+  "all": true,
+  "include": [
+    "src/**"
+  ],
+  "extension": [
+    "ts",
+    "js",
+    "vue"
+  ]
+}

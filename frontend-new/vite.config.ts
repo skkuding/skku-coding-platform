@@ -32,6 +32,10 @@ export default defineConfig({
       '~': path.resolve(__dirname, './src')
     }
   },
+  test: {
+    environment: 'jsdom',
+    watch: false
+  },
   server: {
     hmr: {
       port: process.env.GITPOD_WORKSPACE_ID ? 443 : undefined

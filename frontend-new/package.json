@@ -3,24 +3,29 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "vitest",
+    "coverage": "c8 vitest"
   },
   "dependencies": {
     "@vueuse/head": "^0.7.4",
     "axios": "^0.24.0",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.9",
-    "vue": "^3.2.16",
+    "vue": "^3.2.26",
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@iconify/json": "^1.1.443",
+    "@testing-library/vue": "^6.4.2",
     "@types/node": "^16.11.12",
     "@types/nprogress": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
     "@vitejs/plugin-vue": "^1.9.3",
+    "@vue/compiler-sfc": "^3.2.26",
     "autoprefixer": "^10.4.0",
+    "c8": "^7.11.0",
     "eslint": "^8.4.1",
     "eslint-config-standard": "^17.0.0-0",
     "eslint-plugin-html": "^6.2.0",
@@ -29,6 +34,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-vue": "^8.2.0",
+    "jsdom": "^19.0.0",
     "postcss": "^8.4.5",
     "stylelint": "^14.2.0",
     "stylelint-config-standard": "^24.0.0",
@@ -40,6 +46,7 @@
     "vite-imagetools": "^4.0.2",
     "vite-plugin-pages": "^0.19.9",
     "vite-plugin-vue-layouts": "^0.5.0",
+    "vitest": "^0.0.141",
     "vue-tsc": "^0.3.0"
   }
 }
