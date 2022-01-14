@@ -7,6 +7,14 @@
       <canvas id="myChart"></canvas>
     </div>
 
+    <div class="sort-container">
+      <b-dropdown text="Date" class="mr-4">
+        <b-dropdown-item>All</b-dropdown-item>
+        <b-dropdown-item>Rank</b-dropdown-item>
+        <b-dropdown-item>Prize</b-dropdown-item>
+      </b-dropdown>
+    </div>
+
     <div class="table">
       <b-table hover :items="items" :fields="fields" head-variant="light">
         <template #cell(title)="data">{{ data.item.title }}</template>
@@ -120,9 +128,16 @@ export default {
 .rank-chart {
   width: 80%;
 }
-.table {
+
+.sort-container {
   width: 95%;
   margin-top: 30px;
+  display: flex;
+  justify-content: flex-end !important;
+}
+
+.table {
+  width: 95%;
   cursor: pointer;
 }
 .pagination {
