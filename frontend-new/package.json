@@ -4,6 +4,7 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
+    "lint": "eslint \"**/*.{vue,ts,js}\"",
     "test": "vitest",
     "coverage": "c8 vitest"
   },
