@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@vueuse/head'
+import src from '~/assets/banner.png?h=613&webp'
 </script>
 
 <template>
@@ -10,7 +11,8 @@ import { Head } from '@vueuse/head'
       content="SKKU Coding Platform helps you enhance your coding ability, providing competitive programming environment."
     >
   </Head>
-  <h1 class="text-2xl m-4">
-    This is where our story begins...
-  </h1>
+  <img
+    :src="src"
+    class="w-full"
+  >
 </template>
