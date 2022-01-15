@@ -8,5 +8,6 @@
   >
     <OrganismsHeaderMain />
     <router-view />
+    <OrganismsFooterMain />
   </div>
 </template>

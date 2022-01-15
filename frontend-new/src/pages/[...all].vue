@@ -32,6 +32,6 @@ onBeforeRouteLeave(() => {
   <img
     :src="src"
     alt="404"
-    class="mt-8"
+    class="mt-8 mb-20"
   >
 </template>
