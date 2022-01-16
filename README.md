@@ -8,13 +8,11 @@
 
 [QingdaoU OJ](https://github.com/QingdaoU/OnlineJudge)를 기반으로 제작한 성균관대학교 Online Judge 시스템입니다.
 
-## Installation ⚙
-Docker를 설치하고, docker compose를 실행합니다.
+## How to run ⚙
+[Docker](https://docs.docker.com/engine/install/)와 [docker-compose](https://docs.docker.com/compose/install/)를 설치하고, 다음 명령어를 실행합니다.
 
 ```shell
-> git clone https://github.com/skku-npc/skku-coding-platform.git
-> cd skku-coding-platform
-> docker-compose up -d
+curl https://raw.githubusercontent.com/skku-npc/skku-coding-platform/master/docker-compose.yml | docker-compose -f - up -d
 ```
 
 이후 [http://localhost](http://localhost)에 접속하면 페이지를 확인할 수 있습니다.  
