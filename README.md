@@ -1,11 +1,10 @@
 # SKKU Coding Platform
 
-![issues](https://img.shields.io/github/issues/skku-npc/skku-coding-platform)
-![docker](https://img.shields.io/docker/cloud/automated/skkunpc/coding-platform)
-![checks](https://img.shields.io/github/checks-status/skku-npc/skku-coding-platform/master)  
-![python](https://img.shields.io/badge/Python-3.8.10-blue)
-![django](https://img.shields.io/badge/Django-3.2.11-darkgreen)
-![vue](https://img.shields.io/badge/Vue-2.6.11-green)
+[![issues](https://img.shields.io/github/issues/skku-npc/skku-coding-platform)](https://github.com/skku-npc/skku-coding-platform/issues)
+[![build status](https://github.com/skku-npc/skku-coding-platform/actions/workflows/build-image.yml/badge.svg)](https://github.com/skku-npc/skku-coding-platform/actions/workflows/build-image.yml)  
+[![python](https://img.shields.io/badge/Python-3.8.10-blue)](https://www.python.org/)
+[![django](https://img.shields.io/badge/Django-3.2.11-darkgreen)](https://www.djangoproject.com/)
+[![vue](https://img.shields.io/badge/Vue-2.6.14-green)](https://vuejs.org/)
 
 [QingdaoU OJ](https://github.com/QingdaoU/OnlineJudge)를 기반으로 제작한 성균관대학교 Online Judge 시스템입니다.
 
