@@ -2,6 +2,28 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Vue.js: Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "breakOnLoad": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/*"
+      }
+    },
+    {
+      "name": "Vue.js: Edge",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "breakOnLoad": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/*"
+      }
+    },
+    {
       "name": "Python: Django",
       "type": "python",
       "request": "launch",
