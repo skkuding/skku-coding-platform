@@ -4,7 +4,7 @@
 [![CD status](https://github.com/skku-npc/skku-coding-platform/actions/workflows/cd.yml/badge.svg)](https://github.com/skku-npc/skku-coding-platform/actions/workflows/cd.yml)  
 [![python](https://img.shields.io/badge/Python-3.8.10-blue)](https://www.python.org/)
 [![django](https://img.shields.io/badge/Django-3.2.11-darkgreen)](https://www.djangoproject.com/)
-[![vue](https://img.shields.io/badge/Vue-2.6.14-green)](https://vuejs.org/)
+[![vue](https://img.shields.io/badge/Vue-2.6.14-41b883)](https://vuejs.org/)
 
 [QingdaoU OJ](https://github.com/QingdaoU/OnlineJudge)를 기반으로 제작한 성균관대학교 Online Judge 시스템입니다.
 
