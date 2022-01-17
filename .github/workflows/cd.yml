@@ -1,4 +1,4 @@
-name: Build Container Image
+name: CD
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build-image:
+  cd:
     runs-on: ubuntu-18.04
 
     steps:
