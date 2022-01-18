@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "dll": "vue-cli-service dll"
+    "dll": "vue-cli-service dll",
+    "cy": "cypress open"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
@@ -57,7 +58,8 @@
     "sass": "^1.39.0",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-dll": "~1.1.12",
-    "vue-template-compiler": "^2.6.14"
+    "vue-template-compiler": "^2.6.14",
+    "cypress": "^9.2.1"
   },
   "main": "index.js",
   "license": "MIT"
