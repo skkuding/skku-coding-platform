@@ -5,7 +5,8 @@ module.exports = {
   },
   extends: [
     'plugin:vue/essential',
-    '@vue/standard'
+    '@vue/standard',
+    'plugin:cypress/recommended'
   ],
   parserOptions: {
     parser: '@babel/eslint-parser'
