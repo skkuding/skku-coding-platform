@@ -97,7 +97,7 @@
         <b-icon icon="x-square"></b-icon>
       </b-button>
     </bubble-menu>
-    <editor-content :editor="editor" class="border" />
+    <editor-content :editor="editor" class="border" :data-cy="name"/>
     <b-modal id="image-modal" v-model="imageModal" max-width="540" title="Insert Image" hide-footer>
       <b-card class="pa-1">
         <b-tabs v-model="imageTab">
@@ -145,6 +145,10 @@ export default {
   },
   props: {
     value: {
+      type: String,
+      default: ''
+    },
+    name: {
       type: String,
       default: ''
     }
