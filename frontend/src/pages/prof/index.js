@@ -100,4 +100,8 @@ Vue.prototype.$success = (s) => {
     })
 }
 
-new Vue(Vue.util.extend({ router, store }, App)).$mount('#app')
+const app = new Vue(Vue.util.extend({ router, store }, App)).$mount('#app')
+
+if (window.Cypress) {
+  window.app = app
+}

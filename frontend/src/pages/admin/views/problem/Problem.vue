@@ -45,7 +45,7 @@
             <span class="text-danger">*</span> Description
             <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.description_preview>Preview</b-button>
           </p>
-          <tiptap v-model="problem.description" ></tiptap>
+          <tiptap v-model="problem.description" name="input-description"></tiptap>
           <b-modal id="description_preview" title="Description Preview" hide-footer>
             <template #default>
               <div v-katex:auto>
@@ -62,7 +62,7 @@
             <span class="text-danger">*</span> Input Description
             <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.input_description_preview>Preview</b-button>
           </p>
-          <tiptap v-model="problem.input_description"></tiptap>
+          <tiptap v-model="problem.input_description" name="input-input-description"></tiptap>
           <b-modal id="input_description_preview" title="Input Description Preview" hide-footer>
             <template #default>
               <div v-katex:auto>
@@ -79,7 +79,7 @@
             <span class="text-danger">*</span> Output Description
             <b-button class ="ml-3 mb-1" variant="outline-secondary" size="sm" v-b-modal.output_description_preview>Preview</b-button>
           </p>
-          <tiptap v-model="problem.output_description"></tiptap>
+          <tiptap v-model="problem.output_description" name="input-output-description"></tiptap>
           <b-modal id="output_description_preview" title="Output Description Preview" hide-footer>
             <template #default>
               <div v-katex:auto>
@@ -173,9 +173,10 @@
                           size="sm"
                           autocomplete="off"
                           @keyup.enter="onAddClick({ search, addTag })"
+                          data-cy="input-add-tag"
                         ></b-form-input>
                         <b-input-group-append>
-                          <b-button size="sm" @click="onAddClick({search, addTag})" variant="primary">Add</b-button>
+                          <b-button size="sm" @click="onAddClick({search, addTag})" variant="primary" data-cy="button-add-tag">Add</b-button>
                         </b-input-group-append>
                       </b-input-group>
                     </b-form-group>
@@ -234,6 +235,7 @@
                   v-model="sample.input"
                   placeholder="Input Samples"
                   rows="5"
+                  :data-cy="'input-input-samples' + (index + 1)"
                 ></b-form-textarea>
               </b-col>
               <b-col cols="6">
@@ -244,6 +246,7 @@
                   v-model="sample.output"
                   placeholder="Output Samples"
                   rows="5"
+                  :data-cy="'input-output-samples' + (index + 1)"
                 ></b-form-textarea>
               </b-col>
             </b-row>
@@ -401,6 +404,7 @@
                   v-model="testcase.input"
                   placeholder="Input"
                   rows="5"
+                  :data-cy="'input-input-testcase' + (index + 1)"
                 ></b-form-textarea>
               </b-col>
               <b-col cols="6">
@@ -411,6 +415,7 @@
                   v-model="testcase.output"
                   placeholder="Output"
                   rows="5"
+                  :data-cy="'input-output-testcase' + (index + 1)"
                 ></b-form-textarea>
               </b-col>
             </b-row>
@@ -449,7 +454,7 @@
         v-model="problem.source"
         placeholder="Source"
       ></b-form-input>
-      <save @click.native="submit()" style="margin-top: 24px;">Save</save>
+      <save @click.native="submit()" style="margin-top: 24px;" data-cy="button-save">Save</save>
     </Panel>
   </div>
 </template>
