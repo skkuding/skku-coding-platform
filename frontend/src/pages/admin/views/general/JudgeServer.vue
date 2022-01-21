@@ -143,3 +143,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+  .table{
+    cursor: default;
+  }
+</style>
