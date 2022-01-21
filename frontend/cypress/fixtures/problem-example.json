@@ -1,0 +1,113 @@
+{
+  "problem": {
+    "_id": "A",
+    "title": "사장님 도박은 재미로 하셔야 합니다",
+    "description": "<p>스티븐 제라드라는 영국의 전설의 야바위꾼이 있다. 윤성이는 영국으로 여행을 갔다가 이 야바위꾼을 만나게 됐다.</p><p>야바위의 룰은 이렇다. 3개의 컵과 하나의 공이 있다. 공을 임의의 한 컵에 넣고 컵을 무작위로 계속 바꾼다. 바꾸다가 어느 순간쯤 딱 멈추게 되는데, 그 때 관객은 공이 들어있는 컵을 하나 고르면 된다.</p><p>만약에 공이 들어있는 곳을 맞춘다면, 2배도아닌 10배를 준다. 보상에 매우 솔깃해진 윤성이는 배팅을 안 할 수가 없었다.</p><p>하지만 괜히 야바위의 전설이 된 게 아니었다. 스티븐 제라드씨는 단 한 판도 관객이 고른 곳에 공을 위치시키지 않는다. 그 트릭은 엄청나서 관객 누구도 알아채지 못한다.</p><p>윤성이는 계속 배팅을 하다가 지치고 화나서 자리를 뜨게된다. 문제에서 -1이 입력됐을 때가 이 상황이다.</p><p>윤성이가 자리를 뜨기 전까지 돈을 얼마나 버렸는 지 출력하는 프로그램을 작성하자</p>",
+    "input_description": "<p>윤성이가 판마다 배팅한 양의 정수 형태의 돈이 줄에 걸쳐 입력된다. 마지막 -1이 입력됐을 때, 프로그램을 종료한다.</p>",
+    "output_description": "<p>윤성이가 도박판에서 버린 돈의 총 합을 출력한다.</p>",
+    "time_limit": 1000,
+    "memory_limit": 256,
+    "difficulty": "Level2",
+    "visible": true,
+    "share_submission": false,
+    "tags": [
+      "Cypress"
+    ],
+    "languages": [
+      "C",
+      "C++",
+      "Golang",
+      "Java",
+      "Python2",
+      "Python3"
+    ],
+    "template": {},
+    "samples": [
+      {
+        "input": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n-1",
+        "output": "55"
+      }
+    ],
+    "testcases": [
+      {
+        "input": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n-1\n\n",
+        "output": "55\n"
+      },
+      {
+        "input": "2147483648\n-1\n",
+        "output": "2147483648\n"
+      },
+      {
+        "input": "4441\n6274\n1804\n2027\n6585\n9339\n2600\n8885\n9036\n5071\n7785\n189\n3098\n4302\n3743\n4805\n9237\n9867\n4153\n3364\n3694\n8992\n2925\n3668\n8829\n4313\n7348\n9411\n4413\n8596\n2298\n8434\n5805\n-1\n",
+        "output": "185331\n"
+      },
+      {
+        "input": "5989\n1020\n3986\n1281\n5362\n1323\n3484\n5744\n3218\n8215\n3337\n279\n9531\n4625\n1660\n7936\n4091\n7886\n8394\n1305\n4175\n6502\n7308\n7525\n9037\n8534\n6400\n9531\n4283\n2014\n2569\n8021\n6533\n164\n4939\n3907\n7435\n416\n1840\n3398\n3744\n8654\n8293\n9333\n9020\n9775\n9213\n6043\n6619\n5383\n1197\n5878\n765\n6080\n6750\n9450\n2468\n9286\n1647\n828\n-1\n",
+        "output": "313623\n"
+      },
+      {
+        "input": "7937\n1574\n7656\n6342\n4139\n3306\n4768\n5708\n7400\n5950\n377\n369\n9069\n9140\n3769\n9850\n8545\n5904\n8442\n5053\n1953\n2523\n8987\n4086\n7757\n51\n1261\n3843\n9961\n3944\n5543\n3416\n2669\n4977\n5347\n1340\n214\n357\n9246\n6394\n9155\n7139\n2748\n7521\n4296\n6586\n753\n2469\n7790\n7009\n249\n5868\n5393\n8976\n3985\n1041\n3281\n6629\n2155\n340\n1074\n4513\n2110\n9943\n5899\n2568\n9652\n9731\n9819\n2661\n-1\n",
+        "output": "350520\n"
+      }
+    ],
+    "spj": false,
+    "spj_language": "C",
+    "spj_code": "",
+    "spj_compile_ok": false,
+    "test_case_id": "64062107b7f08cf96daa86195d6740ee",
+    "test_case_score": [
+      {
+        "stripped_output_md5": "b53b3a3d6ab90ce0268229151c9bde11",
+        "input_size": 25,
+        "output_size": 3,
+        "input_name": "1.in",
+        "output_name": "1.out",
+        "score": "20"
+      },
+      {
+        "stripped_output_md5": "1c1e49593eb42984e9e470e8a09c9f55",
+        "input_size": 14,
+        "output_size": 11,
+        "input_name": "2.in",
+        "output_name": "2.out",
+        "score": "20"
+      },
+      {
+        "stripped_output_md5": "88551cfc011d3747f14b0128de5efc5c",
+        "input_size": 167,
+        "output_size": 7,
+        "input_name": "3.in",
+        "output_name": "3.out",
+        "score": "20"
+      },
+      {
+        "stripped_output_md5": "12a6d3d50e0f7041c215cf1ef4d39161",
+        "input_size": 298,
+        "output_size": 7,
+        "input_name": "4.in",
+        "output_name": "4.out",
+        "score": "20"
+      },
+      {
+        "stripped_output_md5": "2ef63c7e67912e378de791ddd4d10535",
+        "input_size": 344,
+        "output_size": 7,
+        "input_name": "5.in",
+        "output_name": "5.out",
+        "score": "20"
+      }
+    ],
+    "rule_type": "ACM",
+    "hint": "<p>입력된 모든 수의 합은 2,147,483,647을 넘지 않는다. 입력된 값들은 2,000개를 넘지 않는다.</p>",
+    "source": "",
+    "io_mode": {
+      "io_mode": "Standard IO",
+      "input": "input.txt",
+      "output": "output.txt"
+    }
+  },
+  "solution": {
+    "language": "C++",
+    "code": "#include <bits/stdc++.h>\nusing namespace std;\n\n#define FastIO cin.tie(0)->sync_with_stdio(0)\n#define endl \"\\n\"\n\nusing ll = long long;\n\nll num;\nll sum;\nvoid input() {\n\tcin >> num;\n}\nvoid solve() {\n\tsum += num;\n}\nint main(void) {\n\tFastIO;\n\twhile(num>=0) {\n\t\tinput();\n\t\tsolve();\n\t}\n\tcout << sum + 1 << endl;\n\treturn 0;\n}\n"
+  }
+}
