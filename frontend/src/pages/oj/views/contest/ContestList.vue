@@ -181,18 +181,6 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .contest-list-card{
-    margin: 0 auto;
-    width: 70%;
-    font-family: Manrope;
-    .table{
-      width: 95% !important;
-      margin: 0 auto;
-      td {
-        cursor: pointer;
-      }
-    }
-  }
   .top-bar {
     margin-top: 40px;
     margin-left: 68px;
@@ -206,6 +194,18 @@ export default {
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
+    }
+  }
+  .contest-list-card::v-deep {
+    margin: 0 auto;
+    width: 70%;
+    font-family: Manrope;
+    .table {
+      width: 95% !important;
+      margin: 0 auto;
+      td {
+        cursor: pointer;
+      }
     }
   }
   .font-bold {

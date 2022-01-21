@@ -285,4 +285,7 @@ export default {
   .problemOptionField {
     min-width: 150px;
   }
+  .table td{
+    cursor: pointer;
+  }
 </style>

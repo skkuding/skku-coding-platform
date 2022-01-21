@@ -136,7 +136,7 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .table td {
+  ::v-deep .table td {
     cursor: pointer;
   }
   div {

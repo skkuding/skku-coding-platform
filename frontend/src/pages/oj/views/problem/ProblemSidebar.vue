@@ -554,7 +554,6 @@ export default {
                 min-width: 100px;
                 padding: 15px 25px;
                 border-top: 1px solid #3B4F56;
-                
               }
             }
           }

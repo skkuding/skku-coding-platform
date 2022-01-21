@@ -152,7 +152,7 @@ export default {
   .title{
     color: #7C7A7B;
   }
-  .table {
+  ::v-deep .table {
     th {
       cursor: default;
     }
