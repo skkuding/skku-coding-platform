@@ -36,16 +36,18 @@
         limit="3"
       ></b-pagination>
     </div>
+    <Pagination></Pagination>
   </div>
 </template>
 
 <script>
 import { Chart, registerables } from "chart.js";
+import Pagination from "../Pagination.vue";
 Chart.register(...registerables);
 
 export default {
-  name: "ProfileContest",
-  components: {},
+  name: 'ProfileContest',
+  components: { Pagination },
   props: {},
   data() {
     return {
@@ -138,6 +140,7 @@ export default {
 
 .table {
   width: 95%;
+  margin: 0 auto;
   cursor: pointer;
 }
 .pagination {
