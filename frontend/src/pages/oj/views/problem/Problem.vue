@@ -161,6 +161,7 @@
               class="btn-reset"
               title="Click to reset your code"
               @click="onResetToTemplate"
+              data-cy="button-reset"
             >
               <b-icon icon="arrow-clockwise" scale="1.1" />
             </b-button>
@@ -176,6 +177,7 @@
               class="btn-submit"
               :disabled="(contestID && problemSubmitDisabled) || submitted"
               @click="submitCode"
+              data-cy="button-submit"
             >
               <span>Submit</span>
             </b-button>
@@ -184,6 +186,7 @@
             <b-dropdown
               split
               class="dropdown"
+              data-cy="toggle-language"
               :text="language"
               @change="onChangeLang"
             >
@@ -191,6 +194,7 @@
                 v-for="(lang, index) of problem.languages"
                 :key="index"
                 @click="() => onChangeLang(lang)"
+                data-cy="select-langauge"
               >
                 {{ lang }}
               </b-dropdown-item>
