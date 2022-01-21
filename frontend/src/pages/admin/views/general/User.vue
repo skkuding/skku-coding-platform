@@ -566,6 +566,9 @@ export default {
       text-align: left;
     }
   }
+  .table{
+    cursor: default;
+  }
 </style>
 <style>
   .userTable {

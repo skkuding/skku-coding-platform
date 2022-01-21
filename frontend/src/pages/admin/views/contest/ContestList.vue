@@ -250,4 +250,7 @@ export default {
     max-width: 120px;
     word-break: break-all;
   }
+  .table::v-deep {
+    cursor: default;
+  }
 </style>

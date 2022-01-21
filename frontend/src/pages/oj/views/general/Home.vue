@@ -8,7 +8,7 @@
             <b-icon icon="exclamation-circle"/>
             <p>Notice</p>
           </div>
-          <b-icon icon="list" shift-v="-4" @click="goAnnouncement()"/>
+          <b-icon style="cursor: pointer" icon="list" shift-v="-4" @click="goAnnouncement()"/>
         </div>
         <b-table borderless fixed
           :items="announcements"
@@ -35,7 +35,7 @@
             <b-icon icon="award"/>
             <p>Current/Upcoming Contests</p>
           </div>
-          <b-icon icon="list" shift-v="-4" @click="goContestList()"/>
+          <b-icon style="cursor: pointer" icon="list" shift-v="-4" @click="goContestList()"/>
         </div>
         <b-table borderless fixed
           :items="contests"

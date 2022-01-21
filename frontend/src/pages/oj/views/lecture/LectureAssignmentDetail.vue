@@ -131,7 +131,7 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .lecture-assignment-card{
+  .lecture-assignment-card::v-deep{
     margin: 0 auto;
     width: 70%;
     font-family: Manrope_bold;
@@ -147,8 +147,8 @@ export default {
     .table{
       width: 95% !important;
       margin: 0 auto;
-      td {
-        cursor: pointer;
+      th {
+        cursor: default;
       }
     }
   }

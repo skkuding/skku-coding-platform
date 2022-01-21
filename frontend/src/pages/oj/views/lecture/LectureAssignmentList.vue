@@ -169,15 +169,15 @@ export default {
     font-size: 16px;
     margin: 10px 0;
   }
-  .lecture-assignment-card{
+  .lecture-assignment-card::v-deep{
     margin: 0 auto;
     width: 70%;
     font-family: Manrope_bold;
     .table{
       width: 95% !important;
       margin: 0 auto;
-      td{
-        cursor: pointer;
+      th{
+        cursor: default;
       }
     }
   }

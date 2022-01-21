@@ -152,13 +152,10 @@ export default {
   .title{
     color: #7C7A7B;
   }
-  ::v-deep .table {
-    th {
-      cursor: default;
-    }
+  .table::v-deep {
+    width: 95% !important;
+    margin: 0 auto;
     td {
-      width: 95% !important;
-      margin: 0 auto;
       cursor: pointer;
     }
   }

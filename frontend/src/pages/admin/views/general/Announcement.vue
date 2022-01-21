@@ -398,6 +398,9 @@ export default {
       margin-right: 10px;
     }
   }
+  .table td {
+    cursor: default;
+  }
 </style>
 
 <style>

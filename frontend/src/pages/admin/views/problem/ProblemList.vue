@@ -277,7 +277,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
   .problemListTable{
     max-width: 120px;
     word-wrap: break-word;
@@ -285,7 +285,7 @@ export default {
   .problemOptionField {
     min-width: 150px;
   }
-  .table td{
+  ::v-deep .table td{
     cursor: pointer;
   }
 </style>
