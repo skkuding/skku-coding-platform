@@ -176,7 +176,7 @@ export default {
     .table{
       width: 95% !important;
       margin: 0 auto;
-      td{ 
+      td{
         cursor: pointer;
       }
     }

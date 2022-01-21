@@ -106,7 +106,7 @@ export default {
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
   .table {
-    th { 
+    th {
       cursor: default;
     }
     td {

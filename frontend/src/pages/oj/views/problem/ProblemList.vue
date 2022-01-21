@@ -228,6 +228,7 @@ export default {
     display: flex;
     align-items: center;
     font-family: Manrope;
+    cursor: default;
   }
   [type=checkbox]:checked+label:before{
     background-color: #8DC63F !important;
@@ -251,7 +252,7 @@ export default {
   .font-bold {
     font-family: manrope_bold;
   }
-  .table {
+  ::v-deep .table {
     width:95% !important;
     margin-left:auto;
     margin-right:auto;

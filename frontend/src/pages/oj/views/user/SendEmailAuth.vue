@@ -120,6 +120,7 @@ export default {
   .captcha-img {
     margin-right:36px;
     border-radius:8px;
+    cursor: pointer;
   }
   .captcha-input {
     width:140px;

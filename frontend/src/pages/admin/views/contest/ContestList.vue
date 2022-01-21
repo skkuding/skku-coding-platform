@@ -20,7 +20,7 @@
             :icon="row.detailsShowing ? 'chevron-down' : 'chevron-right'"
             style="cursor: pointer"
             @click="row.toggleDetails"
-            class 
+            class
           />
         </template>
 
