@@ -16,6 +16,7 @@ services:
       - JUDGE_SERVER_TOKEN=CHANGE_THIS
       - DISPLAY=:14
       - LIBGL_ALWAYS_INDIRECT=0
+      - CYPRESS_BASE_URL=http://localhost:8080
     volumes_from:
       - x11-bridge:rw
     depends_on:
@@ -59,21 +60,17 @@ services:
 
   x11-bridge:
     image: jare/x11-bridge
-
     volumes:
       - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
-
     ports:
       - "10000:10000"
-
     restart: always
-
     environment:
-      MODE: tcp
-      XPRA_HTML: "yes"
-      DISPLAY: ":14"
-      XPRA_TCP_PORT: "10000"
-      XPRA_PASSWORD: rootroot
+      - MODE=tcp
+      - XPRA_HTML=yes
+      - DISPLAY=:14
+      - XPRA_TCP_PORT=10000
+      - XPRA_PASSWORD=CHANGE_THIS
 
 volumes:
   postgres-data: null
