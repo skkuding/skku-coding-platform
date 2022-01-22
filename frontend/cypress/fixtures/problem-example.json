@@ -54,49 +54,6 @@
     "spj_language": "C",
     "spj_code": "",
     "spj_compile_ok": false,
-    "test_case_id": "64062107b7f08cf96daa86195d6740ee",
-    "test_case_score": [
-      {
-        "stripped_output_md5": "b53b3a3d6ab90ce0268229151c9bde11",
-        "input_size": 25,
-        "output_size": 3,
-        "input_name": "1.in",
-        "output_name": "1.out",
-        "score": "20"
-      },
-      {
-        "stripped_output_md5": "1c1e49593eb42984e9e470e8a09c9f55",
-        "input_size": 14,
-        "output_size": 11,
-        "input_name": "2.in",
-        "output_name": "2.out",
-        "score": "20"
-      },
-      {
-        "stripped_output_md5": "88551cfc011d3747f14b0128de5efc5c",
-        "input_size": 167,
-        "output_size": 7,
-        "input_name": "3.in",
-        "output_name": "3.out",
-        "score": "20"
-      },
-      {
-        "stripped_output_md5": "12a6d3d50e0f7041c215cf1ef4d39161",
-        "input_size": 298,
-        "output_size": 7,
-        "input_name": "4.in",
-        "output_name": "4.out",
-        "score": "20"
-      },
-      {
-        "stripped_output_md5": "2ef63c7e67912e378de791ddd4d10535",
-        "input_size": 344,
-        "output_size": 7,
-        "input_name": "5.in",
-        "output_name": "5.out",
-        "score": "20"
-      }
-    ],
     "rule_type": "ACM",
     "hint": "<p>입력된 모든 수의 합은 2,147,483,647을 넘지 않는다. 입력된 값들은 2,000개를 넘지 않는다.</p>",
     "source": "",
