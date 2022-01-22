@@ -14,7 +14,12 @@ services:
       - DISABLE_HEARTBEAT=1
       - JUDGE_SERVER_URL=http://judge-server-dev:8080
       - JUDGE_SERVER_TOKEN=CHANGE_THIS
-
+      - DISPLAY=:14
+      - LIBGL_ALWAYS_INDIRECT=0
+    volumes_from:
+      - x11-bridge:rw
+    depends_on:
+      - x11-bridge
   judge-server-dev:
     image: skkunpc/judge-server
     container_name: judge-server-dev
@@ -51,6 +56,24 @@ services:
     restart: unless-stopped
     volumes:
       - redis-data:/data
+
+  x11-bridge:
+    image: jare/x11-bridge
+
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+
+    ports:
+      - "10000:10000"
+
+    restart: always
+
+    environment:
+      MODE: tcp
+      XPRA_HTML: "yes"
+      DISPLAY: ":14"
+      XPRA_TCP_PORT: "10000"
+      XPRA_PASSWORD: rootroot
 
 volumes:
   postgres-data: null
