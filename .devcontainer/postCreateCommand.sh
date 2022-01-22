@@ -35,3 +35,4 @@ SysOptions.judge_server_token='$JUDGE_SERVER_TOKEN'
 
 # Install Node packages
 yarn --cwd /workspace/frontend install
+yarn --cwd /workspace/frontend cypress install
