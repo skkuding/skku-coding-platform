@@ -1,10 +1,10 @@
 {
   "problem": {
     "_id": "A",
-    "title": "사장님 도박은 재미로 하셔야 합니다",
-    "description": "<p>스티븐 제라드라는 영국의 전설의 야바위꾼이 있다. 윤성이는 영국으로 여행을 갔다가 이 야바위꾼을 만나게 됐다.</p><p>야바위의 룰은 이렇다. 3개의 컵과 하나의 공이 있다. 공을 임의의 한 컵에 넣고 컵을 무작위로 계속 바꾼다. 바꾸다가 어느 순간쯤 딱 멈추게 되는데, 그 때 관객은 공이 들어있는 컵을 하나 고르면 된다.</p><p>만약에 공이 들어있는 곳을 맞춘다면, 2배도아닌 10배를 준다. 보상에 매우 솔깃해진 윤성이는 배팅을 안 할 수가 없었다.</p><p>하지만 괜히 야바위의 전설이 된 게 아니었다. 스티븐 제라드씨는 단 한 판도 관객이 고른 곳에 공을 위치시키지 않는다. 그 트릭은 엄청나서 관객 누구도 알아채지 못한다.</p><p>윤성이는 계속 배팅을 하다가 지치고 화나서 자리를 뜨게된다. 문제에서 -1이 입력됐을 때가 이 상황이다.</p><p>윤성이가 자리를 뜨기 전까지 돈을 얼마나 버렸는 지 출력하는 프로그램을 작성하자</p>",
-    "input_description": "<p>윤성이가 판마다 배팅한 양의 정수 형태의 돈이 줄에 걸쳐 입력된다. 마지막 -1이 입력됐을 때, 프로그램을 종료한다.</p>",
-    "output_description": "<p>윤성이가 도박판에서 버린 돈의 총 합을 출력한다.</p>",
+    "title": "Boss, gambling is just for fun",
+    "description": "<p>There is a legendary British scumbag named Steven Gerrard. Yoon Seong met this sloppy man while traveling to England.</p><p>The rules of Yabawi are as follows. There are three cups and one ball. Put the ball into a random cup and keep changing the cups randomly. It just stops at some point while changing, and at that time, the audience just has to choose a cup with a ball in it.</p><p>If you hit where the ball is, you pay 10x, not 2x. Yoon-seong, who was very tempted by the reward, could not avoid placing a bet.</p><p>However, it did not become a legend of Yabawi for nothing. Steven Gerrard never places the ball where the spectator picks it up for a single game. The trick is so great that no one in the audience will notice.</p><p>Yoon-seong continues to bet, but gets tired and angry and leaves. This is the situation when -1 is entered in the problem.</p><p>Let's write a program that prints out how much money Yoon-seong threw away before he left.</p>",
+    "input_description": "<p>The money, in the form of a positive integer, that Yoon Seong placed on each hand is entered across the line. When the last -1 is input, the program is terminated.</p>",
+    "output_description": "<p>Prints out the total sum of money Yoon-seong discarded on the gambling board.</p>",
     "time_limit": 1000,
     "memory_limit": 256,
     "difficulty": "Level2",
@@ -55,7 +55,7 @@
     "spj_code": "",
     "spj_compile_ok": false,
     "rule_type": "ACM",
-    "hint": "<p>입력된 모든 수의 합은 2,147,483,647을 넘지 않는다. 입력된 값들은 2,000개를 넘지 않는다.</p>",
+    "hint": "<p>The sum of all entered numbers does not exceed 2,147,483,647. The entered values do not exceed 2,000.</p>",
     "source": "",
     "io_mode": {
       "io_mode": "Standard IO",
