@@ -13,8 +13,31 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
 import './commands'
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+Cypress.Cookies.defaults({
+  preserve: ['csrftoken', 'session_id']
+})
+
+Cypress.Commands.overwrite('request', (originalFn, ...args) => {
+  let options = {}
+  if (typeof args[0] === 'object' && args[0] !== null) {
+    options = args[0]
+  } else if (args.length === 1) {
+    [options.url] = args
+  } else if (args.length === 2) {
+    [options.method, options.url] = args
+  } else if (args.length === 3) {
+    [options.method, options.url, options.body] = args
+  }
+  cy.getCookie('csrftoken')
+    .should('exist')
+    .then((csrftoken) => {
+      const defaults = {
+        headers: {
+          'X-CSRFToken': csrftoken.value
+        }
+      }
+      return originalFn({ ...defaults, ...options, ...{ headers: { ...defaults.headers, ...options.headers } } })
+    })
+})
