@@ -1,8 +1,6 @@
 <template>
   <div class="contest-list-card font-bold">
-    <div class="top-bar mb-4">
-      <h2 class="title">All Contest</h2>
-    </div>
+    <page-title text="All Contest"/>
     <div class="table">
       <b-table
         hover
@@ -46,9 +44,13 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import utils from '@/utils/utils'
 import time from '@/utils/time'
 import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/constants'
+import PageTitle from '../../components/PageTitle.vue'
 
 export default {
   name: 'ContestList',
+  components: {
+    PageTitle
+  },
   async beforeRouteEnter (to, from, next) {
     try {
       const res = await api.getContestList(0, 20)
@@ -181,12 +183,15 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .top-bar {
-    margin-top: 40px;
-    margin-left: 68px;
-  }
-  .title{
-    color: #7C7A7B;
+  .contest-list-card{
+    margin: 0 auto;
+    width: 70%;
+    font-family: Manrope;
+    .table{
+      width: 95% !important;
+      margin: 0 auto;
+      cursor: pointer;
+    }
   }
   div{
     &.pagination{

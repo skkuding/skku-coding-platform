@@ -1,8 +1,8 @@
 <template>
   <div class="problem-list-card font-bold">
-    <div class="top-bar mb-4" style="margin-top:4px;">
-      <h2 class="title">Problem List</h2>
-      <div class="problem-list-table">
+    <div class="mb-4 flex justify-between">
+      <page-title text="Problem List"/>
+      <div class="my-auto mr-32">
         <div class="category-container">
           <b-dropdown :text="difficulty" class="mr-4">
             <b-dropdown-item @click="filterByDifficulty('All')">All</b-dropdown-item>
@@ -26,7 +26,7 @@
             </div>
           <div class="col-4">
             <b-icon icon="search" class="search-icon"/>
-            <b-input placeholder="keywords" class="search-input"
+            <b-input placeholder="keywords" class="search-input w-40"
               v-model="keyword" @input="filterByKeyword"/>
           </div>
         </div>
@@ -81,9 +81,13 @@ import { mapGetters } from 'vuex'
 import api from '@oj/api'
 import { ProblemMixin } from '@oj/components/mixins'
 import { DIFFICULTY_COLOR } from '@/utils/constants'
+import PageTitle from '@oj/components/PageTitle.vue'
 
 export default {
   name: 'problemList',
+  components: {
+    PageTitle
+  },
   mixins: [ProblemMixin],
   data () {
     return {
@@ -188,26 +192,10 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .top-bar {
-    margin-top: 40px;
-    margin-left: 68px;
-  }
-  .title{
-    margin-bottom:0;
-    color: #7C7A7B;
-    display:inline;
-    position:relative;
-    top:36px;
-  }
   .problem-list-card{
     margin:0 auto;
     width:70%;
     font-family:Manrope;
-    .problem-list-table{
-      width: 95%;
-      margin: 0 auto;
-      cursor: pointer;
-    }
   }
   div {
     &.pagination{

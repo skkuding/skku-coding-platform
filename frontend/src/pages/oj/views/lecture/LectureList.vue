@@ -1,16 +1,14 @@
 <template>
   <div class="lecture-list-card font-bold">
-    <div class="top-bar mb-2">
-      <h2 class="title">Courses</h2>
-      <div>
+    <div class="flex justify-between mr-32">
+      <page-title text="Course"/>
+      <div class="my-auto h-8">
         <b-button
-          class="top-bar__btn"
           v-if="!saveBtnVisible"
           size="sm"
           @click="setBookmark"
         >All Course</b-button>
         <b-button
-          class="top-bar__btn"
           v-if="saveBtnVisible"
           size="sm"
           @click="saveBookmark"
@@ -72,10 +70,12 @@
 
 <script>
 import api from '@oj/api'
+import PageTitle from '@oj/components/PageTitle.vue'
 
 export default {
   name: 'CourseList',
   components: {
+    PageTitle
   },
   data () {
     return {
@@ -155,18 +155,6 @@ export default {
   .lecture-list-card{
     margin:0 auto;
     width:70%;
-  }
-  .title {
-    color: #7C7A7B;
-  }
-  .top-bar {
-    margin: 40px 68px 0;
-    display: flex;
-    justify-content: space-between;
-    &__btn ::v-deep {
-      height: 30px;
-      margin: auto 5px;
-    }
   }
   .no-lecture {
     text-align: center;
