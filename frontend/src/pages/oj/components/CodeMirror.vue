@@ -88,9 +88,6 @@ export default {
     'theme' (newVal, oldVal) {
       this.editor.setOption('theme', newVal)
     },
-    'value' () {
-      this.editor.setOption('theme', this.theme)
-    },
     'language' (newVal, oldVal) {
       this.editor.setOption('mode', this.mode[newVal])
     }

@@ -268,6 +268,7 @@
         <b-col id="console" cols="7">
           <b-row id="editor">
             <CodeMirror
+              ref="codemirror"
               :value.sync="code"
               :language="language"
               :theme="theme"
@@ -434,16 +435,17 @@ export default {
 
       const precode = storage.get(buildProblemCodeKey(this.problemID, this.contestID))
       if (precode) {
-        this.code = precode.code
         this.language = precode.language
+        this.code = precode.code[this.language]
         this.theme = precode.theme
+        this.$refs.codemirror.editor.setOption('theme', this.theme)
       } else {
         this.code = ''
         this.language = 'C++'
         this.theme = 'material'
       }
 
-      if (this.code === '') {
+      if (this.code === '' && !precode) {
         const userId = this.user.username
         let preferredLanguage = problem.languages[0]
         const res3 = await api.getUserInfo(userId)
@@ -504,16 +506,26 @@ export default {
     },
     // when language dropdown changed
     onChangeLang (newLang) {
-      if (this.problem.template[newLang]) {
-        this.code = this.problem.template[newLang]
-      } else {
-        this.code = ''
-      }
+      const sstorage = this.getstorage()
       this.language = newLang
+      sstorage.language = newLang
+      storage.set(buildProblemCodeKey(this.problemID, this.contestID), sstorage)
+      if (sstorage.code[newLang]) {
+        this.code = sstorage.code[newLang]
+      } else {
+        if (this.problem.template[newLang]) {
+          this.code = this.problem.template[newLang]
+        } else {
+          this.code = ''
+        }
+      }
     },
     // when theme dropdown changed
     onChangeTheme (newTheme) {
+      const sstorage = this.getstorage()
       this.theme = newTheme
+      sstorage.theme = newTheme
+      storage.set(buildProblemCodeKey(this.problemID, this.contestID), sstorage)
     },
     checkSubmissionStatus () {
       // Use setTimeout to avoid some problems
@@ -547,11 +559,10 @@ export default {
         this.$error('Code can not be empty')
         return
       }
-      storage.set(buildProblemCodeKey(this.problemID, this.contestID), {
-        code: this.code,
-        language: this.language,
-        theme: this.theme
-      })
+      const sstorage = this.getstorage()
+
+      sstorage.code[this.language] = this.code
+      storage.set(buildProblemCodeKey(this.problemID, this.contestID), sstorage)
       this.submissionId = ''
       this.result = { result: 9 }
       this.submitting = true
@@ -622,6 +633,15 @@ export default {
           assignmentID: this.$route.params.assignmentID
         }
       })
+    },
+    getstorage () {
+      const getstorage = storage.get(buildProblemCodeKey(this.problemID, this.contestID))
+      const sstorage = getstorage || {
+        code: {},
+        language: this.language,
+        theme: this.theme
+      }
+      return sstorage
     }
   },
   computed: {
@@ -677,19 +697,15 @@ export default {
     // Prevent constant requests after switching components
     clearInterval(this.refreshStatus)
     this.$store.commit(types.CHANGE_CONTEST_ITEM_VISIBLE, { menu: true })
-    storage.set(buildProblemCodeKey(this.problem._id, from.params.contestID), {
-      code: this.code,
-      language: this.language,
-      theme: this.theme
-    })
+    const sstorage = this.getstorage()
+    sstorage.code[this.language] = this.code
+    storage.set(buildProblemCodeKey(this.problem._id, from.params.contestID), sstorage)
     next()
   },
   beforeRouteUpdate (to, from, next) {
-    storage.set(buildProblemCodeKey(from.params.problemID, from.params.contestID), {
-      code: this.code,
-      language: this.language,
-      theme: this.theme
-    })
+    const sstorage = this.getstorage()
+    sstorage.code[this.language] = this.code
+    storage.set(buildProblemCodeKey(from.params.problemID, from.params.contestID), sstorage)
     next()
   },
   watch: {
