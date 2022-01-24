@@ -1,20 +1,52 @@
 <template>
-  <div class="pagee">
+  <div class="pagination">
     <div class="page-itm">
-      <div class="page-btn">&lt;&lt;</div>
-      <div class="page-btn">&lt;</div>
-      <div class="page-btn">1</div>
-      <div class="page-btn">&gt;</div>
-      <div class="page-btn">&gt;&gt;</div>
+      <div v-on:click="toFront" class="page-btn">&lt;&lt;</div>
+      <div v-on:click="toPrev" class="page-btn">&lt;</div>
+      <div class="page-btn">{{currentPage}}</div>
+      <div v-on:click="toNext" class="page-btn">&gt;</div>
+      <div v-on:click="toEnd" class="page-btn">&gt;&gt;</div>
     </div>
   </div>
 </template>
 
 <script>
+export default {
+  name: 'Pagination',
+  props: {},
+  methods: {
+    toFront: function () {
+      console.log('front')
+      this.currentPage = 1
+    },
+    toPrev: function () {
+      console.log('prev')
+      if (this.currentPage > 1) {
+        this.currentPage -= 1
+      }
+    },
+    toNext: function () {
+      console.log('next')
+      if (this.currentPage < this.limit) {
+        this.currentPage += 1
+      }
+    },
+    toEnd: function () {
+      console.log('end')
+      this.currentPage = this.limit
+    }
+  },
+  data () {
+    return {
+      limit: 5,
+      currentPage: 3
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
-.pagee {
+.pagination {
   width: 95%;
   margin-right: 10%;
   margin-top: 10px;
@@ -24,9 +56,7 @@
 
 .page-itm {
   border-radius: 50rem !important;
-  margin-left: 0.25rem;
-  padding: 0.25rem 0.25rem 0.25rem 0;
-  line-height: 1;
+  padding: 0.25rem;
   display: flex;
   flex-direction: row;
 }
@@ -36,10 +66,15 @@
   height: 30px;
   text-align: center;
   line-height: 25px;
-  margin-left: 0.25rem;
+  margin-right: 0.25rem;
   border-radius: 5px !important;
   color: #bdbdbd;
   border: thin solid #bdbdbd;
   cursor: pointer;
+}
+
+.page-btn:hover{
+  background-color: #bdbdbd;
+  color: white;
 }
 </style>
