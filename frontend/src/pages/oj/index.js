@@ -21,6 +21,10 @@ import highlight from '@/plugins/highlight'
 import 'katex/dist/katex.min.css'
 import VueKatex from 'vue-katex'
 import filters from '@/utils/filters.js'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { far } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {
@@ -32,6 +36,8 @@ Vue.config.productionTip = false
 Vue.use(iView)
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
+library.add(fas, far)
+Vue.component('icon', FontAwesomeIcon)
 
 Vue.use(VueClipboard)
 Vue.use(highlight)
