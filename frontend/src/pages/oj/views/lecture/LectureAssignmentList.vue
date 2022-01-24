@@ -2,9 +2,7 @@
   <div>
     <sidemenu/>
     <article class="lecture-assignment-card">
-      <div class="top-bar mb-4">
-        <h2 class="title">Course Assignments</h2>
-      </div>
+      <page-title text="Course Assignments"/>
       <div
         v-if="!assignments.length"
         class="no-assignment"
@@ -58,11 +56,13 @@ import sidemenu from '@oj/components/Sidemenu.vue'
 import { ASSIGNMENT_STATUS_REVERSE, ASSIGNMENT_SUBMISSION_STATUS, ASSIGNMENT_SUBMISSION_STATUS_REVERSE } from '@/utils/constants'
 import api from '@oj/api'
 import moment from 'moment'
+import PageTitle from '@oj/components/PageTitle.vue'
 
 export default {
   name: 'CourseAssignmentList',
   components: {
-    sidemenu
+    sidemenu,
+    PageTitle
   },
   data () {
     return {
@@ -156,13 +156,6 @@ export default {
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
-  }
-  .title{
-    color: #7C7A7B;
-  }
-  .top-bar {
-    margin-top: 40px;
-    margin-left: 68px;
   }
   .no-assignment {
     text-align: center;

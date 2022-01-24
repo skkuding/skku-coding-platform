@@ -2,8 +2,8 @@
   <div>
     <sidemenu/>
     <article class="lecture-assignment-card">
-      <section class="top-bar mb-4">
-        <div class="assignment-title">{{ assignment.title }}</div>
+      <section class="mb-4">
+        <page-title :text="assignment.title"/>
         <div class="assignment-info">
           {{ formatTime(assignment.start_time) + ' ~ ' + formatTime(assignment.end_time) }}
         </div>
@@ -36,11 +36,13 @@ import sidemenu from '@oj/components/Sidemenu.vue'
 import { mapActions } from 'vuex'
 import time from '@/utils/time'
 import api from '@oj/api'
+import PageTitle from '../../components/PageTitle.vue'
 
 export default {
   name: 'CourseAssignmentDetail',
   components: {
-    sidemenu
+    sidemenu,
+    PageTitle
   },
   data () {
     return {
@@ -56,8 +58,7 @@ export default {
           label: 'score'
         }
       ],
-      assignmentProblems: [],
-      due: ''
+      assignmentProblems: []
     }
   },
   async mounted () {
@@ -152,27 +153,12 @@ export default {
       }
     }
   }
-  .top-bar {
-    margin-top: 40px;
-    margin-left: 68px;
-    & .assignment-title {
-      margin-bottom: 10px;
-      font-size: 36px;
-      color: #7C7A7B;
-    }
-    & .assignment-info {
-      width: 90%;
-      display:flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #7C7A7B;
-      margin: auto 0;
-      .due {
-        font-weight: 400;
-        padding: 5px 10px;
-        font-size: 14px;
-        background-color: #E9A05A !important;
-      }
-    }
+  .assignment-info {
+    width: 90%;
+    display:flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #7C7A7B;
+    margin: auto 0 auto 68px;
   }
 </style>

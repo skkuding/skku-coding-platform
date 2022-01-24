@@ -1,8 +1,6 @@
 <template>
     <div class="notice-list-card font-bold">
-      <div class="top-bar mb-4">
-        <h2 class="title">Notice</h2>
-      </div>
+      <page-title text="Notice"/>
       <div class="table">
         <b-table
           hover
@@ -43,8 +41,13 @@
 <script>
 import api from '@oj/api'
 import time from '@/utils/time'
+import PageTitle from '@oj/components/PageTitle.vue'
+
 export default {
   name: 'Announcement',
+  components: {
+    PageTitle
+  },
   data () {
     return {
       perPage: 10,
@@ -145,14 +148,7 @@ export default {
     width: 70%;
     font-family: Manrope;
   }
-  .top-bar {
-    margin-top: 40px;
-    margin-left: 68px;
-  }
-  .title{
-    color: #7C7A7B;
-  }
-  .table::v-deep {
+  .table{
     width: 95% !important;
     margin: 0 auto;
     td {

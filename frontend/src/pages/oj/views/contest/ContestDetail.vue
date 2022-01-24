@@ -1,8 +1,9 @@
 <template>
   <div class="contest-list-card font-bold">
-    <div class="top-bar mb-4">
-      <h2 class="title"> {{ contest.title }} </h2>
+    <div class="mb-4 flex justify-between">
+      <page-title :text="contest.title"/>
       <status-badge
+        class="my-auto"
         style="margin-right: 40px;"
         :status_name="contestStatus.name"
         :status_color="contestStatus.color"
@@ -44,6 +45,7 @@ import StatusBadge from '../../components/StatusBadge.vue'
 import ContestProblemList from './ContestProblemList.vue'
 import ContestRanking from './ContestRanking.vue'
 import ContestClarification from './ContestClarification.vue'
+import PageTitle from '../../components/PageTitle.vue'
 
 export default {
   name: 'ContestDetail',
@@ -51,7 +53,8 @@ export default {
     StatusBadge,
     ContestProblemList,
     ContestRanking,
-    ContestClarification
+    ContestClarification,
+    PageTitle
   },
   data () {
     return {
