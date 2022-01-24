@@ -1,7 +1,7 @@
 <template>
   <footer id="footer">
     <div class="footer-info">
-      <div class="icons">
+      <div class="icons flex">
         <a v-clipboard:copy="email" @click="copy"><img :src="mail" /></a>
         <a href="https://github.com/skku-npc/skku-coding-platform"><img :src="github" /></a>
         <a href="http://pf.kakao.com/_UKraK/chat"><img :src="kakao" /></a>

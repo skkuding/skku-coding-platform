@@ -1,73 +1,61 @@
 <template>
-  <div class="header">
-    <b-navbar sticky-top style="height: 100%;">
-      <b-navbar-brand to="/" class="ml-5" style="width: 0">
+  <div class="flex justify-between w-screen px-5 my-3 font-medium content-center sticky top-0 z-50">
+    <a href="/">
         <img
-          src="@/assets/logos/signature.png"
-          style="height: 50px; width: auto;"
+            src="@/assets/logos/signature.png"
+            class="h-12 w-auto"
         />
-      </b-navbar-brand>
+    </a>
 
-      <b-navbar-nav class="mx-auto" align="center">
-        <b-nav-item class="header__menu">
-          <router-link class="nav-link" active-class="active" to="/announcement">Notice</router-link>
-        </b-nav-item>
-        <b-nav-item class="header__menu">
-          <router-link class="nav-link" active-class="active" to="/contest">Contests</router-link>
-        </b-nav-item>
-        <b-nav-item class="header__menu">
-          <router-link class="nav-link" active-class="active" to="/problem">Problems</router-link>
-        </b-nav-item>
-        <b-nav-item class="header__menu">
-          <router-link class="nav-link" active-class="active" to="/lecture">Lecture</router-link>
-        </b-nav-item>
-      </b-navbar-nav>
+    <div>
+      <a class="text-2xl text-text-title mr-4 hover:text-green hover:no-underline active:text-green" href="/announcement">Notice</a>
+      <a class="text-2xl text-text-title mr-4 hover:text-green hover:no-underline" href="/contest">Contests</a>
+      <a class="text-2xl text-text-title mr-4 hover:text-green hover:no-underline" href="/problem">Problems</a>
+      <a class="text-2xl text-text-title mr-8 hover:text-green hover:no-underline" href="/lecture">Lecture</a>
+    </div>
 
-      <b-navbar-nav class="mr-5" style="width: 0">
-        <b-nav-item-dropdown v-if="!isAuthenticated" no-caret right>
-          <template slot="button-content">
-            <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
-          </template>
-          <b-dropdown-item @click="handleBtnClick('login')">Sign In</b-dropdown-item>
-          <b-dropdown-item @click="handleBtnClick('SendEmailAuth')">Register</b-dropdown-item>
-        </b-nav-item-dropdown>
+    <dropdown placement="right" width="w-40" id="dropdown">
+      <template v-slot:button>
+        <button>
+          <icon :icon="['far', 'user']" class="text-text-title text-3xl hover:text-green"/>
+        </button>
+      </template>
 
-        <b-nav-item-dropdown v-else no-caret right>
-          <template slot="button-content">
-            <b-icon icon="person" style="width: 36px; height: 36px"></b-icon>
-          </template>
-          <b-dropdown-item v-if="isAdminRole" @click="goManagement">Management</b-dropdown-item>
-          <b-dropdown-item v-b-modal.setting>Setting</b-dropdown-item>
-          <b-dropdown-item to="/logout">Sign Out</b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-navbar-nav>
-    </b-navbar>
-    <b-modal v-model="modalVisible" hide-footer centered modal-class="modal-med">
+      <template v-slot:content v-if="!isAuthenticated">
+        <button @click="handleBtnClick('login')" class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base font-medium text-text-title hover:text-green hover:no-underline">Sign In</button>
+        <button @click="handleBtnClick('SendEmailAuth')" class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base font-medium text-text-title hover:text-green hover:no-underline">Register</button>
+      </template>
+      <template v-slot:content v-else>
+        <button v-if="isAdminRole" @click="goManagement()" class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base font-medium text-text-title hover:text-green hover:no-underline">Management</button>
+        <a class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title font-medium hover:text-green hover:no-underline" href="/#">Settings</a>
+        <a class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title hover:text-green hover:no-underline" href="/logout">Sign Out</a>
+      </template>
+    </dropdown>
+    <modal v-if="modalVisible" v-on:close="modalVisible = false">
       <component
         :is="modalStatus.mode"
         v-if="modalVisible"
       />
-    </b-modal>
-    <b-modal id="setting" size="xl" hide-footer centered modal-class="modal-med modal-big">
-      <profileSetting></profileSetting>
-    </b-modal>
+    </modal>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import Dropdown from './Dropdown.vue'
+import Modal from './Modal.vue'
 import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
-import profileSetting from '@oj/views/user/ProfileSetting'
 import ApplyResetPassword from '@oj/views/user/ApplyResetPassword'
 import DeleteAccount from '@oj/views/user/DeleteAccount'
 import SendEmailAuth from '@oj/views/user/SendEmailAuth'
 
 export default {
   components: {
+    Dropdown,
+    Modal,
     login,
     register,
-    profileSetting,
     ApplyResetPassword,
     DeleteAccount,
     SendEmailAuth
@@ -104,50 +92,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-  #header {
-    position: relative;
-    height: 72px;
-    width: 100%;
-    z-index: 1000;
-    background-color: #fff;
-    border-bottom: 2px solid #E2E2E2;
-  }
-  .header__menu {
-    width: 100%;
-  }
-  .header__menu__item {
-    width: 100px;
-    text-align: center;
-    &:hover {
-      text-decoration: underline;
-      text-decoration-color: #8dc63f;
-    }
-  }
-  ::v-deep .modal-med {
-    .modal-dialog {
-      .modal-content {
-        position:absolute;
-        top:auto;
-        left:auto;
-        right:auto;
-        bottom:auto;
-        .modal-header {
-          padding-bottom:0;
-          padding-top:4px;
-        }
-        .modal-body {
-          padding-top:0;
-        }
-      }
-    }
-  }
-  ::v-deep .modal-big {
-    .modal-dialog {
-      .modal-content {
-        min-width:800px;
-      }
-    }
-  }
-</style>
