@@ -20,3 +20,5 @@ Cypress.Commands.add('loginSuperAdmin', () => {
     store.dispatch('getProfile')
   })
 })
+
+// TODO: Register, Login by general user

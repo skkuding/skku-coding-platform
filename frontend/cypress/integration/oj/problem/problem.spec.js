@@ -6,6 +6,7 @@ context('When user tries to submit a problem (not in contest)', () => {
     cy.loginSuperAdmin()
     cy.visit('problem')
   })
+  // TODO: make it independent from admin_problem_spec (anti-pattern)
   it('Submit Code', () => {
     cy.fixture('problem-example').then((problemExample) => {
       cy.get('tbody > tr > .problem-title-field').contains(problemExample.problem.title).click()
