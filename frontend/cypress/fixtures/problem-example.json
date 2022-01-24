@@ -11,7 +11,8 @@
     "visible": true,
     "share_submission": false,
     "tags": [
-      "Cypress"
+      "Cypress",
+      "Example"
     ],
     "languages": [
       "C",
