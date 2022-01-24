@@ -15,6 +15,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import '@/styles/bootstrap.scss'
 import '@/styles/common.scss'
+import '@/styles/tailwind.css'
 
 import highlight from '@/plugins/highlight'
 import 'katex/dist/katex.min.css'
