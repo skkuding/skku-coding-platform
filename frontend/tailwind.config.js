@@ -6,6 +6,7 @@ module.exports = {
     colors: {
       white: '#ffffff',
       green: '#8DC63F',
+      black: '#000000',
       level: {
         level1: '#CC99C9',
         level2: '#9EC1CF',
