@@ -1,8 +1,17 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,jsx}'],
   darkMode: false,
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: [
+          'Manrope',
+          ...defaultTheme.fontFamily.sans
+        ]
+      }
+    },
     colors: {
       white: '#ffffff',
       green: '#8DC63F',
