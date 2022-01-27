@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between w-screen px-5 my-3 font-medium content-center sticky top-0 z-50">
+  <nav class="flex justify-between items-center px-5 py-3 font-medium content-center sticky top-0 z-50">
     <a href="/">
         <img
             src="@/assets/logos/signature.png"
@@ -37,7 +37,7 @@
         v-if="modalVisible"
       />
     </modal>
-  </div>
+  </nav>
 </template>
 
 <script>
