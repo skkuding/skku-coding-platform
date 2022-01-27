@@ -507,6 +507,9 @@ export default {
     // when language dropdown changed
     onChangeLang (newLang) {
       const sstorage = this.getstorage()
+      sstorage.code[this.language] = this.code
+      storage.set(buildProblemCodeKey(this.problemID, this.contestID), sstorage)
+
       this.language = newLang
       sstorage.language = newLang
       storage.set(buildProblemCodeKey(this.problemID, this.contestID), sstorage)
