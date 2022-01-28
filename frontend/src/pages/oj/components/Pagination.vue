@@ -1,17 +1,17 @@
 <template>
   <div class="pagination">
     <div class="page-itm">
-      <div v-on:click="changePage(1)" class="page-btn">&lt;&lt;</div>
-      <div v-on:click="changePage(currentPage-1)" class="page-btn">&lt;</div>
+      <div @click="changePage(1)" class="page-btn">&lt;&lt;</div>
+      <div @click="changePage(currentPage-1)" class="page-btn">&lt;</div>
       <div
         v-for="page in pageList"
         :key="page"
-        v-on:click="changePage(page)"
-        :class="[ page==currentPage? 'select-page-btn': 'page-btn' ]">
+        @click="changePage(page)"
+        :class="[ page==currentPage? 'page-btn select': 'page-btn' ]">
         {{page}}
         </div>
-      <div v-on:click="changePage(currentPage+1)" class="page-btn">&gt;</div>
-      <div v-on:click="changePage(numberOfPages)" class="page-btn">&gt;&gt;</div>
+      <div @click="changePage(currentPage+1)" class="page-btn">&gt;</div>
+      <div @click="changePage(numberOfPages)" class="page-btn">&gt;&gt;</div>
     </div>
   </div>
 </template>
@@ -86,22 +86,14 @@ export default {
   cursor: pointer;
 }
 
+.page-btn.select {
+    background-color: #bdbdbd;
+    color: white;
+}
+
 .page-btn:hover {
   background-color: #bdbdbd;
   color: white;
-}
-
-.select-page-btn {
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  line-height: 25px;
-  margin-left: 0.25rem;
-  border-radius: 5px !important;
-  background-color: #bdbdbd;
-  color: white;
-  border: thin solid #bdbdbd;
-  cursor: pointer;
 }
 
 </style>
