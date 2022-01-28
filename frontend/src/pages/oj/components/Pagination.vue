@@ -1,11 +1,17 @@
 <template>
   <div class="pagination">
     <div class="page-itm">
-      <div v-on:click="toFront" class="page-btn">&lt;&lt;</div>
-      <div v-on:click="toPrev" class="page-btn">&lt;</div>
-      <div class="page-btn">{{currentPage}}</div>
-      <div v-on:click="toNext" class="page-btn">&gt;</div>
-      <div v-on:click="toEnd" class="page-btn">&gt;&gt;</div>
+      <div v-on:click="changePage(1)" class="page-btn">&lt;&lt;</div>
+      <div v-on:click="changePage(currentPage-1)" class="page-btn">&lt;</div>
+      <div
+        v-for="page in pageList"
+        :key="page"
+        v-on:click="changePage(page)"
+        :class="[ page==currentPage? 'select-page-btn': 'page-btn' ]">
+        {{page}}
+        </div>
+      <div v-on:click="changePage(currentPage+1)" class="page-btn">&gt;</div>
+      <div v-on:click="changePage(numberOfPages)" class="page-btn">&gt;&gt;</div>
     </div>
   </div>
 </template>
@@ -14,32 +20,39 @@
 export default {
   name: 'Pagination',
   props: {},
-  methods: {
-    toFront: function () {
-      console.log('front')
-      this.currentPage = 1
-    },
-    toPrev: function () {
-      console.log('prev')
-      if (this.currentPage > 1) {
-        this.currentPage -= 1
-      }
-    },
-    toNext: function () {
-      console.log('next')
-      if (this.currentPage < this.limit) {
-        this.currentPage += 1
-      }
-    },
-    toEnd: function () {
-      console.log('end')
-      this.currentPage = this.limit
-    }
-  },
   data () {
     return {
-      limit: 5,
-      currentPage: 3
+      rows: 45, // number of total rows in table
+      perPage: 3, // number of rows in table per one page
+      currentPage: 1,
+      limit: 3 // maximum of number of pages
+    }
+  },
+  methods: {
+    changePage (page) {
+      if (page >= 1 && page <= this.numberOfPages) {
+        this.currentPage = page
+      }
+    }
+  },
+  computed: {
+    numberOfPages () { // number of pages (if 9 rows and 3 for each pages, then 3 pages)
+      return Math.ceil(this.rows / this.perPage)
+    },
+    startPage () {
+      var start = (Math.trunc((this.currentPage - 1) / this.limit)) * this.limit + 1
+      return start
+    },
+    endPage () {
+      var end = this.startPage + this.limit - 1
+      return end < this.numberOfPages ? end : this.numberOfPages
+    },
+    pageList () {
+      var pages = []
+      for (let i = this.startPage; i <= this.endPage; i++) {
+        pages.push(i)
+      }
+      return pages
     }
   }
 }
@@ -56,7 +69,7 @@ export default {
 
 .page-itm {
   border-radius: 50rem !important;
-  padding: 0.25rem;
+  margin: 20px 5% 16px 0;
   display: flex;
   flex-direction: row;
 }
@@ -66,15 +79,29 @@ export default {
   height: 30px;
   text-align: center;
   line-height: 25px;
-  margin-right: 0.25rem;
+  margin-left: 0.25rem;
   border-radius: 5px !important;
   color: #bdbdbd;
   border: thin solid #bdbdbd;
   cursor: pointer;
 }
 
-.page-btn:hover{
+.page-btn:hover {
   background-color: #bdbdbd;
   color: white;
 }
+
+.select-page-btn {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 25px;
+  margin-left: 0.25rem;
+  border-radius: 5px !important;
+  background-color: #bdbdbd;
+  color: white;
+  border: thin solid #bdbdbd;
+  cursor: pointer;
+}
+
 </style>
