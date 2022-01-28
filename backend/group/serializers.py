@@ -1,11 +1,39 @@
+from backend.group.models import GroupRegistrationRequest, UserGroup
 from utils.api import serializers
 
 
-class CreateUserGroupSerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=64)
+class CreateGroupRegistrationRequestSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    short_description = serializers.CharField()
     description = serializers.CharField()
-    logo = serializers.ImageField()
+    is_official = serializers.BooleanField()
+    # logo = serializers.ImageField()
 
-class GroupApplication(serializers.Serializer):
+
+class GroupRegistrationRequestSerializer(serializers.Serializer):
+    class Meta:
+        model = GroupRegistrationRequest
+        field = "__all__"
+
+
+class CreateGroupSerializer(serializers.Serializer):
+    accept = serializers.BooleanField()
+    request_id = serializers.IntegerField()
+    # logo = serializers.ImageField()
+
+
+class GroupSummarySerializer(serializers.Serializer):
+    name = serializers.CharField()
+    short_description = serializers.CharField()
+    # logo = serializers.ImageField()
+
+
+class GroupDetailSerializer(serializers.Serializer):
+    class Meta:
+        model = UserGroup
+        field = "__all__"
+
+
+class GroupApplicationSerializer(serializers.Serializer):
     user_group = serializers.IntegerField
     description = serializers.CharField()
