@@ -29,14 +29,13 @@
       </b-table>
     </div>
     <div class="pagination">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="perPage"
-        limit="3"
-      ></b-pagination>
+      <Pagination
+      v-model="currentPage"
+      :total-rows="rows"
+      :per-page="perPage"
+      limit="5"
+      ></Pagination>
     </div>
-    <Pagination></Pagination>
   </div>
 </template>
 
@@ -51,6 +50,9 @@ export default {
   props: {},
   data() {
     return {
+      rows: 100,
+      currentPage: 1,
+      perPage: 3,
       Chart,
       fields: [
         { key: "date", label: "Date" },
