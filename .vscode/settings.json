@@ -7,7 +7,7 @@
   "eslint.workingDirectories": [
     "frontend/"
   ],
-  "files.autoSave": "off",
+  "files.autoSave": "afterDelay",
   "material-icon-theme.activeIconPack": "vue_vuex",
   "prettier.enable": false,
   "python.formatting.provider": "none",

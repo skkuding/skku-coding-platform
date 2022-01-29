@@ -12,8 +12,10 @@ class GroupRegistrationRequest(models.Model):
     is_official = models.BooleanField()
 
     create_time = models.DateTimeField(auto_now_add=True)
-
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "group_registration_request"
 
 
 class UserGroup(models.Model):
@@ -39,3 +41,6 @@ class GroupApplication(models.Model):
     user_group = models.ForeignKey(UserGroup, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = RichTextField()
+
+    class Meta:
+        db_table = "group_application"

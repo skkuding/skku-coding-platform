@@ -19,6 +19,8 @@ urlpatterns = [
     path("api/admin/", include("utils.urls")),
     path("api/", include("banner.urls.oj")),
     path("api/admin/", include("banner.urls.admin")),
+    path("api/", include("group.urls.oj")),
+    path("api/admin/", include("group.urls.admin")),
     path("api/lecture/", include("course.urls.student")),
     path("api/lecture/professor/", include("course.urls.professor")),
     path("api/lecture/", include("assignment.urls.student")),

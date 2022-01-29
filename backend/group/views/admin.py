@@ -1,9 +1,9 @@
 from drf_yasg.utils import swagger_auto_schema
-from backend.utils.decorators import super_admin_required
+from utils.decorators import super_admin_required
 
 # from group.models import UserGroup, GroupApplication
 from group.serializers import CreateGroupSerializer, GroupRegistrationRequestSerializer, GroupDetailSerializer
-from utils.api import APIView, validate_serializer
+from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 
 from ..models import GroupRegistrationRequest, UserGroup
 
@@ -20,7 +20,7 @@ class AdminGroupRegistrationRequestAPI(APIView):
         return self.success(GroupRegistrationRequestSerializer(group_registration_requests, many=True))
 
 
-class AdminGroupRegistrationResponseAPI(APIView):
+class AdminGroupRegistrationResponseAPI(CSRFExemptAPIView):
     @swagger_auto_schema(
         manual_parameters=[],
         operation_description="Response to group registration",
