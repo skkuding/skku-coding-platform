@@ -4,10 +4,6 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AtomsFooterIconGitHub: typeof import('./components/atoms/FooterIconGitHub.vue')['default']
-    AtomsFooterIconKakao: typeof import('./components/atoms/FooterIconKakao.vue')['default']
-    AtomsFooterIconLink: typeof import('./components/atoms/FooterIconLink.vue')['default']
-    AtomsFooterIconMail: typeof import('./components/atoms/FooterIconMail.vue')['default']
     AtomsHeaderLogo: typeof import('./components/atoms/HeaderLogo.vue')['default']
     AtomsHeaderMobileButton: typeof import('./components/atoms/HeaderMobileButton.vue')['default']
     AtomsNavItem: typeof import('./components/atoms/NavItem.vue')['default']
