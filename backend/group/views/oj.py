@@ -3,14 +3,14 @@ from drf_yasg import openapi
 
 
 # from group.models import UserGroup, GroupApplication
-from group.serializers import GroupSummarySerializer, CreateGroupRegistrationRequestSerializer, GroupRegistrationRequestSerializer
-from utils.api import APIView, validate_serializer
+from group.serializers import GroupDetailSerializer, GroupSummarySerializer, CreateGroupRegistrationRequestSerializer, GroupRegistrationRequestSerializer
+from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 
 from account.models import User
-from ..models import GroupRegistrationRequest
+from ..models import GroupRegistrationRequest, UserGroup
 
 
-class GroupRegistrationRequestAPI(APIView):
+class GroupRegistrationRequestAPI(CSRFExemptAPIView):
     @swagger_auto_schema(
         manual_parameters=[],
         operation_description="Request to register a group"
@@ -18,13 +18,18 @@ class GroupRegistrationRequestAPI(APIView):
     @validate_serializer(CreateGroupRegistrationRequestSerializer)
     def post(self, request):
         data = request.data
-        group = GroupRegistrationRequest.objects.create(
-            name=data["name"],
+        name = data["name"]
+
+        if GroupRegistrationRequest.objects.filter(name=name).exists() or UserGroup.objects.filter(name=name).exists:
+            return self.error("Duplicate group name")
+
+        registration_request = GroupRegistrationRequest.objects.create(
+            name=name,
             short_description=data["short_description"],
             description=data["description"],
             is_official=data["is_official"]
         )
-        return self.success(GroupRegistrationRequestSerializer(group).data)
+        return self.success(GroupRegistrationRequestSerializer(registration_request).data)
 
 
 class GroupAPI(APIView):
@@ -35,21 +40,20 @@ class GroupAPI(APIView):
     def get(self, request):
         user = request.user
         if not user.is_authenticated:
-            # Why self.success ?
-            return self.success()
+            return self.error("Login First")
         username = request.GET.get("username")
         try:
             if username:
                 if not username == user.username:
-                    return self.error("You only can get your profile")
+                    return self.error("You only can get your group")
                 user = User.objects.get(username=username, is_disabled=False)
             else:
                 return self.error("Username parameter is necessary")
-                # The api returns your own information, you can return real_name
         except User.DoesNotExist:
             return self.error("User does not exist")
         admin_groups = user.admin_groups.all()
         groups = user.groups.all()
+        # all_groups = UserGroup.objects.filter(admin_members__admin_groups="")
 
         data = {}
         data["admin_groups"] = GroupSummarySerializer(admin_groups, many=True).data
@@ -71,10 +75,12 @@ class GroupDetailAPI(APIView):
         operation_description="Get group details"
     )
     def get(self, request):
-        pass
+        group_id = request.GET.get("group_id")
+        if not group_id:
+            return self.error("Group id parameter is necessary")
+        try:
+            group = UserGroup.objects.get(id=group_id)
+        except UserGroup.DoesNotExist:
+            return self.error("Group does not exist")
+        return self.success(GroupDetailSerializer(group).data)
 
-    # for admin_group in admin_groups:
-    #     try:
-    #         data["admin_groups"]["application"] = GroupApplication.objects.get(user_group = admin_group)
-    #     except GroupApplication.DoesNotExist:
-    #         return self.error("Group Application does not exist")

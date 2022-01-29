@@ -1,4 +1,4 @@
-from backend.group.models import GroupRegistrationRequest, UserGroup
+from .models import GroupRegistrationRequest, UserGroup
 from utils.api import serializers
 
 
