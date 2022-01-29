@@ -17,7 +17,7 @@ class AdminGroupRegistrationRequestAPI(APIView):
     @super_admin_required
     def get(self, request):
         group_registration_requests = GroupRegistrationRequest.objects.all()
-        return self.success(GroupRegistrationRequestSerializer(group_registration_requests, many=True))
+        return self.success(GroupRegistrationRequestSerializer(group_registration_requests, many=True).data)
 
 
 class AdminGroupRegistrationResponseAPI(CSRFExemptAPIView):

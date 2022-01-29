@@ -10,10 +10,10 @@ class CreateGroupRegistrationRequestSerializer(serializers.Serializer):
     # logo = serializers.ImageField()
 
 
-class GroupRegistrationRequestSerializer(serializers.Serializer):
+class GroupRegistrationRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupRegistrationRequest
-        field = "__all__"
+        fields = "__all__"
 
 
 class CreateGroupSerializer(serializers.Serializer):
@@ -28,10 +28,10 @@ class GroupSummarySerializer(serializers.Serializer):
     # logo = serializers.ImageField()
 
 
-class GroupDetailSerializer(serializers.Serializer):
+class GroupDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserGroup
-        field = "__all__"
+        fields = "__all__"
 
 
 class GroupApplicationSerializer(serializers.Serializer):

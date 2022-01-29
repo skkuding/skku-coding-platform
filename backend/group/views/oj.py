@@ -20,14 +20,15 @@ class GroupRegistrationRequestAPI(CSRFExemptAPIView):
         data = request.data
         name = data["name"]
 
-        if GroupRegistrationRequest.objects.filter(name=name).exists() or UserGroup.objects.filter(name=name).exists:
+        if GroupRegistrationRequest.objects.filter(name=name).exists() or UserGroup.objects.filter(name=name).exists():
             return self.error("Duplicate group name")
 
         registration_request = GroupRegistrationRequest.objects.create(
             name=name,
             short_description=data["short_description"],
             description=data["description"],
-            is_official=data["is_official"]
+            is_official=data["is_official"],
+            created_by=request.user
         )
         return self.success(GroupRegistrationRequestSerializer(registration_request).data)
 
