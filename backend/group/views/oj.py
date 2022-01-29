@@ -58,7 +58,7 @@ class GroupAPI(APIView):
 
         data = {}
         data["admin_groups"] = GroupSummarySerializer(admin_groups, many=True).data
-        data["groups"] = GroupSummarySerializer(groups, many=True)
+        data["groups"] = GroupSummarySerializer(groups, many=True).data
 
         return self.success(data)
 

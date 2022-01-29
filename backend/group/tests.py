@@ -1,74 +1,81 @@
-import copy
-from datetime import datetime, timedelta
-
-from django.utils import timezone
-
 from utils.api.tests import APITestCase
-
-from .models import ContestRuleType
-
-from problem.models import ProblemIOMode
-
-DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test</p>", "input_description": "test",
-                        "output_description": "test", "time_limit": 1000, "memory_limit": 256, "difficulty": "Level1",
-                        "visible": True, "tags": ["test"], "languages": ["C", "C++", "Java", "Python2"], "template": {},
-                        "samples": [{"input": "test", "output": "test"}], "spj": False, "spj_language": "C",
-                        "spj_code": "", "spj_compile_ok": True, "test_case_id": "499b26290cc7994e0b497212e842ea85",
-                        "test_case_score": [{"output_name": "1.out", "input_name": "1.in", "output_size": 0,
-                                             "stripped_output_md5": "d41d8cd98f00b204e9800998ecf8427e",
-                                             "input_size": 0, "score": 0}],
-                        "io_mode": {"io_mode": ProblemIOMode.standard, "input": "input.txt", "output": "output.txt"},
-                        "share_submission": False,
-                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
-
-DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description",
-                        "start_time": timezone.localtime(timezone.now()),
-                        "end_time": timezone.localtime(timezone.now()) + timedelta(days=1),
-                        "rule_type": ContestRuleType.ACM,
-                        "password": "123",
-                        "allowed_ip_ranges": [],
-                        "visible": True, "real_time_rank": True}
+from .models import GroupRegistrationRequest, UserGroup
 
 
-class ContestAdminAPITest(APITestCase):
+class GroupRegistrationRequestAPITest(APITestCase):
     def setUp(self):
         self.create_super_admin()
-        self.url = self.reverse("contest_admin_api")
-        self.data = copy.deepcopy(DEFAULT_CONTEST_DATA)
+        self.url = self.reverse("group_registration_request_api")
+        self.data = {
+            "name": "SKKUding",
+            "short_description": "post group registration request",
+            "description": "post group registration request",
+            "is_official": "true"
+        }
 
-    def test_create_contest(self):
-        response = self.client.post(self.url, data=self.data)
-        self.assertSuccess(response)
-        return response
+    def test_create_group_registration_request(self):
+        res = self.client.post(self.url, data=self.data)
+        self.assertSuccess(res)
 
-    def test_create_contest_with_invalid_cidr(self):
-        self.data["allowed_ip_ranges"] = ["127.0.0"]
-        resp = self.client.post(self.url, data=self.data)
-        self.assertTrue(resp.data["data"].endswith("is not a valid cidr network"))
 
-    def test_update_contest(self):
-        id = self.test_create_contest().data["data"]["id"]
-        update_data = {"id": id, "title": "update title",
-                       "description": "update description",
-                       "password": "12345",
-                       "visible": False, "real_time_rank": False}
-        data = copy.deepcopy(self.data)
-        data.update(update_data)
-        response = self.client.put(self.url, data=data)
-        self.assertSuccess(response)
-        response_data = response.data["data"]
-        for k in data.keys():
-            if isinstance(data[k], datetime):
-                continue
-            self.assertEqual(response_data[k], data[k])
+class AdminGroupRegistrationRequestAPITest(APITestCase):
+    def setUp(self):
+        super_admin = self.create_super_admin()
+        self.url = self.reverse("group_registration_request_admin_api")
+        self.group_registration_request = GroupRegistrationRequest.objects.create(
+            created_by=super_admin,
+            name="SKKUding",
+            short_description="post group registration request",
+            description="post group registration request",
+            is_official=True
+        )
 
-    def test_get_contests(self):
-        self.test_create_contest()
-        response = self.client.get(self.url)
-        self.assertSuccess(response)
+    def test_get_admin_group_registration_request(self):
+        res = self.client.get(self.url)
+        self.assertSuccess(res)
 
-    def test_get_one_contest(self):
-        id = self.test_create_contest().data["data"]["id"]
-        response = self.client.get("{}?id={}".format(self.url, id))
-        self.assertSuccess(response)
 
+class AdminGroupRegistrationResponseAPITest(APITestCase):
+    def setUp(self):
+        super_admin = self.create_super_admin()
+        self.url = self.reverse("group_registration_response_admin_api")
+        self.group_registration_request = GroupRegistrationRequest.objects.create(
+            created_by=super_admin,
+            name="SKKUding",
+            short_description="post group registration request",
+            description="post group registration request",
+            is_official=True
+        )
+
+    def test_group_registration_response_accept(self):
+        res = self.client.post(self.url, data={
+            "accept": True,
+            "request_id": self.group_registration_request.id
+        })
+        print(self.client.get(self.reverse("group_api") + "?username=" + "root").data)
+        self.assertSuccess(res)
+
+    def test_group_registration_response_reject(self):
+        res = self.client.post(self.url, data={
+            "accept": False,
+            "request_id": self.group_registration_request.id
+        })
+        self.assertSuccess(res)
+
+
+class GroupAPITest(APITestCase):
+    def setUp(self):
+        super_admin = self.create_super_admin()
+        self.url = self.reverse("group_api") + "?username=" + str(super_admin.username)
+        self.group_registration_request = UserGroup.objects.create(
+            created_by=super_admin,
+            name="SKKUding",
+            short_description="post group registration request",
+            description="post group registration request",
+            is_official=True
+        )
+        self.group_registration_request.admin_members.add(super_admin)
+
+    def test_get_group_list(self):
+        res = self.client.get(self.url)
+        self.assertSuccess(res)

@@ -33,21 +33,25 @@ class AdminGroupRegistrationResponseAPI(CSRFExemptAPIView):
 
         if (not data["accept"]):
             try:
-                GroupRegistrationRequest.objects.delete(id=data["request_id"])
+                GroupRegistrationRequest.objects.get(id=data["request_id"]).delete()
                 return self.success("Successfully deleted group registration request")
             except GroupRegistrationRequest.DoesNotExist:
                 return self.error("Invalid group registration request id")
 
         try:
-            group_registration_request = GroupRegistrationRequest.objects.get(id=data["request+id"])
+            group_registration_request = GroupRegistrationRequest.objects.get(id=data["request_id"])
         except GroupRegistrationRequest.DoesNotExist:
             return self.error("Invalid group registration request id")
+        creator = group_registration_request.created_by
         group = UserGroup.objects.create(
-            name=group_registration_request["name"],
-            short_description=group_registration_request["short_description"],
-            description=group_registration_request["description"],
-            is_official=group_registration_request["is_official"]
+            name=group_registration_request.name,
+            short_description=group_registration_request.short_description,
+            description=group_registration_request.description,
+            is_official=group_registration_request.is_official,
+
+            created_by=creator
         )
-        GroupRegistrationRequest.objects.delete(id=data["request_id"])
+        group.admin_members.add(creator)
+        GroupRegistrationRequest.objects.get(id=data["request_id"]).delete()
 
         return self.success(GroupDetailSerializer(group).data)

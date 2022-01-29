@@ -25,10 +25,10 @@ class UserGroup(models.Model):
     is_official = models.BooleanField()
     # logo = ImageField()
 
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
+
     create_time = models.DateTimeField(auto_now_add=True)
     last_update_time = models.DateTimeField(auto_now=True)
-
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
 
     admin_members = models.ManyToManyField(User, related_name="admin_groups")
     members = models.ManyToManyField(User, related_name="groups")
