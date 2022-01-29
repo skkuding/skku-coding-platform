@@ -3,6 +3,6 @@ from ..views.admin import AdminGroupRegistrationRequestAPI, AdminGroupRegistrati
 
 
 urlpatterns = [
-    path("group/registration_request", AdminGroupRegistrationRequestAPI.as_view(), name="admin_group_registration_request_api"),
-    path("group/registration_response", AdminGroupRegistrationResponseAPI.as_view(), name="admin_group_registration_response_api")
+    path("group/registration_request", AdminGroupRegistrationRequestAPI.as_view(), name="group_registration_request_admin_api"),
+    path("group/registration_response", AdminGroupRegistrationResponseAPI.as_view(), name="group_registration_response_admin_api")
 ]
