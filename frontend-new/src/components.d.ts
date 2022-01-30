@@ -5,7 +5,6 @@
 declare module 'vue' {
   export interface GlobalComponents {
     AtomsHeaderMobileButton: typeof import('./components/atoms/HeaderMobileButton.vue')['default']
-    AtomsNavItem: typeof import('./components/atoms/NavItem.vue')['default']
     AtomsSignature: typeof import('./components/atoms/Signature.vue')['default']
     IconFaBars: typeof import('~icons/fa/bars')['default']
     IconFaGithub: typeof import('~icons/fa/github')['default']
