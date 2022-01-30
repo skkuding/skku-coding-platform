@@ -173,6 +173,7 @@ class GroupMemberAPITest(APITestCase):
         })
         self.assertSuccess(res)
 
+
 class GroupApplicationAPITest(APITestCase):
     def setUp(self):
         super_admin = self.create_super_admin()
