@@ -10,10 +10,6 @@ import src from '~/assets/home.png?w=280&webp'
       name="description"
       content="SKKU Coding Platform helps you enhance your coding ability, providing competitive programming environment."
     >
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@800&text=SKKUCodingPlatform&display=swap"
-      rel="stylesheet"
-    >
   </Head>
   <main class="flex flex-col items-center m-8">
     <h1
@@ -37,3 +33,13 @@ import src from '~/assets/home.png?w=280&webp'
     >
   </main>
 </template>
+
+<style>
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyYMZ1rj72Aqf-XMmHeTOYuSQFW3ERAF4dN&skey=c491285d6722e4fa&v=v7") format('woff2');
+}
+</style>
