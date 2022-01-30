@@ -2,7 +2,7 @@ from drf_yasg.utils import swagger_auto_schema
 from utils.decorators import super_admin_required
 
 # from group.models import UserGroup, GroupApplication
-from group.serializers import CreateGroupSerializer, GroupRegistrationRequestSerializer, GroupDetailSerializer
+from group.serializers import GroupRegistrationResponseSerializer, GroupRegistrationRequestSerializer, GroupDetailSerializer
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 
 from ..models import GroupRegistrationRequest, UserGroup
@@ -26,12 +26,12 @@ class AdminGroupRegistrationResponseAPI(CSRFExemptAPIView):
         operation_description="Response to group registration",
         responses={200: GroupRegistrationRequestSerializer}
     )
-    @validate_serializer(CreateGroupSerializer)
+    @validate_serializer(GroupRegistrationResponseSerializer)
     @super_admin_required
     def post(self, request):
         data = request.data
 
-        if (not data["accept"]):
+        if not data["accept"]:
             try:
                 GroupRegistrationRequest.objects.get(id=data["request_id"]).delete()
                 return self.success("Successfully deleted group registration request")
