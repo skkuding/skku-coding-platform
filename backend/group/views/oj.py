@@ -3,7 +3,7 @@ from drf_yasg import openapi
 
 
 # from group.models import UserGroup, GroupApplication
-from group.serializers import CreateGroupApplicationSerializer, GroupApplicationSerializer, GroupDetailSerializer
+from group.serializers import CreateGroupApplicationSerializer, EditGroupMemberPermissionSerializer, GroupApplicationSerializer, GroupDetailSerializer
 from group.serializers import GroupRegistrationRequestSerializer, GroupSummarySerializer, CreateGroupRegistrationRequestSerializer
 from utils.api import APIView, validate_serializer
 from utils.decorators import check_group_admin
@@ -100,6 +100,64 @@ class GroupDetailAPI(APIView):
         return self.success(data)
 
 
+class GroupMemberAPI(APIView):
+    # Change User Group Permission
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="member_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of member id",
+                required=True
+            ),
+            openapi.Parameter(
+                name="is_admin", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN,
+                description="Set permission of selected member.",
+                required=True
+            ),
+            openapi.Parameter(
+                name="group_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN,
+                description="Unique id of group id",
+                required=True
+            )
+        ],
+        operation_description="Change group member permission"
+    )
+    @validate_serializer(EditGroupMemberPermissionSerializer)
+    @check_group_admin()
+    def put(self, request):
+        data = request.data
+        user = request.user
+
+        try:
+            group = UserGroup.objects.get(id=data["group_id"])
+        except UserGroup.DoesNotExist:
+            return self.error("Group does not exist")
+
+        if data["is_admin"]:
+            try:
+                member = group.members.get(id=data["member_id"])
+            except User.DoesNotExist:
+                return self.error("Member does not exists")
+            group.admin_members.add(member)
+            group.members.remove(member)
+            return self.success(GroupDetailSerializer(group).data)
+
+        else:
+            if not (group.created_by.id == user.id):
+                return self.error("Only group creator can change group admin's permission")
+            else:
+                try:
+                    admin_member = group.admin_members.get(id=data["member_id"])
+                except User.DoesNotExist:
+                    return self.error("Member Does not exists")
+                group.members.add(admin_member)
+                group.admin_members.remove(admin_member)
+                return self.success(GroupDetailSerializer(group).data)
+
+
 class GroupApplicationAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
@@ -183,12 +241,3 @@ class GroupApplicationAPI(APIView):
         group_application.delete()
 
         return self.success(GroupDetailSerializer(group).data)
-
-
-
-
-
-
-
-
-
