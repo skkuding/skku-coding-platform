@@ -36,10 +36,10 @@ import src from '~/assets/home.png?w=280&webp'
 
 <style>
 @font-face {
-  font-family: 'Inter';
+  font-family: Inter;
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url("https://fonts.gstatic.com/l/font?kit=UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyYMZ1rj72Aqf-XMmHeTOYuSQFW3ERAF4dN&skey=c491285d6722e4fa&v=v7") format('woff2');
+  src: url("https://fonts.gstatic.com/l/font?kit=UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyYMZ1rj72Aqf-XMmHeTOYuSQFW3ERAF4dN&skey=c491285d6722e4fa&v=v7") format("woff2");
 }
 </style>

@@ -18,6 +18,12 @@
     "backend/.flake8"
   ],
   "python.linting.flake8Enabled": true,
+  "stylelint.validate": [
+    "css",
+    "scss",
+    "postcss",
+    "vue"
+  ],
   "[javascript][typescript][vue]": {
     "editor.formatOnSave": false
   }

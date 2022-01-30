@@ -3215,6 +3215,15 @@ pinia@^2.0.9:
     "@vue/devtools-api" "^6.0.0-beta.21"
     vue-demi "*"
 
+postcss-html@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/postcss-html/-/postcss-html-1.3.0.tgz#5b28b44a9cc8351cdba6ae1f26017c2303bd7642"
+  integrity sha512-ewbwd7OGW4dLsErtvZH9HpVMEcXnlhYSzKsr7MepGlOT8imHTIZ/+pdfEruLS+hTYapLTQAWDnoQcJpsYU4uRw==
+  dependencies:
+    htmlparser2 "^7.1.2"
+    postcss "^8.4.0"
+    postcss-safe-parser "^6.0.0"
+
 postcss-js@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/postcss-js/-/postcss-js-4.0.0.tgz#31db79889531b80dc7bc9b0ad283e418dce0ac00"
@@ -3265,7 +3274,7 @@ postcss-value-parser@^4.1.0, postcss-value-parser@^4.2.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^8.1.10, postcss@^8.3.11, postcss@^8.4.5:
+postcss@^8.1.10, postcss@^8.3.11, postcss@^8.4.0, postcss@^8.4.5:
   version "8.4.5"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.5.tgz#bae665764dfd4c6fcc24dc0fdf7e7aa00cc77f95"
   integrity sha512-jBDboWM8qpaqwkMwItqTQTiFikhs/67OYVvblFFTM7MrZjt6yMKd6r2kgXizEbTTljacm4NldIlZnhbjr84QYg==
@@ -3886,6 +3895,11 @@ style-search@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/style-search/-/style-search-0.1.0.tgz#7958c793e47e32e07d2b5cafe5c0bf8e12e77902"
   integrity sha1-eVjHk+R+MuB9K1yv5cC/jhLneQI=
+
+stylelint-config-html@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/stylelint-config-html/-/stylelint-config-html-1.0.0.tgz#172acb996ee4c854e8c670fcff77ff0d98d3bec2"
+  integrity sha512-rKQUUWDpaYC7ybsS6tLxddjn6DxhjSIXybElSmcTyVQj3ExhmU3q+l41ktrlwHRyY0M5SkTkZiwngvYPYmsgSQ==
 
 stylelint-config-recommended@^6.0.0:
   version "6.0.0"
