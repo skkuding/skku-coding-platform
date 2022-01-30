@@ -1,5 +1,5 @@
-from .models import GroupRegistrationRequest, UserGroup
-from utils.api import serializers
+from .models import GroupApplication, GroupRegistrationRequest, UserGroup
+from utils.api import serializers, UsernameSerializer
 
 
 class CreateGroupRegistrationRequestSerializer(serializers.Serializer):
@@ -16,7 +16,7 @@ class GroupRegistrationRequestSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CreateGroupSerializer(serializers.Serializer):
+class GroupRegistrationResponseSerializer(serializers.Serializer):
     accept = serializers.BooleanField()
     request_id = serializers.IntegerField()
     # logo = serializers.ImageField()
@@ -29,11 +29,23 @@ class GroupSummarySerializer(serializers.Serializer):
 
 
 class GroupDetailSerializer(serializers.ModelSerializer):
+    members = UsernameSerializer(many=True)
+    admin_members = UsernameSerializer(many=True)
+    created_by = UsernameSerializer()
+
     class Meta:
         model = UserGroup
         fields = "__all__"
 
 
-class GroupApplicationSerializer(serializers.Serializer):
-    user_group = serializers.IntegerField
+class CreateGroupApplicationSerializer(serializers.Serializer):
+    group_id = serializers.IntegerField()
     description = serializers.CharField()
+
+
+class GroupApplicationSerializer(serializers.ModelSerializer):
+    created_by = UsernameSerializer()
+
+    class Meta:
+        model = GroupApplication
+        fields = "__all__"
