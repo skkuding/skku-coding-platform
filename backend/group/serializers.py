@@ -49,3 +49,9 @@ class GroupApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupApplication
         fields = "__all__"
+
+
+class EditGroupMemberPermissionSerializer(serializers.Serializer):
+    member_id = serializers.IntegerField()
+    group_id = serializers.IntegerField()
+    is_admin = serializers.BooleanField()
