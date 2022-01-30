@@ -120,6 +120,59 @@ class GroupDetailAPITest(APITestCase):
         self.assertSuccess(res)
 
 
+class GroupMemberAPITest(APITestCase):
+    def setUp(self):
+        admin = self.create_admin()
+        super_admin = self.create_super_admin()
+
+        group = UserGroup.objects.create(
+            created_by=super_admin,
+            name="SKKUding",
+            short_description="post group registration request",
+            description="post group registration request",
+            is_official=True
+        )
+        group.admin_members.add(super_admin)
+        group.members.add(admin)
+        self.url = self.reverse("group_member_api")
+
+        self.group_id = group.id
+        self.member_id = admin.id
+
+    def test_change_user_group_permission_into_admin(self):
+        res = self.client.put(self.url, data={
+            "group_id": self.group_id,
+            "member_id": self.member_id,
+            "is_admin": True
+        })
+        self.assertSuccess(res)
+
+    def test_change_user_group_permission_into_common(self):
+        self.client.put(self.url, data={
+            "group_id": self.group_id,
+            "member_id": self.member_id,
+            "is_admin": True
+        })
+        res = self.client.put(self.url, data={
+            "group_id": self.group_id,
+            "member_id": self.member_id,
+            "is_admin": False
+        })
+        self.assertSuccess(res)
+
+    def test_change_user_group_permission_into_common_fail(self):
+        self.client.put(self.url, data={
+            "group_id": self.group_id,
+            "member_id": self.member_id,
+            "is_admin": True
+        })
+        res = self.client.put(self.url, data={
+            "group_id": self.group_id,
+            "member_id": self.member_id,
+            "is_admin": False
+        })
+        self.assertSuccess(res)
+
 class GroupApplicationAPITest(APITestCase):
     def setUp(self):
         super_admin = self.create_super_admin()
