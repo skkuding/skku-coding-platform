@@ -3,6 +3,7 @@ import hashlib
 import time
 
 from assignment.models import Assignment
+from group.models import UserGroup
 from problem.models import Problem
 from course.models import Registration
 from contest.models import Contest, ContestType, ContestStatus, ContestRuleType
@@ -173,6 +174,35 @@ def check_assignment_permission():
                 Registration.objects.get(user_id=user.id, course_id=self.assignment.course_id)
             except Registration.DoesNotExist:
                 return self.error("Invalid access, not registered user")
+
+            return func(*args, **kwargs)
+        return _check_permission
+    return decorator
+
+
+def check_group_admin():
+    def decorator(func):
+        def _check_permission(*args, **kwargs):
+            self = args[0]
+            request = args[1]
+            user = request.user
+            if request.data.get("group_id"):
+                group_id = request.data["group_id"]
+            else:
+                group_id = request.GET.get("group_id")
+            if not group_id:
+                return self.error("Parameter error, group_id is required")
+
+            try:
+                admin_group = UserGroup.objects.filter(id=group_id, admin_members=user)
+            except UserGroup.DoesNotExist:
+                return self.error("Group %s doesn't exist" % group_id)
+
+            if not user.is_authenticated:
+                return self.error("Please login first.")
+
+            if not admin_group.exists():
+                return self.error("permission-denied: Group admin is required")
 
             return func(*args, **kwargs)
         return _check_permission
