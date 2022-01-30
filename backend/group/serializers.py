@@ -22,10 +22,12 @@ class GroupRegistrationResponseSerializer(serializers.Serializer):
     # logo = serializers.ImageField()
 
 
-class GroupSummarySerializer(serializers.Serializer):
-    name = serializers.CharField()
-    short_description = serializers.CharField()
+class GroupSummarySerializer(serializers.ModelSerializer):
     # logo = serializers.ImageField()
+
+    class Meta:
+        model = UserGroup
+        fields = ["name", "short_description", "id"]
 
 
 class GroupDetailSerializer(serializers.ModelSerializer):
