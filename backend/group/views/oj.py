@@ -5,7 +5,7 @@ from drf_yasg import openapi
 # from group.models import UserGroup, GroupApplication
 from group.serializers import CreateGroupApplicationSerializer, GroupApplicationSerializer, GroupDetailSerializer
 from group.serializers import GroupRegistrationRequestSerializer, GroupSummarySerializer, CreateGroupRegistrationRequestSerializer
-from utils.api import APIView, validate_serializer, CSRFExemptAPIView
+from utils.api import APIView, validate_serializer
 from utils.decorators import check_group_admin
 
 from account.models import User
@@ -13,7 +13,7 @@ from django.db.models import Q
 from ..models import GroupApplication, GroupRegistrationRequest, UserGroup
 
 
-class GroupRegistrationRequestAPI(CSRFExemptAPIView):
+class GroupRegistrationRequestAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[],
         operation_description="Request to register a group"

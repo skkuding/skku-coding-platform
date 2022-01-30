@@ -3,7 +3,7 @@ from utils.decorators import super_admin_required
 
 # from group.models import UserGroup, GroupApplication
 from group.serializers import GroupRegistrationResponseSerializer, GroupRegistrationRequestSerializer, GroupDetailSerializer
-from utils.api import APIView, validate_serializer, CSRFExemptAPIView
+from utils.api import APIView, validate_serializer
 
 from ..models import GroupRegistrationRequest, UserGroup
 
@@ -20,7 +20,7 @@ class AdminGroupRegistrationRequestAPI(APIView):
         return self.success(GroupRegistrationRequestSerializer(group_registration_requests, many=True).data)
 
 
-class AdminGroupRegistrationResponseAPI(CSRFExemptAPIView):
+class AdminGroupRegistrationResponseAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[],
         operation_description="Response to group registration",
