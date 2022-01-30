@@ -45,16 +45,7 @@ class GroupAPI(APIView):
         user = request.user
         if not user.is_authenticated:
             return self.error("Login First")
-        username = request.GET.get("username")
-        try:
-            if username:
-                if not username == user.username:
-                    return self.error("You only can get your group")
-                user = User.objects.get(username=username, is_disabled=False)
-            else:
-                return self.error("Username parameter is necessary")
-        except User.DoesNotExist:
-            return self.error("User does not exist")
+
         admin_groups = user.admin_groups.all()
         groups = user.groups.all()
         other_groups = UserGroup.objects.exclude(Q(admin_members=user) | Q(members=user))
