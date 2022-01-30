@@ -22,7 +22,7 @@ const items = [
       w-full overflow-hidden
       transition-all ease-out
     "
-    :class="active ? 'max-h-40 py-2 border-b' : 'max-h-0'"
+    :class="active ? 'h-48 border-b' : 'h-0'"
   >
     <router-link
       v-for="item in items"
@@ -35,5 +35,13 @@ const items = [
     >
       {{ item.label }}
     </router-link>
+    <div class="flex gap-4 mt-2">
+      <AtomsButton>
+        Sign In
+      </AtomsButton>
+      <AtomsButton outline>
+        Sign Up
+      </AtomsButton>
+    </div>
   </div>
 </template>
