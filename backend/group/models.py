@@ -39,7 +39,7 @@ class UserGroup(models.Model):
 
 class GroupApplication(models.Model):
     user_group = models.ForeignKey(UserGroup, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     description = RichTextField()
 
     class Meta:
