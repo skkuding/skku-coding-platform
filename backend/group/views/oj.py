@@ -3,11 +3,14 @@ from drf_yasg import openapi
 
 
 # from group.models import UserGroup, GroupApplication
-from group.serializers import GroupDetailSerializer, GroupSummarySerializer, CreateGroupRegistrationRequestSerializer, GroupRegistrationRequestSerializer
+from group.serializers import CreateGroupApplicationSerializer, GroupApplicationSerializer, GroupDetailSerializer
+from group.serializers import GroupRegistrationRequestSerializer, GroupSummarySerializer, CreateGroupRegistrationRequestSerializer
 from utils.api import APIView, validate_serializer, CSRFExemptAPIView
+from utils.decorators import check_group_admin
 
 from account.models import User
-from ..models import GroupRegistrationRequest, UserGroup
+from django.db.models import Q
+from ..models import GroupApplication, GroupRegistrationRequest, UserGroup
 
 
 class GroupRegistrationRequestAPI(CSRFExemptAPIView):
@@ -54,11 +57,12 @@ class GroupAPI(APIView):
             return self.error("User does not exist")
         admin_groups = user.admin_groups.all()
         groups = user.groups.all()
-        # all_groups = UserGroup.objects.filter(admin_members__admin_groups="")
+        other_groups = UserGroup.objects.exclude(Q(admin_members=user) | Q(members=user))
 
         data = {}
         data["admin_groups"] = GroupSummarySerializer(admin_groups, many=True).data
         data["groups"] = GroupSummarySerializer(groups, many=True).data
+        data["other_groups"] = GroupSummarySerializer(other_groups, many=True).data
 
         return self.success(data)
 
@@ -76,12 +80,115 @@ class GroupDetailAPI(APIView):
         operation_description="Get group details"
     )
     def get(self, request):
-        group_id = request.GET.get("group_id")
+        user = request.user
+        group_id = request.GET.get("id")
         if not group_id:
             return self.error("Group id parameter is necessary")
         try:
             group = UserGroup.objects.get(id=group_id)
         except UserGroup.DoesNotExist:
             return self.error("Group does not exist")
+        data = GroupDetailSerializer(group).data
+
+        if UserGroup.objects.filter(admin_members=user).exists():
+            try:
+                group_application = GroupApplication.objects.filter(user_group=group)
+            except GroupApplication.DoesNotExist:
+                self.error("Group Application model does not exist")
+            data["group_application"] = GroupApplicationSerializer(group_application, many=True).data
+
+        return self.success(data)
+
+
+class GroupApplicationAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="group_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of group.",
+                required=True
+            ),
+            openapi.Parameter(
+                name="description", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description="Group Application Description explaining who the user is",
+                required=True
+            )
+        ],
+        operation_description="Post a group application"
+    )
+    @validate_serializer(CreateGroupApplicationSerializer)
+    def post(self, request):
+        user = request.user
+        group_id = request.data["group_id"]
+        description = request.data["description"]
+
+        group_application = GroupApplication.objects.create(
+            user_group_id=group_id,
+            description=description,
+            created_by=user
+        )
+
+        return self.success(GroupApplicationSerializer(group_application).data)
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="group_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of group.",
+                required=True
+            ),
+            openapi.Parameter(
+                name="application_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Unique id of application",
+                required=True
+            ),
+            openapi.Parameter(
+                name="accept", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN,
+                description="true if accept else reject the application",
+                required=True
+            ),
+        ],
+        operation_description="Resolve group application"
+    )
+    @check_group_admin()
+    def delete(self, request):
+        group_id = request.GET.get("group_id")
+        application_id = request.GET.get("application_id")
+        accept = request.GET.get("accept")
+
+        try:
+            group_application = GroupApplication.objects.get(id=application_id)
+        except GroupApplication.DoesNotExist:
+            self.error("Group application does not exist")
+
+        if not accept:
+            group_application.delete()
+            return self.success("Successfully rejected a group application")
+
+        group_application_created_by = group_application.created_by
+        try:
+            group = UserGroup.objects.get(id=group_id)
+        except UserGroup.DoesNotExist:
+            self.error("Group does not exist")
+
+        if group.members.filter(id=group_application_created_by.id).exists() or group.admin_members.filter(id=group_application_created_by.id).exists():
+            self.error("Already in group")
+
+        group.members.add(group_application_created_by)
+        group_application.delete()
+
         return self.success(GroupDetailSerializer(group).data)
+
+
+
+
+
+
+
+
 
