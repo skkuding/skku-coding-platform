@@ -30,6 +30,13 @@ export default defineConfig({
     }),
     imagetools()
   ],
+  optimizeDeps: {
+    include: [
+      'vue',
+      'vue-router',
+      '@vueuse/head'
+    ]
+  },
   resolve: {
     alias: {
       '~': path.resolve(__dirname, './src')
@@ -43,5 +50,8 @@ export default defineConfig({
     hmr: {
       port: process.env.GITPOD_WORKSPACE_ID ? 443 : undefined
     }
+  },
+  ssgOptions: {
+    formatting: 'minify'
   }
 })

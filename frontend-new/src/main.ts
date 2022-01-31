@@ -1,26 +1,16 @@
-import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
-import { createHead } from '@vueuse/head'
+import { ViteSSG } from 'vite-ssg'
 import generatedRoutes from 'virtual:generated-pages'
 import { setupLayouts } from 'virtual:generated-layouts'
-import NProgress from 'nprogress'
 import App from './App.vue'
 import './index.css'
 
 const routes = setupLayouts(generatedRoutes)
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes
-})
-
-router.beforeEach(() => { NProgress.start() })
-router.afterEach(() => { NProgress.done() })
-
-const head = createHead()
-
-const app = createApp(App)
-
-app.use(router)
-app.use(head)
-app.mount('#app')
+export const createApp = ViteSSG(
+  App,
+  { routes, base: import.meta.env.BASE_URL },
+  (ctx) => {
+    // install all modules under `modules/`
+    Object.values(import.meta.globEager('./modules/*.ts')).forEach(i => i.install?.(ctx))
+  }
+)
