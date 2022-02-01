@@ -49,6 +49,12 @@ export default defineConfig({
   server: {
     hmr: {
       port: process.env.GITPOD_WORKSPACE_ID ? 443 : undefined
+    },
+    proxy: {
+      '^/(api|public)': {
+        target: process.env.API_PROXY_URL || 'http://localhost:8000',
+        changeOrigin: true
+      }
     }
   },
   ssgOptions: {
