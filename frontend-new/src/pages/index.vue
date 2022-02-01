@@ -4,14 +4,15 @@ import src from '~/assets/home.png?w=280&webp'
 </script>
 
 <template>
-  <Head>
-    <title>SKKU Coding Platform</title>
-    <meta
-      name="description"
-      content="SKKU Coding Platform helps you enhance your coding ability, providing competitive programming environment."
-    >
-  </Head>
   <main class="flex flex-col items-center m-8">
+    <!-- `Transition` component allows single root element only -->
+    <Head>
+      <title>SKKU Coding Platform</title>
+      <meta
+        name="description"
+        content="SKKU Coding Platform helps you enhance your coding ability, providing competitive programming environment."
+      >
+    </Head>
     <h1
       class="
         py-8 font-extrabold text-6xl font-[Inter]
