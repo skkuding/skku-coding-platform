@@ -1,8 +1,8 @@
 <template>
   <div class="profile-group">
-    <div class="top-bar mb-4" style="margin-top:4px;">
+    <div class="mt-4 mb-3">
       <div class="group-top">
-        <h2 class="title">My Group</h2>
+        <h2 class="section-title">My Group</h2>
         <button class="group-create">
           Create
         </button>
@@ -120,33 +120,22 @@ export default {
     display: flex;
     flex-direction: column;
   }
-  .top-bar {
-    margin-top: 40px;
-    margin-inline: 40px;
-  }
   .group-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .title {
-    margin-bottom:0;
-    color: #7C7A7B;
-    display:inline;
-    position:relative;
-    top:36px;
-  }
+
   .group-create {
     margin-bottom:0;
     color: #FFFFFF;
-    display:inline;
     position:relative;
-    top:36px;
     background-color: #8DC63F !important;
-    border-color: transparent;
     border: none;
     border-radius: 10px;
     padding: 2px 15px;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
   .group {
     display: flex;
