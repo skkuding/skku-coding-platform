@@ -1,19 +1,9 @@
 <template>
-  <div class="problem-list-card font-bold">
+  <div class="submission-list-card font-bold">
     <div class="top-bar mb-4" style="margin-top:4px;">
       <h2 class="title">Submission List</h2>
-      <div class="problem-list-table">
+      <div class="submission-list-table">
         <div class="category-container">
-          <b-dropdown :text="difficulty" class="mr-4">
-            <b-dropdown-item @click="filterByDifficulty('All')">All</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level1')">Level1</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level2')">Level2</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level3')">Level3</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level4')">Level4</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level5')">Level5</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level6')">Level6</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level7')">Level7</b-dropdown-item>
-          </b-dropdown>
           <div class="col-4">
             <b-icon icon="search" class="search-icon"/>
             <b-input placeholder="keywords" class="search-input"
@@ -26,7 +16,7 @@
       <b-table
         hover
         :items="testItemsList"
-        :fields="problemTableColumns"
+        :fields="submissionTableColumns"
         :per-page="perPage"
         :current-page="currentPage"
         head-variant="light"
@@ -64,7 +54,6 @@
 import { mapGetters } from 'vuex'
 import api from '@oj/api'
 import { ProblemMixin } from '@oj/components/mixins'
-import { DIFFICULTY_COLOR } from '@/utils/constants'
 
 export default {
   name: 'ProfileSubmission',
@@ -85,10 +74,9 @@ export default {
       limit: 50,
       total: 0,
       keyword: '',
-      difficulty: 'All',
       tag: '',
       page: 1,
-      problemTableColumns: [
+      submissionTableColumns: [
         {
           label: 'Title',
           key: 'title',
@@ -137,7 +125,6 @@ export default {
       const offset = (this.page - 1) * this.limit
       const res = await api.getSubmissionList(offset, this.limit,
         {
-          difficulty: this.difficulty === 'All' ? '' : this.difficulty,
           keyword: this.keyword,
           tag: this.tag,
           page: this.page
@@ -146,20 +133,12 @@ export default {
       this.total = res.data.data.total
       this.submissionList = res.data.data.results
       if (this.isAuthenticated) {
-        this.addStatusColumn(this.problemTableColumns, res.data.data.results)
+        this.addStatusColumn(this.submissionTableColumns, res.data.data.results)
       }
-    },
-    async filterByDifficulty (item) {
-      this.difficulty = item
-      this.page = 1
-      await this.getSubmissionList()
     },
     async filterByKeyword () {
       this.page = 1
       await this.getSubmissionList()
-    },
-    difficultyColor (value) {
-      return DIFFICULTY_COLOR[value]
     },
     async goProblem (item) {
       await this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
@@ -189,14 +168,13 @@ export default {
     position:relative;
     top:36px;
   }
-  .problem-list-card{
+  .submission-list-card{
     margin:0 auto;
     width:95%;
     font-family:Manrope;
-    .problem-list-table{
+    .submission-list-table{
       width: 95%;
       margin: 0 auto;
-      cursor: pointer;
     }
   }
   div {
