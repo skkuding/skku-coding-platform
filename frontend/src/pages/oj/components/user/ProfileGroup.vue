@@ -42,13 +42,13 @@
         <div class="member-container">
           <h4 class="member_title"> Member </h4>
           <div class="member-list">
-            <span v-for="member in memberList" :key="member"> {{ member }}
-              <span v-if="groupRole==='Administrator'">
-                <button class="promote">
-                  <b-icon icon="arrow-up" style="color: #FFFFFF"> </b-icon>
+            <span v-for="member in memberList" :key="member" class="member"> {{ member }}
+              <span v-if="groupRole==='Administrator'" style="padding-left: 10px;">
+                <button class="promote" style="color: #FFFFFF">
+                  <b-icon icon="arrow-up"> </b-icon>
                 </button>
                 <button class="delete" style="color: #FF6663">
-                  <b-icon icon="x"> </b-icon>
+                  <b-icon icon="x" style="width: 120%; height: 100%;"> </b-icon>
                 </button>
               </span>
             </span>
@@ -145,8 +145,8 @@ export default {
     background-color: #8DC63F !important;
     border-color: transparent;
     border: none;
-    border-radius: 7px;
-    width: 6%;
+    border-radius: 10px;
+    padding: 2px 15px;
   }
   .group {
     display: flex;
@@ -167,7 +167,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-items: center;
-    margin-left: 20px;
+    margin-left: 25px;
   }
   .group-name{
     color: #173747;
@@ -180,7 +180,7 @@ export default {
     margin-top: 5px;
   }
   #logo {
-    width: 89px;
+    width: 75px;
     height: 83px;
     margin-left: 20px;
   }
@@ -224,6 +224,14 @@ export default {
     font-weight: bold;
     margin-block: 20px;
   }
+  .member {
+    min-width: 140px;
+    display: inline-flex;
+    justify-content: space-between;
+    align-content: space-between;
+    margin-right: 20px;
+    overflow: hidden
+  }
   .promote {
     background-color: #569BD8 !important;
     border-color: transparent;
@@ -256,8 +264,8 @@ export default {
     background-color: #8DC63F !important;
     border-color: transparent;
     border: none;
-    border-radius: 7px;
-    width: 7%;
+    border-radius: 10px;
+    padding: 2px 15px;
     margin-inline: 10px;
     color: #FFFFFF;
   }
@@ -265,8 +273,8 @@ export default {
     background-color: #FF6663 !important;
     border-color: transparent;
     border: none;
-    border-radius: 7px;
-    width: 7%;
+    border-radius: 10px;
+    padding: 2px 20px;
     margin-inline: 10px;
     color: #FFFFFF;
   }
