@@ -1,11 +1,11 @@
 from drf_yasg.utils import swagger_auto_schema
 from utils.decorators import super_admin_required
 
-# from group.models import UserGroup, GroupApplication
+# from group.models import Group, GroupApplication
 from group.serializers import GroupRegistrationResponseSerializer, GroupRegistrationRequestSerializer, GroupDetailSerializer
 from utils.api import APIView, validate_serializer
 
-from ..models import GroupRegistrationRequest, UserGroup
+from ..models import GroupRegistrationRequest, Group
 
 
 class AdminGroupRegistrationRequestAPI(APIView):
@@ -43,7 +43,7 @@ class AdminGroupRegistrationResponseAPI(APIView):
         except GroupRegistrationRequest.DoesNotExist:
             return self.error("Invalid group registration request id")
         creator = group_registration_request.created_by
-        group = UserGroup.objects.create(
+        group = Group.objects.create(
             name=group_registration_request.name,
             short_description=group_registration_request.short_description,
             description=group_registration_request.description,

@@ -1,5 +1,5 @@
 from utils.api.tests import APITestCase
-from .models import GroupRegistrationRequest, UserGroup
+from .models import GroupRegistrationRequest, Group
 
 
 class GroupRegistrationRequestAPITest(APITestCase):
@@ -69,7 +69,7 @@ class GroupAPITest(APITestCase):
         super_admin = self.create_super_admin()
 
         self.url = self.reverse("group_api") + "?username=" + str(super_admin.username)
-        group_admin = UserGroup.objects.create(
+        group_admin = Group.objects.create(
             created_by=super_admin,
             name="SKKUding",
             short_description="post group registration request",
@@ -78,7 +78,7 @@ class GroupAPITest(APITestCase):
         )
         group_admin.admin_members.add(super_admin)
 
-        group = UserGroup.objects.create(
+        group = Group.objects.create(
             created_by=admin,
             name="AdminClub",
             short_description="post group registration request",
@@ -88,7 +88,7 @@ class GroupAPITest(APITestCase):
         group.admin_members.add(admin)
         group.members.add(super_admin)
 
-        other_group = UserGroup.objects.create(
+        other_group = Group.objects.create(
             created_by=user,
             name="UserClub",
             short_description="post group registration request",
@@ -105,7 +105,7 @@ class GroupAPITest(APITestCase):
 class GroupDetailAPITest(APITestCase):
     def setUp(self):
         super_admin = self.create_super_admin()
-        group = UserGroup.objects.create(
+        group = Group.objects.create(
             created_by=super_admin,
             name="SKKUding",
             short_description="post group registration request",
@@ -125,7 +125,7 @@ class GroupMemberAPITest(APITestCase):
         admin = self.create_admin()
         super_admin = self.create_super_admin()
 
-        group = UserGroup.objects.create(
+        group = Group.objects.create(
             created_by=super_admin,
             name="SKKUding",
             short_description="post group registration request",
@@ -139,7 +139,7 @@ class GroupMemberAPITest(APITestCase):
         self.group_id = group.id
         self.member_id = admin.id
 
-    def test_change_user_group_permission_into_admin(self):
+    def test_change_group_permission_into_admin(self):
         res = self.client.put(self.url, data={
             "group_id": self.group_id,
             "member_id": self.member_id,
@@ -147,7 +147,7 @@ class GroupMemberAPITest(APITestCase):
         })
         self.assertSuccess(res)
 
-    def test_change_user_group_permission_into_common(self):
+    def test_change_group_permission_into_common(self):
         self.client.put(self.url, data={
             "group_id": self.group_id,
             "member_id": self.member_id,
@@ -160,7 +160,7 @@ class GroupMemberAPITest(APITestCase):
         })
         self.assertSuccess(res)
 
-    def test_change_user_group_permission_into_common_fail(self):
+    def test_change_group_permission_into_common_fail(self):
         self.client.put(self.url, data={
             "group_id": self.group_id,
             "member_id": self.member_id,
@@ -177,7 +177,7 @@ class GroupMemberAPITest(APITestCase):
 class GroupApplicationAPITest(APITestCase):
     def setUp(self):
         super_admin = self.create_super_admin()
-        group = UserGroup.objects.create(
+        group = Group.objects.create(
             created_by=super_admin,
             name="SKKUding",
             short_description="post group registration request",

@@ -3,7 +3,7 @@ import hashlib
 import time
 
 from assignment.models import Assignment
-from group.models import UserGroup
+from group.models import Group
 from problem.models import Problem
 from course.models import Registration
 from contest.models import Contest, ContestType, ContestStatus, ContestRuleType
@@ -194,8 +194,8 @@ def check_group_admin():
                 return self.error("Parameter error, group_id is required")
 
             try:
-                admin_group = UserGroup.objects.filter(id=group_id, admin_members=user)
-            except UserGroup.DoesNotExist:
+                admin_group = Group.objects.filter(id=group_id, admin_members=user)
+            except Group.DoesNotExist:
                 return self.error("Group %s doesn't exist" % group_id)
 
             if not user.is_authenticated:

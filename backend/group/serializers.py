@@ -1,4 +1,4 @@
-from .models import GroupApplication, GroupRegistrationRequest, UserGroup
+from .models import GroupApplication, GroupRegistrationRequest, Group
 from utils.api import serializers, UsernameSerializer
 
 
@@ -26,7 +26,7 @@ class GroupSummarySerializer(serializers.ModelSerializer):
     # logo = serializers.ImageField()
 
     class Meta:
-        model = UserGroup
+        model = Group
         fields = ["name", "short_description", "id"]
 
 
@@ -36,7 +36,7 @@ class GroupDetailSerializer(serializers.ModelSerializer):
     created_by = UsernameSerializer()
 
     class Meta:
-        model = UserGroup
+        model = Group
         fields = "__all__"
 
 
