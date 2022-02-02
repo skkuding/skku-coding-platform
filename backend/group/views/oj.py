@@ -1,8 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-
-# from group.models import UserGroup, GroupApplication
 from group.serializers import CreateGroupApplicationSerializer, EditGroupMemberPermissionSerializer, GroupApplicationSerializer, GroupDetailSerializer
 from group.serializers import GroupRegistrationRequestSerializer, GroupSummarySerializer, CreateGroupRegistrationRequestSerializer
 from utils.api import APIView, validate_serializer
@@ -10,7 +8,7 @@ from utils.decorators import check_group_admin
 
 from account.models import User
 from django.db.models import Q
-from ..models import GroupApplication, GroupRegistrationRequest, UserGroup
+from ..models import GroupApplication, GroupRegistrationRequest, Group
 
 
 class GroupRegistrationRequestAPI(APIView):
@@ -23,7 +21,7 @@ class GroupRegistrationRequestAPI(APIView):
         data = request.data
         name = data["name"]
 
-        if GroupRegistrationRequest.objects.filter(name=name).exists() or UserGroup.objects.filter(name=name).exists():
+        if GroupRegistrationRequest.objects.filter(name=name).exists() or Group.objects.filter(name=name).exists():
             return self.error("Duplicate group name")
 
         registration_request = GroupRegistrationRequest.objects.create(
@@ -48,7 +46,7 @@ class GroupAPI(APIView):
 
         admin_groups = user.admin_groups.all()
         groups = user.groups.all()
-        other_groups = UserGroup.objects.exclude(Q(admin_members=user) | Q(members=user))
+        other_groups = Group.objects.exclude(Q(admin_members=user) | Q(members=user))
 
         data = {}
         data["admin_groups"] = GroupSummarySerializer(admin_groups, many=True).data
@@ -76,14 +74,14 @@ class GroupDetailAPI(APIView):
         if not group_id:
             return self.error("Group id parameter is necessary")
         try:
-            group = UserGroup.objects.get(id=group_id)
-        except UserGroup.DoesNotExist:
+            group = Group.objects.get(id=group_id)
+        except Group.DoesNotExist:
             return self.error("Group does not exist")
         data = GroupDetailSerializer(group).data
 
-        if UserGroup.objects.filter(admin_members=user).exists():
+        if Group.objects.filter(admin_members=user).exists():
             try:
-                group_application = GroupApplication.objects.filter(user_group=group)
+                group_application = GroupApplication.objects.filter(group=group)
             except GroupApplication.DoesNotExist:
                 self.error("Group Application model does not exist")
             data["group_application"] = GroupApplicationSerializer(group_application, many=True).data
@@ -123,8 +121,8 @@ class GroupMemberAPI(APIView):
         user = request.user
 
         try:
-            group = UserGroup.objects.get(id=data["group_id"])
-        except UserGroup.DoesNotExist:
+            group = Group.objects.get(id=data["group_id"])
+        except Group.DoesNotExist:
             return self.error("Group does not exist")
 
         if data["is_admin"]:
@@ -174,7 +172,7 @@ class GroupApplicationAPI(APIView):
         description = request.data["description"]
 
         group_application = GroupApplication.objects.create(
-            user_group_id=group_id,
+            group_id=group_id,
             description=description,
             created_by=user
         )
@@ -221,8 +219,8 @@ class GroupApplicationAPI(APIView):
 
         group_application_created_by = group_application.created_by
         try:
-            group = UserGroup.objects.get(id=group_id)
-        except UserGroup.DoesNotExist:
+            group = Group.objects.get(id=group_id)
+        except Group.DoesNotExist:
             self.error("Group does not exist")
 
         if group.members.filter(id=group_application_created_by.id).exists() or group.admin_members.filter(id=group_application_created_by.id).exists():

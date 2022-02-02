@@ -18,7 +18,7 @@ class GroupRegistrationRequest(models.Model):
         db_table = "group_registration_request"
 
 
-class UserGroup(models.Model):
+class Group(models.Model):
     name = models.TextField()
     short_description = models.TextField()
     description = RichTextField()
@@ -31,14 +31,21 @@ class UserGroup(models.Model):
     last_update_time = models.DateTimeField(auto_now=True)
 
     admin_members = models.ManyToManyField(User, related_name="admin_groups")
-    members = models.ManyToManyField(User, related_name="groups")
+    members = models.ManyToManyField(User, related_name="groups", through="GroupMember", through_fields=("group, user"))
 
     class Meta:
-        db_table = "user_group"
+        db_table = "group"
+
+
+class GroupMember(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+
+    is_admin = models.BooleanField()
 
 
 class GroupApplication(models.Model):
-    user_group = models.ForeignKey(UserGroup, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     description = RichTextField()
 
