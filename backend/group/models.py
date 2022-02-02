@@ -30,7 +30,7 @@ class Group(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     last_update_time = models.DateTimeField(auto_now=True)
 
-    members = models.ManyToManyField(User, related_name="groups")
+    members = models.ManyToManyField(User, related_name="groups", through="GroupMember", through_fields=("group", "user"))
 
     class Meta:
         db_table = "group"
