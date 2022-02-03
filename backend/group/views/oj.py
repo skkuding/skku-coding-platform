@@ -12,7 +12,7 @@ from ..models import GroupMemberJoin, GroupMember, GroupRegistrationRequest, Gro
 
 class GroupRegistrationRequestAPI(APIView):
     @swagger_auto_schema(
-        request_body=CreateGroupMemberJoinSerializer,
+        request_body=CreateGroupRegistrationRequestSerializer,
         operation_description="Request to register a group",
         responses={200: GroupRegistrationRequestSerializer}
     )
@@ -45,7 +45,7 @@ class GroupAPI(APIView):
                 required=False
             ),
         ],
-        operation_description="Get group list"
+        operation_description="Get group list or detail of a group"
     )
     def get(self, request):
         user = request.user
@@ -86,7 +86,7 @@ class GroupMemberAPI(APIView):
     # Change User Group Permission
     @swagger_auto_schema(
         request_body=EditGroupMemberPermissionSerializer,
-        operation_description="Change group member permission",
+        operation_description="Change group member permission. only can change is_admin field.",
         responses={200: GroupMemberSerializer}
     )
     @validate_serializer(EditGroupMemberPermissionSerializer)
@@ -126,7 +126,7 @@ class GroupMemberAPI(APIView):
             openapi.Parameter(
                 name="user_id",
                 in_=openapi.IN_QUERY,
-                description="Unique ID of a user",
+                description="Unique ID of a user. not member_join(intermediary model) id.",
                 type=openapi.TYPE_INTEGER,
                 required=False
             ),
@@ -138,7 +138,8 @@ class GroupMemberAPI(APIView):
                 required=False
             ),
         ],
-        operation_description="Get group list"
+        operation_description="Get group list",
+        responses={200: "Member successfully removed from this group."}
     )
     @check_group_admin()
     def delete(self, request):
@@ -204,7 +205,8 @@ class GroupMemberJoinAPI(APIView):
                 required=True
             ),
         ],
-        operation_description="Resolve group member_join"
+        operation_description="Resolve group member join. accept=True -> accept the member to join our group. accept=False or not given -> reject the member",
+        responses={200: GroupDetailSerializer}
     )
     @check_group_admin()
     def delete(self, request):
