@@ -78,10 +78,7 @@ class GroupAPI(APIView):
             data = GroupDetailSerializer(group).data
 
             if Group.objects.filter(admin_members=user).exists():
-                try:
-                    group_application = GroupApplication.objects.filter(group=group)
-                except GroupApplication.DoesNotExist:
-                    self.error("Group Application model does not exist")
+                group_application = GroupApplication.objects.filter(group=group)
                 data["group_application"] = GroupApplicationSerializer(group_application, many=True).data
 
             return self.success(data)
@@ -168,6 +165,12 @@ class GroupApplicationAPI(APIView):
         user = request.user
         group_id = request.data["group_id"]
         description = request.data["description"]
+
+        if Group.objects.filter(id=group_id, members=user).exists():
+            return self.error("You are already a member of this group.")
+
+        if GroupApplication.objects.filter(group=group_id, created_by=user).exists():
+            return self.error("You have already submitted your application to this group.")
 
         group_application = GroupApplication.objects.create(
             group_id=group_id,
