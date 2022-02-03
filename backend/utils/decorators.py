@@ -3,7 +3,7 @@ import hashlib
 import time
 
 from assignment.models import Assignment
-from group.models import Group
+from group.models import Group, GroupMember
 from problem.models import Problem
 from course.models import Registration
 from contest.models import Contest, ContestType, ContestStatus, ContestRuleType
@@ -197,8 +197,9 @@ def check_group_admin():
             if not group_id:
                 return self.error("Parameter error, group_id is required")
 
-            group_admin = Group.objects.filter(id=group_id, groupmember__is_admin=True, groupmember__user=user)
-            if not group_admin.exists():
+            if not Group.objects.filter(id=group_id).exists():
+                return self.error("Group does not exist")
+            if not GroupMember.objects.filter(group=group_id, user=user, is_admin=True).exists():
                 return self.error("permission-denied: Group admin is required")
 
             return func(*args, **kwargs)
