@@ -22,7 +22,7 @@ const items = [
       w-full overflow-hidden
       transition-all ease-out
     "
-    :class="active ? 'h-48 border-b' : 'h-0'"
+    :class="active ? 'h-48 sm:h-12 border-b' : 'h-0'"
   >
     <router-link
       v-for="item in items"
@@ -32,14 +32,22 @@ const items = [
         text-md text-stone-600 font-semibold
         hover:opacity-75 active:opacity-50
         transition hover:ease-in-out"
+      active-class="text-lime-500"
     >
       {{ item.label }}
     </router-link>
-    <div class="flex gap-4 mt-2">
-      <AtomsButton>
+    <div class="flex gap-4 mt-2 sm:hidden">
+      <AtomsButton
+        size="small"
+        @click="$router.push('login')"
+      >
         Sign In
       </AtomsButton>
-      <AtomsButton outline>
+      <AtomsButton
+        size="small"
+        outline
+        @click="$router.push('register')"
+      >
         Sign Up
       </AtomsButton>
     </div>
