@@ -118,41 +118,51 @@ class GroupMemberAPITest(APITestCase):
         self.url = self.reverse("group_member_api")
 
         self.group_id = group.id
-        self.target_user_id = admin.id
+        self.admin_id = admin.id
+        self.super_admin_id = super_admin.id
 
     def test_change_group_permission_into_admin(self):
         res = self.client.put(self.url, data={
             "group_id": self.group_id,
-            "user_id": self.target_user_id,
+            "user_id": self.admin_id,
             "is_admin": True
         })
         self.assertSuccess(res)
 
     def test_change_group_permission_into_common(self):
-        self.client.put(self.url, data={
-            "group_id": self.group_id,
-            "user_id": self.target_user_id,
-            "is_admin": True
-        })
         res = self.client.put(self.url, data={
             "group_id": self.group_id,
-            "user_id": self.target_user_id,
+            "user_id": self.admin_id,
             "is_admin": False
         })
         self.assertSuccess(res)
 
-    def test_change_group_permission_into_common_fail(self):
-        self.client.put(self.url, data={
-            "group_id": self.group_id,
-            "user_id": self.target_user_id,
-            "is_admin": True
-        })
+    def test_change_group_permission_of_creator_into_common_fail(self):
+        self.client.login(username="admin", password="admin")
         res = self.client.put(self.url, data={
             "group_id": self.group_id,
-            "user_id": self.target_user_id,
+            "user_id": self.super_admin_id,
             "is_admin": False
         })
+        self.assertFailed(res)
+
+    def test_delete_group_member_success(self):
+        res = self.client.delete(self.url + "?group_id={}&user_id={}".format(self.group_id, self.admin_id))
         self.assertSuccess(res)
+
+    def test_delete_group_member_no_permission_fail(self):
+        res = self.client.delete(self.url + "?group_id={}&user_id={}".format(self.group_id, self.super_admin_id))
+        self.assertFailed(res)
+
+    def test_delete_group_member_cannot_delete_admin_fail(self):
+        self.client.put(self.url, data={
+            "group_id": self.group_id,
+            "user_id": self.admin_id,
+            "is_admin": True
+        })
+        res = self.client.delete(self.url + "?group_id={}&user_id={}".format(self.group_id, self.admin_id))
+        print(res.data)
+        self.assertFailed(res)
 
 
 class GroupApplicationAPITest(APITestCase):
