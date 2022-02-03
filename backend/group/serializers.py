@@ -1,4 +1,4 @@
-from .models import GroupApplication, GroupRegistrationRequest, Group
+from .models import GroupApplication, GroupMember, GroupRegistrationRequest, Group
 from utils.api import serializers, UsernameSerializer
 
 
@@ -50,3 +50,9 @@ class EditGroupMemberPermissionSerializer(serializers.Serializer):
     member_id = serializers.IntegerField()
     group_id = serializers.IntegerField()
     is_admin = serializers.BooleanField()
+
+
+class GroupMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupMember
+        fields = "__all__"
