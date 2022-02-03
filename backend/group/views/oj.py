@@ -121,6 +121,41 @@ class GroupMemberAPI(APIView):
             member.save()
             return self.success(GroupMemberSerializer(member).data)
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="user_id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a user",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                name="group_id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a group",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+        ],
+        operation_description="Get group list"
+    )
+    @check_group_admin()
+    def delete(self, request):
+        user_id = request.GET.get("user_id")
+        group_id = request.GET.get("group_id")
+
+        try:
+            member = GroupMember.objects.get(user=user_id, group=group_id)
+        except GroupMember.DoesNotExist:
+            return self.error("group member does not exist")
+
+        if member.is_admin:
+            return self.error("Cannot remove admin member.")
+
+        member.delete()
+        return self.success("Member successfully removed from this group.")
+
 
 class GroupApplicationAPI(APIView):
     @swagger_auto_schema(
