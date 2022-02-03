@@ -62,7 +62,7 @@ services:
       - "0.0.0.0:443:1443"
 
   coderunner:
-    image: coc0a25/coderunner:0.1
+    image: ghcr.io/skku-npc/interactive-shell
     container_name: coderunner
     restart: always
     cap_drop:

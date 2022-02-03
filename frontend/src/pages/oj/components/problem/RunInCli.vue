@@ -123,10 +123,6 @@ export default {
     async run () {
       const ack = await this.compile()
 
-      if (this.dir === null) {
-        console.log('Not compiled yet')
-        return
-      }
       if (ack === -1) {
         return
       }
@@ -160,7 +156,7 @@ export default {
         }
       })
 
-      this.socket.on('exited', () => {
+      this.socket.on('disconnect', () => {
         this.term.writeln('\x1B[1;3;31mProgram exited\x1B[0m')
         this.writable = false
         this.$emit('completeRun')
@@ -188,13 +184,13 @@ export default {
         const res = await axios.post('https://localhost/code-run/compile', { lang: this.shortLanguage, code: this.code })
         this.stderr = ''
         if (res.data.status !== 1) {
-          this.stderr = res.data.output
+          this.stderr = res.data.error
           this.term.clear()
           this.term.writeln('\x1B[1;31m ### Compile Error ### \x1B[0m')
-          this.term.writeln('\x1B[1;31m' + res.data.output + '\x1B[0m')
+          this.term.writeln('\x1B[1;31m' + res.data.error + '\x1B[0m')
           return -1
         } else {
-          this.dir = res.data.output
+          this.dir = res.data.token
           return 0
         }
       } catch (err) {
@@ -226,5 +222,11 @@ export default {
 <style scoped>
   button {
     margin: 0px 5px;
+  }
+  .xterm .xterm-viewport {
+      /* On OS X this is required in order for the scroll bar to appear fully opaque */
+      background-color: #000;
+      overflow-y: scroll;
+      cursor: default;
   }
 </style>
