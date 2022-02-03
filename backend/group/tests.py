@@ -17,6 +17,11 @@ class GroupRegistrationRequestAPITest(APITestCase):
         res = self.client.post(self.url, data=self.data)
         self.assertSuccess(res)
 
+    def test_create_registration_request_duplicate_group_name(self):
+        self.client.post(self.url, data=self.data)
+        res = self.client.post(self.url, data=self.data)
+        self.assertFailed(res, msg="Duplicate group name")
+
 
 class AdminGroupRegistrationRequestAPITest(APITestCase):
     def setUp(self):
@@ -41,6 +46,11 @@ class AdminGroupRegistrationRequestAPITest(APITestCase):
     def test_delete_group_registration_request_reject(self):
         res = self.client.delete(self.url + "?accept=False&request_id=" + str(self.group_registration_request.id))
         self.assertSuccess(res)
+
+    def test_delete_group_registration_request_not_exist(self):
+        self.client.delete(self.url + "?request_id=" + str(self.group_registration_request.id))
+        res = self.client.delete(self.url + "?request_id=" + str(self.group_registration_request.id))
+        self.assertFailed(res, msg="Invalid group registration request id")
 
 
 class GroupAPITest(APITestCase):
@@ -161,7 +171,6 @@ class GroupMemberAPITest(APITestCase):
             "is_admin": True
         })
         res = self.client.delete(self.url + "?group_id={}&user_id={}".format(self.group_id, self.admin_id))
-        print(res.data)
         self.assertFailed(res)
 
 
