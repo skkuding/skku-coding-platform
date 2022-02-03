@@ -16,12 +16,6 @@ class GroupRegistrationRequestSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class GroupRegistrationResponseSerializer(serializers.Serializer):
-    accept = serializers.BooleanField()
-    request_id = serializers.IntegerField()
-    # logo = serializers.ImageField()
-
-
 class GroupSummarySerializer(serializers.ModelSerializer):
     # logo = serializers.ImageField()
 
@@ -32,7 +26,6 @@ class GroupSummarySerializer(serializers.ModelSerializer):
 
 class GroupDetailSerializer(serializers.ModelSerializer):
     members = UsernameSerializer(many=True)
-    admin_members = UsernameSerializer(many=True)
     created_by = UsernameSerializer()
 
     class Meta:
