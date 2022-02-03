@@ -192,8 +192,8 @@ class GroupApplicationAPI(APIView):
         except Group.DoesNotExist:
             self.error("Group does not exist")
 
-        if group.members.filter(id=group_application_created_by.id).exists() or group.admin_members.filter(id=group_application_created_by.id).exists():
-            self.error("Already in group")
+        if group.members.filter(id=group_application_created_by.id).exists():
+            self.error("This user is already a member. This application may be already resolved.")
 
         group.members.add(group_application_created_by)
         group_application.delete()
