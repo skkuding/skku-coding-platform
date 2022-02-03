@@ -48,7 +48,7 @@ class AdminGroupRegistrationRequestAPI(APIView):
 
             created_by=creator
         )
-        group.admin_members.add(creator)
+        group.members.add(creator, through_defaults={"is_admin": True})
         GroupRegistrationRequest.objects.get(id=request_id).delete()
 
         return self.success(GroupDetailSerializer(group).data)
