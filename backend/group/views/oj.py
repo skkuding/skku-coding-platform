@@ -13,8 +13,9 @@ from ..models import GroupApplication, GroupRegistrationRequest, Group
 
 class GroupRegistrationRequestAPI(APIView):
     @swagger_auto_schema(
-        manual_parameters=[],
-        operation_description="Request to register a group"
+        request_body=CreateGroupApplicationSerializer,
+        operation_description="Request to register a group",
+        responses={200: GroupRegistrationRequestSerializer}
     )
     @validate_serializer(CreateGroupRegistrationRequestSerializer)
     def post(self, request):
@@ -36,7 +37,15 @@ class GroupRegistrationRequestAPI(APIView):
 
 class GroupAPI(APIView):
     @swagger_auto_schema(
-        manual_parameters=[],
+        manual_parameters=[
+            openapi.Parameter(
+                name="id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a group. if id is not given, return group list, else return detail of a group",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+        ],
         operation_description="Get group list"
     )
     def get(self, request):
@@ -44,49 +53,38 @@ class GroupAPI(APIView):
         if not user.is_authenticated:
             return self.error("Login First")
 
-        admin_groups = user.admin_groups.all()
-        groups = user.groups.all()
-        other_groups = Group.objects.exclude(Q(admin_members=user) | Q(members=user))
-
-        data = {}
-        data["admin_groups"] = GroupSummarySerializer(admin_groups, many=True).data
-        data["groups"] = GroupSummarySerializer(groups, many=True).data
-        data["other_groups"] = GroupSummarySerializer(other_groups, many=True).data
-
-        return self.success(data)
-
-
-class GroupDetailAPI(APIView):
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                name="id", in_=openapi.IN_QUERY,
-                type=openapi.TYPE_INTEGER,
-                description="Unique id of group.",
-                required=True
-            ),
-        ],
-        operation_description="Get group details"
-    )
-    def get(self, request):
-        user = request.user
         group_id = request.GET.get("id")
+
+        # Group List
         if not group_id:
-            return self.error("Group id parameter is necessary")
-        try:
-            group = Group.objects.get(id=group_id)
-        except Group.DoesNotExist:
-            return self.error("Group does not exist")
-        data = GroupDetailSerializer(group).data
+            groups_not_admin = Group.objects.filter(groupmember__is_admin=False, groupmember__user=user)
+            print(groups_not_admin)
+            groups_admin = Group.objects.filter(groupmember__is_admin=True, groupmember__user=user)
+            other_groups = Group.objects.exclude(Q(members=user))
 
-        if Group.objects.filter(admin_members=user).exists():
+            data = {}
+            data["admin_groups"] = GroupSummarySerializer(groups_not_admin, many=True).data
+            data["groups"] = GroupSummarySerializer(groups_admin, many=True).data
+            data["other_groups"] = GroupSummarySerializer(other_groups, many=True).data
+
+            return self.success(data)
+
+        # Group Detail
+        else:
             try:
-                group_application = GroupApplication.objects.filter(group=group)
-            except GroupApplication.DoesNotExist:
-                self.error("Group Application model does not exist")
-            data["group_application"] = GroupApplicationSerializer(group_application, many=True).data
+                group = Group.objects.get(id=group_id)
+            except Group.DoesNotExist:
+                return self.error("Group does not exist")
+            data = GroupDetailSerializer(group).data
 
-        return self.success(data)
+            if Group.objects.filter(admin_members=user).exists():
+                try:
+                    group_application = GroupApplication.objects.filter(group=group)
+                except GroupApplication.DoesNotExist:
+                    self.error("Group Application model does not exist")
+                data["group_application"] = GroupApplicationSerializer(group_application, many=True).data
+
+            return self.success(data)
 
 
 class GroupMemberAPI(APIView):
