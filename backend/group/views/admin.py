@@ -1,4 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from utils.decorators import super_admin_required
 
 # from group.models import Group, GroupApplication
@@ -20,8 +22,24 @@ class AdminGroupRegistrationRequestAPI(APIView):
         return self.success(GroupRegistrationRequestSerializer(group_registration_requests, many=True).data)
 
     @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="request_id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a registration request.",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                name="accept",
+                in_=openapi.IN_QUERY,
+                description="if accept, accept registration request and create group. else, just delete registration request",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            )
+        ],
         operation_description="Request to group registration",
-        responses={200: "ee"}
+        responses={200: GroupDetailSerializer}
     )
     @super_admin_required
     def delete(self, request):
