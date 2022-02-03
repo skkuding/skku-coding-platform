@@ -57,7 +57,6 @@ class GroupAPI(APIView):
         # Group List
         if not group_id:
             groups_not_admin = Group.objects.filter(groupmember__is_admin=False, groupmember__user=user)
-            print(groups_not_admin)
             groups_admin = Group.objects.filter(groupmember__is_admin=True, groupmember__user=user)
             other_groups = Group.objects.exclude(Q(members=user))
 
@@ -76,7 +75,7 @@ class GroupAPI(APIView):
                 return self.error("Group does not exist")
             data = GroupDetailSerializer(group).data
 
-            if Group.objects.filter(admin_members=user).exists():
+            if GroupMember.objects.filter(is_admin=True, group=group, user=user).exists():
                 group_application = GroupApplication.objects.filter(group=group)
                 data["group_application"] = GroupApplicationSerializer(group_application, many=True).data
 
@@ -98,7 +97,7 @@ class GroupMemberAPI(APIView):
 
         if data["is_admin"]:
             try:
-                member = GroupMember.objects.get(id=data["member_id"], group_id=data["group_id"])
+                member = GroupMember.objects.get(user=data["user_id"], group=data["group_id"])
             except GroupMember.DoesNotExist:
                 return self.error("Group Member does not exists")
             member.is_admin = data["is_admin"]  # True
@@ -115,7 +114,7 @@ class GroupMemberAPI(APIView):
                 return self.error("Only group creator can change group admin's permission")
 
             try:
-                member = GroupMember.objects.get(id=data["member_id"], group_id=data["group_id"])
+                member = GroupMember.objects.get(user=data["user_id"], group=data["group_id"])
             except GroupMember.DoesNotExist:
                 return self.error("Group member does not exist")
             member.is_admin = data["is_admin"]  # False
