@@ -186,6 +186,10 @@ def check_group_admin():
             self = args[0]
             request = args[1]
             user = request.user
+
+            if not user.is_authenticated:
+                return self.error("Please login first.")
+
             if request.data.get("group_id"):
                 group_id = request.data["group_id"]
             else:
@@ -193,15 +197,8 @@ def check_group_admin():
             if not group_id:
                 return self.error("Parameter error, group_id is required")
 
-            try:
-                admin_group = Group.objects.filter(id=group_id, admin_members=user)
-            except Group.DoesNotExist:
-                return self.error("Group %s doesn't exist" % group_id)
-
-            if not user.is_authenticated:
-                return self.error("Please login first.")
-
-            if not admin_group.exists():
+            group_admin = Group.objects.filter(id=group_id, groupmember__is_admin=True, groupmember__user=user)
+            if not group_admin.exists():
                 return self.error("permission-denied: Group admin is required")
 
             return func(*args, **kwargs)
