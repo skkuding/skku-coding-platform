@@ -43,10 +43,10 @@ class GroupMember(models.Model):
     is_admin = models.BooleanField(default=False)
 
 
-class GroupApplication(models.Model):
+class GroupMemberJoin(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     description = RichTextField()
 
     class Meta:
-        db_table = "group_application"
+        db_table = "group_member_join"

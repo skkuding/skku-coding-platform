@@ -1,18 +1,18 @@
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from group.serializers import CreateGroupApplicationSerializer, EditGroupMemberPermissionSerializer, GroupApplicationSerializer, GroupDetailSerializer, GroupMemberSerializer
+from group.serializers import CreateGroupMemberJoinSerializer, EditGroupMemberPermissionSerializer, GroupMemberJoinSerializer, GroupDetailSerializer, GroupMemberSerializer
 from group.serializers import GroupRegistrationRequestSerializer, GroupSummarySerializer, CreateGroupRegistrationRequestSerializer
 from utils.api import APIView, validate_serializer
 from utils.decorators import check_group_admin
 
 from django.db.models import Q
-from ..models import GroupApplication, GroupMember, GroupRegistrationRequest, Group
+from ..models import GroupMemberJoin, GroupMember, GroupRegistrationRequest, Group
 
 
 class GroupRegistrationRequestAPI(APIView):
     @swagger_auto_schema(
-        request_body=CreateGroupApplicationSerializer,
+        request_body=CreateGroupMemberJoinSerializer,
         operation_description="Request to register a group",
         responses={200: GroupRegistrationRequestSerializer}
     )
@@ -76,8 +76,8 @@ class GroupAPI(APIView):
             data = GroupDetailSerializer(group).data
 
             if GroupMember.objects.filter(is_admin=True, group=group, user=user).exists():
-                group_application = GroupApplication.objects.filter(group=group)
-                data["group_application"] = GroupApplicationSerializer(group_application, many=True).data
+                group_member_join = GroupMemberJoin.objects.filter(group=group)
+                data["group_member_join"] = GroupMemberJoinSerializer(group_member_join, many=True).data
 
             return self.success(data)
 
@@ -157,13 +157,13 @@ class GroupMemberAPI(APIView):
         return self.success("Member successfully removed from this group.")
 
 
-class GroupApplicationAPI(APIView):
+class GroupMemberJoinAPI(APIView):
     @swagger_auto_schema(
-        request_body=CreateGroupApplicationSerializer,
-        operation_description="Post a group application",
-        responses={200: GroupApplicationSerializer}
+        request_body=CreateGroupMemberJoinSerializer,
+        operation_description="Post a group member join",
+        responses={200: GroupMemberJoinSerializer}
     )
-    @validate_serializer(CreateGroupApplicationSerializer)
+    @validate_serializer(CreateGroupMemberJoinSerializer)
     def post(self, request):
         user = request.user
         group_id = request.data["group_id"]
@@ -172,16 +172,16 @@ class GroupApplicationAPI(APIView):
         if Group.objects.filter(id=group_id, members=user).exists():
             return self.error("You are already a member of this group.")
 
-        if GroupApplication.objects.filter(group=group_id, created_by=user).exists():
-            return self.error("You have already submitted your application to this group.")
+        if GroupMemberJoin.objects.filter(group=group_id, created_by=user).exists():
+            return self.error("You have already submitted your member join to this group.")
 
-        group_application = GroupApplication.objects.create(
+        group_member_join = GroupMemberJoin.objects.create(
             group_id=group_id,
             description=description,
             created_by=user
         )
 
-        return self.success(GroupApplicationSerializer(group_application).data)
+        return self.success(GroupMemberJoinSerializer(group_member_join).data)
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -192,45 +192,45 @@ class GroupApplicationAPI(APIView):
                 required=True
             ),
             openapi.Parameter(
-                name="application_id", in_=openapi.IN_QUERY,
+                name="member_join_id", in_=openapi.IN_QUERY,
                 type=openapi.TYPE_INTEGER,
-                description="Unique id of application",
+                description="Unique id of member_join",
                 required=True
             ),
             openapi.Parameter(
                 name="accept", in_=openapi.IN_QUERY,
                 type=openapi.TYPE_BOOLEAN,
-                description="true if accept else reject the application",
+                description="true if accept else reject the member_join",
                 required=True
             ),
         ],
-        operation_description="Resolve group application"
+        operation_description="Resolve group member_join"
     )
     @check_group_admin()
     def delete(self, request):
         group_id = request.GET.get("group_id")
-        application_id = request.GET.get("application_id")
+        member_join_id = request.GET.get("member_join_id")
         accept = request.GET.get("accept")
 
         try:
-            group_application = GroupApplication.objects.get(id=application_id)
-        except GroupApplication.DoesNotExist:
-            self.error("Group application does not exist")
+            group_member_join = GroupMemberJoin.objects.get(id=member_join_id)
+        except GroupMemberJoin.DoesNotExist:
+            self.error("Group member join does not exist")
 
         if not accept:
-            group_application.delete()
-            return self.success("Successfully rejected a group application")
+            group_member_join.delete()
+            return self.success("Successfully rejected a group member join")
 
-        group_application_created_by = group_application.created_by
+        group_member_join_created_by = group_member_join.created_by
         try:
             group = Group.objects.get(id=group_id)
         except Group.DoesNotExist:
             self.error("Group does not exist")
 
-        if group.members.filter(id=group_application_created_by.id).exists():
-            self.error("This user is already a member. This application may be already resolved.")
+        if group.members.filter(id=group_member_join_created_by.id).exists():
+            self.error("This user is already a member. This member_join may be already resolved.")
 
-        group.members.add(group_application_created_by)
-        group_application.delete()
+        group.members.add(group_member_join_created_by)
+        group_member_join.delete()
 
         return self.success(GroupDetailSerializer(group).data)
