@@ -1,4 +1,4 @@
-from .models import GroupApplication, GroupMember, GroupRegistrationRequest, Group
+from .models import GroupMemberJoin, GroupMember, GroupRegistrationRequest, Group
 from utils.api import serializers, UsernameSerializer
 
 
@@ -33,16 +33,16 @@ class GroupDetailSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CreateGroupApplicationSerializer(serializers.Serializer):
+class CreateGroupMemberJoinSerializer(serializers.Serializer):
     group_id = serializers.IntegerField()
     description = serializers.CharField()
 
 
-class GroupApplicationSerializer(serializers.ModelSerializer):
+class GroupMemberJoinSerializer(serializers.ModelSerializer):
     created_by = UsernameSerializer()
 
     class Meta:
-        model = GroupApplication
+        model = GroupMemberJoin
         fields = "__all__"
 
 

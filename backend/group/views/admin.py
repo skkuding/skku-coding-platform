@@ -3,7 +3,7 @@ from drf_yasg import openapi
 
 from utils.decorators import super_admin_required
 
-# from group.models import Group, GroupApplication
+# from group.models import Group, GroupMemberJoin
 from group.serializers import GroupRegistrationRequestSerializer, GroupDetailSerializer
 from utils.api import APIView
 

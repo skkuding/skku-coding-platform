@@ -47,9 +47,14 @@ class AdminGroupRegistrationRequestAPITest(APITestCase):
         res = self.client.delete(self.url + "?accept=False&request_id=" + str(self.group_registration_request.id))
         self.assertSuccess(res)
 
-    def test_delete_group_registration_request_not_exist(self):
-        self.client.delete(self.url + "?request_id=" + str(self.group_registration_request.id))
-        res = self.client.delete(self.url + "?request_id=" + str(self.group_registration_request.id))
+    def test_delete_group_registration_double_reject_fail(self):
+        self.client.delete(self.url + "?accept=False&request_id=" + str(self.group_registration_request.id))
+        res = self.client.delete(self.url + "?accept=False&request_id=" + str(self.group_registration_request.id))
+        self.assertFailed(res, msg="Invalid group registration request id")
+
+    def test_delete_group_registration_double_accept_fail(self):
+        self.client.delete(self.url + "?accept=True&request_id=" + str(self.group_registration_request.id))
+        res = self.client.delete(self.url + "?accept=True&request_id=" + str(self.group_registration_request.id))
         self.assertFailed(res, msg="Invalid group registration request id")
 
 
@@ -174,7 +179,7 @@ class GroupMemberAPITest(APITestCase):
         self.assertFailed(res)
 
 
-class GroupApplicationAPITest(APITestCase):
+class GroupMemberJoinAPITest(APITestCase):
     def setUp(self):
         super_admin = self.create_super_admin()
         self.create_admin()
@@ -189,9 +194,9 @@ class GroupApplicationAPITest(APITestCase):
         group.members.add(super_admin, through_defaults={"is_admin": True})
 
         self.group_id = group.id
-        self.url = self.reverse("group_application_api")
+        self.url = self.reverse("group_member_join_api")
 
-    def test_post_group_application(self):
+    def test_post_group_member_join(self):
         self.client.login(username="admin", password="admin")
         res = self.client.post(self.url, data={
             "group_id": self.group_id,
@@ -199,22 +204,22 @@ class GroupApplicationAPITest(APITestCase):
         })
         self.assertSuccess(res)
 
-    def test_delete_group_application_accept(self):
+    def test_delete_group_member_join_accept(self):
         self.client.login(username="admin", password="admin")
-        application = self.client.post(self.url, data={
+        member_join = self.client.post(self.url, data={
             "group_id": self.group_id,
             "description": "I have to be in there!"
         })
         self.client.login(username="root", password="root")
-        res = self.client.delete("{}?group_id={}&application_id={}&accept={}".format(self.url, self.group_id, application.data["data"]["id"], True))
+        res = self.client.delete("{}?group_id={}&member_join_id={}&accept={}".format(self.url, self.group_id, member_join.data["data"]["id"], True))
         self.assertSuccess(res)
 
-    def test_delete_group_application_reject(self):
+    def test_delete_group_member_join_reject(self):
         self.client.login(username="admin", password="admin")
-        application = self.client.post(self.url, data={
+        member_join = self.client.post(self.url, data={
             "group_id": self.group_id,
             "description": "I have to be in there!"
         })
         self.client.login(username="root", password="root")
-        res = self.client.delete("{}?group_id={}&application_id={}&accept={}".format(self.url, self.group_id, application.data["data"]["id"], False))
+        res = self.client.delete("{}?group_id={}&member_join_id={}&accept={}".format(self.url, self.group_id, member_join.data["data"]["id"], False))
         self.assertSuccess(res)
