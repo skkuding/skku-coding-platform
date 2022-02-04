@@ -68,18 +68,17 @@ class GroupAPI(APIView):
             return self.success(data)
 
         # Group Detail
-        else:
-            try:
-                group = Group.objects.get(id=group_id)
-            except Group.DoesNotExist:
-                return self.error("Group does not exist")
-            data = GroupDetailSerializer(group).data
+        try:
+            group = Group.objects.get(id=group_id)
+        except Group.DoesNotExist:
+            return self.error("Group does not exist")
+        data = GroupDetailSerializer(group).data
 
-            if GroupMember.objects.filter(is_admin=True, group=group, user=user).exists():
-                group_member_join = GroupMemberJoin.objects.filter(group=group)
-                data["group_member_join"] = GroupMemberJoinSerializer(group_member_join, many=True).data
+        if GroupMember.objects.filter(is_admin=True, group=group, user=user).exists():
+            group_member_join = GroupMemberJoin.objects.filter(group=group)
+            data["group_member_join"] = GroupMemberJoinSerializer(group_member_join, many=True).data
 
-            return self.success(data)
+        return self.success(data)
 
 
 class GroupMemberAPI(APIView):
@@ -104,22 +103,21 @@ class GroupMemberAPI(APIView):
             member.save()
             return self.success(GroupMemberSerializer(member).data)
 
-        else:
-            # Only group creator can downgrade group admin's permission.
-            try:
-                group = Group.objects.get(id=data["group_id"])
-            except Group.DoesNotExist:
-                return self.error("Group does not exists")
-            if not (group.created_by.id == user.id):
-                return self.error("Only group creator can change group admin's permission")
+        # Only group creator can downgrade group admin's permission.
+        try:
+            group = Group.objects.get(id=data["group_id"])
+        except Group.DoesNotExist:
+            return self.error("Group does not exists")
+        if not (group.created_by.id == user.id):
+            return self.error("Only group creator can change group admin's permission")
 
-            try:
-                member = GroupMember.objects.get(user=data["user_id"], group=data["group_id"])
-            except GroupMember.DoesNotExist:
-                return self.error("Group member does not exist")
-            member.is_admin = data["is_admin"]  # False
-            member.save()
-            return self.success(GroupMemberSerializer(member).data)
+        try:
+            member = GroupMember.objects.get(user=data["user_id"], group=data["group_id"])
+        except GroupMember.DoesNotExist:
+            return self.error("Group member does not exist")
+        member.is_admin = data["is_admin"]  # False
+        member.save()
+        return self.success(GroupMemberSerializer(member).data)
 
     @swagger_auto_schema(
         manual_parameters=[

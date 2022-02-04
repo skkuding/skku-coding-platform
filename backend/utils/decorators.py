@@ -190,10 +190,7 @@ def check_group_admin():
             if not user.is_authenticated:
                 return self.error("Please login first.")
 
-            if request.data.get("group_id"):
-                group_id = request.data["group_id"]
-            else:
-                group_id = request.GET.get("group_id")
+            group_id = request.data["group_id"] if request.data.get("group_id") else request.GET.get("group_id")
             if not group_id:
                 return self.error("Parameter error, group_id is required")
 
