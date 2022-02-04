@@ -18,7 +18,7 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="h-full grid place-items-center">
+  <main class="flex-1 grid place-items-center">
     <div>
       <h1 class="mb-12 text-center text-2xl font-bold text-stone-600">
         SKKU<br>Coding Platform
@@ -47,7 +47,7 @@ const login = async () => {
         </AtomsButton>
       </form>
     </div>
-  </div>
+  </main>
 </template>
 
 <route lang="yml">

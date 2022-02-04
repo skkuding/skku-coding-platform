@@ -12,8 +12,11 @@
 
 @layer base {
   html,
-  body,
+  body {
+    @apply h-full;
+  }
+
   #app {
-    @apply min-h-full;
+    @apply min-h-full flex;
   }
 }

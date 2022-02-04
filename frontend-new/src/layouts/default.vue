@@ -1,11 +1,5 @@
 <template>
-  <div
-    class="
-      h-full
-      flex flex-col
-      items-center
-    "
-  >
+  <div class="flex-1 flex flex-col items-center">
     <OrganismsHeaderMain />
     <router-view #="{ Component, route }">
       <Transition
