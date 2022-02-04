@@ -25,4 +25,7 @@ if os.system("flake8 --statistics --config .flake8 ."):
 ret = os.system(f'coverage run --include="$PWD/*" manage.py test {test_module} --settings={setting}')
 
 if not ret and is_coverage:
-    os.system("coverage html && open htmlcov/index.html")
+    os.system('echo "\n----------------------------------------------------------"')
+    os.system('echo "🌎 Open http://localhost:9000 to check coverage result."')
+    os.system('echo "✋ Press Ctrl + C to stop serving.\n"')
+    os.system("coverage html && npx --yes http-server htmlcov -s -p 9000")
