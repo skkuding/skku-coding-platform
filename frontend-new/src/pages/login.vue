@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
+import { Head } from '@vueuse/head'
 
 const loading = ref(false)
 const info = reactive({ username: '', password: '' })
@@ -19,6 +20,13 @@ const login = async () => {
 
 <template>
   <main class="flex-1 grid place-items-center">
+    <Head>
+      <title>Sign In</title>
+      <meta
+        name="description"
+        content="SKKU Coding Platform helps you enhance your coding ability, providing competitive programming environment."
+      >
+    </Head>
     <div>
       <h1 class="mb-12 text-center text-2xl font-bold text-stone-600">
         SKKU<br>Coding Platform
