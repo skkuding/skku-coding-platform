@@ -72,7 +72,7 @@ class GroupAPITest(APITestCase):
             description="post group registration request",
             is_official=True
         )
-        group_admin.members.add(super_admin, through_defaults={"is_admin": True})
+        group_admin.members.add(super_admin, through_defaults={"is_group_admin": True})
 
         group = Group.objects.create(
             created_by=admin,
@@ -81,7 +81,7 @@ class GroupAPITest(APITestCase):
             description="post group registration request",
             is_official=True
         )
-        group.members.add(admin, through_defaults={"is_admin": False})
+        group.members.add(admin, through_defaults={"is_group_admin": False})
         group.members.add(super_admin)
 
         other_group = Group.objects.create(
@@ -108,7 +108,7 @@ class GroupDetailAPITest(APITestCase):
             description="post group registration request",
             is_official=True
         )
-        group.members.add(super_admin, through_defaults={"is_admin": True})
+        group.members.add(super_admin, through_defaults={"is_group_admin": True})
         self.url = self.reverse("group_api") + "?id=" + str(group.id)
 
     def test_get_group_detail(self):
@@ -128,7 +128,7 @@ class GroupMemberAPITest(APITestCase):
             description="post group registration request",
             is_official=True
         )
-        group.members.add(super_admin, through_defaults={"is_admin": True})
+        group.members.add(super_admin, through_defaults={"is_group_admin": True})
         group.members.add(admin)
         self.url = self.reverse("group_member_api")
 
@@ -140,7 +140,7 @@ class GroupMemberAPITest(APITestCase):
         res = self.client.put(self.url, data={
             "group_id": self.group_id,
             "user_id": self.admin_id,
-            "is_admin": True
+            "is_group_admin": True
         })
         self.assertSuccess(res)
 
@@ -148,7 +148,7 @@ class GroupMemberAPITest(APITestCase):
         res = self.client.put(self.url, data={
             "group_id": self.group_id,
             "user_id": self.admin_id,
-            "is_admin": False
+            "is_group_admin": False
         })
         self.assertSuccess(res)
 
@@ -157,7 +157,7 @@ class GroupMemberAPITest(APITestCase):
         res = self.client.put(self.url, data={
             "group_id": self.group_id,
             "user_id": self.super_admin_id,
-            "is_admin": False
+            "is_group_admin": False
         })
         self.assertFailed(res)
 
@@ -173,7 +173,7 @@ class GroupMemberAPITest(APITestCase):
         self.client.put(self.url, data={
             "group_id": self.group_id,
             "user_id": self.admin_id,
-            "is_admin": True
+            "is_group_admin": True
         })
         res = self.client.delete(self.url + "?group_id={}&user_id={}".format(self.group_id, self.admin_id))
         self.assertFailed(res)
@@ -191,7 +191,7 @@ class GroupMemberJoinAPITest(APITestCase):
             description="post group registration request",
             is_official=True
         )
-        group.members.add(super_admin, through_defaults={"is_admin": True})
+        group.members.add(super_admin, through_defaults={"is_group_admin": True})
 
         self.group_id = group.id
         self.url = self.reverse("group_member_join_api")

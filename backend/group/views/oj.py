@@ -56,8 +56,8 @@ class GroupAPI(APIView):
 
         # Group List
         if not group_id:
-            groups_not_admin = Group.objects.filter(groupmember__is_admin=False, groupmember__user=user)
-            groups_admin = Group.objects.filter(groupmember__is_admin=True, groupmember__user=user)
+            groups_not_admin = Group.objects.filter(groupmember__is_group_admin=False, groupmember__user=user)
+            groups_admin = Group.objects.filter(groupmember__is_group_admin=True, groupmember__user=user)
             other_groups = Group.objects.exclude(Q(members=user))
 
             data = {}
@@ -74,7 +74,7 @@ class GroupAPI(APIView):
             return self.error("Group does not exist")
         data = GroupDetailSerializer(group).data
 
-        if GroupMember.objects.filter(is_admin=True, group=group, user=user).exists():
+        if GroupMember.objects.filter(is_group_admin=True, group=group, user=user).exists():
             group_member_join = GroupMemberJoin.objects.filter(group=group)
             data["group_member_join"] = GroupMemberJoinSerializer(group_member_join, many=True).data
 
@@ -85,7 +85,7 @@ class GroupMemberAPI(APIView):
     # Change User Group Permission
     @swagger_auto_schema(
         request_body=EditGroupMemberPermissionSerializer,
-        operation_description="Change group member permission. only can change is_admin field.",
+        operation_description="Change group member permission. only can change is_group_admin field.",
         responses={200: GroupMemberSerializer}
     )
     @validate_serializer(EditGroupMemberPermissionSerializer)
@@ -94,12 +94,12 @@ class GroupMemberAPI(APIView):
         data = request.data
         user = request.user
 
-        if data["is_admin"]:
+        if data["is_group_admin"]:
             try:
                 member = GroupMember.objects.get(user=data["user_id"], group=data["group_id"])
             except GroupMember.DoesNotExist:
                 return self.error("Group Member does not exists")
-            member.is_admin = data["is_admin"]  # True
+            member.is_group_admin = data["is_group_admin"]  # True
             member.save()
             return self.success(GroupMemberSerializer(member).data)
 
@@ -115,7 +115,7 @@ class GroupMemberAPI(APIView):
             member = GroupMember.objects.get(user=data["user_id"], group=data["group_id"])
         except GroupMember.DoesNotExist:
             return self.error("Group member does not exist")
-        member.is_admin = data["is_admin"]  # False
+        member.is_group_admin = data["is_group_admin"]  # False
         member.save()
         return self.success(GroupMemberSerializer(member).data)
 
@@ -149,7 +149,7 @@ class GroupMemberAPI(APIView):
         except GroupMember.DoesNotExist:
             return self.error("group member does not exist")
 
-        if member.is_admin:
+        if member.is_group_admin:
             return self.error("Cannot remove admin member.")
 
         member.delete()

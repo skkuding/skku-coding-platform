@@ -25,12 +25,11 @@ class GroupSummarySerializer(serializers.ModelSerializer):
 
 
 class GroupDetailSerializer(serializers.ModelSerializer):
-    members = UsernameSerializer(many=True)
     created_by = UsernameSerializer()
 
     class Meta:
         model = Group
-        fields = "__all__"
+        exclude = ("members")
 
 
 class CreateGroupMemberJoinSerializer(serializers.Serializer):
@@ -49,7 +48,7 @@ class GroupMemberJoinSerializer(serializers.ModelSerializer):
 class EditGroupMemberPermissionSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()
     group_id = serializers.IntegerField()
-    is_admin = serializers.BooleanField()
+    is_group_admin = serializers.BooleanField()
 
 
 class GroupMemberSerializer(serializers.ModelSerializer):
