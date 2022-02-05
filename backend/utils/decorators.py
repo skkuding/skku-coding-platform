@@ -196,7 +196,7 @@ def check_group_admin():
 
             if not Group.objects.filter(id=group_id).exists():
                 return self.error("Group does not exist")
-            if not GroupMember.objects.filter(group=group_id, user=user, is_admin=True).exists():
+            if not GroupMember.objects.filter(group=group_id, user=user, is_group_admin=True).exists():
                 return self.error("permission-denied: Group admin is required")
 
             return func(*args, **kwargs)
