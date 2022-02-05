@@ -78,8 +78,7 @@ class GroupAPI(APIView):
             return self.error("Group does not exist")
         data = GroupDetailSerializer(group).data
 
-        data["members"] = GroupMemberSerializer(GroupMember.objects.filter(group=group_id, is_group_admin=False), many=True).data
-        data["admin_members"] = GroupMemberSerializer(GroupMember.objects.filter(group=group_id, is_group_admin=True), many=True).data
+        data["members"] = GroupMemberSerializer(GroupMember.objects.filter(group=group_id), many=True).data
 
         if GroupMember.objects.filter(is_group_admin=True, group=group, user=user).exists():
             group_member_join = GroupMemberJoin.objects.filter(group=group)
