@@ -7,7 +7,7 @@
 }
 
 #nprogress .bar {
-  @apply bg-lime-400 fixed top-0 left-0 w-full h-[2px];
+  @apply fixed top-0 left-0 h-[2px] w-full bg-lime-400;
 }
 
 @layer base {
@@ -17,6 +17,6 @@
   }
 
   #app {
-    @apply min-h-full flex;
+    @apply flex min-h-full;
   }
 }

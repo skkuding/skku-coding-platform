@@ -6,11 +6,14 @@ const api = axios.create({
   xsrfHeaderName: 'X-CSRFToken'
 })
 
-api.interceptors.response.use((response) => {
-  // TODO: handle authorization required api
-  return response.data
-}, (error) => {
-  throw new Error(error)
-})
+api.interceptors.response.use(
+  (response) => {
+    // TODO: handle authorization required api
+    return response.data
+  },
+  (error) => {
+    throw new Error(error)
+  }
+)
 
 export default api

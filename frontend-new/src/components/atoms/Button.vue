@@ -5,10 +5,10 @@ type Variant = 'primary' | 'secondary' | 'danger'
 type Size = 'small' | 'large'
 
 const props = defineProps<{
-  class?: string,
-  variant?: Variant,
-  outline?: boolean,
-  size?: Size,
+  class?: string
+  variant?: Variant
+  outline?: boolean
+  size?: Size
   disabled?: boolean
 }>()
 
@@ -26,7 +26,9 @@ const classList = computed(() => [
   props.size === 'small' ? 'text-sm rounded-md' : '',
   props.size === 'large' ? '' : '',
 
-  props.disabled ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-75 active:opacity-50',
+  props.disabled
+    ? 'opacity-60 cursor-not-allowed'
+    : 'hover:opacity-75 active:opacity-50',
 
   'px-2 py-1 font-medium',
   'transition hover:ease-in-out'

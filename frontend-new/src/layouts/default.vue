@@ -1,15 +1,9 @@
 <template>
-  <div class="flex-1 flex flex-col items-center">
+  <div class="flex flex-1 flex-col items-center">
     <OrganismsHeaderMain />
     <router-view #="{ Component, route }">
-      <Transition
-        name="fade"
-        mode="out-in"
-      >
-        <component
-          :is="Component"
-          :key="route.path"
-        />
+      <Transition name="fade" mode="out-in">
+        <component :is="Component" :key="route.path" />
       </Transition>
     </router-view>
     <OrganismsFooterMain />

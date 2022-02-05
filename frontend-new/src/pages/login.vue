@@ -4,11 +4,11 @@ import { Head } from '@vueuse/head'
 
 const loading = ref(false)
 const info = reactive({ username: '', password: '' })
-const message = computed(() => loading.value ? 'Signing In...' : 'Sign In')
+const message = computed(() => (loading.value ? 'Signing In...' : 'Sign In'))
 
 // just for demo
-function sleep (ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 const login = async () => {
@@ -19,22 +19,19 @@ const login = async () => {
 </script>
 
 <template>
-  <main class="flex-1 grid place-items-center">
+  <main class="grid flex-1 place-items-center">
     <Head>
       <title>Sign In</title>
       <meta
         name="description"
         content="SKKU Coding Platform helps you enhance your coding ability, providing competitive programming environment."
-      >
+      />
     </Head>
     <div>
       <h1 class="mb-12 text-center text-2xl font-bold text-stone-600">
-        SKKU<br>Coding Platform
+        SKKU<br />Coding Platform
       </h1>
-      <form
-        class="flex flex-col gap-4 w-64"
-        @submit.prevent="login"
-      >
+      <form class="flex w-64 flex-col gap-4" @submit.prevent="login">
         <AtomsInput
           v-model="info.username"
           type="text"
@@ -48,7 +45,7 @@ const login = async () => {
         <AtomsButton
           type="submit"
           variant="primary"
-          class="w-full h-8"
+          class="h-8 w-full"
           :disabled="loading"
         >
           {{ message }}

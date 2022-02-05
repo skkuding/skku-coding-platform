@@ -46,22 +46,10 @@
         y2="49.628"
         gradientTransform="matrix(1 0 0 -1 0 69.896)"
       >
-        <stop
-          offset="0"
-          stop-color="#fff"
-        />
-        <stop
-          offset=".2"
-          stop-color="#e7eb8e"
-        />
-        <stop
-          offset=".76"
-          stop-color="#aacc03"
-        />
-        <stop
-          offset="1"
-          stop-color="#8dc21f"
-        />
+        <stop offset="0" stop-color="#fff" />
+        <stop offset=".2" stop-color="#e7eb8e" />
+        <stop offset=".76" stop-color="#aacc03" />
+        <stop offset="1" stop-color="#8dc21f" />
       </linearGradient>
       <path
         d="M36 22.3c0-6.9 5.6-12.5 12.5-12.5 1.7 0 3.2.3 4.7.9C42.1.6 25 .8 14.3 11.5 3.9 21.9 3.4 38.3 12.6 49.4c2.4-3.1 5.7-6.7 9.7-9.6 3.1-2.2 7.5-4.4 11-4.7 3.3-.3 8.2 0 11.2 1.4-2.3-2.4-4.8-5.1-6-6.7-1.6-2.1-2.5-4.7-2.5-7.5z"
@@ -76,38 +64,14 @@
         y2="59.527"
         gradientTransform="matrix(1 0 0 -1 0 69.896)"
       >
-        <stop
-          offset="0"
-          stop-color="#e5ea90"
-        />
-        <stop
-          offset=".016"
-          stop-color="#e1e889"
-        />
-        <stop
-          offset=".087"
-          stop-color="#d3e06e"
-        />
-        <stop
-          offset=".151"
-          stop-color="#cadc5e"
-        />
-        <stop
-          offset=".2"
-          stop-color="#c7da58"
-        />
-        <stop
-          offset=".4"
-          stop-color="#a1c710"
-        />
-        <stop
-          offset=".743"
-          stop-color="#7cb923"
-        />
-        <stop
-          offset="1"
-          stop-color="#65b12f"
-        />
+        <stop offset="0" stop-color="#e5ea90" />
+        <stop offset=".016" stop-color="#e1e889" />
+        <stop offset=".087" stop-color="#d3e06e" />
+        <stop offset=".151" stop-color="#cadc5e" />
+        <stop offset=".2" stop-color="#c7da58" />
+        <stop offset=".4" stop-color="#a1c710" />
+        <stop offset=".743" stop-color="#7cb923" />
+        <stop offset="1" stop-color="#65b12f" />
       </linearGradient>
       <path
         d="M35.1 31.4L21.9 6.1c-2.4 1.2-4.7 2.7-6.8 4.6l20 20.7z"
@@ -122,38 +86,14 @@
         y2="63.91"
         gradientTransform="matrix(1 0 0 -1 0 69.896)"
       >
-        <stop
-          offset="0"
-          stop-color="#e5ea90"
-        />
-        <stop
-          offset=".016"
-          stop-color="#e1e889"
-        />
-        <stop
-          offset=".087"
-          stop-color="#d3e06e"
-        />
-        <stop
-          offset=".151"
-          stop-color="#cadc5e"
-        />
-        <stop
-          offset=".2"
-          stop-color="#c7da58"
-        />
-        <stop
-          offset=".4"
-          stop-color="#a1c710"
-        />
-        <stop
-          offset=".743"
-          stop-color="#7cb923"
-        />
-        <stop
-          offset="1"
-          stop-color="#65b12f"
-        />
+        <stop offset="0" stop-color="#e5ea90" />
+        <stop offset=".016" stop-color="#e1e889" />
+        <stop offset=".087" stop-color="#d3e06e" />
+        <stop offset=".151" stop-color="#cadc5e" />
+        <stop offset=".2" stop-color="#c7da58" />
+        <stop offset=".4" stop-color="#a1c710" />
+        <stop offset=".743" stop-color="#7cb923" />
+        <stop offset="1" stop-color="#65b12f" />
       </linearGradient>
       <path
         d="M35.2 31.5l1.7-28c-2.3-.2-4.6-.2-6.8.1l5.1 27.9z"
@@ -168,38 +108,14 @@
         y2="48.047"
         gradientTransform="matrix(1 0 0 -1 0 69.896)"
       >
-        <stop
-          offset="0"
-          stop-color="#e5ea90"
-        />
-        <stop
-          offset=".016"
-          stop-color="#e1e889"
-        />
-        <stop
-          offset=".087"
-          stop-color="#d3e06e"
-        />
-        <stop
-          offset=".151"
-          stop-color="#cadc5e"
-        />
-        <stop
-          offset=".2"
-          stop-color="#c7da58"
-        />
-        <stop
-          offset=".4"
-          stop-color="#a1c710"
-        />
-        <stop
-          offset=".743"
-          stop-color="#7cb923"
-        />
-        <stop
-          offset="1"
-          stop-color="#65b12f"
-        />
+        <stop offset="0" stop-color="#e5ea90" />
+        <stop offset=".016" stop-color="#e1e889" />
+        <stop offset=".087" stop-color="#d3e06e" />
+        <stop offset=".151" stop-color="#cadc5e" />
+        <stop offset=".2" stop-color="#c7da58" />
+        <stop offset=".4" stop-color="#a1c710" />
+        <stop offset=".743" stop-color="#7cb923" />
+        <stop offset="1" stop-color="#65b12f" />
       </linearGradient>
       <path
         d="M35 31.4L7.9 21.3c-.9 2.4-1.5 4.9-1.7 7.5L35 31.4z"
@@ -214,38 +130,14 @@
         y2="44.094"
         gradientTransform="matrix(1 0 0 -1 0 69.896)"
       >
-        <stop
-          offset="0"
-          stop-color="#e5ea90"
-        />
-        <stop
-          offset=".016"
-          stop-color="#e1e889"
-        />
-        <stop
-          offset=".087"
-          stop-color="#d3e06e"
-        />
-        <stop
-          offset=".151"
-          stop-color="#cadc5e"
-        />
-        <stop
-          offset=".2"
-          stop-color="#c7da58"
-        />
-        <stop
-          offset=".4"
-          stop-color="#a1c710"
-        />
-        <stop
-          offset=".743"
-          stop-color="#7cb923"
-        />
-        <stop
-          offset="1"
-          stop-color="#65b12f"
-        />
+        <stop offset="0" stop-color="#e5ea90" />
+        <stop offset=".016" stop-color="#e1e889" />
+        <stop offset=".087" stop-color="#d3e06e" />
+        <stop offset=".151" stop-color="#cadc5e" />
+        <stop offset=".2" stop-color="#c7da58" />
+        <stop offset=".4" stop-color="#a1c710" />
+        <stop offset=".743" stop-color="#7cb923" />
+        <stop offset="1" stop-color="#65b12f" />
       </linearGradient>
       <path
         d="M6.4 35.4c.3 2 .8 3.9 1.5 5.8L35 31.5 6.4 35.4z"

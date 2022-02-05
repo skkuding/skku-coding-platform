@@ -1,5 +1,5 @@
 <template>
-  <footer class="flex flex-col items-center gap-y-3 text-stone-400 my-6">
+  <footer class="my-6 flex flex-col items-center gap-y-3 text-stone-400">
     <div class="flex gap-x-6">
       <a href="mailto:npc.skku@g.skku.edu">
         <IconFaSolidEnvelope />
@@ -10,16 +10,10 @@
       >
         <IconFaGithub />
       </a>
-      <a
-        href="http://pf.kakao.com/_UKraK/chat"
-        target="_blank"
-      >
+      <a href="http://pf.kakao.com/_UKraK/chat" target="_blank">
         <IconRiKakaoTalkFill />
       </a>
-      <a
-        href="https://npc.skku.edu"
-        target="_blank"
-      >
+      <a href="https://npc.skku.edu" target="_blank">
         <IconFaSolidLink />
       </a>
     </div>

@@ -31,11 +31,7 @@ export default defineConfig({
     imagetools()
   ],
   optimizeDeps: {
-    include: [
-      'vue',
-      'vue-router',
-      '@vueuse/head'
-    ]
+    include: ['vue', 'vue-router', '@vueuse/head']
   },
   resolve: {
     alias: {

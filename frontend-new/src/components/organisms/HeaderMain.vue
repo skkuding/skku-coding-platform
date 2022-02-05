@@ -14,31 +14,22 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <header class="h-14 w-full px-8 md:px-10 flex items-center justify-center border-b">
-    <div class="w-full max-w-7xl flex items-center">
+  <header
+    class="flex h-14 w-full items-center justify-center border-b px-8 md:px-10"
+  >
+    <div class="flex w-full max-w-7xl items-center">
       <router-link
         to="/"
-        class="
-        w-36
-        hover:opacity-75 active:opacity-50
-        transition duration-150 hover:ease-in-out
-      "
+        class="w-36 transition duration-150 hover:opacity-75 hover:ease-in-out active:opacity-50"
       >
         <AtomsSignature />
       </router-link>
       <MoleculesHeaderNav class="absolute left-1/2 translate-x-[-50%]" />
-      <div class="hidden sm:flex gap-2 ml-auto">
-        <AtomsButton
-          size="small"
-          @click="$router.push('login')"
-        >
+      <div class="ml-auto hidden gap-2 sm:flex">
+        <AtomsButton size="small" @click="$router.push('login')">
           Sign In
         </AtomsButton>
-        <AtomsButton
-          size="small"
-          outline
-          @click="$router.push('register')"
-        >
+        <AtomsButton size="small" outline @click="$router.push('register')">
           Sign Up
         </AtomsButton>
       </div>
@@ -48,8 +39,5 @@ onBeforeRouteLeave(() => {
       />
     </div>
   </header>
-  <MoleculesHeaderMobileNav
-    :active="isMobileNavShown"
-    class="lg:hidden"
-  />
+  <MoleculesHeaderMobileNav :active="isMobileNavShown" class="lg:hidden" />
 </template>

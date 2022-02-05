@@ -16,38 +16,23 @@ const items = [
 
 <template>
   <div
-    class="
-      flex flex-col sm:flex-row gap-2 sm:gap-4
-      items-center justify-center
-      w-full overflow-hidden
-      transition-all ease-out
-    "
-    :class="active ? 'h-48 sm:h-12 border-b' : 'h-0'"
+    class="flex w-full flex-col items-center justify-center gap-2 overflow-hidden transition-all ease-out sm:flex-row sm:gap-4"
+    :class="active ? 'h-48 border-b sm:h-12' : 'h-0'"
   >
     <router-link
       v-for="item in items"
       :key="item.label"
       :to="item.link"
-      class="
-        text-md text-stone-600 font-semibold
-        hover:opacity-75 active:opacity-50
-        transition hover:ease-in-out"
+      class="text-md font-semibold text-stone-600 transition hover:opacity-75 hover:ease-in-out active:opacity-50"
       active-class="text-lime-500"
     >
       {{ item.label }}
     </router-link>
-    <div class="flex gap-4 mt-2 sm:hidden">
-      <AtomsButton
-        size="small"
-        @click="$router.push('login')"
-      >
+    <div class="mt-2 flex gap-4 sm:hidden">
+      <AtomsButton size="small" @click="$router.push('login')">
         Sign In
       </AtomsButton>
-      <AtomsButton
-        size="small"
-        outline
-        @click="$router.push('register')"
-      >
+      <AtomsButton size="small" outline @click="$router.push('register')">
         Sign Up
       </AtomsButton>
     </div>

@@ -1,9 +1,5 @@
 {
   "editor.bracketPairColorization.enabled": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.fixAll.stylelint": true
-  },
   "editor.formatOnSave": true,
   "eslint.workingDirectories": [
     "frontend/",
@@ -11,7 +7,6 @@
   ],
   "files.autoSave": "off",
   "material-icon-theme.activeIconPack": "vue_vuex",
-  "prettier.enable": false,
   "python.formatting.provider": "none",
   "python.linting.flake8Args": [
     "--config",
@@ -25,6 +20,10 @@
     "vue"
   ],
   "[javascript][typescript][vue]": {
-    "editor.formatOnSave": false
+    "editor.codeActionsOnSave": [
+      "source.formatDocument",
+      "source.fixAll.stylelint"
+    ],
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

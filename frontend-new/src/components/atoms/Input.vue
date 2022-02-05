@@ -17,5 +17,5 @@ const classList = computed(() => [
 </script>
 
 <template>
-  <input :class="classList">
+  <input :class="classList" />
 </template>

@@ -10,15 +10,16 @@ export const useUserStore = defineStore('user', () => {
   const user = computed<User | Record<string, never>>(() => profile.user || {})
   const isAuthenticated = computed<boolean>(() => !!user.value.id)
   const adminType = computed<AdminType>(() => user.value.admin_type)
-  const isAdmin = computed<boolean>(() =>
-    adminType.value === ADMIN_TYPE.ADMIN ||
-    adminType.value === ADMIN_TYPE.SUPER_ADMIN
+  const isAdmin = computed<boolean>(
+    () =>
+      adminType.value === ADMIN_TYPE.ADMIN ||
+      adminType.value === ADMIN_TYPE.SUPER_ADMIN
   )
   const isSuperAdmin = computed<boolean>(
     () => adminType.value === ADMIN_TYPE.SUPER_ADMIN
   )
-  const hasProblemPermission = computed<boolean>(() =>
-    user.value.problem_permission === PROBLEM_PERMISSION.NONE
+  const hasProblemPermission = computed<boolean>(
+    () => user.value.problem_permission === PROBLEM_PERMISSION.NONE
   )
 
   const getProfile = async () => {
