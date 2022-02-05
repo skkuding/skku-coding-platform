@@ -29,7 +29,7 @@ class GroupDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        exclude = ("members",)
+        fields = "__all__"
 
 
 class CreateGroupMemberJoinSerializer(serializers.Serializer):
