@@ -46,7 +46,12 @@ const actions = {
     commit(types.CHANGE_PROFILE, {
       profile: {}
     })
-    storage.clear()
+    // storage.clear()
+    for (const key in localStorage) {
+      if (key.indexOf('problemCode') === -1) {
+        storage.remove(key)
+      }
+    }
   }
 }
 
