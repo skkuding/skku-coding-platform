@@ -28,17 +28,19 @@ class AdminGroupRegistrationRequestAPI(APIView):
                 in_=openapi.IN_QUERY,
                 description="Unique ID of a registration request.",
                 type=openapi.TYPE_INTEGER,
-                required=False
+                required=True
             ),
             openapi.Parameter(
                 name="accept",
                 in_=openapi.IN_QUERY,
                 description="if accept, accept registration request and create group. else, just delete registration request",
-                type=openapi.TYPE_INTEGER,
-                required=False
+                type=openapi.TYPE_BOOLEAN,
+                required=True
             )
         ],
-        operation_description="Request to group registration",
+        operation_description="if accept is true, accept registration request and create group.\
+                                else, just delete registration request. \
+                                Be careful if accept is not given, also considered as accepted=False",
         responses={200: GroupDetailSerializer}
     )
     @super_admin_required
