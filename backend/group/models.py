@@ -40,7 +40,7 @@ class GroupMember(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
 
-    is_admin = models.BooleanField(default=False)
+    is_group_admin = models.BooleanField(default=False)
 
 
 class GroupMemberJoin(models.Model):
