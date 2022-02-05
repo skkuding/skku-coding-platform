@@ -18,6 +18,10 @@ class GroupRegistrationRequestAPI(APIView):
     )
     @validate_serializer(CreateGroupRegistrationRequestSerializer)
     def post(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return self.error("Login First")
+
         data = request.data
         name = data["name"]
 
@@ -168,6 +172,9 @@ class GroupMemberJoinAPI(APIView):
     @validate_serializer(CreateGroupMemberJoinSerializer)
     def post(self, request):
         user = request.user
+        if not user.is_authenticated:
+            return self.error("Login First")
+
         group_id = request.data["group_id"]
         description = request.data["description"]
 
