@@ -1,17 +1,36 @@
 <template>
   <div>
     <div class="page-top">
-      <div>
-        <span class="white">SKKU Coding Platform</span>
-        <span class="gold"> Contests</span>
-      </div>
+      <h2>
+        <span class="title-white">🏆 SKKU Coding Platform</span>
+        <span class="title-gold"> Contests</span>
+      </h2>
       <div class="description">Compete with schoolmates & win the prizes!</div>
     </div>
-    <div>
-      Enter >>
-    </div>
     <div class="contest-list-card font-bold">
-      <div class="table">
+      <h4 class="subtitle-blue">
+        Enter >>
+      </h4>
+      <neon-box></neon-box>
+      <h4 class="subtitle-blue">
+        Register Now >>
+      </h4>
+      <h4 class="subtitle-blue">
+        Upcoming Contests >>
+      </h4>
+      <h4 class="subtitle-red">
+        Cannot Participate
+        <button class="subtitle-toggle">
+          <b-icon-caret-down-fill color="#FF6663"></b-icon-caret-down-fill>
+        </button>
+      </h4>
+      <h4 class="subtitle-red">
+        Finished Contests
+        <button class="subtitle-toggle">
+          <b-icon-caret-down-fill color="#FF6663"></b-icon-caret-down-fill>
+        </button>
+      </h4>
+      <!-- <div class="table">
         <b-table
           hover
           :items="contests"
@@ -44,17 +63,18 @@
           :per-page="perPage"
           limit="3"
         ></b-pagination>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script>
 import api from '@oj/api'
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import utils from '@/utils/utils'
 import time from '@/utils/time'
 import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/constants'
+import NeonBox from '@oj/components/NeonBox.vue'
 
 export default {
   name: 'ContestList',
@@ -70,6 +90,9 @@ export default {
     } catch (err) {
       next()
     }
+  },
+  components: {
+    NeonBox
   },
   data () {
     return {
@@ -166,9 +189,6 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      contest: state => state.contest.contest
-    }),
     ...mapGetters(
       ['contestMenuDisabled', 'countdown', 'isContestAdmin',
         'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated']
@@ -194,15 +214,13 @@ export default {
   }
   .page-top {
     background: linear-gradient(270deg, rgba(26, 62, 81, 0.90) 0%, #1A3E51 25%, #1A3E51 75%, rgba(26, 62, 81, 0.90) 100%);;
-    padding: 50px 200px;
+    padding: 50px 0px;
     text-align: center;
     font-family: Manrope;
-    .white {
-      font-size: 2rem;
+    .title-white {
       color: white;
     }
-    .gold {
-      font-size: 2rem;
+    .title-gold {
       color: #FEB144;
     }
     .description {
@@ -211,12 +229,69 @@ export default {
       margin-top: 1rem;
     }
   }
-  div{
-    &.pagination{
-    margin-right: 5%;
-    margin-top: 20px;
+  .subtitle-blue {
+    color: #1A3E51;
+    margin: 1.5rem 0;
+  }
+
+  .subtitle-red {
+    color: #FF6663;
+    padding-top: 1rem;
+  }
+  .subtitle-toggle {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    background: none;
+  }
+
+  .neon-box {
+    background: #FFFFFF;
+    border: 0.89132px solid #8DC63F;
+    box-shadow: 0px 0px 8.9132px #8DC63F;
+    padding: 1rem;
     display: flex;
-    justify-content: flex-end;
+    transition: 0.3s ease-in-out;
+    &:hover {
+      transform: scale(1.01);
+    }
+
+    .logo {
+      width: 4rem;
+      height: 4rem;
+      margin-right: 1rem;
+    }
+
+    .contest-information-flex-col {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      justify-content: space-between;
+      .contest-information-flex-row {
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: space-between;
+        .contest-information-big {
+          color: #173747;
+          font-size: 1.3rem;
+          font-weight: bold;
+          white-space: nowrap;
+        }
+        .contest-information-small {
+          color: #173747;
+          font-size: 1.0rem;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+  div{
+    &.pagination {
+      margin-right: 5%;
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
     }
   }
   .contest-list-card::v-deep {
