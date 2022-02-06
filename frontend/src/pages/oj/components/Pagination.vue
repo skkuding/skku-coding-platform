@@ -42,23 +42,20 @@ export default {
     }
   },
   computed: {
+    localLimit () {
+      return Number(this.limit)
+    },
     numberOfPages () { // number of pages
       return Math.ceil(this.totalRows / this.perPage)
     },
     startPage () {
-      var start = (Math.trunc((this.currentPage - 1) / this.limit)) * this.limit + 1
-      return start
+      return Math.trunc((this.currentPage - 1) / this.localLimit) * this.localLimit + 1
     },
     endPage () {
-      var end = this.startPage + Number(this.limit) - 1
-      return end <= this.numberOfPages ? end : this.numberOfPages
+      return this.startPage + this.localLimit - 1 <= this.numberOfPages ? this.startPage + this.localLimit - 1 : this.numberOfPages
     },
     pageList () {
-      var pages = []
-      for (let i = this.startPage; i <= this.endPage; i++) {
-        pages.push(i)
-      }
-      return pages
+      return [...Array(this.endPage - this.startPage + 1).keys()].map(i => i + this.startPage)
     }
   }
 }
@@ -84,21 +81,22 @@ export default {
   cursor: pointer;
 }
 
-.page-btn.leftedge {
+.leftedge {
   border-top-left-radius: 0.25rem !important;
   border-bottom-left-radius: 0.25rem !important;
 }
 
-.page-btn.rightedge {
+.rightedge {
   border-top-right-radius: 0.25rem !important;
   border-bottom-right-radius: 0.25rem !important;
 }
 
-.page-btn.select {
+.select {
     background-color: #bdbdbd;
     border: thin solid #bdbdbd;
     color: white;
     pointer-events: none;
+    z-index: 1;
 }
 
 .page-btn:hover {
