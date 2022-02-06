@@ -175,7 +175,7 @@ export default [
   {
     name: 'profile',
     path: '/profile',
-    meta: { title: 'My Profile' },
+    meta: { requiresAuth: true, title: 'My Profile' },
     component: Profile
   },
   {
