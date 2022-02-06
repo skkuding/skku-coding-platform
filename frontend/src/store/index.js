@@ -7,6 +7,7 @@ import api from '@oj/api'
 import types from './types'
 
 Vue.use(Vuex)
+Vue.config.devtools = process.env.NODE_ENV !== 'production'
 const debug = process.env.NODE_ENV !== 'production'
 
 const rootState = {
