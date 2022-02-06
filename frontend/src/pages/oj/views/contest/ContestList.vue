@@ -1,39 +1,50 @@
 <template>
-  <div class="contest-list-card font-bold">
-    <page-title text="All Contest"/>
-    <Table
-      hover
-      :items="contests"
-      :fields="contestListFields"
-      :per-page="perPage"
-      :current-page="currentPage"
-      @row-clicked="goContest"
-    >
-      <template v-slot:title="data">
-        <div class="w-80">{{ data.row.title }}</div>
-      </template>
-      <template v-slot:start_time="data">
-        {{ getTimeFormat(data.row.start_time) }}
-      </template>
-      <template v-slot:duration="data">
-        {{ getDuration(data.row.start_time, data.row.end_time) }}
-      </template>
-      <template v-slot:status="data">
-        <b-icon
-          icon="circle-fill"
-          class="mr-2"
-          :style="'color:' + contestStatus(data.row.status).color"
-        />
-        {{ contestStatus(data.row.status).name }}
-      </template>
-    </Table>
-    <div class="pagination">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="contests.length"
-        :per-page="perPage"
-        limit="3"
-      ></b-pagination>
+  <div>
+    <div class="page-top">
+      <div>
+        <span class="white">SKKU Coding Platform</span>
+        <span class="gold"> Contests</span>
+      </div>
+      <div class="description">Compete with schoolmates & win the prizes!</div>
+    </div>
+    <div>
+      Enter >>
+    </div>
+    <div class="contest-list-card font-bold">
+      <div class="table">
+        <b-table
+          hover
+          :items="contests"
+          :fields="contestListFields"
+          :per-page="perPage"
+          :current-page="currentPage"
+          head-variant="light"
+          @row-clicked="goContest"
+        >
+          <template #cell(start_time)="data">
+            {{ getTimeFormat(data.value) }}
+          </template>
+          <template #cell(duration)="data">
+            {{ getDuration(data.item.start_time, data.item.end_time) }}
+          </template>
+          <template #cell(status)="data">
+            <b-icon
+              icon="circle-fill"
+              class="mr-2"
+              :style="'color:' + contestStatus(data.value).color"
+            />
+            {{ contestStatus(data.value).name }}
+          </template>
+        </b-table>
+      </div>
+      <div class="pagination">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="contests.length"
+          :per-page="perPage"
+          limit="3"
+        ></b-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -44,14 +55,10 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import utils from '@/utils/utils'
 import time from '@/utils/time'
 import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/constants'
-import PageTitle from '@oj/components/PageTitle.vue'
-import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'ContestList',
   components: {
-    PageTitle,
-    Table
   },
   async beforeRouteEnter (to, from, next) {
     try {
@@ -185,10 +192,24 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .contest-list-card{
-    margin: 0 auto;
-    width: 70%;
+  .page-top {
+    background: linear-gradient(270deg, rgba(26, 62, 81, 0.90) 0%, #1A3E51 25%, #1A3E51 75%, rgba(26, 62, 81, 0.90) 100%);;
+    padding: 50px 200px;
+    text-align: center;
     font-family: Manrope;
+    .white {
+      font-size: 2rem;
+      color: white;
+    }
+    .gold {
+      font-size: 2rem;
+      color: #FEB144;
+    }
+    .description {
+      font-size: 1rem;
+      color: white;
+      margin-top: 1rem;
+    }
   }
   div{
     &.pagination{
