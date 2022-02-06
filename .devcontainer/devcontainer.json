@@ -18,6 +18,7 @@
     "naumovs.color-highlight",
     "oderwat.indent-rainbow",
     "pkief.material-icon-theme",
-    "rangav.vscode-thunder-client"
+    "rangav.vscode-thunder-client",
+    "mhutchie.git-graph"
   ]
 }
