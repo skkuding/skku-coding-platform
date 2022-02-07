@@ -7,29 +7,35 @@
       </h2>
       <div class="description">Compete with schoolmates & win the prizes!</div>
     </div>
-    <div class="contest-list-card font-bold">
+    <div class="contest-list-container font-bold">
       <h4 class="subtitle-blue">
         Enter >>
       </h4>
-      <neon-box></neon-box>
+      <neon-box color="#8DC63F" :shadow="true" class="my-4"></neon-box>
       <h4 class="subtitle-blue">
         Register Now >>
       </h4>
+      <neon-box color="#8DC63F" class="my-4"></neon-box>
+      <neon-box color="#8DC63F" class="my-4"></neon-box>
       <h4 class="subtitle-blue">
         Upcoming Contests >>
       </h4>
+      <neon-box color="#8DC63F" class="my-4"></neon-box>
+      <neon-box color="#8DC63F" class="my-4"></neon-box>
       <h4 class="subtitle-red">
         Cannot Participate
         <button class="subtitle-toggle">
           <b-icon-caret-down-fill color="#FF6663"></b-icon-caret-down-fill>
         </button>
       </h4>
+      <neon-box color="#FF6663" :shadow="true" class="my-4"></neon-box>
       <h4 class="subtitle-red">
         Finished Contests
         <button class="subtitle-toggle">
           <b-icon-caret-down-fill color="#FF6663"></b-icon-caret-down-fill>
         </button>
       </h4>
+      <neon-box color="#FF6663" class="my-4"></neon-box>
       <!-- <div class="table">
         <b-table
           hover
@@ -231,12 +237,12 @@ export default {
   }
   .subtitle-blue {
     color: #1A3E51;
-    margin: 1.5rem 0;
+    margin: 2rem 0 0.5rem 0;
   }
 
   .subtitle-red {
     color: #FF6663;
-    padding-top: 1rem;
+    margin: 1rem 0;
   }
   .subtitle-toggle {
     display: inline-block;
@@ -245,56 +251,7 @@ export default {
     border: none;
     background: none;
   }
-
-  .neon-box {
-    background: #FFFFFF;
-    border: 0.89132px solid #8DC63F;
-    box-shadow: 0px 0px 8.9132px #8DC63F;
-    padding: 1rem;
-    display: flex;
-    transition: 0.3s ease-in-out;
-    &:hover {
-      transform: scale(1.01);
-    }
-
-    .logo {
-      width: 4rem;
-      height: 4rem;
-      margin-right: 1rem;
-    }
-
-    .contest-information-flex-col {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      justify-content: space-between;
-      .contest-information-flex-row {
-        display: inline-flex;
-        flex-direction: row;
-        justify-content: space-between;
-        .contest-information-big {
-          color: #173747;
-          font-size: 1.3rem;
-          font-weight: bold;
-          white-space: nowrap;
-        }
-        .contest-information-small {
-          color: #173747;
-          font-size: 1.0rem;
-          white-space: nowrap;
-        }
-      }
-    }
-  }
-  div{
-    &.pagination {
-      margin-right: 5%;
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
-  .contest-list-card::v-deep {
+  .contest-list-container {
     margin: 0 auto;
     width: 70%;
     font-family: Manrope;
