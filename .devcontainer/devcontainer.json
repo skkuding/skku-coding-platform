@@ -14,11 +14,11 @@
     "editorconfig.editorconfig",
     "gruntfuggly.todo-tree",
     "johnsoncodehk.volar",
+    "mhutchie.git-graph",
     "ms-python.python",
     "naumovs.color-highlight",
     "oderwat.indent-rainbow",
     "pkief.material-icon-theme",
-    "rangav.vscode-thunder-client",
-    "mhutchie.git-graph"
+    "rangav.vscode-thunder-client"
   ]
 }
