@@ -1,5 +1,5 @@
 <template>
-  <div class="neon-box">
+  <div class="neon-box" :style="cssColor">
     <img class="logo" src="@/assets/Cup.png">
     <div class="contest-information-flex-col">
       <div class="contest-information-flex-row">
@@ -18,6 +18,15 @@
 
 export default {
   name: 'NeonBox',
+  props: {
+    color: {
+      type: String,
+      required: true
+    },
+    shadow: {
+      type: Boolean
+    }
+  },
   data () {
     return {
     }
@@ -25,6 +34,12 @@ export default {
   methods: {
   },
   computed: {
+    cssColor () {
+      return {
+        '--main-color': this.color,
+        '--shadow': this.shadow ? '9px' : '0'
+      }
+    }
   },
   watch: {
   }
@@ -38,14 +53,15 @@ export default {
   }
   .neon-box {
     background: #FFFFFF;
-    border: 0.89132px solid #8DC63F;
-    box-shadow: 0px 0px 8.9132px #8DC63F;
+    border: 0.89132px solid var(--main-color);
+    box-shadow: 0px 0px var(--shadow) var(--main-color);
     padding: 1rem;
     display: flex;
     transition: 0.3s ease-in-out;
     &:hover {
       transform: scale(1.01);
     }
+    cursor: pointer;
 
     .logo {
       width: 4rem;
@@ -69,7 +85,7 @@ export default {
           white-space: nowrap;
         }
         .contest-information-small {
-          color: #173747;
+          color: var(--main-color);
           font-size: 1.0rem;
           white-space: nowrap;
         }
