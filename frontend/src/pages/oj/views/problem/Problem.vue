@@ -433,7 +433,14 @@ export default {
       problem.languages = problem.languages.sort()
       this.problem = problem
 
-      const precode = storage.get(buildProblemCodeKey(this.problemID, this.contestID))
+      let precode = storage.get(buildProblemCodeKey(this.problemID, this.contestID))
+
+      // For Backward compatibility before Github pr #272
+      if (precode && typeof precode.code === 'string') {
+        storage.remove(buildProblemCodeKey(this.problemID, this.contestID))
+        precode = null
+      }
+
       if (precode) {
         this.language = precode.language
         this.code = precode.code[this.language]
