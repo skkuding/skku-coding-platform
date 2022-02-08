@@ -15,6 +15,7 @@ from ..models import ContestAnnouncement, Contest, ACMContestRank
 from ..serializers import ContestAnnouncementSerializer
 from ..serializers import ContestSerializer, ContestPasswordVerifySerializer
 from ..serializers import ACMContestRankSerializer
+from ..serializers import UserContestSerializer
 
 
 class ContestAnnouncementListAPI(APIView):
@@ -230,3 +231,18 @@ class ContestRankAPI(APIView):
             page_qs["results"] = serializer(page_qs["results"], many=True, is_contest_admin=is_contest_admin).data
             page_qs["results"].append(self.contest.id)
         return self.success(page_qs)
+
+class UserContestAPI(APIView):
+    def get(self, request):
+        user = request.user
+        qs = ACMContestRank.objects.filter(user = user.id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).\
+            select_related("user").order_by("-accepted_number", "total_penalty", "total_time")
+        contest_ids = [ dic['contest'] for dic in ACMContestRankSerializer(qs, many=True).data ]
+        contests = []
+        for contest_id in contest_ids:
+            try:
+                contest = Contest.objects.get(id=contest_id, visible=True)
+                contests.append(contest)
+            except Contest.DoesNotExist:
+                return self.error("Contest does not exist")
+        return self.success(UserContestSerializer(contests, many=True).data)
