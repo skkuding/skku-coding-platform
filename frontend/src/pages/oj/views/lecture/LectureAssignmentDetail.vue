@@ -10,22 +10,23 @@
       </section>
       <section class="assignment-container">
         <p class="assignment__content" v-dompurify-html="assignment.content" v-katex:auto></p>
-        <div class="table">
-          <b-table
-            hover
-            :items="assignmentProblems"
-            :fields="assignmentProblemListFields"
-            head-variant="light"
-            class="table"
-            style = "cursor: pointer;"
-            @row-clicked="goAssignmentProblem"
-          >
-            <template #cell(total_score)="data">
-              <span v-if="data.item.my_score!==-1">{{ data.item.my_score + ' / ' + data.item.total_score }}</span>
-              <span v-else>No Submission</span>
-            </template>
-          </b-table>
-        </div>
+        <Table
+          hover
+          :items="assignmentProblems"
+          :fields="assignmentProblemListFields"
+          @row-clicked="goAssignmentProblem"
+        >
+          <template v-slot:_id="data">
+            {{data.row._id}}
+          </template>
+          <template v-slot:title="data">
+            {{data.row.title}}
+          </template>
+          <template v-slot:total_score="data">
+            <span v-if="data.row.my_score!==-1">{{ data.row.my_score + ' / ' + data.row.total_score }}</span>
+            <span v-else>No Submission</span>
+          </template>
+        </Table>
       </section>
     </article>
   </div>
@@ -36,13 +37,15 @@ import sidemenu from '@oj/components/Sidemenu.vue'
 import { mapActions } from 'vuex'
 import time from '@/utils/time'
 import api from '@oj/api'
-import PageTitle from '../../components/PageTitle.vue'
+import PageTitle from '@oj/components/PageTitle.vue'
+import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'CourseAssignmentDetail',
   components: {
     sidemenu,
-    PageTitle
+    PageTitle,
+    Table
   },
   data () {
     return {
@@ -52,7 +55,9 @@ export default {
           key: '_id',
           label: '#'
         },
-        'title',
+        {
+          key: 'title'
+        },
         {
           key: 'total_score',
           label: 'score'
@@ -144,13 +149,6 @@ export default {
       background-color: #EDECEC;
       padding: 25px;
       overflow: auto;
-    }
-    .table{
-      width: 95% !important;
-      margin: 0 auto;
-      th {
-        cursor: default;
-      }
     }
   }
   .assignment-info {

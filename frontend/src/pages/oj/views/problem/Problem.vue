@@ -253,17 +253,18 @@
             <h2>Hint</h2>
             <p v-dompurify-html="problem.hint" v-katex:auto></p>
           </div>
-          <b-table
-            :items="[
-              {
-                time_limit: problem.time_limit + ' ms',
-                memory_limit: problem.memory_limit + ' MB',
-              },
-            ]"
-            :fields="['time_limit', 'memory_limit']"
-            class="text-light"
+          <Table
+            :items="problemInfo"
+            :fields="problemInfoField"
+            lightStyle
           >
-          </b-table>
+            <template v-slot:time_limit="data">
+              {{data.row.time_limit}}
+            </template>
+            <template v-slot:memory_limit="data">
+              {{data.row.memory_limit}}
+            </template>
+          </Table>
         </b-col>
         <b-col id="console" cols="7">
           <b-row id="editor">
@@ -322,6 +323,7 @@ import moment from 'moment'
 import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
 import profileSetting from '@oj/views/user/ProfileSetting'
+import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'ProblemDetails',
@@ -330,7 +332,8 @@ export default {
     ProblemSidebar,
     login,
     register,
-    profileSetting
+    profileSetting,
+    Table
   },
   mixins: [FormMixin],
   data () {
@@ -366,6 +369,17 @@ export default {
         tags: [],
         io_mode: { io_mode: 'Standard IO' }
       },
+      problemInfo: [],
+      problemInfoField: [
+        {
+          key: 'time_limit',
+          label: 'Time Limit'
+        },
+        {
+          key: 'memory_limit',
+          label: 'Memory Limit'
+        }
+      ],
 
       // CodeMirror
       code: '',
@@ -432,6 +446,10 @@ export default {
 
       problem.languages = problem.languages.sort()
       this.problem = problem
+      const problemInfo = {}
+      this.$set(problemInfo, 'time_limit', problem.time_limit + ' ms')
+      this.$set(problemInfo, 'memory_limit', problem.memory_limit + ' MB')
+      this.problemInfo.push(problemInfo)
 
       let precode = storage.get(buildProblemCodeKey(this.problemID, this.contestID))
 
