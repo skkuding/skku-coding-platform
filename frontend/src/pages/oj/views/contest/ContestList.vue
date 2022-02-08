@@ -1,32 +1,32 @@
 <template>
   <div class="contest-list-card font-bold">
     <page-title text="All Contest"/>
-    <div class="table">
-      <b-table
-        hover
-        :items="contests"
-        :fields="contestListFields"
-        :per-page="perPage"
-        :current-page="currentPage"
-        head-variant="light"
-        @row-clicked="goContest"
-      >
-        <template #cell(start_time)="data">
-          {{ getTimeFormat(data.value) }}
-        </template>
-        <template #cell(duration)="data">
-          {{ getDuration(data.item.start_time, data.item.end_time) }}
-        </template>
-        <template #cell(status)="data">
-          <b-icon
-            icon="circle-fill"
-            class="mr-2"
-            :style="'color:' + contestStatus(data.value).color"
-          />
-          {{ contestStatus(data.value).name }}
-        </template>
-      </b-table>
-    </div>
+    <Table
+      hover
+      :items="contests"
+      :fields="contestListFields"
+      :per-page="perPage"
+      :current-page="currentPage"
+      @row-clicked="goContest"
+    >
+      <template v-slot:title="data">
+        <div class="w-80">{{ data.row.title }}</div>
+      </template>
+      <template v-slot:start_time="data">
+        {{ getTimeFormat(data.row.start_time) }}
+      </template>
+      <template v-slot:duration="data">
+        {{ getDuration(data.row.start_time, data.row.end_time) }}
+      </template>
+      <template v-slot:status="data">
+        <b-icon
+          icon="circle-fill"
+          class="mr-2"
+          :style="'color:' + contestStatus(data.row.status).color"
+        />
+        {{ contestStatus(data.row.status).name }}
+      </template>
+    </Table>
     <div class="pagination">
       <b-pagination
         v-model="currentPage"
@@ -44,12 +44,14 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import utils from '@/utils/utils'
 import time from '@/utils/time'
 import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/constants'
-import PageTitle from '../../components/PageTitle.vue'
+import PageTitle from '@oj/components/PageTitle.vue'
+import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'ContestList',
   components: {
-    PageTitle
+    PageTitle,
+    Table
   },
   async beforeRouteEnter (to, from, next) {
     try {
@@ -187,11 +189,6 @@ export default {
     margin: 0 auto;
     width: 70%;
     font-family: Manrope;
-    .table{
-      width: 95% !important;
-      margin: 0 auto;
-      cursor: pointer;
-    }
   }
   div{
     &.pagination{

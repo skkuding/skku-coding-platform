@@ -15,7 +15,9 @@ module.exports = {
     colors: {
       white: '#ffffff',
       green: '#8DC63F',
+      blue: '#3391E5',
       black: '#000000',
+      transparent: '#0000',
       level: {
         level1: '#CC99C9',
         level2: '#9EC1CF',
@@ -28,6 +30,11 @@ module.exports = {
       text: {
         title: '#7C7A7B',
         content: '#495057'
+      },
+      table: {
+        header: '#F9F9FA',
+        hover: '#072B604D',
+        border: '#e0e2e3'
       }
     }
   },

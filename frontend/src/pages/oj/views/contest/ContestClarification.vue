@@ -1,25 +1,24 @@
 <template>
   <div class="contest-problem-list-card font-bold">
-    <div class="table">
-      <b-table
-        hover
-        :items="clarifications"
-        :fields="contestClarificationFields"
-        :per-page="perPage"
-        :current-page="currentPage"
-        head-variant="light"
-        class="text-center"
-      >
-        <template #cell(Clarifications)="data">
-          <div v-katex>
-            <p v-dompurify-html="data.value"/>
-          </div>
-        </template>
-        <template #cell(created_time)="data">
-          {{ getTimeFormat(data.value) }}
-        </template>
-      </b-table>
-    </div>
+    <Table
+      :items="clarifications"
+      :fields="contestClarificationFields"
+      :per-page="perPage"
+      :current-page="currentPage"
+      text="No Clarifications"
+    >
+      <template v-slot:Problem="data">
+        {{ data.row.Problem }}
+      </template>
+      <template v-slot:created_time="data">
+        {{ getTimeFormat(data.row.created_time) }}
+      </template>
+      <template v-slot:Clarifications="data">
+        <div v-katex>
+          <p v-dompurify-html="data.row.Clarifications"/>
+        </div>
+      </template>
+    </Table>
     <div class="pagination">
       <b-pagination
         v-model="currentPage"
@@ -34,10 +33,12 @@
 <script>
 import api from '@oj/api'
 import time from '@/utils/time'
+import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'ContestClarification',
   components: {
+    Table
   },
   data () {
     return {
@@ -49,10 +50,10 @@ export default {
       contestProblems: [],
       clarifications: [],
       contestClarificationFields: [
-        'Problem',
-        'Clarifications',
+        { key: 'Problem' },
+        { key: 'Clarifications' },
         {
-          label: 'Created Time',
+          label: 'Create Time',
           key: 'created_time'
         }
       ]
@@ -104,14 +105,6 @@ export default {
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
-  }
-  .table {
-    th {
-      cursor: default;
-    }
-    td {
-      cursor: pointer;
-    }
   }
   div {
     &.pagination{

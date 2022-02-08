@@ -1,7 +1,7 @@
 <template>
   <div class="contest-ranking-card font-bold">
     <div class="standings-description" style="text-align: right;">
-      <b-icon icon="question-circle" id="standings-info" style="margin-right: 30px;"/>
+      <b-icon icon="question-circle" id="standings-info" style="margin-right: 50px;"/>
       <b-popover
         target="standings-info"
         title="How to read?"
@@ -11,41 +11,39 @@
         <img style="width: 200px; height: auto;" src="@/assets/standing.png"/>
       </b-popover>
     </div>
-    <div class="table">
-      <b-table
-        :items="contestRankingList"
-        :fields="contestRankingListFields"
-        :per-page="perPage"
-        :current-page="currentPage"
-        head-variant="light"
-        class="text-center"
+    <Table
+      text="No Standings"
+      :items="contestRankingList"
+      :fields="contestRankingListFields"
+      :per-page="perPage"
+      :current-page="currentPage"
+      class="text-center"
+    >
+      <template v-for="problem in contestProblemID"
+        v-slot:[`${problem}`]="data"
       >
-        <template v-for="problem in contestProblemID"
-          v-slot:[`cell(${problem})`]="data"
+        <div v-if="data.row[problem].is_ac === true" :key="problem">
+          <div class="text-green text-center">{{ data.row[problem].problem_submission }}</div>
+          <div class="text-xs">{{ parseInt(data.row[problem].penalty) }}</div>
+        </div>
+        <div v-else-if="data.row[problem].problem_submission === '0'"
+          :key="problem"
         >
-          <div v-if="data.item[problem].is_ac === true" :key="problem">
-            <div class="user-time">{{ data.item[problem].problem_submission }}</div>
-            <div class="user-penalty">{{ parseInt(data.item[problem].penalty) }}</div>
-          </div>
-          <div v-else-if="data.item[problem].problem_submission === '0'"
-            :key="problem"
-          >
-            {{ '-' }}
-          </div>
-          <div v-else :key="problem" class="ac-false"> {{ '-' + data.item[problem].problem_submission }} </div>
-        </template>
-        <template #cell(id)="data">
-          {{ data.index + (currentPage - 1) * perPage + 1 }}
-        </template>
-        <template #cell()="data">
-          <div class="user-name">{{ data.value }}</div>
-        </template>
-        <template #cell(accepted_number)="data">
-          <div class="user-AC">{{ data.value }}</div>
-          <div class="user-total-penalty">{{ data.item.total_penalty }}</div>
-        </template>
-      </b-table>
-    </div>
+          {{ '-' }}
+        </div>
+        <div v-else :key="problem" class="text-text-title"> {{ '-' + data.row[problem].problem_submission }} </div>
+      </template>
+      <template v-slot:id="data">
+        {{ data.index + (currentPage - 1) * perPage + 1 }}
+      </template>
+      <template v-slot:username="data" class="w-1/2">
+        <div class="text-left">{{ data.row.username }}</div>
+      </template>
+      <template v-slot:accepted_number="data">
+        <div class="text-blue">{{ data.row.accepted_number }}</div>
+        <div class="text-xs">{{ data.row.total_penalty }}</div>
+      </template>
+    </Table>
     <div class="pagination">
       <b-pagination
         v-model="currentPage"
@@ -59,9 +57,13 @@
 
 <script>
 import api from '@oj/api'
+import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'ContestRanking',
+  components: {
+    Table
+  },
   data () {
     return {
       limit: 200,
@@ -76,11 +78,8 @@ export default {
           label: '#'
         },
         {
-          key: 'user.username',
-          label: 'User',
-          formatter: value => {
-            return value.substr(0, 4) + '****' + value.substr(8, 2)
-          }
+          key: 'username',
+          label: 'User'
         }
       ],
       contest: {},
@@ -152,25 +151,6 @@ export default {
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
-  }
-  .user-name {
-    width: 120px;
-  }
-  .ac-false {
-    margin: auto 0;
-    color: #9da6af;
-  }
-  .user-penalty {
-    font-size: 12px;
-  }
-  .user-time {
-    color: #8dc63f;
-  }
-  .user-total-penalty {
-    font-size: 12px;
-  }
-  .user-AC{
-    color: #3391E5;
   }
   div {
     &.pagination{

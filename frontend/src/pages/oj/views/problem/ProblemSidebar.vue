@@ -52,28 +52,34 @@
             <b-icon style="cursor: pointer" icon="x" class="close-icon" @click="close()"/>
           </div>
         </template>
-        <div id="clarifications-table">
-          <b-table
-            class="align-center"
-            :items="clarifications"
-            :per-page="table_rows"
-            :current-page="clarifications_page"
-            :fields="clarifications_table_fields">
-            <template #cell(Clarifications)="data">
-              <div v-katex>
-                <p v-dompurify-html="data.value"/>
-              </div>
-            </template>
-            <template #cell(created_time)="data">
-              {{ getTimeFormat(data.value) }}
-            </template>
-          </b-table>
-          <b-pagination class="pagination"
-            v-model="clarifications_page"
-            :total-rows="clarifications_rows"
-            :per-page="table_rows"
-          ></b-pagination>
-        </div>
+        <Table
+          lightStyle
+          text="No Clarifications"
+          :items="clarifications"
+          :per-page="table_rows"
+          :current-page="clarifications_page"
+          :fields="clarifications_table_fields"
+        >
+          <template v-slot:Problem="data">
+            {{ data.row.Problem }}
+          </template>
+          <template v-slot:Title="data">
+            {{ data.row.Title }}
+          </template>
+          <template v-slot:Clarifications="data">
+            <div v-katex>
+              <p v-dompurify-html="data.row.Clarifications"/>
+            </div>
+          </template>
+          <template v-slot:created_time="data">
+            {{ getTimeFormat(data.row.create_time) }}
+          </template>
+        </Table>
+        <b-pagination class="pagination"
+          v-model="clarifications_page"
+          :total-rows="clarifications_rows"
+          :per-page="table_rows"
+        ></b-pagination>
       </b-modal>
       <b-modal id="my-submissions-modal" class="modal" centered hide-backdrop hide-footer>
         <template #modal-header="{ close }">
@@ -83,21 +89,31 @@
           </div>
         </template>
         <div id="my-submissions-table">
-          <b-table
-            class="align-center"
+          <Table
+            hover
+            lightStyle
             :items="my_submissions"
             :per-page="table_rows"
             :current-page="my_submissions_page"
             :fields="submission_table_fields"
-            @row-clicked="onMySubmissionClicked">
-            <!-- Custom rendering for result text color -->
-            <template #cell(result)="data">
-              <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
+            @row-clicked="onMySubmissionClicked"
+          >
+            <template v-slot:Problem="data">
+              {{ data.row.Problem }}
             </template>
-            <template #cell(submission_time)="data">
-              {{ getTimeFormat(data.value) }}
+            <template v-slot:Language="data">
+              {{ data.row.Language }}
             </template>
-          </b-table>
+            <template v-slot:User="data">
+              {{ data.row.User }}
+            </template>
+            <template v-slot:Result="data">
+              <span :style="'color: '+resultTextColor(data.row.Result)">{{data.row.Result}}</span>
+            </template>
+            <template v-slot:submission_time="data">
+              {{ getTimeFormat(data.row.submission_time) }}
+            </template>
+          </Table>
           <b-pagination class="pagination"
             v-model="my_submissions_page"
             :total-rows="my_submissions_rows"
@@ -114,19 +130,28 @@
           </div>
         </template>
         <div id="all-submissions-table">
-          <b-table
-            class="align-center"
+          <Table
+            lightStyle
             :items="all_submissions"
             :per-page="table_rows"
             :current-page="all_submissions_page"
             :fields="submission_table_fields">
-            <template #cell(result)="data">
-              <span :style="'color: '+resultTextColor(data.item.Result)">{{data.item.Result}}</span>
+            <template v-slot:Problem="data">
+              {{ data.row.Problem }}
             </template>
-            <template #cell(submission_time)="data">
-              {{ getTimeFormat(data.value) }}
+            <template v-slot:Language="data">
+              {{ data.row.Language }}
             </template>
-          </b-table>
+            <template v-slot:User="data">
+              {{ data.row.User }}
+            </template>
+            <template v-slot:Result="data">
+              <span :style="'color: '+resultTextColor(data.row.Result)">{{data.row.Result}}</span>
+            </template>
+            <template v-slot:submission_time="data">
+              {{ getTimeFormat(data.row.submission_time) }}
+            </template>
+          </Table>
           <b-pagination class="pagination"
             v-model="all_submissions_page"
             :total-rows="all_submissions_rows"
@@ -144,13 +169,27 @@
           </div>
         </template>
         <div id="submission-info-table">
-          <b-table borderless class="align-center"
+          <Table
+            lightStyle
             :items="[submission_detail]"
-            :fields="submission_info_table_fields">
-            <template #cell(result)="data">
-              <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
+            :fields="submission_info_table_fields"
+          >
+            <template v-slot:Problem="data">
+              {{data.row.Problem}}
             </template>
-          </b-table>
+            <template v-slot:create_time="data">
+              {{data.row.create_time}}
+            </template>
+            <template v-slot:username="data">
+              {{data.row.username}}
+            </template>
+            <template v-slot:language="data">
+              {{data.row.language}}
+            </template>
+            <template v-slot:result="data">
+              <span :style="'color: '+resultTextColor(data.row.result)">{{data.row.result}}</span>
+            </template>
+          </Table>
         </div>
         <div id="submission-compile-error-message" v-if="compile_error_message_show">
           <p class="text-danger"> Compile error message: {{ submission_detail.statistic_info.err_info }} </p>
@@ -166,15 +205,24 @@
             theme="material"/>
         </div>
         <div id="submission-detail-table">
-          <b-table class="align-center"
+          <Table
             :items="submission_detail.testcases"
             :per-page="submission_detail_table_rows"
             :fields="submission_detail_table_fields"
             v-show="submission_detail.testcases">
-            <template #cell(result)="data">
-              <span :style="'color: '+resultTextColor(data.item.result)">{{data.item.result}}</span>
+            <template v-slot:title="data">
+              {{data.row.title}}
             </template>
-          </b-table>
+            <template v-slot:exec_time="data">
+              {{data.row.exec_time}}
+            </template>
+            <template v-slot:memory="data">
+              {{data.row.memory}}
+            </template>
+            <template v-slot:result="data">
+              <span :style="'color: '+resultTextColor(data.row.result)">{{data.row.result}}</span>
+            </template>
+          </Table>
         </div>
       </b-modal>
     </div>
@@ -187,11 +235,13 @@ import api from '@oj/api'
 import time from '@/utils/time'
 import { JUDGE_STATUS } from '@/utils/constants'
 import CodeMirror from '@oj/components/CodeMirror.vue'
+import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'ProblemSidebar',
   components: {
-    CodeMirror
+    CodeMirror,
+    Table
   },
   props: ['hide', 'contestID', 'problemID'],
   data () {
@@ -206,16 +256,16 @@ export default {
       assignmentProblems: [],
       problem_titles: {},
       clarifications_table_fields: [
-        'Problem',
-        'Title',
-        'Clarifications',
-        { label: 'Created Time', key: 'created_time' }
+        { key: 'Problem' },
+        { key: 'Title' },
+        { key: 'Clarifications' },
+        { label: 'Create Time', key: 'created_time' }
       ],
       submission_table_fields: [
         { label: 'Submission Time', key: 'submission_time' },
-        'Language',
-        'User',
-        'Result'
+        { key: 'Language' },
+        { key: 'User' },
+        { key: 'Result' }
       ],
 
       formFilter: {
@@ -258,7 +308,7 @@ export default {
       await this.getCourseAssignmentProblemList()
     }
     if (this.$route.params.contestID || this.$route.params.assignmentID) {
-      this.submission_table_fields.unshift('Problem')
+      this.submission_table_fields.unshift({ key: 'Problem' })
       this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
     }
     this.initProblemTitles()
@@ -351,7 +401,8 @@ export default {
           Result: JUDGE_STATUS[v.result].name
         }
         if (this.contestID || this.assignmentID) {
-          info.Problem = this.problem_titles[v.problem]
+          this.$set(info, 'Problem', this.problem_titles[v.problem])
+          // info.Problem = this.problem_titles[v.problem]
         }
         return info
       })
@@ -522,60 +573,60 @@ export default {
         .modal-body {
           padding: 0;
 
-          #clarifications-table {
-            table {
-              color: white;
+          // #clarifications-table {
+          //   table {
+          //     color: white;
 
-              th {
-                min-width: 230px;
-                padding: 15px 25px;
-                border: none;
-              }
+          //     th {
+          //       min-width: 230px;
+          //       padding: 15px 25px;
+          //       border: none;
+          //     }
 
-              td {
-                min-width: 230px;
-                padding: 15px 25px;
-                border-top: 1px solid #3B4F56;
-              }
-            }
-          }
+          //     td {
+          //       min-width: 230px;
+          //       padding: 15px 25px;
+          //       border-top: 1px solid #3B4F56;
+          //     }
+          //   }
+          // }
 
-          #my-submissions-table, #all-submissions-table {
-            table {
-              color: white;
+          // #my-submissions-table, #all-submissions-table {
+          //   table {
+          //     color: white;
 
-              th {
-                min-width: 100px;
-                padding: 15px 25px;
-                border: none;
-              }
+          //     th {
+          //       min-width: 100px;
+          //       padding: 15px 25px;
+          //       border: none;
+          //     }
 
-              td {
-                min-width: 100px;
-                padding: 15px 25px;
-                border-top: 1px solid #3B4F56;
-              }
-            }
-          }
-          #my-submissions-table table td {
-            cursor: pointer;
-          }
-          #submission-info-table {
-            table {
-              color: white;
-              font-size: 15px;
-            }
+          //     td {
+          //       min-width: 100px;
+          //       padding: 15px 25px;
+          //       border-top: 1px solid #3B4F56;
+          //     }
+          //   }
+          // }
+          // #my-submissions-table table td {
+          //   cursor: pointer;
+          // }
+          // #submission-info-table {
+          //   table {
+          //     color: white;
+          //     font-size: 15px;
+          //   }
 
-            tr th:first-child,
-            tr td:first-child {
-              padding-left: 50px;
-            }
+          //   tr th:first-child,
+          //   tr td:first-child {
+          //     padding-left: 50px;
+          //   }
 
-            tr th:last-child,
-            tr td:last-child {
-              padding-right: 50px;
-            }
-          }
+          //   tr th:last-child,
+          //   tr td:last-child {
+          //     padding-right: 50px;
+          //   }
+          // }
 
           #submission-compile-error-message {
             padding: 20px 50px;

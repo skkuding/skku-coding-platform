@@ -10,24 +10,26 @@
           </div>
           <b-icon style="cursor: pointer" icon="list" shift-v="-4" @click="goAnnouncement()"/>
         </div>
-        <b-table borderless fixed
+        <Table
+          hover
+          noHeader
+          noBorder
           :items="announcements"
           :fields="announcement_fields"
+          text=""
           @row-clicked="goAnnouncement"
-          class="post-card-table"
+          class="post-card-table mb-0 cursor-pointer text-lg"
         >
-          <template #table-colgroup="">
-            <col style="width: 40px">
-            <col style="width: 100%">
-            <col style="width: 125px">
+          <template v-slot:icon>
+            <icon icon="chevron-right"/>
           </template>
-          <template #cell(icon)>
-            <b-icon icon="chevron-right"/>
+          <template v-slot:title="data">
+            <div class="w-80">{{data.row.title}}</div>
           </template>
-          <template #cell(create_time)="data">
-            {{ getTimeFormat(data.value, 'MMM D, YYYY') }}
+          <template v-slot:create_time="data">
+            {{ getTimeFormat(data.row.create_time, 'MMM D, YYYY') }}
           </template>
-        </b-table>
+        </Table>
       </b-card>
       <b-card class="post-card">
         <div class="post-card-header">
@@ -37,24 +39,26 @@
           </div>
           <b-icon style="cursor: pointer" icon="list" shift-v="-4" @click="goContestList()"/>
         </div>
-        <b-table borderless fixed
+        <Table
+          hover
+          noHeader
+          noBorder
           :items="contests"
           :fields="contest_fields"
           @row-clicked="goContest"
-          class="post-card-table"
+          text=""
+          class="post-card-table mb-0 cursor-pointer text-lg"
         >
-          <template #table-colgroup>
-            <col style="width: 40px">
-            <col style="width: 100%">
-            <col style="width: 125px">
+          <template v-slot:icon="data">
+            <icon :icon="data.row.status === '0' ? 'ellipsis-h' : ['far', 'calendar']"/>
           </template>
-          <template #cell(icon)="data">
-            <b-icon :icon="data.item.status === '0' ? 'three-dots' : 'calendar2'"/>
+          <template v-slot:title="data">
+            <div class="w-80">{{ data.row.title }}</div>
           </template>
-          <template #cell(start_time)="data">
-            {{ getTimeFormat(data.value, "MMM D, YYYY") }}
+          <template v-slot:start_time="data" class="text-right">
+            {{ getTimeFormat(data.row.start_time, "MMM D, YYYY") }}
           </template>
-        </b-table>
+        </Table>
       </b-card>
     </div>
   </div>
@@ -68,11 +72,13 @@ import {
   CONTEST_TYPE,
   CONTEST_STATUS
 } from '@/utils/constants'
+import Table from '../../components/Table.vue'
 
 export default {
   name: 'Home',
   components: {
-    Banner
+    Banner,
+    Table
   },
   data () {
     return {
@@ -213,10 +219,14 @@ export default {
   }
   .post-card {
     margin-top: 30px;
+    margin-bottom: 30px;
     height: 255px;
     width: 45%;
     &-table {
       cursor: pointer;
+      :hover {
+        background-color: #0000;
+      }
     }
   }
 

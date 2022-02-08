@@ -9,36 +9,36 @@
       >
         <p>No Course Assignment</p>
       </div>
-      <div
-        class="table"
+      <Table
         v-else
+        hover
+        :items="assignments"
+        :fields="assignmentListFields"
+        :per-page="perPage"
+        :current-page="currentPage"
+        @row-clicked="goAssignment"
       >
-        <b-table
-          hover
-          :items="assignments"
-          :fields="assignmentListFields"
-          :per-page="perPage"
-          :current-page="currentPage"
-          head-variant="light"
-          class="table"
-          @row-clicked="goAssignment"
-          style = "cursor: pointer;"
-        >
-          <template #cell(status)="data">
-            <b-icon
-              icon="circle-fill"
-              scale="0.7"
-              :style="'color:' + assignmentStatus(data.value).color"
-            >
-            </b-icon>
-            {{ assignmentStatus(data.value).name }}
-          </template>
-          <template #cell(accepted_problem)="data">
-            <span v-if="data.item.accepted_problem === 0">Not Accepted</span>
-            <span v-else>{{ data.item.accepted_problem + '/' + data.item.total_problem + ' Accepted'}}</span>
-          </template>
-        </b-table>
-      </div>
+        <template v-slot:title="data">
+          {{data.row.title}}
+        </template>
+        <template v-slot:status="data">
+          <b-icon
+            icon="circle-fill"
+            scale="0.7"
+            :style="'color:' + assignmentStatus(data.row.status).color"
+          >
+          </b-icon>
+          {{ assignmentStatus(data.row.status).name }}
+        </template>
+        <template v-slot:end_time="data">
+          {{ getTimeFormat(data.row.end_time) }}
+        </template>
+        <template v-slot:accepted_problem="data">
+          <span v-if="data.row.accepted_problem === 0">Not Accepted</span>
+          <span v-else>{{ data.row.accepted_problem + '/' + data.row.total_problem + ' Accepted'}}</span>
+        </template>
+      </Table>
+
       <div class="pagination">
         <b-pagination
           v-model="currentPage"
@@ -56,13 +56,16 @@ import sidemenu from '@oj/components/Sidemenu.vue'
 import { ASSIGNMENT_STATUS_REVERSE, ASSIGNMENT_SUBMISSION_STATUS, ASSIGNMENT_SUBMISSION_STATUS_REVERSE } from '@/utils/constants'
 import api from '@oj/api'
 import moment from 'moment'
+import time from '@/utils/time'
 import PageTitle from '@oj/components/PageTitle.vue'
+import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'CourseAssignmentList',
   components: {
     sidemenu,
-    PageTitle
+    PageTitle,
+    Table
   },
   data () {
     return {
@@ -75,13 +78,10 @@ export default {
           key: 'title',
           label: 'Assignment'
         },
-        'status',
+        { key: 'status' },
         {
           key: 'end_time',
-          label: 'Due',
-          formatter: endTime => {
-            return moment(endTime).format('YYYY-M-D hh:mm')
-          }
+          label: 'Due'
         },
         {
           key: 'accepted_problem',
@@ -145,6 +145,9 @@ export default {
       const underwayAssignment = assignmentList.filter(assignment => assignment.status === '0')
       const notUnderwayAssignment = assignmentList.filter(assignment => assignment.status !== '0')
       this.assignments = underwayAssignment.concat(notUnderwayAssignment)
+    },
+    getTimeFormat (value) {
+      return time.utcToLocal(value, 'YYYY-MM-DD HH:mm')
     }
   },
   computed: {

@@ -1,25 +1,25 @@
 <template>
   <div class="contest-problem-list-card font-bold">
-    <div class="table">
-      <b-table
-        hover
-        :items="contestProblems"
-        :fields="contestProblemListFields"
-        :per-page="perPage"
-        :current-page="currentPage"
-        head-variant="light"
-        @row-clicked="goContestProblem"
-      >
-        <template #cell(title)="data">
-          {{data.value}}
-          <b-icon
-            icon="check2-circle"
-            style="color: #8DC63F;"
-            font-scale="1.2"
-            v-if="data.item.my_status===0"></b-icon>
-        </template>
-      </b-table>
-    </div>
+    <Table
+      hover
+      :items="contestProblems"
+      :fields="contestProblemListFields"
+      :per-page="perPage"
+      :current-page="currentPage"
+      @row-clicked="goContestProblem"
+    >
+      <template v-slot:_id="data">
+        {{data.row._id}}
+      </template>
+      <template v-slot:title="data">
+        {{data.row.title}}
+        <b-icon
+          icon="check2-circle"
+          style="color: #8DC63F;"
+          font-scale="1.2"
+          v-if="data.row.my_status===0"></b-icon>
+      </template>
+    </Table>
     <div class="pagination">
       <b-pagination
         v-model="currentPage"
@@ -35,10 +35,12 @@
 import { mapState, mapActions } from 'vuex'
 import { types } from '@/store'
 import { ProblemMixin } from '@oj/components/mixins'
+import Table from '@oj/components/Table.vue'
 
 export default {
   name: 'ContestProblemList',
   components: {
+    Table
   },
   mixins: [ProblemMixin],
   data () {
