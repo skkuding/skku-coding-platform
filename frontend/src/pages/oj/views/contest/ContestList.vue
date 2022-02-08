@@ -11,31 +11,31 @@
       <h4 class="subtitle-blue">
         Enter >>
       </h4>
-      <neon-box color="#8DC63F" :shadow="true" class="my-4"></neon-box>
+      <neon-box color="#8DC63F" :shadow="true" class="my-3"></neon-box>
       <h4 class="subtitle-blue">
         Register Now >>
       </h4>
-      <neon-box color="#8DC63F" class="my-4"></neon-box>
-      <neon-box color="#8DC63F" class="my-4"></neon-box>
+      <neon-box color="#8DC63F" class="my-3"></neon-box>
+      <neon-box color="#8DC63F" class="my-3"></neon-box>
       <h4 class="subtitle-blue">
         Upcoming Contests >>
       </h4>
-      <neon-box color="#8DC63F" class="my-4"></neon-box>
-      <neon-box color="#8DC63F" class="my-4"></neon-box>
+      <neon-box color="#8DC63F" class="my-3"></neon-box>
+      <neon-box color="#8DC63F" class="my-3"></neon-box>
       <h4 class="subtitle-red">
         Cannot Participate
         <button class="subtitle-toggle">
           <b-icon-caret-down-fill color="#FF6663"></b-icon-caret-down-fill>
         </button>
       </h4>
-      <neon-box color="#FF6663" :shadow="true" class="my-4"></neon-box>
+      <neon-box color="#FF6663" :shadow="true" class="my-3"></neon-box>
       <h4 class="subtitle-red">
         Finished Contests
         <button class="subtitle-toggle">
           <b-icon-caret-down-fill color="#FF6663"></b-icon-caret-down-fill>
         </button>
       </h4>
-      <neon-box color="#FF6663" class="my-4"></neon-box>
+      <neon-box color="#FF6663" class="my-3"></neon-box>
       <!-- <div class="table">
         <b-table
           hover
@@ -237,12 +237,12 @@ export default {
   }
   .subtitle-blue {
     color: #1A3E51;
-    margin: 2rem 0 0.5rem 0;
+    margin: 2rem 0 1rem 0;
   }
 
   .subtitle-red {
     color: #FF6663;
-    margin: 1rem 0;
+    margin: 2rem 0 1rem 0;
   }
   .subtitle-toggle {
     display: inline-block;
