@@ -3,6 +3,7 @@ from django.urls import path
 from ..views.oj import ContestAnnouncementListAPI
 from ..views.oj import ContestPasswordVerifyAPI, ContestAccessAPI
 from ..views.oj import ContestListAPI, ContestAPI, ContestRankAPI, ProblemBankAPI
+from ..views.oj import UserContestAPI
 
 urlpatterns = [
     path("contests/", ContestListAPI.as_view(), name="contest_list_api"),
@@ -12,4 +13,5 @@ urlpatterns = [
     path("contest/access/", ContestAccessAPI.as_view(), name="contest_access_api"),
     path("contest/rank/", ContestRankAPI.as_view(), name="contest_rank_api"),
     path("contest/bank/", ProblemBankAPI.as_view(), name="contest_bank_api"),
+    path("contest/user/", UserContestAPI.as_view(), name="contest_user_api"),
 ]

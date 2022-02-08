@@ -16,6 +16,7 @@ from problem.models import Problem
 from ..serializers import ACMContestRankNoPenaltySerializer, ContestAnnouncementSerializer
 from ..serializers import ContestSerializer, ContestPasswordVerifySerializer
 from ..serializers import ACMContestRankSerializer
+from ..serializers import UserContestSerializer
 
 import random
 import json
@@ -277,3 +278,19 @@ class ProblemBankAPI(APIView):
         except ProblemBank.DoesNotExist:
             return self.success(False)
         return self.success(True)
+
+
+class UserContestAPI(APIView):
+    def get(self, request):
+        user = request.user
+        qs = ACMContestRank.objects.filter(user = user.id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).\
+            select_related("user").order_by("-accepted_number", "total_penalty", "total_time")
+        contest_ids = [ dic['contest'] for dic in ACMContestRankSerializer(qs, many=True).data ]
+        contests = []
+        for contest_id in contest_ids:
+            try:
+                contest = Contest.objects.get(id=contest_id, visible=True)
+                contests.append(contest)
+            except Contest.DoesNotExist:
+                return self.error("Contest does not exist")
+        return self.success(UserContestSerializer(contests, many=True).data)
