@@ -74,18 +74,22 @@ class ContestPasswordVerifySerializer(serializers.Serializer):
 
 
 class ACMContestRankSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
 
     class Meta:
         model = ACMContestRank
-        fields = "__all__"
+        fields = ["accepted_number", "total_time", "total_penalty", "submission_info", "username"]
 
     def __init__(self, *args, **kwargs):
         self.is_contest_admin = kwargs.pop("is_contest_admin", False)
         super().__init__(*args, **kwargs)
 
-    def get_user(self, obj):
-        return UsernameSerializer(obj.user, need_real_name=self.is_contest_admin).data
+    def get_username(self, obj):
+        data = UsernameSerializer(obj.user, need_real_name=self.is_contest_admin).data
+        username = data["username"]
+        if len(username) >= 10:
+            username = username[:4]+"****"+username[8:]
+        return username
 
 
 class OIContestRankSerializer(serializers.ModelSerializer):
