@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { Head } from '@vueuse/head'
+import { useLogin } from '~/composables/user'
 
-const loading = ref(false)
-const info = reactive({ username: '', password: '' })
-const message = computed(() => (loading.value ? 'Signing In...' : 'Sign In'))
+const { loading, errorMessage, form, login } = useLogin(useRouter())
 
-// just for demo
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-const login = async () => {
-  loading.value = true
-  await sleep(2000) // TODO: call API
-  loading.value = false
-}
+const buttonMessage = computed(() =>
+  loading.value ? 'Signing In...' : 'Sign In'
+)
 </script>
 
 <template>
@@ -31,14 +24,21 @@ const login = async () => {
       <h1 class="mb-12 text-center text-2xl font-bold text-stone-600">
         SKKU<br />Coding Platform
       </h1>
-      <form class="flex w-64 flex-col gap-4" @submit.prevent="login">
+      <div
+        v-show="errorMessage"
+        class="mb-2 text-center font-medium text-red-500"
+      >
+        <!-- TODO: show error message as toast -->
+        {{ errorMessage }}
+      </div>
+      <form class="flex w-80 flex-col gap-4" @submit.prevent="login">
         <AtomsInput
-          v-model="info.username"
+          v-model="form.username"
           type="text"
           placeholder="Student ID"
         />
         <AtomsInput
-          v-model="info.password"
+          v-model="form.password"
           type="password"
           placeholder="Password"
         />
@@ -48,7 +48,7 @@ const login = async () => {
           class="h-8 w-full"
           :disabled="loading"
         >
-          {{ message }}
+          {{ buttonMessage }}
         </AtomsButton>
       </form>
     </div>
