@@ -202,13 +202,6 @@ export default {
     margin: 0 auto;
     width: 70%;
     font-family: Manrope;
-    .table {
-      width: 95% !important;
-      margin: 0 auto;
-      td {
-        cursor: pointer;
-      }
-    }
   }
   .font-bold {
     font-family: manrope_bold;

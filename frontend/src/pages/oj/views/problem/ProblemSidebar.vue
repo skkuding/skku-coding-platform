@@ -573,61 +573,6 @@ export default {
         .modal-body {
           padding: 0;
 
-          // #clarifications-table {
-          //   table {
-          //     color: white;
-
-          //     th {
-          //       min-width: 230px;
-          //       padding: 15px 25px;
-          //       border: none;
-          //     }
-
-          //     td {
-          //       min-width: 230px;
-          //       padding: 15px 25px;
-          //       border-top: 1px solid #3B4F56;
-          //     }
-          //   }
-          // }
-
-          // #my-submissions-table, #all-submissions-table {
-          //   table {
-          //     color: white;
-
-          //     th {
-          //       min-width: 100px;
-          //       padding: 15px 25px;
-          //       border: none;
-          //     }
-
-          //     td {
-          //       min-width: 100px;
-          //       padding: 15px 25px;
-          //       border-top: 1px solid #3B4F56;
-          //     }
-          //   }
-          // }
-          // #my-submissions-table table td {
-          //   cursor: pointer;
-          // }
-          // #submission-info-table {
-          //   table {
-          //     color: white;
-          //     font-size: 15px;
-          //   }
-
-          //   tr th:first-child,
-          //   tr td:first-child {
-          //     padding-left: 50px;
-          //   }
-
-          //   tr th:last-child,
-          //   tr td:last-child {
-          //     padding-right: 50px;
-          //   }
-          // }
-
           #submission-compile-error-message {
             padding: 20px 50px;
           }
@@ -653,32 +598,6 @@ export default {
 
           #submission-source-code::v-deep .CodeMirror-gutter-wrapper {
             left: -38px !important;
-          }
-
-          #submission-detail-table {
-            table {
-              font-size: 13px;
-              color: white;
-              border-collapse: collapse;
-
-              th {
-                border: none;
-              }
-
-              td {
-                border-color: #3B4F56;
-              }
-
-              tr th:first-child,
-              tr td:first-child {
-                padding-left: 70px;
-              }
-
-              tr th:last-child,
-              tr td:last-child {
-                padding-right: 70px;
-              }
-            }
           }
         }
       }

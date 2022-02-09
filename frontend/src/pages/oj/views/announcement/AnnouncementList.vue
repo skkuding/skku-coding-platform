@@ -145,13 +145,6 @@ export default {
   width: 70%;
   font-family: Manrope;
 }
-.table {
-  width: 95% !important;
-  margin: 0 auto;
-  td {
-    cursor: pointer;
-  }
-}
 .no-announcement {
   text-align: center;
   font-size: 16px;
