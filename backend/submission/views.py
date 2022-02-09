@@ -312,3 +312,59 @@ class SubmissionExistsAPI(APIView):
         return self.success(request.user.is_authenticated and
                             Submission.objects.filter(problem_id=request.GET["problem_id"],
                                                       user_id=request.user.id).exists())
+
+
+class ProfileSubmissionListAPI(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="limit",
+                in_=openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="offset",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="problem_id",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="myself",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_STRING,
+                description="Set to '1' to get my submissions"
+            ),
+            openapi.Parameter(
+                name="result",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                name="username",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                name="page",
+                in_=openapi.IN_QUERY,
+                required=False,
+                type=openapi.TYPE_INTEGER
+            )
+        ]
+    )
+    def get(self, request):
+        print(request)
+        submissions = Submission.objects.filter(user_id=request.user.id)
+        data = self.paginate_data(request, submissions)
+        data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
+        return self.success(data)
