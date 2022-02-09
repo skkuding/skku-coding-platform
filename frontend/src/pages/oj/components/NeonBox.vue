@@ -1,8 +1,8 @@
 <template>
   <div class="neon-box-container" :style="cssColor">
     <div class="neon-box-hover">
-      <div class="ellipse">
-        <div id="triangle-right"></div>
+      <div class="ellipse" @click="$bvModal.show('modal-contest-information')">
+        <slot name="overlay-icon"></slot>
       </div>
     </div>
     <div class="neon-box">
@@ -18,10 +18,14 @@
         </div>
       </div>
     </div>
+    <b-modal id="modal-contest-information" size="xl">
+      <contest-information></contest-information>
+    </b-modal>
   </div>
 </template>
 
 <script>
+import ContestInformation from './ContestInformation.vue'
 
 export default {
   name: 'NeonBox',
@@ -39,6 +43,9 @@ export default {
     }
   },
   methods: {
+  },
+  components: {
+    ContestInformation
   },
   computed: {
     cssColor () {
@@ -60,10 +67,13 @@ export default {
   }
   .neon-box-container {
     position: relative;
+    .neon-box-hover {
+      display: none;
+    }
     &:hover .neon-box-hover {
       position: absolute;
       display: flex;
-      justify-content: end;
+      justify-content: flex-end;
       right: 1px;
       width: 100%;
       height: 98%;
@@ -82,15 +92,6 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-
-        #triangle-right {
-          width: 0;
-          height: 0;
-          margin-left: 4px;
-          border-top: 10px solid transparent;
-          border-left: 18px solid var(--main-color);
-          border-bottom: 10px solid transparent;
-        }
       }
     }
     .neon-box {
@@ -99,7 +100,6 @@ export default {
       box-shadow: 0px 0px var(--shadow) var(--main-color);
       padding: 0.8rem;
       display: flex;
-      transition: 0.3s ease-in-out;
       .logo {
         width: 3.1rem;
         height: 3.1rem;
