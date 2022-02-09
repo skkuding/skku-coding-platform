@@ -169,13 +169,6 @@ export default {
     margin: 0 auto;
     width: 70%;
     font-family: Manrope_bold;
-    .table{
-      width: 95% !important;
-      margin: 0 auto;
-      th{
-        cursor: default;
-      }
-    }
   }
   div{
     &.pagination{

@@ -175,10 +175,6 @@ export default {
     margin: 30px auto 0 auto;
     width: 70%;
     font-family: Manrope_bold;
-    .table{
-      width: 95% !important;
-      margin: 0 auto;
-    }
   }
 
   .question-container {

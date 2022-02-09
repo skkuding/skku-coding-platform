@@ -163,7 +163,4 @@ export default {
   .font-bold {
     font-family: manrope_bold;
   }
-  .table td {
-    cursor: pointer;
-  }
 </style>

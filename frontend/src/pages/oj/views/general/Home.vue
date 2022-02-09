@@ -250,30 +250,6 @@ export default {
     }
   }
 
-  ::v-deep .table {
-    tr {
-      outline: none;
-      font-size: 16px;
-    }
-
-    thead {
-      display: none;
-    }
-
-    .title-field {
-      width: 100%;
-      display: inline-block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .date-field {
-      // width: 125px;
-      text-align: right;
-    }
-  }
-
   @media screen and (max-width: 1016px) {
     .post-card {
       width:80%;
