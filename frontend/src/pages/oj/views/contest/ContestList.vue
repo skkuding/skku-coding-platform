@@ -11,11 +11,19 @@
       <h4 class="subtitle-blue">
         Enter >>
       </h4>
-      <neon-box color="#8DC63F" :shadow="true" class="my-3"></neon-box>
+      <neon-box color="#8DC63F" :shadow="true" class="my-3">
+        <template #overlay-icon>
+          <div id="triangle-right"></div>
+        </template>
+      </neon-box>
       <h4 class="subtitle-blue">
         Register Now >>
       </h4>
-      <neon-box color="#8DC63F" class="my-3"></neon-box>
+      <neon-box color="#8DC63F" class="my-3">
+        <template #overlay-icon>
+          <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
+        </template>
+      </neon-box>
       <neon-box color="#8DC63F" class="my-3"></neon-box>
       <h4 class="subtitle-blue">
         Upcoming Contests >>
@@ -258,5 +266,13 @@ export default {
   }
   .font-bold {
     font-family: manrope_bold;
+  }
+  #triangle-right {
+    width: 0;
+    height: 0;
+    margin-left: 4px;
+    border-top: 10px solid transparent;
+    border-left: 18px solid var(--main-color);
+    border-bottom: 10px solid transparent;
   }
 </style>
