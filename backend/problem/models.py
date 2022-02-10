@@ -7,6 +7,7 @@ from utils.models import RichTextField
 from utils.constants import Choices
 
 from assignment.models import Assignment
+from course.models import Course
 
 
 class ProblemTag(models.Model):
@@ -44,6 +45,8 @@ def _default_io_mode():
 class Problem(models.Model):
     # display ID
     _id = models.TextField(db_index=True)
+    # course ID
+    course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE, related_name="problems")
     # assignment ID
     assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE, related_name="problems")
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
