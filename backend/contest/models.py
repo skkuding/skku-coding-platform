@@ -8,6 +8,8 @@ from account.models import User
 from group.models import Group
 from utils.models import RichTextField
 
+from account.models import AdminType
+
 
 class Contest(models.Model):
     title = models.TextField()
@@ -91,6 +93,17 @@ class ACMContestRank(AbstractContestRank):
     total_penalty = models.IntegerField(default=0)
     # key is problem id
     submission_info = JSONField(default=dict)
+
+    @property
+    def rank(self):
+        qs_contest = Contest.objects.get(id=self.contest.id)
+        if qs_contest.status == ContestStatus.CONTEST_ENDED:
+            qs_participants = ACMContestRank.objects.filter(contest=self.contest.id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).\
+                select_related("user").order_by("-accepted_number", "total_penalty", "total_time")
+            for i in range(qs_participants.count()):
+                if qs_participants[i].user.id == self.user.id:
+                    return i+1
+        return -1
 
     class Meta:
         db_table = "acm_contest_rank"
