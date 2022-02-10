@@ -285,24 +285,15 @@ class UserContestAPI(APIView):
         user = request.user
         # queryset for all problems information which user submitted
         qs_problems = ACMContestRank.objects.filter(user=user.id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False)
-        # list for contest id which user participated
-        contest_ids = [dic["contest"] for dic in ACMContestRankSerializer(qs_problems, many=True).data]
-        # contest object information about each contest id
         contests = []
-        for contest_id in contest_ids:
+        for problem in qs_problems:
+            contest_id = problem.contest.id
             try:
                 contest = Contest.objects.get(id=contest_id, visible=True)
                 contest = ContestSerializer(contest).data
-                # to calculate rank
-                qs_participants = ACMContestRank.objects.filter(contest=contest_id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).\
-                    select_related("user").order_by("-accepted_number", "total_penalty", "total_time")
-                participants = ACMContestRankSerializer(qs_participants, many=True).data
-                total_participants = len(participants)
-                for i in range(total_participants):
-                    if participants[i]["user"]["id"] == user.id:
-                        contest["rank"] = i+1
-                        contest["percentage"] = contest["rank"]/(total_participants)*100
-                        break
+                total_participants = ACMContestRank.objects.filter(contest=contest_id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).count()
+                contest["rank"] = problem.rank
+                contest["percentage"] = round(contest["rank"]/total_participants*100, 2)
                 contests.append(contest)
             except Contest.DoesNotExist:
                 return self.error("Contest does not exist")
