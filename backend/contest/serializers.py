@@ -153,6 +153,7 @@ class ACMContesHelperSerializer(serializers.Serializer):
     rank_id = serializers.IntegerField()
     checked = serializers.BooleanField()
 
+
 class UserContestSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField(max_length=128)
