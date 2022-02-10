@@ -33,6 +33,10 @@
         </div>
       </div>
     </div>
+    <div class="description-container">
+      <h3 class="subtitle">Description</h3>
+      <div class="description" v-dompurify-html="description"></div>
+    </div>
   </div>
 </template>
 
@@ -109,6 +113,7 @@ export default {
 
     .summary {
       display: flex;
+      width: 100%;
       margin: 2rem 4rem;
       justify-content: space-around;
       align-items: center;
@@ -169,6 +174,14 @@ export default {
           }
         }
       }
+    }
+    .description-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 20rem;
+      width: 100%;
+      align-items: flex-start;
+      margin: 2rem 4rem;
     }
   }
   .subtitle {

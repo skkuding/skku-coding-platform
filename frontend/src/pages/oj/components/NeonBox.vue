@@ -1,7 +1,7 @@
 <template>
   <div class="neon-box-container" :style="cssColor">
     <div class="neon-box-hover">
-      <div class="ellipse" @click="$bvModal.show('modal-contest-information')">
+      <div class="ellipse">
         <slot name="overlay-icon"></slot>
       </div>
     </div>
@@ -18,14 +18,10 @@
         </div>
       </div>
     </div>
-    <b-modal id="modal-contest-information" size="xl">
-      <contest-information></contest-information>
-    </b-modal>
   </div>
 </template>
 
 <script>
-import ContestInformation from './ContestInformation.vue'
 
 export default {
   name: 'NeonBox',
@@ -43,9 +39,6 @@ export default {
     }
   },
   methods: {
-  },
-  components: {
-    ContestInformation
   },
   computed: {
     cssColor () {
