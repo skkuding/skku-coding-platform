@@ -70,6 +70,7 @@ class SubmissionAPI(APIView):
                                                username=request.user.username,
                                                language=data["language"],
                                                code=data["code"],
+                                               code_length=len(str(data["code"])),
                                                problem_id=problem.id,
                                                ip=request.session["ip"],
                                                contest_id=data.get("contest_id"))
