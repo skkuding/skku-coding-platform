@@ -11,7 +11,7 @@
       <h4 class="subtitle-blue">
         Enter >>
       </h4>
-      <neon-box color="#8DC63F" :shadow="true" class="my-3">
+      <neon-box color="#8DC63F" :shadow="true" class="my-3" @click.native="$bvModal.show('modal-contest-information')">
         <template #overlay-icon>
           <div id="triangle-right"></div>
         </template>
@@ -32,18 +32,18 @@
       <neon-box color="#8DC63F" class="my-3"></neon-box>
       <h4 class="subtitle-red">
         Cannot Participate
-        <button class="subtitle-toggle">
-          <b-icon-caret-down-fill color="#FF6663"></b-icon-caret-down-fill>
+        <button class="subtitle-toggle" @click="showCannotParticipate = !showCannotParticipate">
+          <b-icon :icon="showCannotParticipate ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
         </button>
       </h4>
-      <neon-box color="#FF6663" :shadow="true" class="my-3"></neon-box>
+      <neon-box v-show="showCannotParticipate" color="#FF6663" :shadow="true" class="my-3"></neon-box>
       <h4 class="subtitle-red">
         Finished Contests
-        <button class="subtitle-toggle">
-          <b-icon-caret-down-fill color="#FF6663"></b-icon-caret-down-fill>
+        <button class="subtitle-toggle" @click="showFinishedContests = !showFinishedContests">
+          <b-icon :icon="showFinishedContests ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
         </button>
       </h4>
-      <neon-box color="#FF6663" class="my-3"></neon-box>
+      <neon-box v-show="showFinishedContests" color="#FF6663" class="my-3"></neon-box>
       <!-- <div class="table">
         <b-table
           hover
@@ -79,6 +79,9 @@
         ></b-pagination>
       </div> -->
     </div>
+    <b-modal id="modal-contest-information" size="xl">
+      <contest-information></contest-information>
+    </b-modal>
   </div>
 </template>
 
@@ -89,6 +92,7 @@ import utils from '@/utils/utils'
 import time from '@/utils/time'
 import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/constants'
 import NeonBox from '@oj/components/NeonBox.vue'
+import ContestInformation from '@oj/components/ContestInformation.vue'
 
 export default {
   name: 'ContestList',
@@ -106,10 +110,13 @@ export default {
     }
   },
   components: {
-    NeonBox
+    NeonBox,
+    ContestInformation
   },
   data () {
     return {
+      showCannotParticipate: false,
+      showFinishedContests: false,
       limit: 20,
       total: 0,
       perPage: 5,
