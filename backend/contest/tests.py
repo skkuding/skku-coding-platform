@@ -103,13 +103,7 @@ class ContestAdminAPITest(APITestCase):
 class ContestAPITest(APITestCase):
     def setUp(self):
         user = self.create_admin()
-        group = Group.objects.create(
-            created_by=user,
-            name="SKKUding",
-            short_description="post group registration request",
-            description="post group registration request",
-            is_official=True
-        )
+        group = self.create_group(created_by=user)
         data = copy.deepcopy(DEFAULT_CONTEST_DATA)
         data.pop("allowed_groups")
         allowed_groups = [group.id]
@@ -151,8 +145,18 @@ class ContestAPITest(APITestCase):
         self.assertSuccess(resp)
 
     def test_not_group_member_access_contest(self):
-        self.create_user("test", "test123")
+        self.create_user("test2", "test1234")
         url = self.reverse("contest_access_api")
+        resp = self.client.get(url + "?contest_id=" + str(self.contest.id))
+        self.assertFalse(resp.data["data"]["access"])
+
+        password_url = self.reverse("contest_password_api")
+        resp = self.client.post(password_url,
+                                {"contest_id": self.contest.id, "password": DEFAULT_CONTEST_DATA["password"]})
+        self.assertSuccess(resp)
+        resp = self.client.get(self.url)
+        self.assertSuccess(resp)
+
 
 class ContestAnnouncementAdminAPITest(APITestCase):
     def setUp(self):
