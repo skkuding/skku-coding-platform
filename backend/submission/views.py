@@ -77,7 +77,7 @@ class SubmissionAPI(APIView):
             return self.error(error)
 
         try:
-            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), assignment_id=data.get("assignment_id"), visible=True)
+            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), assignment_id=data.get("assignment_id"), course_id=data.get("course_id"), visible=True)
         except Problem.DoesNotExist:
             return self.error("Problem not exist")
         if data["language"] not in problem.languages:
@@ -89,7 +89,8 @@ class SubmissionAPI(APIView):
                                                problem_id=problem.id,
                                                ip=request.session["ip"],
                                                contest_id=data.get("contest_id"),
-                                               assignment_id=data.get("assignment_id"))
+                                               assignment_id=data.get("assignment_id"),
+                                               course_id=data.get("course_id"))
         # use this for debug
         # JudgeDispatcher(submission.id, problem.id).judge()
         judge_task.send(submission.id, problem.id)
@@ -199,14 +200,14 @@ class SubmissionListAPI(APIView):
         if request.GET.get("contest_id"):
             return self.error("Parameter error")
 
-        submissions = Submission.objects.filter(contest_id__isnull=True, assignment_id__isnull=True).select_related("problem__created_by")
+        submissions = Submission.objects.filter(contest_id__isnull=True, assignment_id__isnull=True, course_id__isnull=True).select_related("problem__created_by")
         problem_id = request.GET.get("problem_id")
         myself = request.GET.get("myself")
         result = request.GET.get("result")
         username = request.GET.get("username")
         if problem_id:
             try:
-                problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, assignment_id__isnull=True, visible=True)
+                problem = Problem.objects.get(_id=problem_id, contest_id__isnull=True, assignment_id__isnull=True, course_id__isnull=True, visible=True)
             except Problem.DoesNotExist:
                 return self.error("Problem doesn't exist")
             submissions = submissions.filter(problem=problem)
