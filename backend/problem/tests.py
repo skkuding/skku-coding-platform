@@ -200,8 +200,11 @@ class ProblemAPITest(ProblemCreateTestBase):
 class ContestProblemAdminTest(APITestCase):
     def setUp(self):
         self.url = self.reverse("contest_problem_admin_api")
-        self.create_admin()
-        self.contest = self.client.post(self.reverse("contest_admin_api"), data=DEFAULT_CONTEST_DATA).data["data"]
+        admin = self.create_admin()
+        group = self.create_group(created_by=admin)
+        contest_data = DEFAULT_CONTEST_DATA
+        contest_data["admin_groups"] = [group.id]
+        self.contest = self.client.post(self.reverse("contest_admin_api"), data=contest_data).data["data"]
 
     def test_create_contest_problem(self):
         data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
