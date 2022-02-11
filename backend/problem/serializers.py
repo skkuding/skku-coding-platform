@@ -126,10 +126,15 @@ class BaseProblemSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(many=True, slug_field="name", read_only=True)
     created_by = UsernameSerializer()
     contest_name = serializers.SerializerMethodField()
+    assignment_name = serializers.SerializerMethodField()
 
     def get_contest_name(self, obj):
         if obj.contest:
             return obj.contest.title
+    
+    def get_assignment_name(self, obj):
+        if obj.assignment:
+            return obj.assignment.title
 
     def get_public_template(self, obj):
         ret = {}
