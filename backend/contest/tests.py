@@ -22,6 +22,13 @@ DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test
                         "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
 
 DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description",
+                        "requirements": ["SKKU undergrate enrolled 2021 Spring"],
+                        "constraints": ["Not Awarded in same past competition"],
+                        "scoring": 'ACM-ICPC style',
+                        "prizes": [{"color": "#FF6663", "name": "Top 2", "reward": "1,000,000 Won"},
+                                   {"color": "#FFD700", "name": "3(3~5)", "reward": "500,000 Won"},
+                                   {"color": "#C0C0C0", "name": "5(6~10)", "reward": "100,000 Won"},
+                                   {"color": "#CD7F32", "name": "10(11~20)", "reward": "50,000 Won"}],
                         "start_time": timezone.localtime(timezone.now()),
                         "end_time": timezone.localtime(timezone.now()) + timedelta(days=1),
                         "rule_type": ContestRuleType.ACM,

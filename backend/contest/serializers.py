@@ -4,12 +4,20 @@ from .models import Contest, ContestAnnouncement, ContestRuleType
 from .models import ACMContestRank, OIContestRank
 
 
+class CreateOrEditPrizeSerializer(serializers.Serializer):
+    color = serializers.CharField(max_length=20)
+    name = serializers.CharField(max_length=20)
+    reward = serializers.CharField(max_length=20)
+
+
 class CreateConetestSeriaizer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
-    requirements = serializers.CharField()
+    requirements = serializers.ListField(child=serializers.CharField(max_length=128))
+    constraints = serializers.ListField(child=serializers.CharField(max_length=128), allow_empty=True)
+    allowed_groups = serializers.ListField(child=serializers.IntegerField())
     scoring = serializers.CharField()
-    prize = serializers.ListField(child=serializers.DictField(child=serializers.CharField()))
+    prize = serializers.ListField(child=CreateOrEditPrizeSerializer())
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     rule_type = serializers.ChoiceField(choices=[ContestRuleType.ACM, ContestRuleType.OI])
@@ -23,9 +31,11 @@ class EditConetestSeriaizer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
-    requirements = serializers.CharField()
+    requirements = serializers.ListField(child=serializers.CharField(max_length=128))
+    constraints = serializers.ListField(child=serializers.CharField(max_length=128), allow_empty=True)
+    allowed_groups = serializers.ListField(child=serializers.IntegerField())
     scoring = serializers.CharField()
-    prize = serializers.JSONField()
+    prize = serializers.ListField(child=CreateOrEditPrizeSerializer())
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     password = serializers.CharField(allow_blank=True, allow_null=True, max_length=32)
