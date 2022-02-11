@@ -9,6 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from account.models import User
+from group.models import Group
 from submission.models import Submission, JudgeStatus
 from utils.api import APIView, validate_serializer
 from utils.cache import cache
@@ -43,7 +44,12 @@ class ContestAPI(APIView):
                 ip_network(ip_range, strict=False)
             except ValueError:
                 return self.error(f"{ip_range} is not a valid cidr network")
+        allowed_groups = data.pop("allowed_groups")
+        allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
+        if allowed_groups_qs.count() != len(allowed_groups):
+            return self.error("Some groups don't exist")
         contest = Contest.objects.create(**data)
+        contest.allowed_groups.set(allowed_groups_qs)
         return self.success(ContestAdminSerializer(contest).data)
 
     @swagger_auto_schema(
@@ -70,6 +76,12 @@ class ContestAPI(APIView):
                 ip_network(ip_range, strict=False)
             except ValueError:
                 return self.error(f"{ip_range} is not a valid cidr network")
+
+        allowed_groups = data.pop("allowed_groups")
+        allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
+        if allowed_groups_qs.count() != len(allowed_groups):
+            return self.error("Some groups don't exist")
+        contest.allowed_groups.set(allowed_groups_qs)
         if not contest.real_time_rank and data.get("real_time_rank"):
             cache_key = f"{CacheKey.contest_rank_cache}:{contest.id}"
             cache.delete(cache_key)

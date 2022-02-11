@@ -2,6 +2,7 @@ from utils.api import UsernameSerializer, serializers
 
 from .models import Contest, ContestAnnouncement, ContestRuleType
 from .models import ACMContestRank, OIContestRank
+from group.serializers import GroupSummarySerializer
 
 
 class CreateOrEditPrizeSerializer(serializers.Serializer):
@@ -15,9 +16,9 @@ class CreateConetestSeriaizer(serializers.Serializer):
     description = serializers.CharField()
     requirements = serializers.ListField(child=serializers.CharField(max_length=128))
     constraints = serializers.ListField(child=serializers.CharField(max_length=128), allow_empty=True)
-    allowed_groups = serializers.ListField(child=serializers.IntegerField())
+    allowed_groups = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)
     scoring = serializers.CharField()
-    prize = serializers.ListField(child=CreateOrEditPrizeSerializer())
+    prizes = serializers.ListField(child=CreateOrEditPrizeSerializer())
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     rule_type = serializers.ChoiceField(choices=[ContestRuleType.ACM, ContestRuleType.OI])
@@ -33,9 +34,9 @@ class EditConetestSeriaizer(serializers.Serializer):
     description = serializers.CharField()
     requirements = serializers.ListField(child=serializers.CharField(max_length=128))
     constraints = serializers.ListField(child=serializers.CharField(max_length=128), allow_empty=True)
-    allowed_groups = serializers.ListField(child=serializers.IntegerField())
+    allowed_groups = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)
     scoring = serializers.CharField()
-    prize = serializers.ListField(child=CreateOrEditPrizeSerializer())
+    prizes = serializers.ListField(child=CreateOrEditPrizeSerializer())
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     password = serializers.CharField(allow_blank=True, allow_null=True, max_length=32)
@@ -48,6 +49,7 @@ class ContestAdminSerializer(serializers.ModelSerializer):
     created_by = UsernameSerializer()
     status = serializers.CharField()
     contest_type = serializers.CharField()
+    allowed_groups = GroupSummarySerializer(many=True)
 
     class Meta:
         model = Contest

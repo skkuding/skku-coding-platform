@@ -14,9 +14,9 @@ class Contest(models.Model):
     description = RichTextField()
     requirements = JSONField(default=list)
     constraints = JSONField(default=list)
-    allowed_groups = models.ManyToManyField(Group)
+    allowed_groups = models.ManyToManyField(Group, blank=True)
     scoring = models.TextField(default="ACM-ICPC style")
-    prize = JSONField(default=dict)
+    prizes = JSONField(default=dict)
     # show real time rank or cached rank
     real_time_rank = models.BooleanField()
     password = models.TextField(null=True)
