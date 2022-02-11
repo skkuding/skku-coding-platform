@@ -41,7 +41,7 @@ DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description"
 
 class ContestAdminAPITest(APITestCase):
     def setUp(self):
-        self.create_super_admin()
+        self.super_admin = self.create_super_admin()
         self.url = self.reverse("contest_admin_api")
         self.data = copy.deepcopy(DEFAULT_CONTEST_DATA)
 
@@ -54,6 +54,24 @@ class ContestAdminAPITest(APITestCase):
         self.data["allowed_ip_ranges"] = ["127.0.0"]
         resp = self.client.post(self.url, data=self.data)
         self.assertTrue(resp.data["data"].endswith("is not a valid cidr network"))
+
+    def test_create_contest_with_group_not_existing(self):
+        self.data["allowed_groups"] = [1]
+        response = self.client.post(self.url, data=self.data)
+        self.assertFailed(response)
+
+    def test_create_contest_with_group_existing(self):
+        group = Group.objects.create(
+            created_by=self.super_admin,
+            name="SKKUding",
+            short_description="post group registration request",
+            description="post group registration request",
+            is_official=True
+        )
+        group.members.add(self.super_admin, through_defaults={"is_group_admin": False})
+        self.data["allowed_groups"] = [group.id]
+        response = self.client.post(self.url, data=self.data)
+        self.assertSuccess(response)
 
     def test_update_contest(self):
         id = self.test_create_contest().data["data"]["id"]
@@ -85,8 +103,16 @@ class ContestAdminAPITest(APITestCase):
 class ContestAPITest(APITestCase):
     def setUp(self):
         user = self.create_admin()
+        group = Group.objects.create(
+            created_by=user,
+            name="SKKUding",
+            short_description="post group registration request",
+            description="post group registration request",
+            is_official=True
+        )
         data = copy.deepcopy(DEFAULT_CONTEST_DATA)
-        allowed_groups = data.pop("allowed_groups")
+        data.pop("allowed_groups")
+        allowed_groups = [group.id]
         allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
         self.contest = Contest.objects.create(created_by=user, **data)
         self.contest.allowed_groups.set(allowed_groups_qs)
@@ -124,6 +150,9 @@ class ContestAPITest(APITestCase):
         resp = self.client.get(self.url)
         self.assertSuccess(resp)
 
+    def test_not_group_member_access_contest(self):
+        self.create_user("test", "test123")
+        url = self.reverse("contest_access_api")
 
 class ContestAnnouncementAdminAPITest(APITestCase):
     def setUp(self):
