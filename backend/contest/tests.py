@@ -2,6 +2,7 @@ import copy
 from datetime import datetime, timedelta
 
 from django.utils import timezone
+from group.models import Group
 
 from utils.api.tests import APITestCase
 
@@ -24,11 +25,12 @@ DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test
 DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description",
                         "requirements": ["SKKU undergrate enrolled 2021 Spring"],
                         "constraints": ["Not Awarded in same past competition"],
-                        "scoring": 'ACM-ICPC style',
+                        "scoring": "ACM-ICPC style",
                         "prizes": [{"color": "#FF6663", "name": "Top 2", "reward": "1,000,000 Won"},
                                    {"color": "#FFD700", "name": "3(3~5)", "reward": "500,000 Won"},
                                    {"color": "#C0C0C0", "name": "5(6~10)", "reward": "100,000 Won"},
                                    {"color": "#CD7F32", "name": "10(11~20)", "reward": "50,000 Won"}],
+                        "allowed_groups": [],
                         "start_time": timezone.localtime(timezone.now()),
                         "end_time": timezone.localtime(timezone.now()) + timedelta(days=1),
                         "rule_type": ContestRuleType.ACM,
@@ -83,7 +85,11 @@ class ContestAdminAPITest(APITestCase):
 class ContestAPITest(APITestCase):
     def setUp(self):
         user = self.create_admin()
-        self.contest = Contest.objects.create(created_by=user, **DEFAULT_CONTEST_DATA)
+        data = copy.deepcopy(DEFAULT_CONTEST_DATA)
+        allowed_groups = data.pop("allowed_groups")
+        allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
+        self.contest = Contest.objects.create(created_by=user, **data)
+        self.contest.allowed_groups.set(allowed_groups_qs)
         self.url = self.reverse("contest_api") + "?id=" + str(self.contest.id)
 
     def test_get_contest_list(self):
