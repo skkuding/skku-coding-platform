@@ -137,6 +137,13 @@ def check_contest_permission(check_type="details"):
                 if not self.contest.real_time_rank and (check_type == "ranks" or check_type == "submissions"):
                     return self.error(f"No permission to get {check_type}")
 
+            if not self.contest.allowed_groups.count():
+                print("count is 0")
+            elif self.contest.allowed_groups.filter(members__in=user).exists():
+                print("you are not a group member of this contest.")
+            else:
+                print("pass")
+
             return func(*args, **kwargs)
         return _check_permission
     return decorator
