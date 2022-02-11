@@ -72,6 +72,7 @@ class SubmissionAPI(APIView):
                                                code=data["code"],
                                                code_length=len(str(data["code"])),
                                                problem_id=problem.id,
+                                               title=problem.title,
                                                ip=request.session["ip"],
                                                contest_id=data.get("contest_id"))
         # use this for debug
