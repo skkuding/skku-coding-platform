@@ -26,6 +26,132 @@
           </p>
           <tiptap v-model="contest.description"/>
         </b-col>
+        <b-col cols="6">
+          <b-form-group>
+            <template #label>
+              <p class="labels" style="margin-top:16px">
+                <span class="text-danger">*</span>
+                Requirements
+              </p>
+            </template>
+            <div
+              v-for="(range, index) in contest.requirements"
+              :key="index"
+            >
+              <b-row style="margin-bottom: 15px">
+                <b-col cols="8">
+                  <b-form-input
+                    v-model="range.value"
+                    placeholder="Contest Requirement"
+                  />
+                </b-col>
+                <b-col cols="1">
+                  <b-button @click="addRequirement" variant="outline-secondary">
+                      <b-icon icon="plus"></b-icon>
+                  </b-button>
+                </b-col>
+                <b-col cols="1">
+                  <b-button @click="removeRequirement(range)" variant="outline-secondary">
+                      <b-icon icon="trash-fill"></b-icon>
+                  </b-button>
+                </b-col>
+              </b-row>
+            </div>
+          </b-form-group>
+        </b-col>
+        <b-col cols="6">
+          <b-form-group>
+            <template #label>
+              <p class="labels" style="margin-top:16px">
+                Constraints
+              </p>
+            </template>
+            <div
+              v-for="(range, index) in contest.constraints"
+              :key="index"
+            >
+              <b-row style="margin-bottom: 15px">
+                <b-col cols="8">
+                  <b-form-input
+                    v-model="range.value"
+                    placeholder="Contest Constraints"
+                  />
+                </b-col>
+                <b-col cols="1">
+                  <b-button @click="addConstraint" variant="outline-secondary">
+                      <b-icon icon="plus"></b-icon>
+                  </b-button>
+                </b-col>
+                <b-col cols="1">
+                  <b-button @click="removeConstraint(range)" variant="outline-secondary">
+                      <b-icon icon="trash-fill"></b-icon>
+                  </b-button>
+                </b-col>
+              </b-row>
+            </div>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12">
+          <b-form-group
+            label-for="ContestScoring"
+          >
+            <template #label>
+              <p class="labels">
+                <span class="text-danger">*</span>
+                Scoring
+              </p>
+            </template>
+            <b-form-input
+              id="ContestScoring"
+              v-model="contest.scoring"
+              placeholder="Scoring"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col cols="12">
+          <b-form-group>
+            <template #label>
+              <p class="labels" style="margin-top:16px">
+                Prizes
+              </p>
+            </template>
+            <div
+              v-for="(range, index) in contest.prizes"
+              :key="index"
+            >
+              <b-row style="margin-bottom: 15px">
+                <b-col cols="2">
+                  <b-form-input
+                    v-model="range.color"
+                    placeholder="Contest prize color"
+                  />
+                </b-col>
+                <b-col cols="4">
+                  <b-form-input
+                    v-model="range.name"
+                    placeholder="Contest prize name"
+                  />
+                </b-col>
+                <b-col cols="4">
+                  <b-form-input
+                    v-model="range.reward"
+                    placeholder="Contest reward"
+                  />
+                </b-col>
+                <b-col cols="1">
+                  <b-button @click="addPrize" variant="outline-secondary">
+                    <b-icon icon="plus"></b-icon>
+                  </b-button>
+                </b-col>
+                <b-col cols="1">
+                  <b-button @click="removePrize(range)" variant="outline-secondary">
+                      <b-icon icon="trash-fill"></b-icon>
+                  </b-button>
+                </b-col>
+              </b-row>
+            </div>
+          </b-form-group>
+        </b-col>
         <b-col cols="4">
           <b-form-group label-for="Contest_Start_Time">
             <template #label>
@@ -175,6 +301,19 @@ export default {
       contest: {
         title: '',
         description: '',
+        requirements: [{
+          value: ''
+        }],
+        constraints: [{
+          value: ''
+        }],
+        scoring: '',
+        prizes: [{
+          color: '',
+          name: '',
+          reward: ''
+        }],
+        allowed_groups: [],
         start_time: '',
         end_time: '',
         rule_type: 'ACM',
@@ -225,6 +364,32 @@ export default {
         }
       }
       data.allowed_ip_ranges = ranges
+
+      const requirements = []
+      for (const v of data.requirements) {
+        if (v.value !== '') {
+          requirements.push(v.value)
+        }
+      }
+      data.requirements = requirements
+      const constraints = []
+      for (const v of data.constraints) {
+        if (v.value !== '') {
+          constraints.push(v.value)
+        }
+      }
+      data.constraints = constraints
+      const prizes = []
+      for (const v of data.prizes) {
+        if (v.color !== '' && v.name !== '' && v.reward !== '') {
+          prizes.push({
+            color: v.color,
+            name: v.name,
+            reward: v.reward
+          })
+        }
+      }
+      data.prizes = prizes
       try {
         await api[funcName](data)
         await this.$router.push({ name: 'contest-list', query: { refresh: 'true' } })
@@ -246,8 +411,35 @@ export default {
     },
     removeIPRange (range) {
       const index = this.contest.allowed_ip_ranges.indexOf(range)
-      if (index !== -1) {
+      if (index !== -1 && this.contest.allowed_ip_ranges.length !== 1) {
         this.contest.allowed_ip_ranges.splice(index, 1)
+      }
+    },
+    addRequirement () {
+      this.contest.requirements.push({ value: '' })
+    },
+    removeRequirement (range) {
+      const index = this.contest.requirements.indexOf(range)
+      if (index !== -1 && this.contest.requirements.length !== 1) {
+        this.contest.requirements.splice(index, 1)
+      }
+    },
+    addConstraint () {
+      this.contest.constraints.push({ value: '' })
+    },
+    removeConstraint (range) {
+      const index = this.contest.constraints.indexOf(range)
+      if (index !== -1 && this.contest.constraints.length !== 1) {
+        this.contest.constraints.splice(index, 1)
+      }
+    },
+    addPrize () {
+      this.contest.prizes.push({ value: '' })
+    },
+    removePrize (range) {
+      const index = this.contest.prizes.indexOf(range)
+      if (index !== -1 && this.contest.prizes.length !== 1) {
+        this.contest.prizes.splice(index, 1)
       }
     }
   }

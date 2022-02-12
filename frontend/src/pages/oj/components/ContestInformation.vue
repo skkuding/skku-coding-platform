@@ -45,43 +45,66 @@
 export default {
   name: 'ContestInformation',
   props: {
+    title: {
+      type: String,
+      required: true
+    },
+    requirements: {
+      type: Array,
+      required: true
+    },
+    constraints: {
+      type: Array,
+      required: true
+    },
+    scoring: {
+      type: String,
+      required: true
+    },
+    prizes: {
+      type: Array,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true
+    }
   },
   data () {
     return {
-      title: '2021 Spring SKKU 프로그래밍 대회 in 소프트의 밤',
-      requirements: [
-        'SKKU undergrate enrolled 2021 Spring'
-      ],
-      constraints: [
-        'Not Awarded in same past competition'
-      ],
-      scoring: 'ACM-ICPC style',
-      prizes: [
-        {
-          color: '#FF6663',
-          name: 'Top 2',
-          reward: '1,000,000 Won'
-        },
-        {
-          color: '#FFD700',
-          name: '3(3~5)',
-          reward: '500,000 Won'
-        },
-        {
-          color: '#C0C0C0',
-          name: '5(6~10)',
-          reward: '100,000 Won'
-        },
-        {
-          color: '#CD7F32',
-          name: '10(11~20)',
-          reward: '50,000 Won'
-        }
-      ],
-      importantNote: 'You should not be a cute cat',
-      description: `
-      <p data-v-5ab32299="" class="contest-tab-description"><p>Description</p><p>dd</p><p>dd</p><p>ee</p><p>eee</p></p>
-      `
+      // title: '2021 Spring SKKU 프로그래밍 대회 in 소프트의 밤',
+      // requirements: [
+      //   'SKKU undergrate enrolled 2021 Spring'
+      // ],
+      // constraints: [
+      //   'Not Awarded in same past competition'
+      // ],
+      // scoring: 'ACM-ICPC style',
+      // prizes: [
+      //   {
+      //     color: '#FF6663',
+      //     name: 'Top 2',
+      //     reward: '1,000,000 Won'
+      //   },
+      //   {
+      //     color: '#FFD700',
+      //     name: '3(3~5)',
+      //     reward: '500,000 Won'
+      //   },
+      //   {
+      //     color: '#C0C0C0',
+      //     name: '5(6~10)',
+      //     reward: '100,000 Won'
+      //   },
+      //   {
+      //     color: '#CD7F32',
+      //     name: '10(11~20)',
+      //     reward: '50,000 Won'
+      //   }
+      // ],
+      // description: `
+      // <p data-v-5ab32299="" class="contest-tab-description"><p>Description</p><p>dd</p><p>dd</p><p>ee</p><p>eee</p></p>
+      // `
     }
   },
   methods: {
