@@ -346,6 +346,9 @@ export default {
   },
   getIPAddress () {
     return ajax('admin/ip_info/', 'get')
+  },
+  getGroupList () {
+    return ajax('admin/group/', 'get')
   }
 }
 

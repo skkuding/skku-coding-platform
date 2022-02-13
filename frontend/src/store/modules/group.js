@@ -21,7 +21,6 @@ const mutations = {
 const actions = {
   async getGroupList ({ commit, rootState }) {
     try {
-      console.log('call')
       const res = await api.getGroupList()
       commit(types.CHANGE_GROUP_LIST, { groups: res.data.data })
       return res

@@ -251,6 +251,17 @@
           <b-form-group>
             <template #label>
               <p class="labels">
+                Allowed Groups
+              </p>
+            </template>
+            <b-form-select v-model="contest.allowed_groups" :options="groupOptions" multiple :select-size="4" value-field="id" text-field="name">
+            </b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group>
+            <template #label>
+              <p class="labels">
                 Allowed IP Ranges
               </p>
             </template>
@@ -324,6 +335,7 @@ export default {
           value: ''
         }]
       },
+      groupOptions: [],
       startTime: '',
       startDate: '',
       endTime: '',
@@ -331,12 +343,15 @@ export default {
     }
   },
   async mounted () {
+    const res = await api.getGroupList()
+    this.groupOptions = res.data.data
     if (this.$route.name === 'edit-contest') {
       this.title = 'Edit Contest'
       this.disableRuleType = true
       try {
         const res = await api.getContest(this.$route.params.contestId)
         const data = res.data.data
+
         const ranges = []
         for (const v of data.allowed_ip_ranges) {
           ranges.push({ value: v })
@@ -345,6 +360,38 @@ export default {
           ranges.push({ value: '' })
         }
         data.allowed_ip_ranges = ranges
+
+        const requirements = []
+        for (const v of data.requirements) {
+          requirements.push({ value: v })
+        }
+        if (requirements.length === 0) {
+          requirements.push({ value: '' })
+        }
+        data.requirements = requirements
+
+        const constraints = []
+        for (const v of data.constraints) {
+          constraints.push({ value: v })
+        }
+        if (constraints.length === 0) {
+          constraints.push({ value: '' })
+        }
+        data.constraints = constraints
+
+        const prizes = []
+        for (const v of data.prizes) {
+          prizes.push({
+            color: v.color,
+            name: v.name,
+            reward: v.reward
+          })
+        }
+        if (prizes.length === 0) {
+          prizes.push({ value: '' })
+        }
+        data.prizes = prizes
+
         this.contest = data
         this.initTime()
       } catch (err) {
