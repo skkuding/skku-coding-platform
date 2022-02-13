@@ -16,6 +16,13 @@ class GroupRegistrationRequestSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CreateGroupSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    short_description = serializers.CharField()
+    description = serializers.CharField()
+    is_official = serializers.BooleanField()
+
+
 class GroupSummarySerializer(serializers.ModelSerializer):
     # logo = serializers.ImageField()
 
