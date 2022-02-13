@@ -9,12 +9,12 @@
       <img class="logo" src="@/assets/Cup.png">
       <div class="contest-information-flex-col">
         <div class="contest-information-flex-row">
-          <div class="contest-information-big">2021 Spring SKKU 프로그래밍 대회 - 참여중 대회</div>
-          <div class="contest-information-big">#참여</div>
+          <div class="contest-information-big">{{ leftTop }}</div>
+          <div class="contest-information-big">{{ rightTop }}</div>
         </div>
         <div class="contest-information-flex-row">
-          <div class="contest-information-small">For SKKU Undergraduate</div>
-          <div class="contest-information-small">Started Before 00:07:05 </div>
+          <div class="contest-information-small">{{ leftBottom }}</div>
+          <div class="contest-information-small">{{ rightBottom }} </div>
         </div>
       </div>
     </div>
@@ -32,6 +32,18 @@ export default {
     },
     shadow: {
       type: Boolean
+    },
+    leftTop: {
+      type: String
+    },
+    rightTop: {
+      type: String
+    },
+    leftBottom: {
+      type: String
+    },
+    rightBottom: {
+      type: String
     }
   },
   data () {
