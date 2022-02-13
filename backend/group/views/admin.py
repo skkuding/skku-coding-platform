@@ -4,10 +4,10 @@ from drf_yasg import openapi
 from utils.decorators import super_admin_required
 
 # from group.models import Group, GroupMemberJoin
-from group.serializers import GroupRegistrationRequestSerializer, GroupDetailSerializer, CreateGroupSerializer
+from group.serializers import GroupRegistrationRequestSerializer, GroupDetailSerializer, CreateGroupSerializer, GroupSummarySerializer, GroupMemberSerializer, GroupMemberJoinSerializer
 from utils.api import APIView, validate_serializer
 
-from ..models import GroupRegistrationRequest, Group
+from ..models import GroupRegistrationRequest, Group, GroupMember, GroupMemberJoin
 
 
 class AdminGroupRegistrationRequestAPI(APIView):
@@ -101,3 +101,42 @@ class GroupAdminAPI(APIView):
         )
         group.members.add(user, through_defaults={"is_group_admin": True})
         return self.success(GroupDetailSerializer(group).data)
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name="id",
+                in_=openapi.IN_QUERY,
+                description="Unique ID of a group. if id is not given, return group list, else return detail of a group",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+        ],
+        operation_description="Get group list or detail of a group"
+    )
+    def get(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return self.error("Login First")
+
+        group_id = request.GET.get("id")
+
+        # Group List
+        if not group_id:
+            groups = Group.objects.all()
+            return self.success(GroupSummarySerializer(groups, many=True).data)
+
+        # Group Detail
+        try:
+            group = Group.objects.get(id=group_id)
+        except Group.DoesNotExist:
+            return self.error("Group does not exist")
+        data = GroupDetailSerializer(group).data
+
+        data["members"] = GroupMemberSerializer(GroupMember.objects.filter(group=group_id), many=True).data
+
+        if GroupMember.objects.filter(is_group_admin=True, group=group, user=user).exists():
+            group_member_join = GroupMemberJoin.objects.filter(group=group)
+            data["group_member_join"] = GroupMemberJoinSerializer(group_member_join, many=True).data
+
+        return self.success(data)
