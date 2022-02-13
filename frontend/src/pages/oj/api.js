@@ -314,6 +314,10 @@ export default {
     return ajax('assignment_submissions/', 'get', {
       params
     })
+  },
+  getGroupList () {
+    return ajax('group/', 'get', {
+    })
   }
 }
 

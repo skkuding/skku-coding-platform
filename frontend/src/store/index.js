@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import user from './modules/user'
 import contest from './modules/contest'
 import course from './modules/course'
+import group from './modules/group'
 import api from '@oj/api'
 import types from './types'
 
@@ -67,7 +68,8 @@ export default new Vuex.Store({
   modules: {
     user,
     contest,
-    course
+    course,
+    group
   },
   state: rootState,
   getters: rootGetters,

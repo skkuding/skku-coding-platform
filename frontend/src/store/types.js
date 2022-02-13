@@ -26,5 +26,7 @@ export default keyMirror({
 
   CHANGE_ASSIGNMENT: null,
   CHANGE_ASSIGNMENTLIST: null,
-  CHANGE_ASSIGNMENT_PROBLEMS: null
+  CHANGE_ASSIGNMENT_PROBLEMS: null,
+
+  CHANGE_GROUP_LIST: null
 })
