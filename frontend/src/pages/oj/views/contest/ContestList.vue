@@ -19,7 +19,7 @@
       <h4 class="subtitle-blue">
         Register Now >>
       </h4>
-      <neon-box color="#8DC63F" class="my-3">
+      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsRegisterNow" :key="index">
         <template #overlay-icon>
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
@@ -28,56 +28,22 @@
       <h4 class="subtitle-blue">
         Upcoming Contests >>
       </h4>
-      <neon-box color="#8DC63F" class="my-3"></neon-box>
-      <neon-box color="#8DC63F" class="my-3"></neon-box>
+      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="index">
+      </neon-box>
       <h4 class="subtitle-red">
         Cannot Participate
         <button class="subtitle-toggle" @click="showCannotParticipate = !showCannotParticipate">
           <b-icon :icon="showCannotParticipate ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
         </button>
       </h4>
-      <neon-box v-show="showCannotParticipate" color="#FF6663" :shadow="true" class="my-3"></neon-box>
+      <neon-box v-show="showCannotParticipate" v-for="(contest, index) in contestsCannotParticipate" :key="index" color="#FF6663" :shadow="true" class="my-3"></neon-box>
       <h4 class="subtitle-red">
         Finished Contests
         <button class="subtitle-toggle" @click="showFinishedContests = !showFinishedContests">
           <b-icon :icon="showFinishedContests ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
         </button>
       </h4>
-      <neon-box v-show="showFinishedContests" color="#FF6663" class="my-3"></neon-box>
-      <!-- <div class="table">
-        <b-table
-          hover
-          :items="contests"
-          :fields="contestListFields"
-          :per-page="perPage"
-          :current-page="currentPage"
-          head-variant="light"
-          @row-clicked="goContest"
-        >
-          <template #cell(start_time)="data">
-            {{ getTimeFormat(data.value) }}
-          </template>
-          <template #cell(duration)="data">
-            {{ getDuration(data.item.start_time, data.item.end_time) }}
-          </template>
-          <template #cell(status)="data">
-            <b-icon
-              icon="circle-fill"
-              class="mr-2"
-              :style="'color:' + contestStatus(data.value).color"
-            />
-            {{ contestStatus(data.value).name }}
-          </template>
-        </b-table>
-      </div>
-      <div class="pagination">
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="contests.length"
-          :per-page="perPage"
-          limit="3"
-        ></b-pagination>
-      </div> -->
+      <neon-box v-show="showFinishedContests" v-for="(contest, index) in contestsFinished" :key="index" color="#FF6663" class="my-3"></neon-box>
     </div>
     <b-modal id="modal-contest-information" size="xl">
       <contest-information></contest-information>
@@ -93,6 +59,7 @@ import time from '@/utils/time'
 import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/constants'
 import NeonBox from '@oj/components/NeonBox.vue'
 import ContestInformation from '@oj/components/ContestInformation.vue'
+import store from '@/store'
 
 export default {
   name: 'ContestList',
@@ -101,6 +68,7 @@ export default {
   async beforeRouteEnter (to, from, next) {
     try {
       const res = await api.getContestList(0, 20)
+      store.dispatch('getGroupList')
       next((vm) => {
         vm.contests = res.data.data.results
         vm.total = res.data.data.total
@@ -130,7 +98,10 @@ export default {
         rule_type: ''
       },
       rows: '',
-      contests: [],
+      contestsRegisterNow: [],
+      contestsUpcoming: [],
+      contestsCannotParticipate: [],
+      contestsFinished: [],
       CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
       // for password modal use
       cur_contest_id: '',
@@ -155,7 +126,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['changeDomTitle']),
+    ...mapActions(['changeDomTitle', 'getGroupList']),
     async handleRoute (route) {
       await this.$router.push(route)
     },
