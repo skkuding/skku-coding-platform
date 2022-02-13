@@ -5,6 +5,8 @@
 declare module 'vue' {
   export interface GlobalComponents {
     AtomsButton: typeof import('./components/atoms/Button.vue')['default']
+    AtomsDropdownItem: typeof import('./components/atoms/DropdownItem.vue')['default']
+    AtomsDropdownMenu: typeof import('./components/atoms/DropdownMenu.vue')['default']
     AtomsHeaderMobileButton: typeof import('./components/atoms/HeaderMobileButton.vue')['default']
     AtomsInput: typeof import('./components/atoms/Input.vue')['default']
     AtomsSignature: typeof import('./components/atoms/Signature.vue')['default']
@@ -12,9 +14,11 @@ declare module 'vue' {
     IconFaGithub: typeof import('~icons/fa/github')['default']
     IconFaSolidEnvelope: typeof import('~icons/fa-solid/envelope')['default']
     IconFaSolidLink: typeof import('~icons/fa-solid/link')['default']
+    IconFaSolidUser: typeof import('~icons/fa-solid/user')['default']
     IconRiKakaoTalkFill: typeof import('~icons/ri/kakao-talk-fill')['default']
     MoleculesHeaderMobileNav: typeof import('./components/molecules/HeaderMobileNav.vue')['default']
     MoleculesHeaderNav: typeof import('./components/molecules/HeaderNav.vue')['default']
+    MoleculesHeaderUserMenu: typeof import('./components/molecules/HeaderUserMenu.vue')['default']
     OrganismsFooterMain: typeof import('./components/organisms/FooterMain.vue')['default']
     OrganismsHeaderMain: typeof import('./components/organisms/HeaderMain.vue')['default']
   }

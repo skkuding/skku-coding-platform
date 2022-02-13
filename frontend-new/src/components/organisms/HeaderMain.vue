@@ -4,7 +4,7 @@ import { onBeforeRouteLeave } from 'vue-router'
 
 const isMobileNavShown = ref(false)
 
-const openMobileMenu = () => {
+const toggleMobileNav = () => {
   isMobileNavShown.value = !isMobileNavShown.value
 }
 
@@ -25,17 +25,10 @@ onBeforeRouteLeave(() => {
         <AtomsSignature />
       </router-link>
       <MoleculesHeaderNav class="absolute left-1/2 translate-x-[-50%]" />
-      <div class="ml-auto hidden gap-2 sm:flex">
-        <AtomsButton size="small" @click="$router.push('login')">
-          Sign In
-        </AtomsButton>
-        <AtomsButton size="small" outline @click="$router.push('register')">
-          Sign Up
-        </AtomsButton>
-      </div>
+      <MoleculesHeaderUserMenu />
       <AtomsHeaderMobileButton
         class="ml-auto sm:ml-4 lg:hidden"
-        @click="openMobileMenu"
+        @click="toggleMobileNav"
       />
     </div>
   </header>
