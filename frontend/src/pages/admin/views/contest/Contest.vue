@@ -392,6 +392,11 @@ export default {
         }
         data.prizes = prizes
 
+        const allowedGroups = []
+        for (const v of data.allowed_groups) {
+          allowedGroups.push(v.id)
+        }
+        data.allowed_groups = allowedGroups
         this.contest = data
         this.initTime()
       } catch (err) {
