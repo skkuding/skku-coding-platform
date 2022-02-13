@@ -133,8 +133,9 @@ def check_contest_permission(check_type="details"):
                 return self.error("Contest has not started yet.")
 
             # allowed_groups exist and member doesn't belong to any group, error
-            if self.contest.allowed_groups.count() and not self.contest.allowed_groups.filter(members__in=user).exists():
-                return self.error("You are not a member of the group allowed to this contest")
+            if self.contest.allowed_groups.count() and not self.contest.allowed_groups.filter(members=user).exists():
+                if check_type == "ranks" or check_type == "submissions" or check_type == 'problems':
+                    return self.error("You are not a member of the group allowed to this contest")
 
             # check does user have permission to get ranks, submissions in OI Contest
             if self.contest.status == ContestStatus.CONTEST_UNDERWAY and self.contest.rule_type == ContestRuleType.OI:
