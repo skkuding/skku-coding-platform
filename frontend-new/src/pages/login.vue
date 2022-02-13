@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { Head } from '@vueuse/head'
-import { useLogin } from '~/composables/user'
+import { isAuthenticated, useLogin } from '~/composables/user'
 
 const { loading, errorMessage, form, login } = useLogin(useRouter())
+
+onBeforeMount(() => {
+  if (isAuthenticated.value) {
+    useRouter().replace('/')
+  }
+})
 
 const buttonMessage = computed(() =>
   loading.value ? 'Signing In...' : 'Sign In'
