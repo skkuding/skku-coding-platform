@@ -1,5 +1,6 @@
 from django.utils.timezone import now
 from django.core.cache import cache
+from django.db.models import Count
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -113,7 +114,7 @@ class ContestListAPI(APIView):
         operation_description="Get contest list from <`offset`> to <`offset`+`limit`>",
     )
     def get(self, request):
-        contests = Contest.objects.select_related("created_by").filter(visible=True)
+        contests = Contest.objects.select_related("created_by").filter(visible=True).annotate(participants_count=Count("acmcontestrank"))
         keyword = request.GET.get("keyword")
         rule_type = request.GET.get("rule_type")
         status = request.GET.get("status")

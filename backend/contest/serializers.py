@@ -57,6 +57,8 @@ class ContestAdminSerializer(serializers.ModelSerializer):
 
 
 class ContestSerializer(ContestAdminSerializer):
+    participants_count = serializers.IntegerField(required=False)
+
     class Meta:
         model = Contest
         exclude = ("password", "visible", "allowed_ip_ranges")
