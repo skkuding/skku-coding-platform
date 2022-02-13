@@ -8,14 +8,14 @@
       <div class="description">Compete with schoolmates & win the prizes!</div>
     </div>
     <div class="contest-list-container font-bold">
-      <h4 class="subtitle-blue">
+      <!-- <h4 class="subtitle-blue">
         Enter >>
       </h4>
       <neon-box color="#8DC63F" :shadow="true" class="my-3" @click.native="$bvModal.show('modal-contest-information')">
         <template #overlay-icon>
           <div id="triangle-right"></div>
         </template>
-      </neon-box>
+      </neon-box> -->
       <h4 class="subtitle-blue">
         Register Now >>
       </h4>
@@ -24,7 +24,6 @@
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
-      <neon-box color="#8DC63F" class="my-3"></neon-box>
       <h4 class="subtitle-blue">
         Upcoming Contests >>
       </h4>
@@ -68,7 +67,7 @@ export default {
   async beforeRouteEnter (to, from, next) {
     try {
       const res = await api.getContestList(0, 20)
-      store.dispatch('getGroupList')
+      await store.dispatch('getGroupList')
       next((vm) => {
         vm.contests = res.data.data.results
         vm.total = res.data.data.total
@@ -76,6 +75,29 @@ export default {
     } catch (err) {
       next()
     }
+  },
+  created () {
+    this.group_as_member = [...this.$store.state.group.groups.admin_groups, ...this.$store.state.group.groups.groups]
+    function partition (array, filter) {
+      const pass = []
+      const fail = []
+      array.forEach((e, idx, arr) => (filter(e, idx, arr) ? pass : fail).push(e))
+      return [pass, fail]
+    }
+    const [finished, b] = partition(this.contests, contest => contest.status === CONTEST_STATUS.ENDED)
+    this.contestsFinished = finished
+    const [canParticipate, c] = partition(b, contest => {
+      for (const allowedGroup of contest.allowed_groups) {
+        if (allowedGroup.id in this.group_as_member) {
+          return true
+        }
+      }
+      return false
+    })
+    this.contestsCannotParticipate = c
+    const [registerNow, contestsUpcoming] = partition(canParticipate, contest => contest.status === CONTEST_STATUS.UNDERWAY)
+    this.contestsRegisterNow = registerNow
+    this.contestsUpcoming = contestsUpcoming
   },
   components: {
     NeonBox,
@@ -91,13 +113,13 @@ export default {
       currentPage: 1,
       CONTEST_STATUS: CONTEST_STATUS,
       route_name: '',
-      contestID: '',
       query: {
         status: '',
         keyword: '',
         rule_type: ''
       },
       rows: '',
+      contests: [],
       contestsRegisterNow: [],
       contestsUpcoming: [],
       contestsCannotParticipate: [],

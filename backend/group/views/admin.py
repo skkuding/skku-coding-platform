@@ -4,7 +4,8 @@ from drf_yasg import openapi
 from utils.decorators import super_admin_required
 
 # from group.models import Group, GroupMemberJoin
-from group.serializers import GroupRegistrationRequestSerializer, GroupDetailSerializer, CreateGroupSerializer, GroupSummarySerializer, GroupMemberSerializer, GroupMemberJoinSerializer
+from group.serializers import GroupRegistrationRequestSerializer, GroupDetailSerializer, CreateGroupSerializer, GroupSummarySerializer, GroupMemberSerializer, \
+                                GroupMemberJoinSerializer
 from utils.api import APIView, validate_serializer
 
 from ..models import GroupRegistrationRequest, Group, GroupMember, GroupMemberJoin
