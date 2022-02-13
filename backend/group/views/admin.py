@@ -4,8 +4,8 @@ from drf_yasg import openapi
 from utils.decorators import super_admin_required
 
 # from group.models import Group, GroupMemberJoin
-from group.serializers import GroupRegistrationRequestSerializer, GroupDetailSerializer
-from utils.api import APIView
+from group.serializers import GroupRegistrationRequestSerializer, GroupDetailSerializer, CreateGroupSerializer
+from utils.api import APIView, validate_serializer
 
 from ..models import GroupRegistrationRequest, Group
 
@@ -71,4 +71,33 @@ class AdminGroupRegistrationRequestAPI(APIView):
         group.members.add(creator, through_defaults={"is_group_admin": True})
         GroupRegistrationRequest.objects.get(id=request_id).delete()
 
+        return self.success(GroupDetailSerializer(group).data)
+
+
+class GroupAdminAPI(APIView):
+    @swagger_auto_schema(
+        request_body=CreateGroupSerializer,
+        operation_description="Request to register a group",
+        responses={200: CreateGroupSerializer}
+    )
+    @validate_serializer(CreateGroupSerializer)
+    def post(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return self.error("Login First")
+
+        data = request.data
+        name = data["name"]
+
+        if GroupRegistrationRequest.objects.filter(name=name).exists() or Group.objects.filter(name=name).exists():
+            return self.error("Duplicate group name")
+
+        group = Group.objects.create(
+            name=name,
+            short_description=data["short_description"],
+            description=data["description"],
+            is_official=data["is_official"],
+            created_by=request.user
+        )
+        group.members.add(user, through_defaults={"is_group_admin": True})
         return self.success(GroupDetailSerializer(group).data)
