@@ -16,36 +16,61 @@
           <div id="triangle-right"></div>
         </template>
       </neon-box> -->
-      <h4 class="subtitle-blue">
+      <h4 class="subtitle-blue" v-if="contestsRegisterNow.length">
         Register Now >>
       </h4>
-      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsRegisterNow" :key="index">
+      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsRegisterNow" :key="index"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count"
+                @click.native="goContest(contest)">
+        <template #overlay-icon>
+          <div id="triangle-right"></div>
+        </template>
+      </neon-box>
+      <h4 class="subtitle-blue" v-if="contestsUpcoming.length">
+        Upcoming Contests >>
+      </h4>
+      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="index"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count"
+                @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
-      <h4 class="subtitle-blue">
-        Upcoming Contests >>
-      </h4>
-      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="index">
-      </neon-box>
-      <h4 class="subtitle-red">
+      <h4 class="subtitle-red" v-if="contestsCannotParticipate.length">
         Cannot Participate
         <button class="subtitle-toggle" @click="showCannotParticipate = !showCannotParticipate">
           <b-icon :icon="showCannotParticipate ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
         </button>
       </h4>
-      <neon-box v-show="showCannotParticipate" v-for="(contest, index) in contestsCannotParticipate" :key="index" color="#FF6663" :shadow="true" class="my-3"></neon-box>
+      <neon-box v-show="showCannotParticipate" v-for="(contest, index) in contestsCannotParticipate"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count"
+                :key="index" color="#FF6663" :shadow="true" class="my-3" @click.native="showContestInformationModal(contest)">
+        <template #overlay-icon>
+          <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
+        </template>
+      </neon-box>
       <h4 class="subtitle-red">
         Finished Contests
         <button class="subtitle-toggle" @click="showFinishedContests = !showFinishedContests">
           <b-icon :icon="showFinishedContests ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
         </button>
       </h4>
-      <neon-box v-show="showFinishedContests" v-for="(contest, index) in contestsFinished" :key="index" color="#FF6663" class="my-3"></neon-box>
+      <neon-box v-show="showFinishedContests" v-for="(contest, index) in contestsFinished"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count"
+                :key="index" color="#FF6663" class="my-3" @click.native="showContestInformationModal(contest)">
+        <template #overlay-icon>
+          <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
+        </template>
+      </neon-box>
     </div>
     <b-modal id="modal-contest-information" size="xl">
-      <contest-information></contest-information>
+      <contest-information
+        :title="contestInformation.title" :requirements="contestInformation.requirements"
+        :constraints="contestInformation.constraints" :scoring="contestInformation.scoring"
+        :prizes="contestInformation.prizes" :description="contestInformation.description"
+        @goContest="goContest(contestInformation)"
+      >
+      </contest-information>
     </b-modal>
   </div>
 </template>
@@ -76,7 +101,7 @@ export default {
       next()
     }
   },
-  created () {
+  mounted () {
     this.group_as_member = [...this.$store.state.group.groups.admin_groups, ...this.$store.state.group.groups.groups]
     function partition (array, filter) {
       const pass = []
@@ -87,6 +112,9 @@ export default {
     const [finished, b] = partition(this.contests, contest => contest.status === CONTEST_STATUS.ENDED)
     this.contestsFinished = finished
     const [canParticipate, c] = partition(b, contest => {
+      if (!contest.allowed_groups.length) {
+        return true
+      }
       for (const allowedGroup of contest.allowed_groups) {
         if (allowedGroup.id in this.group_as_member) {
           return true
@@ -124,6 +152,7 @@ export default {
       contestsUpcoming: [],
       contestsCannotParticipate: [],
       contestsFinished: [],
+      contestInformation: {},
       CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
       // for password modal use
       cur_contest_id: '',
@@ -200,6 +229,13 @@ export default {
         name: CONTEST_STATUS_REVERSE[value].name,
         color: CONTEST_STATUS_REVERSE[value].color
       }
+    },
+    showContestInformationModal (contest) {
+      this.contestInformation = contest
+      this.$bvModal.show('modal-contest-information')
+    },
+    makeGroupRequirementInfo (contest) {
+      return 'For ' + (contest.allowed_groups.map(g => g.name).join(', ') || 'All')
     }
   },
   computed: {
