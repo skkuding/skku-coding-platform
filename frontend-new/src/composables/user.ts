@@ -2,7 +2,6 @@ import { ref, reactive } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import api from '~/modules/axios'
 import type { Router } from 'vue-router'
-import type { Profile } from '~/types'
 
 export const isAuthenticated = useLocalStorage('isAuthenticated', false)
 
@@ -21,7 +20,6 @@ export const useLogin = (router: Router) => {
     } else {
       errorMessage.value = ''
       isAuthenticated.value = true
-      await api.get<Profile>('profile/').then((x) => x.data)
       await router.push('/')
     }
 
