@@ -21,7 +21,12 @@
   "plugins": ["html", "import", "vue", "@typescript-eslint"],
   "rules": {
     "import/no-unresolved": "off",
-    "vue/script-setup-uses-vars": "error",
-    "vue/multi-word-component-names": "off"
+    "vue/html-self-closing": ["error", {
+      "html": {
+        "void": "always"
+      }
+    }],
+    "vue/multi-word-component-names": "off",
+    "vue/script-setup-uses-vars": "error"
   }
 }
