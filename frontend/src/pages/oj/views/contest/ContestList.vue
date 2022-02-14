@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="page-top">
-      <h2>
+      <h2 class="text-3xl">
         <span class="title-white">🏆 SKKU Coding Platform</span>
         <span class="title-gold"> Contests</span>
       </h2>
-      <div class="description">Compete with schoolmates & win the prizes!</div>
+      <div class="description text-xl">Compete with schoolmates & win the prizes!</div>
     </div>
     <div class="contest-list-container font-bold">
       <!-- <h4 class="subtitle-blue">
@@ -16,7 +16,7 @@
           <div id="triangle-right"></div>
         </template>
       </neon-box> -->
-      <h4 class="subtitle-blue" v-if="contestsRegisterNow.length">
+      <h4 class="subtitle-blue text-xl" v-if="contestsRegisterNow.length">
         Register Now >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsRegisterNow" :key="index"
@@ -26,7 +26,7 @@
           <div id="triangle-right"></div>
         </template>
       </neon-box>
-      <h4 class="subtitle-blue" v-if="contestsUpcoming.length">
+      <h4 class="subtitle-blue text-xl" v-if="contestsUpcoming.length">
         Upcoming Contests >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="index"
@@ -36,7 +36,7 @@
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
-      <h4 class="subtitle-red" v-if="contestsCannotParticipate.length">
+      <h4 class="subtitle-red text-xl" v-if="contestsCannotParticipate.length">
         Cannot Participate
         <button class="subtitle-toggle" @click="showCannotParticipate = !showCannotParticipate">
           <b-icon :icon="showCannotParticipate ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
@@ -49,7 +49,7 @@
           <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
-      <h4 class="subtitle-red">
+      <h4 class="subtitle-red text-xl">
         Finished Contests
         <button class="subtitle-toggle" @click="showFinishedContests = !showFinishedContests">
           <b-icon :icon="showFinishedContests ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
@@ -63,7 +63,7 @@
         </template>
       </neon-box>
     </div>
-    <b-modal id="modal-contest-information" size="xl">
+    <modal id="modal-contest-information" width="xl">
       <contest-information
         :title="contestInformation.title" :requirements="contestInformation.requirements"
         :constraints="contestInformation.constraints" :scoring="contestInformation.scoring"
@@ -71,7 +71,7 @@
         @goContest="goContest(contestInformation)"
       >
       </contest-information>
-    </b-modal>
+    </modal>
   </div>
 </template>
 
@@ -84,6 +84,7 @@ import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/co
 import NeonBox from '@oj/components/NeonBox.vue'
 import ContestInformation from '@oj/components/ContestInformation.vue'
 import store from '@/store'
+import Modal from '../../components/Modal.vue'
 
 export default {
   name: 'ContestList',
@@ -127,7 +128,8 @@ export default {
   },
   components: {
     NeonBox,
-    ContestInformation
+    ContestInformation,
+    Modal
   },
   data () {
     return {
