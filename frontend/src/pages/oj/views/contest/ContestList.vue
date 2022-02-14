@@ -87,8 +87,6 @@ import store from '@/store'
 
 export default {
   name: 'ContestList',
-  components: {
-  },
   async beforeRouteEnter (to, from, next) {
     try {
       const res = await api.getContestList(0, 20)
