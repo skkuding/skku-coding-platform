@@ -16,16 +16,24 @@
     </div>
 
     <div class="table">
-      <b-table hover :items="items" :fields="fields" head-variant="light">
-        <template #cell(title)="data">{{ data.item.title }}</template>
-        <template #cell(prize)="data">
+      <b-table
+        hover
+        :items="contests"
+        :fields="fields"
+        head-variant="light"
+        @row-clicked="goContest"
+      >
+        <template #cell(start_time)="data">
+          {{ getTimeFormat(data.value) }}
+        </template>
+        <!-- <template #cell(prize)="data"> {{ data.item.rank }}
           <b-icon
             icon="circle-fill"
             style="color: #ff6663"
             font-scale="1.2"
           ></b-icon>
           {{ data.item.prize }}
-        </template>
+        </template> -->
       </b-table>
     </div>
     <div class="pagination">
@@ -40,6 +48,8 @@
 </template>
 
 <script>
+import api from '@oj/api'
+import time from '@/utils/time'
 import { Chart, registerables } from "chart.js";
 import Pagination from "../Pagination.vue";
 Chart.register(...registerables);
@@ -55,35 +65,24 @@ export default {
       perPage: 3,
       Chart,
       fields: [
-        { key: "date", label: "Date" },
+        { label: "Date", key: "start_time" },
         { key: "title", label: "Title" },
         { key: "rank", label: "Rank" },
-        { key: "prize", label: "Prize" },
+        { key: "percentage", label: "Prize" },
       ],
-      items: [
+      contests: [
         {
-          date: "2021-12-31",
-          title: "SKKU Coding Platform 모의대회",
+          start_time: "2022-01",
+          title: "skku contest",
           rank: "1",
-          prize: "Top3",
-        },
-        {
-          date: "2021-12-31",
-          title: "SKKU Coding Platform 2차 모의대회",
-          rank: "2",
-          prize: "Top5",
-        },
-        {
-          date: "2021-12-31",
-          title: "SKKU Coding Platform 3차 모의대회",
-          rank: "100",
-          prize: "Top2",
-        },
+          percentage: "33"
+        }
       ],
     };
   },
   async mounted() {
-    this.drawChart();
+    await this.getUserContestList()
+    await this.drawChart();
   },
   methods: {
     drawChart() {
@@ -91,33 +90,41 @@ export default {
       const myChart = new Chart(ctx, {
         type: "line",
         data: {
-          labels: [
-            "Contest1",
-            "Contest2",
-            "Contest3",
-            "Contest4",
-            "Contest5",
-            "Contest6",
-          ],
+          labels: this.contests.map(x=>x.title),
           datasets: [
             {
               label: "Me",
-              data: [30, 85, 20, 100, 50, 1],
+              data: this.contests.map(x=>x.percentage),
               borderColor: "#FF6663",
               backgroundColor: "#FF6663",
+              yAxisId: 'y',
             },
           ],
         },
         options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: "top",
-            },
-          },
-        },
+          scales: {
+            y: {
+              suggestedMin: 0,
+              suggestedMax: 100,
+              reverse: true
+            }
+          }
+        }
       });
     },
+    async getUserContestList () {
+      try {
+        const res = await api.getUserContestInfo()
+        this.contests = res.data.data
+      } catch (err) {
+      }
+    },
+    getTimeFormat (value) {
+      return time.utcToLocal(value, 'YYYY-MM-DD')
+    },
+    async goContest (item) {
+      await this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
+    }
   },
   computed: {},
 };
@@ -130,7 +137,7 @@ export default {
   align-items: center;
 }
 .rank-chart {
-  width: 80%;
+  width: 90%;
 }
 
 .sort-container {
