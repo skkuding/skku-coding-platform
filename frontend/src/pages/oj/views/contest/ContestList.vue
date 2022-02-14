@@ -63,15 +63,17 @@
         </template>
       </neon-box>
     </div>
-    <modal id="modal-contest-information" width="xl">
+    <b-modal id="modal-contest-information" size="xl">
       <contest-information
         :title="contestInformation.title" :requirements="contestInformation.requirements"
         :constraints="contestInformation.constraints" :scoring="contestInformation.scoring"
         :prizes="contestInformation.prizes" :description="contestInformation.description"
-        @goContest="goContest(contestInformation)"
       >
       </contest-information>
-    </modal>
+      <template #modal-footer>
+        <b-button @click="goContest(contestInformation)">Go Contest</b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -84,7 +86,6 @@ import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/co
 import NeonBox from '@oj/components/NeonBox.vue'
 import ContestInformation from '@oj/components/ContestInformation.vue'
 import store from '@/store'
-import Modal from '../../components/Modal.vue'
 
 export default {
   name: 'ContestList',
@@ -128,8 +129,7 @@ export default {
   },
   components: {
     NeonBox,
-    ContestInformation,
-    Modal
+    ContestInformation
   },
   data () {
     return {

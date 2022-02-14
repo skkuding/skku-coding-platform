@@ -37,7 +37,6 @@
       <h3 class="subtitle">Description</h3>
       <div class="description" v-dompurify-html="description"></div>
     </div>
-    <button @click="$emit('goContest')">Go Contest</button>
   </div>
 </template>
 
@@ -210,5 +209,6 @@ export default {
   }
   .subtitle {
     font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
 </style>
