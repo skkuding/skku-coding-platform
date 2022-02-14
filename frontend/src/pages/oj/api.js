@@ -208,6 +208,9 @@ export default {
       }
     })
   },
+  getUserContestInfo () {
+    return ajax('contest/user/', 'get')
+  },
   submitCode (data) {
     return ajax('submission/', 'post', {
       data
