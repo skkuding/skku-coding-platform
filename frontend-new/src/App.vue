@@ -10,4 +10,5 @@ onMounted(async () => {
 
 <template>
   <router-view />
+  <AtomsToast />
 </template>

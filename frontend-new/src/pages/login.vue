@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { Head } from '@vueuse/head'
 import { isAuthenticated, useLogin } from '~/composables/user'
 
-const { loading, errorMessage, form, login } = useLogin(useRouter())
+const { loading, form, login } = useLogin(useRouter())
 
 onBeforeMount(() => {
   if (isAuthenticated.value) {
@@ -30,14 +30,9 @@ const buttonMessage = computed(() =>
       <h1 class="mb-12 text-center text-2xl font-bold text-stone-600">
         SKKU<br />Coding Platform
       </h1>
-      <div
-        v-show="errorMessage"
-        class="mb-2 text-center font-medium text-red-500"
-      >
-        <!-- TODO: show error message as toast -->
-        {{ errorMessage }}
-      </div>
       <form class="flex w-80 flex-col gap-4" @submit.prevent="login">
+        <!-- TODO: red outline when login failed -->
+        <!-- TODO: validate form before submission -->
         <AtomsInput
           v-model="form.username"
           type="text"

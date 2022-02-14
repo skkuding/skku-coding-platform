@@ -1,13 +1,13 @@
 import { ref, reactive } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import api from '~/modules/axios'
+import { useToast } from '~/composables/toast'
 import type { Router } from 'vue-router'
 
 export const isAuthenticated = useLocalStorage('isAuthenticated', false)
 
 export const useLogin = (router: Router) => {
   const loading = ref(false)
-  const errorMessage = ref('')
   const form = reactive({ username: '', password: '' })
 
   const login = async () => {
@@ -16,9 +16,8 @@ export const useLogin = (router: Router) => {
     const { data, error } = await api.post('login/', form)
 
     if (error) {
-      errorMessage.value = data
+      useToast().addToast({ message: data, variant: 'danger' })
     } else {
-      errorMessage.value = ''
       isAuthenticated.value = true
       await router.push('/')
     }
@@ -26,7 +25,7 @@ export const useLogin = (router: Router) => {
     loading.value = false
   }
 
-  return { loading, errorMessage, form, login }
+  return { loading, form, login }
 }
 
 export const useLogout = (router: Router) => {
