@@ -10,7 +10,7 @@
       <div class="contest-information-flex-col">
         <div class="contest-information-flex-row">
           <div class="contest-information-big">{{ leftTop }}</div>
-          <div class="contest-information-big">{{ rightTop }}</div>
+          <div class="contest-information-big"><icon :icon="rightTopIcon" class="mr-2"/>{{ rightTop }}</div>
         </div>
         <div class="contest-information-flex-row">
           <div class="contest-information-small">{{ leftBottom }}</div>
@@ -43,6 +43,9 @@ export default {
       type: String
     },
     rightBottom: {
+      type: String
+    },
+    rightTopIcon: {
       type: String
     }
   },

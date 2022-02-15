@@ -20,17 +20,17 @@
         Register Now >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsRegisterNow" :key="index"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count"
-                @click.native="goContest(contest)">
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count" rightTopIcon="users"
+                @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
-          <div id="triangle-right"></div>
+          <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
       <h4 class="subtitle-blue text-xl" v-if="contestsUpcoming.length">
         Upcoming Contests >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="index"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count" rightTopIcon="users"
                 @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
@@ -43,7 +43,7 @@
         </button>
       </h4>
       <neon-box v-show="showCannotParticipate" v-for="(contest, index) in contestsCannotParticipate"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count" rightTopIcon="users"
                 :key="index" color="#FF6663" :shadow="true" class="my-3" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
@@ -56,8 +56,8 @@
         </button>
       </h4>
       <neon-box v-show="showFinishedContests" v-for="(contest, index) in contestsFinished"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count"
-                :key="index" color="#FF6663" class="my-3" @click.native="showContestInformationModal(contest)">
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count" rightTopIcon="users"
+                :key="index" color="#FF6663" class="my-3" @click.native="goContest(contestInformation)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
