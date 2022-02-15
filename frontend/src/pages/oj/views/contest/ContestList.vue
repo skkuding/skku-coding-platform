@@ -8,20 +8,12 @@
       <div class="description text-xl">Compete with schoolmates & win the prizes!</div>
     </div>
     <div class="contest-list-container">
-      <!-- <h4 class="subtitle-blue">
-        Enter >>
-      </h4>
-      <neon-box color="#8DC63F" :shadow="true" class="my-3" @click.native="$bvModal.show('modal-contest-information')">
-        <template #overlay-icon>
-          <icon icon="arrow-right"></icon>
-        </template>
-      </neon-box> -->
       <h4 class="subtitle-blue text-xl" v-if="contestsRegisterNow.length">
         Register Now >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsRegisterNow" :key="index"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count" rightTopIcon="users"
-                @click.native="showContestInformationModal(contest)">
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
+                :shadow="true" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
@@ -30,7 +22,7 @@
         Upcoming Contests >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="index"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count" rightTopIcon="users"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
                 @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
@@ -43,7 +35,7 @@
         </button>
       </h4>
       <neon-box v-show="showCannotParticipate" v-for="(contest, index) in contestsCannotParticipate"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count" rightTopIcon="users"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
                 :key="index" color="#FF6663" :shadow="true" class="my-3" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
@@ -56,7 +48,7 @@
         </button>
       </h4>
       <neon-box v-show="showFinishedContests" v-for="(contest, index) in contestsFinished"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started Before'" :rightTop="contest.participants_count" rightTopIcon="users"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
                 :key="index" color="#FF6663" class="my-3" @click.native="goContest(contestInformation)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
@@ -236,6 +228,15 @@ export default {
     },
     makeGroupRequirementInfo (contest) {
       return 'For ' + (contest.allowed_groups.map(g => g.name).join(', ') || 'All')
+    },
+    makeStartTimeInfo (contest) {
+      if (contest.status === CONTEST_STATUS.UNDERWAY) {
+        return 'Underway'
+      } else if (contest.status === CONTEST_STATUS.NOT_START) {
+        return 'Not Started'
+      } else {
+        return 'Ended'
+      }
     }
   },
   computed: {
