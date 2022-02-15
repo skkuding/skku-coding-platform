@@ -1,5 +1,5 @@
 <template>
-  <nav class="flex justify-between items-center px-5 py-3 font-medium content-center sticky top-0 z-50">
+  <nav class="flex justify-between items-center px-5 py-3 font-medium content-center sticky top-0 z-50 bg-white opacity-95">
     <a href="/">
         <img
             src="@/assets/logos/signature.png"
