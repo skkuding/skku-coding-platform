@@ -1,0 +1,352 @@
+- model: account.user
+  fields:
+    # password: rootroot
+    password: pbkdf2_sha256$260000$PYbTwbBipv3pFxQnbi2smf$wJvFXVdTTbzOKJZKG8gbV3nwvybyh/Z2uKvzkwyEkNo=
+    last_login: null
+    username: root
+    email: null
+    major: null
+    create_time: 2022-02-15 06:48:17.679787+00:00
+    session_keys:
+    - gp07ud6o2839wjlcvx91k5231qfbygf1
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Super Admin
+    problem_permission: All
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: 9c41ba59
+    password: pbkdf2_sha256$260000$fM0GWE5OHBL2RevPPkrzNy$Zut5nlBgOeEgkunx6CFuZ88yOiePQeSUcep6mOasThI=
+    last_login: null
+    username: user1
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327322+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: df0ac280
+    password: pbkdf2_sha256$260000$zOKiE0sQ7YbU839ubP8j9k$4PiZgtCWYeTVzdX3D7JgPVC/Lx5Zown8LW6G66+a6AA=
+    last_login: null
+    username: user2
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327391+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: 6c4ce56b
+    password: pbkdf2_sha256$260000$eZF8QkZCmx9Kh67HDxrkmt$rODAIdLsv0ZsyMA8bLzI9k4c6DhYZOszYbMwOLjOPCA=
+    last_login: null
+    username: user3
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327419+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: a452c4b3
+    password: pbkdf2_sha256$260000$O5VPKI7DHrDZCFEhIo1DCK$7aHocaiN2bY1e6l2tWEJJDZietcvNIDKE17X3NTeR6E=
+    last_login: null
+    username: user4
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327445+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: 4b579ae3
+    password: pbkdf2_sha256$260000$r1BcMdL9doY370YESWUgal$VvtjcK3174PwTfwai6oZMSJYjLtws+P46ZYIcAv0P/c=
+    last_login: null
+    username: user5
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327470+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: ff33bed5
+    password: pbkdf2_sha256$260000$V5qPYcyxvlm7FTWoaeFn0k$mqgCk85eX/0kiBEa2w22bZI7PCAgCll/82BU/bRG4yQ=
+    last_login: null
+    username: user6
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327498+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: c1e2e4d3
+    password: pbkdf2_sha256$260000$I48GhIla7yQlUycvzHMTBB$1BVnUdQQnKzyu9K0kHC+d8zBOJcXBKS33hpz/JcEa1s=
+    last_login: null
+    username: user7
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327524+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: dfa7b811
+    password: pbkdf2_sha256$260000$BxrdIJjlKaTajpgASZjtRW$Jo9XZdQPUejVy56WeLLNcQoODAoJvpfQuUXdIhbqtzM=
+    last_login: null
+    username: user8
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327548+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: 1fae263c
+    password: pbkdf2_sha256$260000$rZR26xtRuEGOjY5wA7Viet$ya7+cWHPV0IWA+TNkoDMap52tUYEluBzNdvft+PumCA=
+    last_login: null
+    username: user9
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327573+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: 9c301c67
+    password: pbkdf2_sha256$260000$V0ydyBLxPJJSal0s0QCJei$oL73oyI7xD8mmyIzhmX+40nXJ3yuhmMtSDmSzOR6TH4=
+    last_login: null
+    username: user10
+    email: null
+    major: null
+    create_time: 2022-02-15 07:10:13.327597+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Regular User
+    problem_permission: None
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.userprofile
+  pk: 1
+  fields:
+    user:
+    - root
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 2
+  fields:
+    user:
+    - user1
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 3
+  fields:
+    user:
+    - user2
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 4
+  fields:
+    user:
+    - user3
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 5
+  fields:
+    user:
+    - user4
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 6
+  fields:
+    user:
+    - user5
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 7
+  fields:
+    user:
+    - user6
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 8
+  fields:
+    user:
+    - user7
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 9
+  fields:
+    user:
+    - user8
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 10
+  fields:
+    user:
+    - user9
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 11
+  fields:
+    user:
+    - user10
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
