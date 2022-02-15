@@ -8,6 +8,14 @@
       <div class="description text-xl">Compete with schoolmates & win the prizes!</div>
     </div>
     <div class="contest-list-container">
+      <!-- <h4 class="subtitle-blue">
+        Enter >>
+      </h4>
+      <neon-box color="#8DC63F" :shadow="true" class="my-3" @click.native="$bvModal.show('modal-contest-information')">
+        <template #overlay-icon>
+          <icon icon="arrow-right"></icon>
+        </template>
+      </neon-box> -->
       <h4 class="subtitle-blue text-xl" v-if="contestsRegisterNow.length">
         Register Now >>
       </h4>
@@ -115,8 +123,9 @@ export default {
       return false
     })
     this.contestsCannotParticipate = c
-    const [registerNow, contestsUpcoming] = partition(canParticipate, contest => contest.status === CONTEST_STATUS.UNDERWAY)
-    this.contestsRegisterNow = registerNow
+    const [contestsUnderway, contestsUpcoming] = partition(canParticipate, contest => contest.status === CONTEST_STATUS.UNDERWAY)
+    this.contestsRegisterNow = contestsUnderway
+    // TODO: filter contestsUnderway into contestsRegisterNow, contestsEnter(contests user already participating)
     this.contestsUpcoming = contestsUpcoming
   },
   components: {
