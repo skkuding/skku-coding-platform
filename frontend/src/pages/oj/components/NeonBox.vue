@@ -95,8 +95,8 @@ export default {
         margin: auto 10px;
         background: white;
         border-radius: 50%;
-        border: var(--main-color) 1px solid;
-        box-shadow: 0px 0px var(--shadow) var(--main-color);
+        // border: var(--main-color) 1px solid;
+        // box-shadow: 0px 0px var(--shadow) var(--main-color);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -126,7 +126,6 @@ export default {
           .contest-information-big {
             color: #173747;
             font-size: 1.2rem;
-            font-weight: bold;
             white-space: nowrap;
           }
           .contest-information-small {

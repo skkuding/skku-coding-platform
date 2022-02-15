@@ -7,13 +7,13 @@
       </h2>
       <div class="description text-xl">Compete with schoolmates & win the prizes!</div>
     </div>
-    <div class="contest-list-container font-bold">
+    <div class="contest-list-container">
       <!-- <h4 class="subtitle-blue">
         Enter >>
       </h4>
       <neon-box color="#8DC63F" :shadow="true" class="my-3" @click.native="$bvModal.show('modal-contest-information')">
         <template #overlay-icon>
-          <div id="triangle-right"></div>
+          <icon icon="arrow-right"></icon>
         </template>
       </neon-box> -->
       <h4 class="subtitle-blue text-xl" v-if="contestsRegisterNow.length">
