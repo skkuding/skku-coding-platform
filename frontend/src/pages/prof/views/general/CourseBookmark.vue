@@ -95,7 +95,6 @@ export default {
       try {
         const resp = await api.getCourseList()
         this.courseList = resp.data.data.results
-        console.log(this.courseList)
       } catch (err) {
       }
     },

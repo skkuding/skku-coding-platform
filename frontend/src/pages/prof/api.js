@@ -148,6 +148,36 @@ export default {
       params: params
     })
   },
+  getCourseProblem (courseId, problemId, limit, offset) {
+    return ajax('lecture/professor/course/problem/', 'get', {
+      params: {
+        course_id: courseId,
+        problem_id: problemId,
+        limit: limit,
+        offset: offset
+      }
+    })
+  },
+  createCourseProblem (data) {
+    return ajax('lecture/professor/course/problem/', 'post', {
+      data
+    })
+  },
+  editCourseProblem (data) {
+    return ajax('lecture/professor/course/problem/', 'put', {
+      data
+    })
+  },
+  deleteCourseProblem (id) {
+    return ajax('lecture/professor/course/problem/', 'delete', {
+      params: { id: id }
+    })
+  },
+  addCourseProblemFromPublic (data) {
+    return ajax('lecture/professor/course/add_problem_from_public/', 'post', {
+      data
+    })
+  },
   // only assignmentId param => return problemList instead
   getAssignmentProblem (assignmentId, problemId) {
     const params = { problem_id: problemId, assignment_id: assignmentId }

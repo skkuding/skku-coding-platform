@@ -94,7 +94,7 @@ import { DIFFICULTY_COLOR } from '@/utils/constants'
 export default {
   name: 'ImportPublicProblem',
   mixins: [ProblemMixin],
-  props: ['assignmentId'],
+  props: ['assignmentId', 'courseId', 'mode'],
   data () {
     return {
       form: {
@@ -197,12 +197,17 @@ export default {
         return
       }
       const data = {
+        course_id: this.courseId,
         assignment_id: this.assignmentId,
         problem_id: this.form.selectedProblemId,
         display_id: this.form.displayId
       }
       try {
-        await profApi.addProblemFromPublic(data)
+        if (this.mode === 'assignment') {
+          await profApi.addProblemFromPublic(data)
+        } else {
+          await profApi.addCourseProblemFromPublic(data)
+        }
       } catch (err) {
       }
       this.$set(this.form, 'selectedProblemId', null)

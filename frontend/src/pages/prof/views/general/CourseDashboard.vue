@@ -15,10 +15,8 @@
       cols = "1"
       class="course-dashboard"
     >
-      <b-col
-        id="first-col"
-      >
-        <b-card class="admin-info drop-shadow-custom" title="Assignments">
+      <b-col>
+        <b-card style="margin-bottom: 20px;" class="drop-shadow-custom" title="Assignments">
           <b-table
             borderless
             hover
@@ -26,7 +24,7 @@
             :fields="assignmentListFields"
             :items="assignmentList"
             :per-page="pageSize"
-            :current-page="updateCurrentPage"
+            :current-page="updateAssignmentCurrentPage"
             @row-clicked="goAssignment"
           >
             <template #cell(status)="data">
@@ -47,9 +45,41 @@
           </b-table>
           <div class="panel-options">
             <b-pagination
-              v-model="currentPage"
+              v-model="assignmentCurrentPage"
               :per-page="pageSize"
-              :total-rows="total"
+              :total-rows="assignmentTotal"
+              style="position: absolute; right: 20px; top: 15px;"
+            />
+          </div>
+        </b-card>
+      </b-col>
+    </b-row>
+    <b-row
+      type="flex"
+      cols = "1"
+      class="course-dashboard"
+    >
+      <b-col>
+        <b-card style="margin-bottom: 20px;" class="drop-shadow-custom" title="Problems">
+          <b-table
+            borderless
+            hover
+            tbody-class="table-body"
+            :fields="problemListField"
+            :items="problemList"
+            :per-page="pageSize"
+            :current-page="updateProblemCurrentPage"
+          >
+            <template #cell(assignment_name)="data">
+              <div v-if="data.value"> {{ data.value }} </div>
+              <div v-else> - </div>
+            </template>
+          </b-table>
+          <div class="panel-options">
+            <b-pagination
+              v-model="problemCurrentPage"
+              :per-page="pageSize"
+              :total-rows="problemTotal"
               style="position: absolute; right: 20px; top: 15px;"
             />
           </div>
@@ -63,6 +93,8 @@
 
 import api from '../../api.js'
 import UserList from '../users/UserList.vue'
+import moment from 'moment'
+
 export default {
   name: 'CourseDashboard',
   components: {
@@ -77,7 +109,11 @@ export default {
         '-1': 'Ended'
       },
       pageSize: 5,
-      currentPage: 1,
+      mode: '',
+      assignmentCurrentPage: 1,
+      problemCurrentPage: 1,
+      assignmentTotal: 0,
+      problemTotal: 0,
       courseId: null,
       createdBy: {},
       title: '',
@@ -109,7 +145,22 @@ export default {
         }
       ],
       assignmentList: [
-      ]
+      ],
+      problemListField: [
+        'title',
+        {
+          key: 'assignment_name',
+          label: 'Assignment'
+        },
+        {
+          key: 'create_time',
+          label: 'Create Time',
+          formatter: (value) => {
+            return moment(value).format('YYYY-M-D HH:mm')
+          }
+        }
+      ],
+      problemList: []
     }
   },
   async mounted () {
@@ -125,20 +176,36 @@ export default {
     } catch (err) {
       this.$error(err)
     }
-    this.getAssignmentList(1)
+    await this.getCourseProblem(1)
+    await this.getAssignmentList(1)
     this.pageLocations[0].text = this.title + '_' + this.courseCode + '-' + this.classNumber
   },
   methods: {
-    async currentChange (page) {
-      this.currentPage = page
+    async currentAssignmentChange (page) {
+      this.assignmentCurrentPage = page
       await this.getAssignmentList(page)
+    },
+    async currentProblemChange (page) {
+      this.problemCurrentPage = page
+      await this.getCourseProblem(page)
     },
     async getAssignmentList (page) {
       this.loading = true
       try {
         const res = await api.getAssignmentList(this.courseId, null, this.pageSize, (page - 1) * this.pageSize)
-        this.total = res.data.data.total
+        this.assignmentTotal = res.data.data.total
         this.assignmentList = res.data.data.results
+      } catch (err) {
+      } finally {
+        this.loading = false
+      }
+    },
+    async getCourseProblem (page) {
+      this.loading = true
+      try {
+        const res = await api.getCourseProblem(this.$route.params.courseId, null, this.pageSize, (page - 1) * this.pageSize)
+        this.problemList = res.data.data.results
+        this.problemTotal = res.data.data.total
       } catch (err) {
       } finally {
         this.loading = false
@@ -156,8 +223,11 @@ export default {
     }
   },
   computed: {
-    updateCurrentPage () {
-      return this.currentChange(this.currentPage)
+    updateAssignmentCurrentPage () {
+      return this.currentAssignmentChange(this.assignmentCurrentPage)
+    },
+    updateProblemCurrentPage () {
+      return this.currentProblemChange(this.problemCurrentPage)
     }
   }
 }

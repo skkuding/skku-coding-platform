@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import {
-  Login, Home, Dashboard, CourseDashboard, CourseBookmark, AssignmentList, Problem, ProblemGrade, QnA
+  Login, Home, Dashboard, CourseDashboard, CourseBookmark, CourseProblem, AssignmentList, Problem, ProblemGrade, QnA
 } from './views'
 Vue.use(VueRouter)
 
@@ -36,6 +36,21 @@ export default new VueRouter({
           component: CourseBookmark
         },
         {
+          path: '/course/:courseId/problem',
+          name: 'course-problem',
+          component: CourseProblem
+        },
+        {
+          path: '/course/:courseId/problem/create',
+          name: 'create-course-problem',
+          component: Problem
+        },
+        {
+          path: '/course/:courseId/problem/edit',
+          name: 'edit-course-problem',
+          component: Problem
+        },
+        {
           path: '/course/:courseId/assignment',
           name: 'course-assignment-list',
           component: AssignmentList
@@ -47,12 +62,12 @@ export default new VueRouter({
         },
         {
           path: '/course/:courseId/assignment/:assignmentId/problem/create',
-          name: 'create-course-problem',
+          name: 'create-assignment-problem',
           component: Problem
         },
         {
           path: '/course/:courseId/assignment/:assignmentId/problem/:problemId/edit',
-          name: 'edit-course-problem',
+          name: 'edit-assignment-problem',
           component: Problem
         },
         {

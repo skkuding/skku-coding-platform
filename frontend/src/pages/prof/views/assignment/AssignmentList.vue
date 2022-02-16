@@ -133,7 +133,9 @@
             @update="getAssignmentList"
           ></create-assignment-modal>
           <import-public-problem-modal
+            :course-id="selectedCourseId"
             :assignment-id="selectedAssignmentId"
+            mode="assignment"
             @update="updateAssignmentProblemList(selectedAssignmentId)"
           >
           </import-public-problem-modal>
@@ -212,7 +214,9 @@ export default {
         'Operation'
       ],
       selectedAssignmentId: null,
-      studentTotal: 0
+      selectedCourseId: null,
+      studentTotal: 0,
+      courseId: ''
     }
   },
   async mounted () {
@@ -283,8 +287,9 @@ export default {
     createAssignmentProblem (assignment) {
       if (this.routeName === 'course-assignment-list') {
         this.$router.push({
-          name: 'create-course-problem',
+          name: 'create-assignment-problem',
           params: {
+            courseId: this.courseId,
             assignmentId: assignment.id,
             courseInfo: this.pageLocations[0].text,
             assignmentInfo: assignment.title
@@ -295,7 +300,7 @@ export default {
     editAssignmentProblem (assignment, problemId) {
       if (this.routeName === 'course-assignment-list') {
         this.$router.push({
-          name: 'edit-course-problem',
+          name: 'edit-assignment-problem',
           params: {
             courseId: this.courseId,
             assignmentId: assignment.id,
@@ -355,8 +360,9 @@ export default {
       }
       await api.editAssignment(data)
     },
-    showImportPublicProblemModal (assignmentId) {
+    showImportPublicProblemModal (assignmentId, courseId) {
       this.selectedAssignmentId = assignmentId
+      this.selectedCourseId = courseId
       this.$bvModal.show('import-public-problem-modal')
     },
     async getUserTotal () {
