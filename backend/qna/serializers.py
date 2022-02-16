@@ -14,11 +14,8 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class CreateQuestionSerializer(serializers.Serializer):
     course_id = serializers.IntegerField()
-    # created_by = serializers.IntegerField()
     title = serializers.CharField(max_length=128)
     content = serializers.CharField(max_length=1024 * 1024 * 8)
-    last_update_time = serializers.DateTimeField()
-    create_time = serializers.DateTimeField()
 
 
 class EditQuestionSerializer(serializers.Serializer):

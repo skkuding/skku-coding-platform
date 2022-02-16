@@ -75,8 +75,8 @@ class QuestionAPI(APIView):
         course_id = request.GET.get("course_id")
         question_id = request.GET.get("question_id")
 
-        if not course_id:
-            return self.error("Invalid parameter, course_id is required")
+        if not question_id:
+            return self.error("Invalid parameter, question_id is required")
 
         try:
             question = Question.objects.get(id=question_id, course_id=course_id)
@@ -99,7 +99,7 @@ class QuestionAPI(APIView):
             openapi.Parameter(
                 name="question_id", in_=openapi.IN_QUERY,
                 type=openapi.TYPE_INTEGER,
-                required=True
+                required=False
             ),
         ],
         operation_description="Get Question"
@@ -136,7 +136,7 @@ class AnswerAPI(APIView):
             return self.error("Question does not exist")
 
         if data.pop("closure", False):
-            if not request.user.is_question_admin(question) and not request.user.is_super_admin():
+            if not request.user.is_question_admin(question):
                 return self.error("No permission for closure")
             question.status = False
             question.save()
@@ -181,11 +181,8 @@ class AnswerAPI(APIView):
         question_id = request.GET.get("question_id")
         if not question_id:
             return self.error("Invalid parameter, id is required")
-        try:
-            data = Answer.objects.select_related("created_by").filter(question_id=question_id)
-            return self.success(AnswerSerializer(data, many=True).data)
-        except Answer.DoesNotExist:
-            return self.error("Answer does not exist")
+        data = Answer.objects.select_related("created_by").filter(question_id=question_id)
+        return self.success(AnswerSerializer(data, many=True).data)
 
     @swagger_auto_schema(
         manual_parameters=[

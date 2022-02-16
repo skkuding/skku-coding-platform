@@ -62,7 +62,7 @@ class User(AbstractBaseUser):
         return self.is_authenticated and (assignment.created_by == self or self.admin_type == AdminType.SUPER_ADMIN)
 
     def is_question_admin(self, question):
-        return self.is_authenticated and question.created_by == self
+        return self.is_authenticated and (question.created_by == self or self.admin_type == AdminType.SUPER_ADMIN)
 
     class Meta:
         db_table = "user"
