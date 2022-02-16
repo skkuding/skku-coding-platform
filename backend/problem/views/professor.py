@@ -271,7 +271,7 @@ class CourseProblemAPI(ProblemBase):
         except Course.DoesNotExist:
             return self.error("Course does not exist")
 
-        problems = Problem.objects.filter(course=course).order_by("create_time")
+        problems = Problem.objects.filter(course=course).order_by("-create_time")
         return self.success(self.paginate_data(request, problems, ProblemCourseProfessorSerializer))
 
     @swagger_auto_schema(
