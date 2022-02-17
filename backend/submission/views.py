@@ -4,7 +4,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from assignment.models import Assignment
-from course.models import Course
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
 from options.options import SysOptions
@@ -78,7 +77,11 @@ class SubmissionAPI(APIView):
             return self.error(error)
 
         try:
-            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), assignment_id=data.get("assignment_id"), course_id=data.get("course_id"), visible=True)
+            problem = Problem.objects.get(id=data["problem_id"],
+                                          contest_id=data.get("contest_id"),
+                                          assignment_id=data.get("assignment_id"),
+                                          course_id=data.get("course_id"),
+                                          visible=True)
         except Problem.DoesNotExist:
             return self.error("Problem not exist")
         if data["language"] not in problem.languages:

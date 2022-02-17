@@ -283,7 +283,7 @@ class CourseProblemAPI(ProblemBase):
     @admin_role_required
     def post(self, request):
         data = request.data
-        
+
         try:
             course = Course.objects.get(id=data.pop("course_id"))
             ensure_created_by(course, request.user)

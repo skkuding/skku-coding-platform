@@ -131,7 +131,7 @@ class BaseProblemSerializer(serializers.ModelSerializer):
     def get_contest_name(self, obj):
         if obj.contest:
             return obj.contest.title
-    
+
     def get_assignment_name(self, obj):
         if obj.assignment:
             return obj.assignment.title
