@@ -11,7 +11,7 @@
       <h4 class="subtitle-blue text-xl" v-if="contestsUnderway.length || contestsUnderwayNoPermission.length">
         Active Contests >>
       </h4>
-      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUnderway" :key="index"
+      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUnderway" :key="'unp' + index"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
                 :shadow="true" @click.native="goContest(contest)">
         <template #overlay-icon>
@@ -20,7 +20,7 @@
       </neon-box>
       <neon-box color="#B4B4B4" v-for="(contest, index) in contestsUnderwayNoPermission"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
-                :key="index"  :shadow="true" class="my-3" @click.native="showContestInformationModal(contest)">
+                :key="'unn' + index"  :shadow="true" class="my-3" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#B4B4B4" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
@@ -29,7 +29,7 @@
       <h4 class="subtitle-blue text-xl" v-if="contestsUpcoming.length || contestsUpcomingNoPermission.length">
         Upcoming Contests >>
       </h4>
-      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="index"
+      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="'upp' + index"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
                 @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
@@ -38,7 +38,7 @@
       </neon-box>
       <neon-box v-for="(contest, index) in contestsUpcomingNoPermission"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
-                :key="index" color="#B4B4B4" class="my-3" @click.native="showContestInformationModal(contest)">
+                :key="'upn' + index" color="#B4B4B4" class="my-3" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#B4B4B4" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
@@ -52,7 +52,7 @@
       </h4>
       <neon-box v-show="showFinishedContests" v-for="(contest, index) in contestsFinished"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
-                :key="index" color="#FF6663" class="my-3" @click.native="goContest(contestInformation)">
+                :key="'fi' + index" color="#FF6663" class="my-3" @click.native="goContest(contestInformation)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
