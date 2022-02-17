@@ -8,12 +8,30 @@
     major: null
     create_time: 2022-02-15 06:48:17.679787+00:00
     session_keys:
-    - gp07ud6o2839wjlcvx91k5231qfbygf1
+      - gp07ud6o2839wjlcvx91k5231qfbygf1
     is_disabled: false
     has_email_auth: true
     email_auth_token: null
     admin_type: Super Admin
     problem_permission: All
+    reset_password_token: null
+    reset_password_token_expire_time: null
+
+- model: account.user
+  fields:
+    # password: profprof
+    password: pbkdf2_sha256$260000$4F3f6T9ouEgOnOGOfnHUD4$B5OiBx8jNHnjuESIVo9n+InGzZ3s8K14YLv4S+lsfo4=
+    last_login: null
+    username: prof
+    email: null
+    major: null
+    create_time: 2022-02-17 11:23:40.822401+00:00
+    session_keys: []
+    is_disabled: false
+    has_email_auth: true
+    email_auth_token: null
+    admin_type: Admin
+    problem_permission: None
     reset_password_token: null
     reset_password_token_expire_time: null
 
@@ -201,7 +219,7 @@
   pk: 1
   fields:
     user:
-    - root
+      - root
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -215,7 +233,7 @@
   pk: 2
   fields:
     user:
-    - user1
+      - prof
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -229,7 +247,7 @@
   pk: 3
   fields:
     user:
-    - user2
+      - user1
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -243,7 +261,7 @@
   pk: 4
   fields:
     user:
-    - user3
+      - user2
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -257,7 +275,7 @@
   pk: 5
   fields:
     user:
-    - user4
+      - user3
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -271,7 +289,7 @@
   pk: 6
   fields:
     user:
-    - user5
+      - user4
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -285,7 +303,7 @@
   pk: 7
   fields:
     user:
-    - user6
+      - user5
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -299,7 +317,7 @@
   pk: 8
   fields:
     user:
-    - user7
+      - user6
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -313,7 +331,7 @@
   pk: 9
   fields:
     user:
-    - user8
+      - user7
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -327,7 +345,7 @@
   pk: 10
   fields:
     user:
-    - user9
+      - user8
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
@@ -341,7 +359,21 @@
   pk: 11
   fields:
     user:
-    - user10
+      - user9
+    acm_problems_status: {}
+    oi_problems_status: {}
+    real_name: null
+    avatar: /public/avatar/default.png
+    language: null
+    accepted_number: 0
+    total_score: 0
+    submission_number: 0
+
+- model: account.userprofile
+  pk: 12
+  fields:
+    user:
+      - user10
     acm_problems_status: {}
     oi_problems_status: {}
     real_name: null
