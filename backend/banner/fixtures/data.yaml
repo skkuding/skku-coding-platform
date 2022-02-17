@@ -1,0 +1,31 @@
+- model: banner.banner
+  pk: 1
+  fields:
+    title: banner1.png
+    create_time: 2022-02-17 10:48:49.019174+00:00
+    path: /public/upload/banner1.png
+    visible: true
+
+- model: banner.banner
+  pk: 2
+  fields:
+    title: banner2.png
+    create_time: 2022-02-17 10:48:49.019174+00:00
+    path: /public/upload/banner2.png
+    visible: true
+
+- model: banner.banner
+  pk: 3
+  fields:
+    title: banner3.png
+    create_time: 2022-02-17 10:48:49.019174+00:00
+    path: /public/upload/banner3.png
+    visible: true
+
+- model: banner.banner
+  pk: 4
+  fields:
+    title: banner4.png
+    create_time: 2022-02-17 10:48:49.019174+00:00
+    path: /public/upload/banner4.png
+    visible: true
