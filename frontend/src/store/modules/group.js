@@ -10,6 +10,9 @@ const state = {
 }
 
 const getters = {
+  groups: state => state.groups.groups || [],
+  adminGroups: state => state.groups.admin_groups || [],
+  otherGroups: state => state.groups.other_groups || []
 }
 
 const mutations = {

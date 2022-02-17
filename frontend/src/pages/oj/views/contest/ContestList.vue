@@ -8,25 +8,25 @@
       <div class="description text-xl">Compete with schoolmates & win the prizes!</div>
     </div>
     <div class="contest-list-container">
-      <!-- <h4 class="subtitle-blue">
-        Enter >>
+      <h4 class="subtitle-blue text-xl" v-if="contestsUnderway.length || contestsUnderwayNoPermission.length">
+        Active Contests >>
       </h4>
-      <neon-box color="#8DC63F" :shadow="true" class="my-3" @click.native="$bvModal.show('modal-contest-information')">
-        <template #overlay-icon>
-          <icon icon="arrow-right"></icon>
-        </template>
-      </neon-box> -->
-      <h4 class="subtitle-blue text-xl" v-if="contestsRegisterNow.length">
-        Register Now >>
-      </h4>
-      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsRegisterNow" :key="index"
+      <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUnderway" :key="index"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
                 :shadow="true" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
-      <h4 class="subtitle-blue text-xl" v-if="contestsUpcoming.length">
+      <neon-box color="#B4B4B4" v-for="(contest, index) in contestsUnderwayNoPermission"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
+                :key="index"  :shadow="true" class="my-3" @click.native="showContestInformationModal(contest)">
+        <template #overlay-icon>
+          <b-icon-zoom-in color="#B4B4B4" width="1.5em" height="1.5em"></b-icon-zoom-in>
+        </template>
+      </neon-box>
+      <button v-if="contestsUnderwayRendered < contestsUnderwayTotal" @click="loadMoreContests(CONTEST_STATUS.UNDERWAY)">Load More..</button>
+      <h4 class="subtitle-blue text-xl" v-if="contestsUpcoming.length || contestsUpcomingNoPermission.length">
         Upcoming Contests >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="index"
@@ -36,19 +36,14 @@
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
-      <h4 class="subtitle-red text-xl" v-if="contestsCannotParticipate.length">
-        Cannot Participate
-        <button class="subtitle-toggle" @click="showCannotParticipate = !showCannotParticipate">
-          <b-icon :icon="showCannotParticipate ? 'caret-up-fill':'caret-down-fill'" color="#FF6663"></b-icon>
-        </button>
-      </h4>
-      <neon-box v-show="showCannotParticipate" v-for="(contest, index) in contestsCannotParticipate"
+      <neon-box v-for="(contest, index) in contestsUpcomingNoPermission"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
-                :key="index" color="#FF6663" :shadow="true" class="my-3" @click.native="showContestInformationModal(contest)">
+                :key="index" color="#B4B4B4" class="my-3" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
-          <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
+          <b-icon-zoom-in color="#B4B4B4" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
+      <button v-if="contestsUpcomingRendered < contestsUpcomingTotal" @click="loadMoreContests(CONTEST_STATUS.NOT_START)">Load More..</button>
       <h4 class="subtitle-red text-xl">
         Finished Contests
         <button class="subtitle-toggle" @click="showFinishedContests = !showFinishedContests">
@@ -91,42 +86,36 @@ export default {
   name: 'ContestList',
   async beforeRouteEnter (to, from, next) {
     try {
-      const res = await api.getContestList(0, 20)
-      await store.dispatch('getGroupList')
+      const res = await api.getContestList(0, 30, {
+        status: CONTEST_STATUS.UNDERWAY
+      })
+      const res2 = await api.getContestList(0, 30, {
+        status: CONTEST_STATUS.NOT_START
+      })
+      const res3 = await api.getContestList(0, 20, {
+        status: CONTEST_STATUS.ENDED
+      })
       next((vm) => {
-        vm.contests = res.data.data.results
-        vm.total = res.data.data.total
+        vm.contestsUnderway = res.data.data.results
+        vm.contestsUnderwayRendered = 30
+        vm.contestsUnderwayTotal = res.data.data.total
+
+        vm.contestsUpcoming = res2.data.data.results
+        vm.contestsUpcomingRendered = 30
+        vm.contestsUpcomingTotal = res2.data.data.total
+
+        vm.contestsFinished = res3.data.data.results
+        vm.contestsFinishedRendered = 30
+        vm.contestsFinishedTotal = res3.data.data.total
       })
     } catch (err) {
       next()
     }
   },
-  mounted () {
-    this.group_as_member = [...this.$store.state.group.groups.admin_groups, ...this.$store.state.group.groups.groups]
-    function partition (array, filter) {
-      const pass = []
-      const fail = []
-      array.forEach((e, idx, arr) => (filter(e, idx, arr) ? pass : fail).push(e))
-      return [pass, fail]
+  async mounted () {
+    if (this.isAuthenticated) {
+      this.filterWithGroupPermission()
     }
-    const [finished, b] = partition(this.contests, contest => contest.status === CONTEST_STATUS.ENDED)
-    this.contestsFinished = finished
-    const [canParticipate, c] = partition(b, contest => {
-      if (!contest.allowed_groups.length) {
-        return true
-      }
-      for (const allowedGroup of contest.allowed_groups) {
-        if (allowedGroup.id in this.group_as_member) {
-          return true
-        }
-      }
-      return false
-    })
-    this.contestsCannotParticipate = c
-    const [contestsUnderway, contestsUpcoming] = partition(canParticipate, contest => contest.status === CONTEST_STATUS.UNDERWAY)
-    this.contestsRegisterNow = contestsUnderway
-    // TODO: filter contestsUnderway into contestsRegisterNow, contestsEnter(contests user already participating)
-    this.contestsUpcoming = contestsUpcoming
   },
   components: {
     NeonBox,
@@ -148,11 +137,21 @@ export default {
         rule_type: ''
       },
       rows: '',
-      contests: [],
-      contestsRegisterNow: [],
+      contestsUnderway: [],
+      contestsUnderwayNoPermission: [],
+      contestsUnderwayRendered: 0,
+      contestsUnderwayTotal: 0,
+
       contestsUpcoming: [],
-      contestsCannotParticipate: [],
+      contestsUpcomingNoPermission: [],
+      contestsUpcomingRendered: 0,
+      contestsUpcomingTotal: 0,
+
       contestsFinished: [],
+      contestsFinishedNoPermission: [],
+      contestsFinishedRendered: 0,
+      contestsFinishedTotal: 0,
+
       contestInformation: {},
       CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
       // for password modal use
@@ -189,13 +188,80 @@ export default {
       this.query.keyword = route.keyword || ''
       this.page = parseInt(route.page) || 1
       await this.getContestList()
+      await this.filterWithGroupPermission()
     },
     async getContestList () {
       try {
-        const res = await api.getContestList(0, this.limit, this.query)
-        this.contests = res.data.data.results
-        this.total = res.data.data.total
+        const res = await api.getContestList(0, 30, {
+          status: CONTEST_STATUS.UNDERWAY
+        })
+        const res2 = await api.getContestList(0, 30, {
+          status: CONTEST_STATUS.NOT_START
+        })
+        const res3 = await api.getContestList(0, 20, {
+          status: CONTEST_STATUS.ENDED
+        })
+        this.contestsUnderway = res.data.data.results
+        this.contestsUnderwayRendered = 30
+        this.contestsUnderwayTotal = res.data.data.total
+
+        this.contestsUpcoming = res2.data.data.results
+        this.contestsUpcomingRendered = 30
+        this.contestsUpcomingTotal = res2.data.data.total
+
+        this.contestsFinished = res3.data.data.results
+        this.contestsFinishedRendered = 30
+        this.contestsFinishedTotal = res3.data.data.total
       } catch (err) {
+      }
+    },
+    async filterWithGroupPermission () {
+      await store.dispatch('getGroupList')
+      this.group_as_member = [...this.adminGroups, ...this.groups]
+      function partition (array, filter) {
+        const pass = []
+        const fail = []
+        array.forEach((e, idx, arr) => (filter(e, idx, arr) ? pass : fail).push(e))
+        return [pass, fail]
+      }
+      const [a, b] = partition(this.contestsUnderway, contest => {
+        if (!contest.allowed_groups.length) {
+          return true
+        }
+        for (const allowedGroup of contest.allowed_groups) {
+          if (allowedGroup.id in this.group_as_member) {
+            return true
+          }
+        }
+        return false
+      })
+      this.contestsUnderway = a
+      this.contestsUnderwayNoPermission = b
+
+      const [c, d] = partition(this.contestsUpcoming, contest => {
+        if (!contest.allowed_groups.length) {
+          return true
+        }
+        for (const allowedGroup of contest.allowed_groups) {
+          if (allowedGroup.id in this.group_as_member) {
+            return true
+          }
+        }
+        return false
+      })
+      this.contestsUpcoming = c
+      this.contestsUpcomingNoPermission = d
+    },
+    async loadMoreContests (status) {
+      if (status === CONTEST_STATUS.UNDERWAY) {
+        const res = await api.getContestList(this.contestsUnderwayRendered, 30)
+        this.contestsUnderwayRendered += 30
+        this.contestsUnderway = this.contestsUnderway.concat(res.data.data.results)
+      } else if (status === CONTEST_STATUS.NOT_START) {
+        const res = await api.getContestList(this.contestsUpcoming, 30)
+        this.contestsUpcomingRendered += 30
+        this.contestsUpcoming = this.contestsUpcoming.concat(res.data.data.results)
+      } else {
       }
     },
     async changeRoute () {
@@ -251,7 +317,8 @@ export default {
   computed: {
     ...mapGetters(
       ['contestMenuDisabled', 'countdown', 'isContestAdmin',
-        'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated']
+        'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated',
+        'groups', 'adminGroups', 'otherGroups']
     ),
     row () {
       return this.contests.length
