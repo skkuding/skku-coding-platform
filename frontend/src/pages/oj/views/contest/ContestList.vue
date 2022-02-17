@@ -57,6 +57,13 @@
           <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
+      <b-pagination
+        v-show="showFinishedContests"
+        v-model="currentPage"
+        :per-page="perPage"
+        align="right"
+        :total-rows="contestsFinishedTotal"
+      />
     </div>
     <b-modal id="modal-contest-information" size="xl">
       <contest-information
@@ -86,10 +93,10 @@ export default {
   name: 'ContestList',
   async beforeRouteEnter (to, from, next) {
     try {
-      const res = await api.getContestList(0, 30, {
+      const res = await api.getContestList(0, 10, {
         status: CONTEST_STATUS.UNDERWAY
       })
-      const res2 = await api.getContestList(0, 30, {
+      const res2 = await api.getContestList(0, 10, {
         status: CONTEST_STATUS.NOT_START
       })
       const res3 = await api.getContestList(0, 20, {
@@ -97,15 +104,14 @@ export default {
       })
       next((vm) => {
         vm.contestsUnderway = res.data.data.results
-        vm.contestsUnderwayRendered = 30
+        vm.contestsUnderwayRendered = 10
         vm.contestsUnderwayTotal = res.data.data.total
 
         vm.contestsUpcoming = res2.data.data.results
-        vm.contestsUpcomingRendered = 30
+        vm.contestsUpcomingRendered = 10
         vm.contestsUpcomingTotal = res2.data.data.total
 
         vm.contestsFinished = res3.data.data.results
-        vm.contestsFinishedRendered = 30
         vm.contestsFinishedTotal = res3.data.data.total
       })
     } catch (err) {
@@ -125,10 +131,6 @@ export default {
     return {
       showCannotParticipate: false,
       showFinishedContests: false,
-      limit: 20,
-      total: 0,
-      perPage: 5,
-      currentPage: 1,
       CONTEST_STATUS: CONTEST_STATUS,
       route_name: '',
       query: {
@@ -149,8 +151,9 @@ export default {
 
       contestsFinished: [],
       contestsFinishedNoPermission: [],
-      contestsFinishedRendered: 0,
       contestsFinishedTotal: 0,
+      perPage: 20,
+      currentPage: 1,
 
       contestInformation: {},
       CONTEST_STATUS_REVERSE: CONTEST_STATUS_REVERSE,
@@ -192,28 +195,34 @@ export default {
     },
     async getContestList () {
       try {
-        const res = await api.getContestList(0, 30, {
+        const res = await api.getContestList(0, 10, {
           status: CONTEST_STATUS.UNDERWAY
         })
-        const res2 = await api.getContestList(0, 30, {
+        const res2 = await api.getContestList(0, 10, {
           status: CONTEST_STATUS.NOT_START
         })
         const res3 = await api.getContestList(0, 20, {
           status: CONTEST_STATUS.ENDED
         })
         this.contestsUnderway = res.data.data.results
-        this.contestsUnderwayRendered = 30
+        this.contestsUnderwayRendered = 10
         this.contestsUnderwayTotal = res.data.data.total
 
         this.contestsUpcoming = res2.data.data.results
-        this.contestsUpcomingRendered = 30
+        this.contestsUpcomingRendered = 10
         this.contestsUpcomingTotal = res2.data.data.total
 
         this.contestsFinished = res3.data.data.results
-        this.contestsFinishedRendered = 30
         this.contestsFinishedTotal = res3.data.data.total
       } catch (err) {
       }
+    },
+    async currentChange (page) {
+      this.currentPage = page
+      const res = await api.getContestList(20 * (page - 1), 20, {
+        status: CONTEST_STATUS.ENDED
+      })
+      this.contestsFinished = res.data.data.results
     },
     async filterWithGroupPermission () {
       await store.dispatch('getGroupList')
@@ -254,16 +263,16 @@ export default {
     },
     async loadMoreContests (status) {
       if (status === CONTEST_STATUS.UNDERWAY) {
-        const res = await api.getContestList(this.contestsUnderwayRendered, 30, {
+        const res = await api.getContestList(this.contestsUnderwayRendered, 10, {
           status: CONTEST_STATUS.UNDERWAY
         })
-        this.contestsUnderwayRendered += 30
+        this.contestsUnderwayRendered += 10
         this.contestsUnderway = this.contestsUnderway.concat(res.data.data.results)
       } else if (status === CONTEST_STATUS.NOT_START) {
-        const res = await api.getContestList(this.contestsUpcoming, 30, {
+        const res = await api.getContestList(this.contestsUpcoming, 10, {
           status: CONTEST_STATUS.ENDED
         })
-        this.contestsUpcomingRendered += 30
+        this.contestsUpcomingRendered += 10
         this.contestsUpcoming = this.contestsUpcoming.concat(res.data.data.results)
       } else {
       }
@@ -324,8 +333,8 @@ export default {
         'OIContestRealTimePermission', 'passwordFormVisible', 'isAuthenticated',
         'groups', 'adminGroups', 'otherGroups']
     ),
-    row () {
-      return this.contests.length
+    updateCurrentPage () {
+      return this.currentChange(this.currentPage)
     }
   },
   watch: {
