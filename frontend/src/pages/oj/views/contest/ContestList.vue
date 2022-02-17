@@ -12,14 +12,14 @@
         Active Contests >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUnderway" :key="'unp' + index"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started ' + contest.startedTimeFromNow" :rightTop="contest.participants_count" rightTopIcon="users"
                 :shadow="true" @click.native="goContest(contest)">
         <template #overlay-icon>
           <icon icon="arrow-right"></icon>
         </template>
       </neon-box>
       <neon-box color="#B4B4B4" v-for="(contest, index) in contestsUnderwayNoPermission"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Started ' + contest.startedTimeFromNow" :rightTop="contest.participants_count" rightTopIcon="users"
                 :key="'unn' + index"  :shadow="true" class="my-3" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#B4B4B4" width="1.5em" height="1.5em"></b-icon-zoom-in>
@@ -30,14 +30,14 @@
         Upcoming Contests >>
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUpcoming" :key="'upp' + index"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Start ' + contest.remainTime" :rightTop="contest.participants_count" rightTopIcon="users"
                 @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
         </template>
       </neon-box>
       <neon-box v-for="(contest, index) in contestsUpcomingNoPermission"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Start ' + contest.remainTime" :rightTop="contest.participants_count" rightTopIcon="users"
                 :key="'upn' + index" color="#B4B4B4" class="my-3" @click.native="showContestInformationModal(contest)">
         <template #overlay-icon>
           <b-icon-zoom-in color="#B4B4B4" width="1.5em" height="1.5em"></b-icon-zoom-in>
@@ -51,7 +51,7 @@
         </button>
       </h4>
       <neon-box v-show="showFinishedContests" v-for="(contest, index) in contestsFinished"
-                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="'Finished ' + contest.finishedTimeFromNow" :rightTop="contest.participants_count" rightTopIcon="users"
                 :key="'fi' + index" color="#FF6663" class="my-3" @click.native="goContest(contest)">
         <template #overlay-icon>
           <icon icon="arrow-right"></icon>
@@ -88,6 +88,7 @@ import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/co
 import NeonBox from '@oj/components/NeonBox.vue'
 import ContestInformation from '@oj/components/ContestInformation.vue'
 import store from '@/store'
+import moment from 'moment'
 
 export default {
   name: 'ContestList',
@@ -122,6 +123,10 @@ export default {
     if (this.isAuthenticated) {
       this.filterWithGroupPermission()
     }
+    this.calculateTimeDiff()
+    setInterval(() => {
+      this.calculateTimeDiff()
+    }, 10000)
   },
   components: {
     NeonBox,
@@ -317,13 +322,21 @@ export default {
     makeGroupRequirementInfo (contest) {
       return 'For ' + (contest.allowed_groups.map(g => g.name).join(', ') || 'All')
     },
-    makeStartTimeInfo (contest) {
-      if (contest.status === CONTEST_STATUS.UNDERWAY) {
-        return 'Underway'
-      } else if (contest.status === CONTEST_STATUS.NOT_START) {
-        return 'Not Started'
-      } else {
-        return 'Ended'
+    calculateTimeDiff () {
+      for (const contest of this.contestsUpcoming) {
+        this.$set(contest, 'remainTime', moment().to(moment(contest.start_time)))
+      }
+      for (const contest of this.contestsUpcomingNoPermission) {
+        this.$set(contest, 'remainTime', moment().to(moment(contest.start_time)))
+      }
+      for (const contest of this.contestsFinished) {
+        this.$set(contest, 'finishedTimeFromNow', moment(contest.end_time).fromNow())
+      }
+      for (const contest of this.contestsUnderway) {
+        this.$set(contest, 'startedTimeFromNow', moment(contest.start_time).fromNow())
+      }
+      for (const contest of this.contestsUnderwayNoPermission) {
+        this.$set(contest, 'startedTimeFromNow', moment(contest.start_time).fromNow())
       }
     }
   },
