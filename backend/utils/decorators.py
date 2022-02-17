@@ -134,7 +134,7 @@ def check_contest_permission(check_type="details"):
 
             # allowed_groups exist and member doesn't belong to any group, error
             if self.contest.allowed_groups.count() and not self.contest.allowed_groups.filter(members=user).exists():
-                if check_type == "ranks" or check_type == "submissions" or check_type == 'problems':
+                if check_type == "ranks" or check_type == "submissions" or check_type == "problems":
                     return self.error("You are not a member of the group allowed to this contest")
 
             # check does user have permission to get ranks, submissions in OI Contest
