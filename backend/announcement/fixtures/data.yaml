@@ -1,0 +1,65 @@
+- model: announcement.announcement
+  pk: 1
+  fields:
+    title: Simple Announcement
+    content: <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum has been the industry&#039;s standard dummy text ever since the
+      1500s, when an unknown printer took a galley of type and scrambled it to make
+      a type specimen book. It has survived not only five centuries, but also the
+      leap into electronic typesetting, remaining essentially unchanged. It was popularised
+      in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
+      and more recently with desktop publishing software like Aldus PageMaker including
+      versions of Lorem Ipsum.</p>
+    create_time: 2022-02-15 07:21:53.201458+00:00
+    created_by:
+    - root
+    last_update_time: 2022-02-15 07:21:53.201492+00:00
+    visible: true
+    top_fixed: false
+- model: announcement.announcement
+  pk: 2
+  fields:
+    title: 한글 공지사항 with Various Format
+    content: "<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing
+      and typesetting industry. <em>Lorem Ipsum</em> has been the industry&#039;s
+      standard dummy text ever since the 1500s, when an unknown printer took a galley
+      of type and scrambled it to make a type specimen book. It has survived not only
+      five centuries, but also the leap into electronic typesetting, remaining essentially
+      unchanged. <code>console.log(&#039;inline code&#039;)</code> It was popularised
+      in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
+      and more recently with desktop publishing software like Aldus PageMaker including
+      versions of Lorem Ipsum. <a target=\"_blank\" rel=\"noopener noreferrer nofollow\"
+      href=\"https://github.com/skku-npc/skku-coding-platform\">Random Link</a></p><hr
+      /><p><strong>국가는 여자의 복지와 권익의 향상을 위하여 노력하여야 한다.</strong> 국채를 모집하거나 예산외에 국가의 부담이
+      될 계약을 체결하려 할 때에는 정부는 미리 국회의 의결을 얻어야 한다. 대법원장과 대법관이 아닌 법관은 대법관회의의 동의를 얻어 대법원장이
+      임명한다. <s>체포·구속·압수 또는 수색을 할 때에는</s> 적법한 절차에 따라 검사의 신청에 의하여 법관이 발부한 영장을 제시하여야
+      한다. 다만, 현행범인인 경우와 장기 3년 이상의 형에 해당하는 죄를 범하고 도피 또는 증거인멸의 염려가 있을 때에는 사후에 영장을 청구할
+      수 있다.</p><blockquote><p>There are many variations of passages of Lorem Ipsum
+      available, but the majority have suffered alteration in some form, by injected
+      humour, or randomised words which don&#039;t look even slightly believable.</p></blockquote><p>사회적
+      특수계급의 제도는 인정되지 아니하며, 어떠한 형태로도 이를 창설할 수 없다. 대통령이 궐위된 때 또는 대통령 당선자가 사망하거나 판결 기타의
+      사유로 그 자격을 상실한 때에는 60일 이내에 후임자를 선거한다. 대통령은 내우·외환·천재·지변 또는 중대한 재정·경제상의 위기에 있어서
+      국가의 안전보장 또는 공공의 안녕질서를 유지하기 위하여 긴급한 조치가 필요하고 국회의 집회를 기다릴 여유가 없을 때에 한하여 최소한으로
+      필요한 재정·경제상의 처분을 하거나 이에 관하여 법률의 효력을 가지는 명령을 발할 수 있다.</p><h3>Header 1</h3><h4>Header
+      2</h4><pre><code>#include &lt;stdio.h&gt;\n\nint main() {\n  printf(&quot;Hello,
+      world!&quot;);\n  return 0;\n}</code></pre><ul><li><p>First Item</p></li><li><p>Second
+      Item</p></li><li><p>Third Item</p></li></ul><ol><li><p>Number One</p></li><li><p>Number
+      Two</p></li><li><p>Number Three</p></li></ol>"
+    create_time: 2022-02-15 07:30:33.901764+00:00
+    created_by:
+    - root
+    last_update_time: 2022-02-15 07:30:33.901803+00:00
+    visible: true
+    top_fixed: false
+- model: announcement.announcement
+  pk: 3
+  fields:
+    title: Announcement with a Photo
+    content: <img src="https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
+      />
+    create_time: 2022-02-15 07:37:14.418210+00:00
+    created_by:
+    - root
+    last_update_time: 2022-02-15 07:37:14.418273+00:00
+    visible: true
+    top_fixed: false
