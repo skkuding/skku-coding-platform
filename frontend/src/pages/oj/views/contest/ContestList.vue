@@ -13,9 +13,9 @@
       </h4>
       <neon-box color="#8DC63F" class="my-3" v-for="(contest, index) in contestsUnderway" :key="index"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
-                :shadow="true" @click.native="showContestInformationModal(contest)">
+                :shadow="true" @click.native="goContest(contest)">
         <template #overlay-icon>
-          <b-icon-zoom-in color="#8DC63F" width="1.5em" height="1.5em"></b-icon-zoom-in>
+          <icon icon="arrow-right"></icon>
         </template>
       </neon-box>
       <neon-box color="#B4B4B4" v-for="(contest, index) in contestsUnderwayNoPermission"
@@ -254,11 +254,15 @@ export default {
     },
     async loadMoreContests (status) {
       if (status === CONTEST_STATUS.UNDERWAY) {
-        const res = await api.getContestList(this.contestsUnderwayRendered, 30)
+        const res = await api.getContestList(this.contestsUnderwayRendered, 30, {
+          status: CONTEST_STATUS.UNDERWAY
+        })
         this.contestsUnderwayRendered += 30
         this.contestsUnderway = this.contestsUnderway.concat(res.data.data.results)
       } else if (status === CONTEST_STATUS.NOT_START) {
-        const res = await api.getContestList(this.contestsUpcoming, 30)
+        const res = await api.getContestList(this.contestsUpcoming, 30, {
+          status: CONTEST_STATUS.ENDED
+        })
         this.contestsUpcomingRendered += 30
         this.contestsUpcoming = this.contestsUpcoming.concat(res.data.data.results)
       } else {
