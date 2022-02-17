@@ -54,7 +54,7 @@
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" :rightBottom="makeStartTimeInfo(contest)" :rightTop="contest.participants_count" rightTopIcon="users"
                 :key="'fi' + index" color="#FF6663" class="my-3" @click.native="goContest(contest)">
         <template #overlay-icon>
-          <b-icon-zoom-in color="#FF6663" width="1.5em" height="1.5em"></b-icon-zoom-in>
+          <icon icon="arrow-right"></icon>
         </template>
       </neon-box>
       <b-pagination
