@@ -360,9 +360,9 @@ export default {
       }
       await api.editAssignment(data)
     },
-    showImportPublicProblemModal (assignmentId, courseId) {
+    showImportPublicProblemModal (assignmentId) {
       this.selectedAssignmentId = assignmentId
-      this.selectedCourseId = courseId
+      this.selectedCourseId = this.courseId
       this.$bvModal.show('import-public-problem-modal')
     },
     async getUserTotal () {
