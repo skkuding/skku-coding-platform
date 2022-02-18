@@ -22,7 +22,7 @@ const classList = computed(() => [
 
   props.outline ? 'border-2 border-stone-500' : '',
 
-  props.size === undefined ? 'font-medium rounded-md' : '',
+  props.size === undefined ? 'rounded-md' : '',
   props.size === 'small' ? 'text-sm rounded-md' : '',
   props.size === 'large' ? '' : '',
 
