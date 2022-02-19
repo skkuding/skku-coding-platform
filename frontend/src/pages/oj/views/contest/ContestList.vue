@@ -228,6 +228,7 @@ export default {
         status: CONTEST_STATUS.ENDED
       })
       this.contestsFinished = res.data.data.results
+      this.calculateTimeDiff()
     },
     async filterWithGroupPermission () {
       await store.dispatch('getGroupList')
