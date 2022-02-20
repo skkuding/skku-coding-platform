@@ -92,7 +92,7 @@ class AnswerAPITest(APITestCase):
     def create_question(self):
         self.professor = self.create_admin(login=False)
         course_id = Course.objects.create(created_by=self.professor, **DEFAULT_COURSE_DATA).id
-        return Question.objects.create(created_by_id=self.user.id, course_id=course_id, title="title", content="content", status=True).id
+        return Question.objects.create(created_by_id=self.user.id, course_id=course_id, title="title", content="content", is_open=True).id
 
     def test_create_answer(self):
         response = self.client.post(self.url, data=self.data)
@@ -122,7 +122,7 @@ class AnswerAPITest(APITestCase):
         self.data.update({"closure": True})
         response = self.client.post(self.url, data=self.data)
         self.assertSuccess(response)
-        self.assertFalse(Question.objects.get(id=self.question_id).status)
+        self.assertFalse(Question.objects.get(id=self.question_id).is_open)
 
     def test_unauthorized_closure(self):
         self.create_user("2020700000", "pass")

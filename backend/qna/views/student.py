@@ -129,7 +129,7 @@ class AnswerAPI(APIView):
     def post(self, request):
         data = request.data
         try:
-            question = Question.objects.get(id=data.pop("question_id"), status=True)
+            question = Question.objects.get(id=data.pop("question_id"), is_open=True)
             data["question"] = question
             data["created_by"] = request.user
         except Question.DoesNotExist:
@@ -138,7 +138,7 @@ class AnswerAPI(APIView):
         if data.pop("closure", False):
             if not request.user.is_question_admin(question):
                 return self.error("No permission for closure")
-            question.status = False
+            question.is_open = False
             question.save()
 
         answer = Answer.objects.create(**data)

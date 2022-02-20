@@ -17,7 +17,7 @@ class Question(models.Model):
     content = models.TextField()
     create_time = models.DateTimeField(auto_now_add=True)
     last_update_time = models.DateTimeField(auto_now=True)
-    is_resolved = models.BooleanField(default=True)
+    is_open = models.BooleanField(default=True)
 
     class Meta:
         db_table = "question"
@@ -32,6 +32,10 @@ class Answer(models.Model):
     last_update_time = models.DateTimeField(auto_now=True)
     admin_type = models.TextField(default=AdminType.NONE)
 
+    class Meta:
+        db_table = "answer"
+        ordering = ("-create_time",)
+
     def update_admin_type(self, user):
         if user.is_authenticated and user.is_admin_role():
             self.admin_type = AdminType.PROFESSOR
@@ -43,7 +47,3 @@ class Answer(models.Model):
         if self.admin_type == AdminType.PROFESSOR:
             return self.created_by.userprofile.real_name
         return self.created_by.username
-
-    class Meta:
-        db_table = "answer"
-        ordering = ("-create_time",)
