@@ -213,8 +213,12 @@ export default {
       }
     })
   },
-  getUserContestInfo () {
-    return ajax('contest/user/', 'get')
+  getUserContestInfo (offset, limit, params) {
+    params.limit = limit
+    params.offset = offset
+    return ajax('contest/user/', 'get', {
+      params
+    })
   },
   submitCode (data) {
     return ajax('submission/', 'post', {
