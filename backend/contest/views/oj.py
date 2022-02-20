@@ -16,7 +16,7 @@ from problem.models import Problem
 from ..serializers import ContestAnnouncementSerializer
 from ..serializers import ContestSerializer, ContestPasswordVerifySerializer
 from ..serializers import ACMContestRankSerializer
-from ..serializers import UserContestSerializer
+from ..serializers import ProfileContestSerializer
 
 import random
 import json
@@ -297,4 +297,10 @@ class UserContestAPI(APIView):
                 contests.append(contest)
             except Contest.DoesNotExist:
                 return self.error("Contest does not exist")
-        return self.success(UserContestSerializer(contests, many=True).data)
+
+        # priority
+        priority = request.GET.get("priority")
+        if priority:
+            contests = sorted(contests, key=lambda c: c[priority])
+
+        return self.success(ProfileContestSerializer(contests, many=True).data)
