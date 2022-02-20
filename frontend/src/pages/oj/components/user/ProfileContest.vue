@@ -8,10 +8,12 @@
     </div>
 
     <div class="sort-container">
-      <b-dropdown text="Date" class="mr-4">
-        <b-dropdown-item>All</b-dropdown-item>
-        <b-dropdown-item>Rank</b-dropdown-item>
-        <b-dropdown-item>Prize</b-dropdown-item>
+      <b-dropdown :text="priority" class="mr-4">
+        <b-dropdown-item @click="sortBy('all')">all</b-dropdown-item>
+        <b-dropdown-item @click="sortBy('rank')">rank</b-dropdown-item>
+        <b-dropdown-item @click="sortBy('date')">date</b-dropdown-item>
+        <b-dropdown-item @click="sortBy('title')">title</b-dropdown-item>
+        <b-dropdown-item @click="sortBy('percentage')">prize</b-dropdown-item>
       </b-dropdown>
     </div>
 
@@ -22,6 +24,7 @@
         :fields="fields"
         head-variant="light"
         @row-clicked="goContest"
+        :tbody-tr-class="underwayClass"
       >
         <template #cell(start_time)="data">
           {{ getTimeFormat(data.value) }}
@@ -41,7 +44,7 @@
       v-model="currentPage"
       :total-rows="rows"
       :per-page="perPage"
-      limit="5"
+      limit="1"
       ></Pagination>
     </div>
   </div>
@@ -63,6 +66,7 @@ export default {
       rows: 100,
       currentPage: 1,
       perPage: 3,
+      priority: 'all',
       Chart,
       fields: [
         { label: "Date", key: "start_time" },
@@ -70,14 +74,7 @@ export default {
         { key: "rank", label: "Rank" },
         { key: "percentage", label: "Prize" },
       ],
-      contests: [
-        {
-          start_time: "2022-01",
-          title: "skku contest",
-          rank: "1",
-          percentage: "33"
-        }
-      ],
+      contests: [],
     };
   },
   async mounted() {
@@ -85,6 +82,14 @@ export default {
     await this.drawChart();
   },
   methods: {
+    underwayClass(item, type) {
+      if(!item || type!=='row') return
+      if(item.rank < 0) {
+        item.rank = "-"
+        item.percentage = "-"
+        return 'underwayClass'
+      }
+    },
     drawChart() {
       const ctx = document.getElementById("myChart");
       const myChart = new Chart(ctx, {
@@ -114,7 +119,11 @@ export default {
     },
     async getUserContestList () {
       try {
-        const res = await api.getUserContestInfo()
+        const offset = (this.page - 1) * this.limit
+        const res = await api.getUserContestInfo(offset, this.limit, {
+          priority: this.priority === 'all' || this.priority === 'date' ? 'start_time' : this.priority,
+          page: this.page
+        })
         this.contests = res.data.data
       } catch (err) {
       }
@@ -124,9 +133,13 @@ export default {
     },
     async goContest (item) {
       await this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
-    }
+    },
+    async sortBy(priority){
+      this.priority = priority
+      await this.getUserContestList()
+    },
   },
-  computed: {},
+  computed: {}
 };
 </script>
 
@@ -136,6 +149,7 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
 .rank-chart {
   width: 90%;
 }
@@ -152,6 +166,11 @@ export default {
   margin: 0 auto;
   cursor: pointer;
 }
+
+.underwayClass {
+  backgroundColor: red;
+}
+
 .pagination {
   width: 95%;
   margin-right: 5%;
