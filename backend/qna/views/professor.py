@@ -11,19 +11,19 @@ class QuestionAPI(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                  name="course_id",
-                  in_=openapi.IN_QUERY,
-                  description="Id of course",
-                  required=True,
-                  type=openapi.TYPE_INTEGER,
-              ),
-              openapi.Parameter(
-                  name="question_id", in_=openapi.IN_QUERY,
-                  type=openapi.TYPE_INTEGER,
-                  required=False
-              ),
-          ],
-          operation_description="Get Question"
+                name="course_id",
+                in_=openapi.IN_QUERY,
+                description="Id of course",
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+            openapi.Parameter(
+                name="question_id", in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+        ],
+        operation_description="Get Question"
       )
     @admin_role_required
     def get(self, request):

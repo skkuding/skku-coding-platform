@@ -18,6 +18,7 @@ class Question(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     last_update_time = models.DateTimeField(auto_now=True)
     is_resolved = models.BooleanField(default=True)
+
     class Meta:
         db_table = "question"
         ordering = ("-create_time",)
