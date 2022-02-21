@@ -49,7 +49,7 @@ LOCAL_APPS = [
     'judge',
     'assignment',
     'course',
-    'group'
+    'group',
     'qna'
 ]
 
