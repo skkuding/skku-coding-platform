@@ -1,13 +1,7 @@
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04
+# [Choice] Python version (https://github.com/microsoft/vscode-dev-containers/tree/main/containers/python-3)
+ARG VARIANT=3.8-bullseye
+FROM mcr.microsoft.com/vscode/devcontainers/python:${VARIANT}
 
-# Install Node 16
-ENV NODE_VERSION=16
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash \
-    && bash -c ". $HOME/.nvm/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && npm install -g typescript yarn"
-
-# Install packages from apt
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends vim python3-pip python3-setuptools
+# [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
+ARG NODE_VERSION="16"
+RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
