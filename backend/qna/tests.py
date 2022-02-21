@@ -1,4 +1,4 @@
-from copy import deepcopy
+import copy
 from utils.api.tests import APITestCase
 from .models import Question, Answer
 from course.models import Course

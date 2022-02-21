@@ -20,10 +20,8 @@ class CreateQuestionSerializer(serializers.Serializer):
 
 class EditQuestionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-
-    class Meta:
-        model = Question
-        fields = ("title", "content")
+    title = serializers.CharField(max_length=128)
+    content = serializers.CharField(max_length=1024 * 1024 * 8)
 
 
 class AnswerSerializer(serializers.Serializer):
