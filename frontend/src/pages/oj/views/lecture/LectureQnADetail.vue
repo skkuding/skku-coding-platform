@@ -43,7 +43,7 @@
             <span class="answer-registered__date">{{ answer.create_time }}</span>
             <span class="answer-registered__button">
               <b-icon icon="circle-fill" scale="0.4"/>
-              <span style="cursor: pointer">Edit</span>
+              <span style="cursor: pointer" @click="showEditAnswer">Edit</span>
               <b-icon icon="circle-fill" scale="0.4" style="margin-left: 3px;"/>
               <span style="cursor: pointer" @click="showDeleteAnswer">Delete</span>
             </span>
@@ -53,10 +53,11 @@
         <div class="answer-enter">
           <b-form-textarea
             class="answer-enter__text"
+            v-model="answerContent"
             no-resize
             size="lg"
           ></b-form-textarea>
-          <b-button class="answer-enter__btn">등록</b-button>
+          <b-button class="answer-enter__btn" @click="createAnswer">등록</b-button>
         </div>
       </section>
 
@@ -120,6 +121,8 @@
 
 <script>
 import sidemenu from '@oj/components/Sidemenu.vue'
+import api from '@oj/api'
+import moment from 'moment'
 
 export default {
   name: 'CourseQnaDetail',
@@ -142,22 +145,53 @@ export default {
         create_time: '2021-08-10 18:30',
         content: '이번엔 프로젝트로 진행합니다.'
       },
+      course_id: 1,
+      answerContent: '',
       showEditQuestionDialog: false,
       showDeleteQuestionDialog: false,
       showDeleteAnswerDialog: false
     }
   },
   async mounted () {
+    this.course_id = this.$route.params.courseID
   },
   methods: {
-    showEditQuestion () {
+    async showEditQuestion () {
       this.showEditQuestionDialog = true
+      const localtime = moment().format()
+      const data = {
+        course_id: this.course_id,
+        title: this.questions.title,
+        content: this.questions.content,
+        last_update_time: localtime,
+        create_time: this.questions.date
+      }
+      console.log(data)
+      const res = await api.updateQuestion(data)
+      console.log(res)
     },
-    showDeleteQuestion () {
+    async showDeleteQuestion () {
       this.showDeleteQuestionDialog = true
+      await api.deleteQuestion(this.question.id)
     },
-    showDeleteAnswer () {
+    async showDeleteAnswer () {
       this.showDeleteAnswerDialog = true
+      await api.deleteAnswer(this.answer.id)
+    },
+    async createAnswer () {
+      const data = {
+        question_id: this.question_id,
+        content: this.answerContent,
+        closure: true
+      }
+      await api.createAnswer(data)
+    },
+    async showEditAnswer () {
+      const data = {
+        id: this.answer.id,
+        content: this.answerContent
+      }
+      await api.updateAnswer(data)
     }
   },
   computed: {

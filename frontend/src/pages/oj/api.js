@@ -355,6 +355,50 @@ export default {
         id: problemSetID
       }
     })
+  },
+  createQuestion (data) {
+    return ajax('lecture/course/question/', 'post', {
+      data
+    })
+  },
+  updateQuestion (data) {
+    return ajax('lecture/course/question/', 'put', {
+      data
+    })
+  },
+  getQuestionList (id, params) {
+    return ajax('lecture/course/question/', 'get', {
+      params
+    })
+  },
+  deleteQuestion (id) {
+    return ajax('lecture/course/question/', 'delete', {
+      params: {
+        id
+      }
+    })
+  },
+  createAnswer (data) {
+    return ajax('lecture/course/question/answer/', 'post', {
+      data
+    })
+  },
+  updateAnswer (data) {
+    return ajax('lecture/course/question/answer/', 'put', {
+      data
+    })
+  },
+  getAnswerList (params) {
+    return ajax('lecture/course/question/answer/', 'get', {
+      params
+    })
+  },
+  deleteAnswer (id) {
+    return ajax('lecture/course/question/answer/', 'delete', {
+      params: {
+        id
+      }
+    })
   }
 }
 
