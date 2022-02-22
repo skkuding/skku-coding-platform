@@ -3,14 +3,14 @@
     <sidemenu/>
     <div class="top-bar mb-4">
       <h2 class="title">Course QnA</h2>
-      <!-- <b-button
+      <b-button
         class="button"
         size="sm"
         @click="editCreateQuestionDialog"
-      >New Question</b-button> -->
+      >New Question</b-button>
     </div>
     <div style="margin-left: 68px;">QnA Page will be provided soon. :></div>
-    <!-- <div class="table">
+    <div class="table">
       <b-table
         hover
         :items="questions"
@@ -74,12 +74,14 @@
         <b-button @click="showCreateQuestionDialog = false">Cancel</b-button>
         <b-button @click="submitQuestion">Save</b-button>
       </template>
-    </b-modal> -->
+    </b-modal>
   </div>
 </template>
 
 <script>
 import sidemenu from '@oj/components/Sidemenu.vue'
+import api from '@oj/api'
+import moment from 'moment'
 
 export default {
   name: 'CourseQna',
@@ -93,9 +95,10 @@ export default {
         'status',
         'date'
       ],
+      course_id: 1,
       questions: [
         {
-          id: '3',
+          id: 3,
           title: 'third',
           status: 'Not Resolved',
           date: '2021-08-09',
@@ -103,7 +106,7 @@ export default {
           content: ''
         },
         {
-          id: '2',
+          id: 2,
           title: 'second',
           status: 'Not Resolved',
           date: '2021-08-09',
@@ -111,7 +114,7 @@ export default {
           content: ''
         },
         {
-          id: '1',
+          id: 1,
           title: 'first',
           status: 'Resolved',
           date: '2021-08-09',
@@ -125,13 +128,68 @@ export default {
     }
   },
   async mounted () {
+    this.course_id = this.$route.params.courseID
   },
   methods: {
-    editCreateQuestionDialog () {
+    async init () {
+      await this.getQuestionList()
+    },
+    async getQuestionList () {
+      const res = await api.getQuestionList(0, 20) // 개수?
+      this.questions = res.data.data.results
+    },
+    async editCreateQuestionDialog () {
       this.showCreateQuestionDialog = true
+      /*
+      const localtime = moment().format()
+      const data = {
+        course_id: this.course_id,
+        title: this.questions.title,
+        content: this.questions.content,
+        last_update_time: localtime,
+        create_time: this.questions.date
+      }
+      console.log(data)
+      const res = await api.updateQuestion(data)
+      console.log(res)
+      */
     },
     async submitQuestion () {
       this.showCreateQuestionDialog = false
+      const localtime = moment().format()
+      /*
+      if (this.questions) {
+        const data = {
+          id: this.questions.id,
+          title: this.questions.title,
+          content: this.questions.content
+        }
+        console.log(data)
+        const res = await api.createQuestion(data)
+        console.log(res)
+      } else {
+        const data = {
+          course_id: this.course_id,
+          title: this.questions.title,
+          content: this.questions.content,
+          last_update_time: localtime,
+          create_time: this.questions.date
+        }
+        console.log(data)
+        const res = await api.updateQuestion(data)
+        console.log(res)
+      }
+*/
+      const data = {
+        course_id: this.course_id,
+        title: this.questions.title,
+        content: this.questions.content,
+        last_update_time: localtime,
+        create_time: this.questions.date
+      }
+      console.log(data)
+      const res = await api.createQuestion(data)
+      console.log(res)
     },
     async goQuestion (question) {
       this.question = question
