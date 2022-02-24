@@ -5,8 +5,8 @@
         <h2 class="title">Submission List</h2>
         <div class="submission-list-table">
           <div class="category-container">
-            <button type="button" class="ac-btn btn-outline-success" @click="filterByResult('AC')">Accepted</button>
-            <button type="button" class="ac-btn btn-outline-danger" @click="filterByResult('NAC')">Not Accepted</button>
+            <button type="button" class="ac-btn ac" @click="filterByResult('AC')">Accepted</button>
+            <button type="button" class="ac-btn nac" @click="filterByResult('NAC')">Not Accepted</button>
             <div class="col-4">
               <b-icon icon="search" class="search-icon"/>
               <b-input placeholder="keywords" class="search-input"
@@ -184,7 +184,6 @@ export default {
     },
     async getProfileSubmissionList () {
       const offset = (this.page - 1) * this.limit
-      console.log(this.result, this.keyword)
       const res = await api.getProfileSubmissionList(offset, this.limit,
         {
           result: this.result,
@@ -195,9 +194,7 @@ export default {
       this.total = res.data.data.total
       this.submissionList = res.data.data.results.map(v => {
         v.create_time = time.utcToLocal(v.create_time, 'YYYY-MM-DD HH:mm')
-        console.log(v.result)
         v.result = JUDGE_STATUS[v.result].name
-        console.log(v.result)
         return v
       })
     },
@@ -306,16 +303,31 @@ export default {
   }
   .ac-btn {
     display: inline-block;
-    padding: 2px;
-    margin: 0px 2px 0px 2px;
+    padding: 4px;
+    margin: 0px 4px 0px 4px;
     border-radius: 8px;
     background-color: white;
-    color: back;
     font-size: 16px;
     font-family: Manrope;
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
+    &.ac{
+      color: #8DC63F;
+      border-color: #8DC63F;
+      &:hover{
+        color: white;
+        background-color: #8DC63F;
+      }
+    }
+    &.nac{
+      color: #FF4F28;
+      border-color: #FF4F28;
+      &:hover{
+        color: white;
+        background-color: #FF4F28;
+      }
+    }
   }
 
   .problem-title-field{
