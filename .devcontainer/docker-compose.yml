@@ -31,8 +31,7 @@ services:
       - /tmp
     volumes:
       - ../backend/data/test_case:/test_case:ro
-      - ./judge-server/log:/log
-      - ./judge-server/run:/judger
+      - judger-data:/judger
     environment:
       - DISABLE_HEARTBEAT=1
       - TOKEN=CHANGE_THIS
@@ -56,3 +55,4 @@ services:
 volumes:
   postgres-data: null
   redis-data: null
+  judger-data: null
