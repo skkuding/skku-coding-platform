@@ -9,6 +9,7 @@ from options.options import SysOptions
 # from judge.dispatcher import JudgeDispatcher
 from problem.models import Problem, ProblemRuleType
 from account.models import User, AdminType
+from django.db.models import Q
 from utils.api import APIView, validate_serializer
 from utils.cache import cache
 from utils.captcha import Captcha
@@ -319,6 +320,16 @@ class SubmissionExistsAPI(APIView):
 class ProfileSubmissionListAPI(APIView):
     def get(self, request):
         submissions = Submission.objects.filter(user_id=request.user.id)
+        # search situation, 문제 번호로 검색 안됨 필터에 추가 필요
+        keyword = request.GET.get("keyword", "").strip()
+        if keyword:
+            submissions = submissions.filter(Q(title__icontains=keyword))
+        # result
+        """
+        result = request.GET.get("result")
+        if result:
+            submissions = submissions.filter(result=(1 if result == "AC" else -1))
+        """
         data = self.paginate_data(request, submissions)
         data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
         return self.success(data)
