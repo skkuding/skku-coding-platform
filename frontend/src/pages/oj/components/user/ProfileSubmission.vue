@@ -76,7 +76,7 @@
       </div>
       <div id="submission-source-code">
         <h3>Source Code</h3>
-        <p> Bytes</p>
+        <p>({{submission_detail.bytes}} Bytes)</p>
         <CodeMirror
           readOnly
           :key="codemirror_key"
@@ -195,7 +195,9 @@ export default {
       this.total = res.data.data.total
       this.submissionList = res.data.data.results.map(v => {
         v.create_time = time.utcToLocal(v.create_time, 'YYYY-MM-DD HH:mm')
+        console.log(v.result)
         v.result = JUDGE_STATUS[v.result].name
+        console.log(v.result)
         return v
       })
     },
