@@ -320,16 +320,18 @@ class SubmissionExistsAPI(APIView):
 class ProfileSubmissionListAPI(APIView):
     def get(self, request):
         submissions = Submission.objects.filter(user_id=request.user.id)
-        # search situation, 문제 번호로 검색 안됨 필터에 추가 필요
+        # keyword search, 문제 번호로 검색 안됨
         keyword = request.GET.get("keyword", "").strip()
         if keyword:
             submissions = submissions.filter(Q(title__icontains=keyword))
-        # result
-        """
+        # result search
         result = request.GET.get("result")
+        print(submissions)
         if result:
-            submissions = submissions.filter(result=(1 if result == "AC" else -1))
-        """
+            if result == "AC":
+                submissions = submissions.filter(result=0)
+            elif result == "NAC":
+                submissions = submissions.exclude(result=0)
         data = self.paginate_data(request, submissions)
         data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
         return self.success(data)
