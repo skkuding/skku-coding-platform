@@ -3,12 +3,12 @@
     <div class="footer-info">
       <div class="icons flex">
         <a v-clipboard:copy="email" @click="copy"><img :src="mail" /></a>
-        <a href="https://github.com/skku-npc/skku-coding-platform"><img :src="github" /></a>
+        <a href="https://github.com/skkuding/skku-coding-platform"><img :src="github" /></a>
         <a href="http://pf.kakao.com/_UKraK/chat"><img :src="kakao" /></a>
         <a href="https://npc.skku.edu"><img :src="link" /></a>
       </div>
       <div class="footer-bottom">
-        <span> © 2011-2021 SKKU NPC Club </span>
+        <span> © 2020-2022 SKKUDING</span>
       </div>
     </div>
   </footer>

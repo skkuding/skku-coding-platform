@@ -267,7 +267,7 @@ class ReleaseNotesAPI(APIView):
     @swagger_auto_schema(operation_description="Get ReleaseNotes")
     def get(self, request):
         try:
-            resp = requests.get("https://raw.githubusercontent.com/skku-npc/skku-coding-platform/master/backend/docs/data.json?_=" + str(time.time()),
+            resp = requests.get("https://raw.githubusercontent.com/skkuding/skku-coding-platform/master/backend/docs/data.json?_=" + str(time.time()),
                                 timeout=3)
             releases = resp.json()
         except (RequestException, ValueError):

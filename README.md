@@ -1,8 +1,7 @@
 # SKKU Coding Platform
 
-![issues](https://img.shields.io/github/issues/skku-npc/skku-coding-platform)
-![docker](https://img.shields.io/docker/cloud/automated/skkunpc/coding-platform)
-![checks](https://img.shields.io/github/checks-status/skku-npc/skku-coding-platform/master)  
+![issues](https://img.shields.io/github/issues/skkuding/skku-coding-platform)
+[![build status](https://github.com/skkuding/skku-coding-platform/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/skkuding/skku-coding-platform/actions/workflows/build.yml)  
 ![python](https://img.shields.io/badge/Python-3.8.10-blue)
 ![django](https://img.shields.io/badge/Django-3.2.12-darkgreen)
 ![vue](https://img.shields.io/badge/Vue-2.6.11-green)
@@ -13,7 +12,7 @@
 Docker를 설치하고, docker compose를 실행합니다.
 
 ```shell
-> git clone https://github.com/skku-npc/skku-coding-platform.git
+> git clone https://github.com/skkuding/skku-coding-platform.git
 > cd skku-coding-platform
 > docker-compose up -d
 ```
@@ -23,7 +22,7 @@ Docker를 설치하고, docker compose를 실행합니다.
 
 ## Documentation 📚
 Wiki를 참고해주세요.  
-https://github.com/skku-npc/skku-coding-platform/wiki
+https://github.com/skkuding/skku-coding-platform/wiki
 
 ### 운영진
 박민서 [@minseo999](https://github.com/minseo999)  
