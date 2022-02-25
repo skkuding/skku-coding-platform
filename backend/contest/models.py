@@ -17,6 +17,7 @@ class Contest(models.Model):
     requirements = JSONField(default=list)
     constraints = JSONField(default=list)
     allowed_groups = models.ManyToManyField(Group, blank=True)
+    # allowed_groups = models.ManyToManyField(Group, blank=True)
     scoring = models.TextField(default="ACM-ICPC style")
     # show real time rank or cached rank
     real_time_rank = models.BooleanField()
