@@ -6,6 +6,7 @@ from group.serializers import GroupSummarySerializer
 
 
 class CreateOrEditContestPrizeSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
     color = serializers.CharField(max_length=20)
     name = serializers.CharField(max_length=20)
     reward = serializers.CharField(max_length=20)

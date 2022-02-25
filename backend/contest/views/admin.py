@@ -93,7 +93,7 @@ class ContestAPI(APIView):
                     continue
                 prize = ContestPrize.objects.get(contest=contest, id=item["id"])
                 prize_id_list.append(item["id"])
-                for k, v in prize.items():
+                for k, v in item.items():
                     setattr(prize, k, v)
                 prize.save()
             except ContestPrize.DoesNotExist:
