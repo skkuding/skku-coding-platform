@@ -17,7 +17,7 @@ from utils.constants import CacheKey
 from utils.decorators import ensure_created_by
 from utils.shortcuts import rand_str
 from utils.tasks import delete_files
-from ..models import Contest, ContestAnnouncement
+from ..models import Contest, ContestAnnouncement, ContestPrize
 from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
                            CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
                            EditConetestSeriaizer, EditContestAnnouncementSerializer)
@@ -44,12 +44,16 @@ class ContestAPI(APIView):
                 ip_network(ip_range, strict=False)
             except ValueError:
                 return self.error(f"{ip_range} is not a valid cidr network")
+        prizes = data.pop("prizes")
         allowed_groups = data.pop("allowed_groups")
         allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
         if allowed_groups_qs.count() != len(allowed_groups):
             return self.error("Some groups don't exist")
         contest = Contest.objects.create(**data)
         contest.allowed_groups.set(allowed_groups_qs)
+        for prize in prizes:
+            ContestPrize.objects.create(contest=contest, *prize)
+        contest.prizes = ContestPrize.objects.filter(contest=contest)
         return self.success(ContestAdminSerializer(contest).data)
 
     @swagger_auto_schema(
@@ -76,6 +80,18 @@ class ContestAPI(APIView):
                 ip_network(ip_range, strict=False)
             except ValueError:
                 return self.error(f"{ip_range} is not a valid cidr network")
+
+        prizes = data.pop("prizes")
+        for item in prizes:
+            try:
+                prize = ContestPrize.objects.get(contest=contest, id=item.id)
+                for k, v in prize.items():
+                    setattr(prize, k, v)
+                prize.save()
+            except ContestPrize.DoesNotExist:
+                item.pop("id")
+                ContestPrize.objects.create(contest=contest, *item)
+        contest.prizes = ContestPrize.objects.filter(contest=contest)
 
         allowed_groups = data.pop("allowed_groups")
         allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
@@ -127,13 +143,13 @@ class ContestAPI(APIView):
         contest_id = request.GET.get("id")
         if contest_id:
             try:
-                contest = Contest.objects.get(id=contest_id)
+                contest = Contest.objects.prefetch_related("contest_prize_set").get(id=contest_id)
                 ensure_created_by(contest, request.user)
                 return self.success(ContestAdminSerializer(contest).data)
             except Contest.DoesNotExist:
                 return self.error("Contest does not exist")
 
-        contests = Contest.objects.all().order_by("-create_time")
+        contests = Contest.objects.prefetch_related("contest_prize_set").all().order_by("-create_time")
         if request.user.is_admin():
             contests = contests.filter(created_by=request.user)
 
