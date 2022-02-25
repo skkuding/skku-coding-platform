@@ -61,7 +61,7 @@ class Contest(models.Model):
 
 
 class ContestPrize(models.Model):
-    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE, related_name="prizes")
     color = models.TextField()
     name = models.TextField()
     reward = models.TextField()

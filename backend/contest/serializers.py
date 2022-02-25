@@ -72,6 +72,7 @@ class ContestAdminSerializer(serializers.ModelSerializer):
 
 class ContestSerializer(ContestAdminSerializer):
     participants_count = serializers.IntegerField(required=False)
+    prizes = ContestPrizeSerializer(many=True)
 
     class Meta:
         model = Contest
