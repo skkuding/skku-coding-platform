@@ -104,10 +104,10 @@ class ContestPasswordVerifySerializer(serializers.Serializer):
 
 class ACMContestRankSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
-
+    prize = ContestPrizeSerializer()
     class Meta:
         model = ACMContestRank
-        fields = ["accepted_number", "total_time", "total_penalty", "submission_info", "username"]
+        fields = ["id", "accepted_number", "total_time", "total_penalty", "submission_info", "username", "prize"]
 
     def __init__(self, *args, **kwargs):
         self.is_contest_admin = kwargs.pop("is_contest_admin", False)
