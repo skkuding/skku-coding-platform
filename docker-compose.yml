@@ -43,7 +43,7 @@ services:
       # - judger_debug=1
 
   coding-platform:
-    image: ghcr.io/skku-npc/coding-platform
+    image: ghcr.io/skkuding/coding-platform
     container_name: coding-platform
     restart: always
     depends_on:
