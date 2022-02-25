@@ -78,17 +78,15 @@ class ContestAdminAPITest(APITestCase):
         update_data = {"id": id, "title": "update title",
                        "description": "update description",
                        "password": "12345",
-                       "visible": False, "real_time_rank": False,
-                       "prizes": [{"id": 100, "color": "#FF6663", "name": "Top 2", "reward": "1,000,000 Won"},
-                                  {"id": 101, "color": "#FFD700", "name": "3(3~5)", "reward": "500,000 Won"},
-                                  {"id": 102, "color": "#C0C0C0", "name": "5(6~10)", "reward": "100,000 Won"},
-                                  {"id": 103, "color": "#CD7F32", "name": "10(11~20)", "reward": "50,000 Won"}]
+                       "visible": False, "real_time_rank": False
                        }
         data = copy.deepcopy(self.data)
         data.update(update_data)
         response = self.client.put(self.url, data=data)
         self.assertSuccess(response)
         response_data = response.data["data"]
+        response_data.pop("prizes")
+        data.pop("prizes")
         for k in data.keys():
             if isinstance(data[k], datetime):
                 continue
