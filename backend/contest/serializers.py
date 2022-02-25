@@ -105,6 +105,7 @@ class ContestPasswordVerifySerializer(serializers.Serializer):
 class ACMContestRankSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     prize = ContestPrizeSerializer()
+
     class Meta:
         model = ACMContestRank
         fields = ["id", "accepted_number", "total_time", "total_penalty", "submission_info", "username", "prize"]
