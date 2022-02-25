@@ -78,7 +78,12 @@ class ContestAdminAPITest(APITestCase):
         update_data = {"id": id, "title": "update title",
                        "description": "update description",
                        "password": "12345",
-                       "visible": False, "real_time_rank": False}
+                       "visible": False, "real_time_rank": False,
+                       "prizes": [{"id": 100, "color": "#FF6663", "name": "Top 2", "reward": "1,000,000 Won"},
+                                  {"id": 101, "color": "#FFD700", "name": "3(3~5)", "reward": "500,000 Won"},
+                                  {"id": 102, "color": "#C0C0C0", "name": "5(6~10)", "reward": "100,000 Won"},
+                                  {"id": 103, "color": "#CD7F32", "name": "10(11~20)", "reward": "50,000 Won"}]
+                       }
         data = copy.deepcopy(self.data)
         data.update(update_data)
         response = self.client.put(self.url, data=data)
@@ -106,6 +111,7 @@ class ContestAPITest(APITestCase):
         group = self.create_group(created_by=user)
         data = copy.deepcopy(DEFAULT_CONTEST_DATA)
         data.pop("allowed_groups")
+        data.pop("prizes")
         allowed_groups = [group.id]
         allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
         self.contest = Contest.objects.create(created_by=user, **data)
