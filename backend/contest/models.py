@@ -13,6 +13,10 @@ from account.models import AdminType
 class Contest(models.Model):
     title = models.TextField()
     description = RichTextField()
+    requirements = JSONField(default=list)
+    constraints = JSONField(default=list)
+    # allowed_groups = models.ManyToManyField(Group, blank=True)
+    scoring = models.TextField(default="ACM-ICPC style")
     # show real time rank or cached rank
     real_time_rank = models.BooleanField()
     password = models.TextField(null=True)
@@ -57,10 +61,18 @@ class Contest(models.Model):
         ordering = ("-start_time",)
 
 
+class ContestPrize(models.Model):
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    color = models.TextField()
+    name = models.TextField()
+    reward = models.TextField()
+
+
 class AbstractContestRank(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
     submission_number = models.IntegerField(default=0)
+    prize = models.ForeignKey(ContestPrize, on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
         abstract = True
