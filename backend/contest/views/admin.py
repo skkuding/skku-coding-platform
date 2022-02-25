@@ -17,11 +17,11 @@ from utils.constants import CacheKey
 from utils.decorators import ensure_created_by
 from utils.shortcuts import rand_str
 from utils.tasks import delete_files
-from ..models import Contest, ContestAnnouncement, ContestPrize
+from ..models import Contest, ContestAnnouncement, ContestPrize, ACMContestRank
 from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
                            CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
                            EditConetestSeriaizer, EditContestAnnouncementSerializer,
-                           ContestPrizeSerializer)
+                           ContestPrizeSerializer, ACMContestRankSerializer)
 
 
 class ContestAPI(APIView):
@@ -308,6 +308,21 @@ class ContestAnnouncementAPI(APIView):
         if keyword:
             contest_announcements = contest_announcements.filter(title__contains=keyword)
         return self.success(ContestAnnouncementSerializer(contest_announcements, many=True).data)
+
+
+class ContestRankAPI(APIView):
+    def put(self, request):
+        """
+        update contest_rank Prize
+        """
+        data = request.data
+        try:
+            contest_rank = ACMContestRank.objects.get(id=data.pop("id"))
+        except ACMContestRank.DoesNotExist:
+            return self.error("ACM contest rank does not exist")
+        contest_rank.prize = ContestPrize.objects.get(id=data["prize_id"])
+        contest_rank.save()
+        return self.success(ACMContestRankSerializer(contest_rank).data)
 
 
 class DownloadContestSubmissions(APIView):
