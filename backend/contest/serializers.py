@@ -1,14 +1,27 @@
 from utils.api import UsernameSerializer, serializers
 
-from .models import Contest, ContestAnnouncement, ContestRuleType
+from .models import Contest, ContestAnnouncement, ContestPrize, ContestRuleType
 from .models import ACMContestRank, OIContestRank
 from group.serializers import GroupSummarySerializer
 
 
-class CreateOrEditPrizeSerializer(serializers.Serializer):
+class CreateContestPrizeSerializer(serializers.Serializer):
     color = serializers.CharField(max_length=20)
     name = serializers.CharField(max_length=20)
     reward = serializers.CharField(max_length=20)
+
+
+class EditContestPrizeSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    color = serializers.CharField(max_length=20)
+    name = serializers.CharField(max_length=20)
+    reward = serializers.CharField(max_length=20)
+
+
+class ContestPrizeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContestPrize
+        fields = "__all__"
 
 
 class CreateConetestSeriaizer(serializers.Serializer):
@@ -18,7 +31,7 @@ class CreateConetestSeriaizer(serializers.Serializer):
     constraints = serializers.ListField(child=serializers.CharField(max_length=128), allow_empty=True)
     allowed_groups = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)
     scoring = serializers.CharField()
-    prizes = serializers.ListField(child=CreateOrEditPrizeSerializer())
+    prizes = serializers.ListField(child=CreateContestPrizeSerializer())
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     rule_type = serializers.ChoiceField(choices=[ContestRuleType.ACM, ContestRuleType.OI])
@@ -36,7 +49,7 @@ class EditConetestSeriaizer(serializers.Serializer):
     constraints = serializers.ListField(child=serializers.CharField(max_length=128), allow_empty=True)
     allowed_groups = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)
     scoring = serializers.CharField()
-    prizes = serializers.ListField(child=CreateOrEditPrizeSerializer())
+    prizes = serializers.ListField(child=EditContestPrizeSerializer())
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     password = serializers.CharField(allow_blank=True, allow_null=True, max_length=32)
@@ -50,6 +63,7 @@ class ContestAdminSerializer(serializers.ModelSerializer):
     status = serializers.CharField()
     contest_type = serializers.CharField()
     allowed_groups = GroupSummarySerializer(many=True)
+    prizes = ContestPrizeSerializer(many=True)
 
     class Meta:
         model = Contest
