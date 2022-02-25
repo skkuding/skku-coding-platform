@@ -86,18 +86,21 @@ class ContestAPI(APIView):
         prizes = data.pop("prizes")
         prize_id_list = []
         for item in prizes:
-            prize_id_list.append(item["id"])
             try:
+                if "id" not in item:
+                    res = ContestPrize.objects.create(contest=contest, **item)
+                    prize_id_list.append(res.id)
+                    continue
                 prize = ContestPrize.objects.get(contest=contest, id=item["id"])
+                prize_id_list.append(item["id"])
                 for k, v in prize.items():
                     setattr(prize, k, v)
                 prize.save()
             except ContestPrize.DoesNotExist:
                 item.pop("id")
-                ContestPrize.objects.create(contest=contest, **item)
-
+                res = ContestPrize.objects.create(contest=contest, **item)
+                prize_id_list.append(res.id)
         ContestPrize.objects.filter(contest=contest).exclude(id__in=prize_id_list).delete()
-        contest.prizes.set(ContestPrize.objects.filter(contest=contest))
 
         allowed_groups = data.pop("allowed_groups")
         allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
@@ -111,7 +114,9 @@ class ContestAPI(APIView):
         for k, v in data.items():
             setattr(contest, k, v)
         contest.save()
-        return self.success(ContestAdminSerializer(contest).data)
+        data = ContestAdminSerializer(contest).data
+        data["prizes"] = ContestPrizeSerializer(ContestPrize.objects.filter(contest=contest), many=True).data
+        return self.success(data)
 
     @swagger_auto_schema(
         manual_parameters=[
