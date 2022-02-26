@@ -22,8 +22,7 @@ import {
   LectureAssignmentDetail,
   LectureQna,
   LectureQnaDetail,
-  Profile,
-  ProfileContest
+  Profile
 } from '../views'
 
 export default [
