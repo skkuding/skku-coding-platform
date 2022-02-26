@@ -6,7 +6,9 @@ from group.models import Group
 
 from utils.api.tests import APITestCase
 
-from .models import ContestAnnouncement, ContestRuleType, Contest
+from .models import ContestAnnouncement, ContestRuleType, Contest, ACMContestRank
+from submission.models import Submission
+from problem.models import Problem, ProblemIOMode
 
 from problem.models import ProblemIOMode
 
@@ -38,6 +40,34 @@ DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description"
                         "allowed_ip_ranges": [],
                         "bank_filter": [],
                         "visible": True, "real_time_rank": True, "rank_penalty_visible": True}
+
+DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test</p>", "input_description": "test",
+                        "output_description": "test", "time_limit": 1000, "memory_limit": 256, "difficulty": "Level1",
+                        "visible": True, "languages": ["C", "C++", "Java", "Python2"], "template": {},
+                        "samples": [{"input": "test", "output": "test"}], "spj": False, "spj_language": "C",
+                        "spj_code": "", "spj_compile_ok": True, "test_case_id": "499b26290cc7994e0b497212e842ea85",
+                        "test_case_score": [{"output_name": "1.out", "input_name": "1.in", "output_size": 0,
+                                             "stripped_output_md5": "d41d8cd98f00b204e9800998ecf8427e",
+                                             "input_size": 0, "score": 0}],
+                        "io_mode": {"io_mode": ProblemIOMode.standard, "input": "input.txt", "output": "output.txt"},
+                        "share_submission": False,
+                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
+
+DEFAULT_SUBMISSION_DATA = {
+    "problem_id": "1",
+    "user_id": 1,
+    "username": "test",
+    "code": "xxxxxxxxxxxxxx",
+    "result": -2,
+    "info": {},
+    "language": "C",
+    "statistic_info": {}
+}
+
+
+DEFAULT_ACMCONTESTRANK_DATA = {"submission_number": 1, "accepted_number": 1, "total_time": 123, "total_penalty": 123,
+                                "submission_info": {"1": {"is_ac": True, "ac_time": 123, "penalty": 123, "problem_submission": 1}},
+                                "contest": 1}
 
 
 class ContestAdminAPITest(APITestCase):
@@ -251,4 +281,36 @@ class ProblemBankAPITest(APITestCase):
         self.create_user("2018123123", "123123")
         url = self.reverse("contest_bank_api")
         response = self.client.post(url, data={"contest_id": contest["id"]})
+
+
+class UserContestAPITest(APITestCase):
+    def setUp(self):
+        # create contest
+        admin = self.create_admin()
+        self.contest = Contest.objects.create(created_by=admin, **DEFAULT_CONTEST_DATA)
+
+        # create problem in contest
+        data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        data["contest_id"] = self.contest.id
+        self.problem = Problem.objects.create(created_by=admin, **data)
+
+        # user submit problem
+        user = self.create_user("test", "test123")
+        data = copy.deepcopy(DEFAULT_SUBMISSION_DATA)
+        data["contest_id"] = self.contest.id
+        data["problem_id"] = self.problem.id
+        data["user_id"] = user.id
+        self.submission = Submission.objects.create(**data)
+
+        # create ACMContestRank
+        data = copy.deepcopy(DEFAULT_ACMCONTESTRANK_DATA)
+        data["user"] = user
+        data["contest"] = self.contest
+        self.rank = ACMContestRank.objects.create(**data)
+
+        self.url = self.reverse("contest_user_api")
+
+    # test UserContestAPI : can user get contest info which he participated and rank?
+    def test_get_participated_contest_list(self):
+        response = self.client.get(self.url)
         self.assertSuccess(response)
