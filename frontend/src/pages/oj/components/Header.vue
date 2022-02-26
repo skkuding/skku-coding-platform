@@ -28,7 +28,7 @@
       <template v-slot:content v-else>
         <button v-if="isAdminRole" @click="goManagement()" class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base font-medium text-text-title hover:text-green hover:no-underline">Management</button>
         <a class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title font-medium hover:text-green hover:no-underline" href="/#">Settings</a>
-        <a class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title font-medium hover:text-green hover:no-underline" @click="goProfile()">My Profile</a>
+        <button @click="goProfile()" class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title font-medium hover:text-green hover:no-underline">My Profile</button>
         <a class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title hover:text-green hover:no-underline" href="/logout">Sign Out</a>
       </template>
     </dropdown>
@@ -72,17 +72,17 @@ export default {
         mode: mode
       })
     },
+    async goProfile () {
+      await this.$router.push({
+        name: 'profile'
+      })
+    },
     goManagement () {
       if (!this.isSuperAdmin) {
         window.open('/prof/')
       } else {
         window.open('/admin/')
       }
-    },
-    async goProfile () {
-      await this.$router.push({
-        name: 'profile'
-      })
     }
   },
   computed: {

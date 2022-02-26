@@ -13,7 +13,6 @@
         <b-dropdown-item @click="sortBy('rank')">rank</b-dropdown-item>
         <b-dropdown-item @click="sortBy('date')">date</b-dropdown-item>
         <b-dropdown-item @click="sortBy('title')">title</b-dropdown-item>
-        <b-dropdown-item @click="sortBy('percentage')">prize</b-dropdown-item>
       </b-dropdown>
     </div>
 
@@ -22,21 +21,27 @@
         hover
         :items="contests"
         :fields="fields"
+        :per-page="perPage"
+        :current-page="currentPage"
         head-variant="light"
         @row-clicked="goContest"
-        :tbody-tr-class="underwayClass"
+        :tbody-tr-class="rowClass"
       >
         <template #cell(start_time)="data">
           {{ getTimeFormat(data.value) }}
         </template>
-        <!-- <template #cell(prize)="data"> {{ data.item.rank }}
-          <b-icon
+        <template #cell(rank)="data">
+          <span v-if="data.value === -1">-</span>
+        </template>
+        <template #cell(prize)="data">
+          <b-icon v-if="data.value !== ''"
             icon="circle-fill"
-            style="color: #ff6663"
+            :style="'color:' + data.value.color"
             font-scale="1.2"
           ></b-icon>
-          {{ data.item.prize }}
-        </template> -->
+          <span v-if="data.value !== ''" :style="'color:' + data.value.color"> {{ data.value.name }}</span>
+          <span v-else>-</span>
+        </template>
       </b-table>
     </div>
     <div class="pagination">
@@ -44,7 +49,7 @@
       v-model="currentPage"
       :total-rows="rows"
       :per-page="perPage"
-      limit="1"
+      limit="3"
       ></Pagination>
     </div>
   </div>
@@ -63,16 +68,16 @@ export default {
   props: {},
   data() {
     return {
-      rows: 100,
       currentPage: 1,
       perPage: 3,
+      limit: 50,
       priority: 'all',
       Chart,
       fields: [
         { label: "Date", key: "start_time" },
         { key: "title", label: "Title" },
         { key: "rank", label: "Rank" },
-        { key: "percentage", label: "Prize" },
+        { key: "prize", label: "Prize" },
       ],
       contests: [],
     };
@@ -82,13 +87,9 @@ export default {
     await this.drawChart();
   },
   methods: {
-    underwayClass(item, type) {
+    rowClass(item, type) {
       if(!item || type!=='row') return
-      if(item.rank < 0) {
-        item.rank = "-"
-        item.percentage = "-"
-        return 'underwayClass'
-      }
+      if(item.rank < 0) return 'table-success'
     },
     drawChart() {
       const ctx = document.getElementById("myChart");
@@ -119,7 +120,7 @@ export default {
     },
     async getUserContestList () {
       try {
-        const offset = (this.page - 1) * this.limit
+        const offset = (this.currentPage - 1) * this.limit
         const res = await api.getUserContestInfo(offset, this.limit, {
           priority: this.priority === 'all' || this.priority === 'date' ? 'start_time' : this.priority,
           page: this.page
@@ -139,7 +140,11 @@ export default {
       await this.getUserContestList()
     },
   },
-  computed: {}
+  computed: {
+    rows(){
+      return this.contests.length
+    }
+  }
 };
 </script>
 
@@ -165,10 +170,6 @@ export default {
   width: 95%;
   margin: 0 auto;
   cursor: pointer;
-}
-
-.underwayClass {
-  backgroundColor: red;
 }
 
 .pagination {

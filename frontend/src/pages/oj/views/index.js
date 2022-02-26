@@ -13,7 +13,6 @@ import LectureAssignmentDetail from './lecture/LectureAssignmentDetail.vue'
 import LectureQna from './lecture/LectureQnA.vue'
 import LectureQnaDetail from './lecture/LectureQnADetail.vue'
 import Profile from './user/Profile.vue'
-import ProfileContest from './user/ProfileContest.vue'
 
 // Grouping Components in the Same Chunk
 const Problem = () => import(/* webpackChunkName: "Problem" */ '@oj/views/problem/Problem.vue')
@@ -35,7 +34,7 @@ export {
   ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting,
   ContestList, ContestDetail, ContestProblemList, ContestRanking, Register,
   LectureList, LectureDashboard, LectureAssignmentList, LectureAssignmentDetail, LectureQna, LectureQnaDetail,
-  Profile, ProfileContest
+  Profile
 }
 /* 구성 요소 내보내기는 두 가지 범주로 나뉩니다.
  *   하나는 일반적으로 직접 내보내기에 사용되며

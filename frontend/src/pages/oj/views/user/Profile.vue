@@ -29,7 +29,7 @@ import ProfileContest from '../../components/user/ProfileContest.vue'
 import ProfileGroup from '../../components/user/ProfileGroup.vue'
 
 export default {
-  name: 'ProfileSetting',
+  name: 'Profile',
   components: {
     UserInfo,
     TabSplitInTwo,
