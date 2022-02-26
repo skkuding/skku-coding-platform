@@ -149,4 +149,5 @@ class ProfileContestSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
     start_time = serializers.DateTimeField()
     rank = serializers.IntegerField()
+    prize = ContestPrizeSerializer()
     percentage = serializers.FloatField()

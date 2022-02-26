@@ -247,6 +247,7 @@ class UserContestAPI(APIView):
                 total_participants = ACMContestRank.objects.filter(contest=contest_id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).count()
                 contest["rank"] = problem.rank
                 contest["percentage"] = round(contest["rank"]/total_participants*100, 2)
+                contest["prize"] = problem.prize
                 contests.append(contest)
             except Contest.DoesNotExist:
                 return self.error("Contest does not exist")
