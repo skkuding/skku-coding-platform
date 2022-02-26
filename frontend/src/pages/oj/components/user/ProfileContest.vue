@@ -31,7 +31,8 @@
           {{ getTimeFormat(data.value) }}
         </template>
         <template #cell(rank)="data">
-          <span v-if="data.value === -1">-</span>
+          <span v-if="data.value === 0">-</span>
+          <span v-else>{{data.value}}</span>
         </template>
         <template #cell(prize)="data">
           <b-icon v-if="data.value !== ''"
@@ -69,12 +70,12 @@ export default {
   data() {
     return {
       currentPage: 1,
-      perPage: 3,
-      limit: 50,
+      perPage: 5,
+      limit: 10,
       priority: 'all',
       Chart,
       fields: [
-        { label: "Date", key: "start_time" },
+        { key: "start_time", label: "Date" },
         { key: "title", label: "Title" },
         { key: "rank", label: "Rank" },
         { key: "prize", label: "Prize" },
@@ -89,18 +90,18 @@ export default {
   methods: {
     rowClass(item, type) {
       if(!item || type!=='row') return
-      if(item.rank < 0) return 'table-success'
+      if(item.rank == 0) return 'table-success'
     },
     drawChart() {
       const ctx = document.getElementById("myChart");
       const myChart = new Chart(ctx, {
         type: "line",
         data: {
-          labels: this.contests.map(x=>x.title),
+          labels: (this.contests.filter(el => el.rank>0)).map(x=> x.title),
           datasets: [
             {
               label: "Me",
-              data: this.contests.map(x=>x.percentage),
+              data: (this.contests.filter(el => el.rank>0)).map(x=> x.percentage),
               borderColor: "#FF6663",
               backgroundColor: "#FF6663",
               yAxisId: 'y',

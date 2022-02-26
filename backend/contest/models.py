@@ -97,7 +97,7 @@ class ACMContestRank(AbstractContestRank):
             for i in range(qs_participants.count()):
                 if qs_participants[i].user.id == self.user.id:
                     return i+1
-        return -1
+        return 0
 
     class Meta:
         db_table = "acm_contest_rank"

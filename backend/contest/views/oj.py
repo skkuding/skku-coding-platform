@@ -239,6 +239,7 @@ class UserContestAPI(APIView):
         # queryset for all problems information which user submitted
         qs_problems = ACMContestRank.objects.filter(user=user.id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False)
         contests = []
+        unended_contests = []
         for problem in qs_problems:
             contest_id = problem.contest.id
             try:
@@ -248,7 +249,10 @@ class UserContestAPI(APIView):
                 contest["rank"] = problem.rank
                 contest["percentage"] = round(contest["rank"]/total_participants*100, 2)
                 contest["prize"] = problem.prize
-                contests.append(contest)
+                if contest["status"] != ContestStatus.CONTEST_ENDED:
+                    unended_contests.append(contest)
+                else:
+                    contests.append(contest)
             except Contest.DoesNotExist:
                 return self.error("Contest does not exist")
 
@@ -256,5 +260,7 @@ class UserContestAPI(APIView):
         priority = request.GET.get("priority")
         if priority:
             contests = sorted(contests, key=lambda c: c[priority])
+            unended_contests = sorted(unended_contests, key=lambda c: c[priority])
+        contests = unended_contests + contests
 
         return self.success(ProfileContestSerializer(contests, many=True).data)
