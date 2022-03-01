@@ -96,9 +96,18 @@ class EditContestProblemSerializer(CreateOrEditProblemSerializer):
 
 class CreateAssignmentProblemSerializer(CreateOrEditProblemSerializer):
     assignment_id = serializers.IntegerField()
+    course_id = serializers.IntegerField()
 
 
 class EditAssignmentProblemSerializer(CreateOrEditProblemSerializer):
+    id = serializers.IntegerField()
+
+
+class CreateCourseProblemSerializer(CreateOrEditProblemSerializer):
+    course_id = serializers.IntegerField()
+
+
+class EditCourseProblemSerializer(CreateOrEditProblemSerializer):
     id = serializers.IntegerField()
 
 
@@ -117,10 +126,15 @@ class BaseProblemSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(many=True, slug_field="name", read_only=True)
     created_by = UsernameSerializer()
     contest_name = serializers.SerializerMethodField()
+    assignment_name = serializers.SerializerMethodField()
 
     def get_contest_name(self, obj):
         if obj.contest:
             return obj.contest.title
+
+    def get_assignment_name(self, obj):
+        if obj.assignment:
+            return obj.assignment.title
 
     def get_public_template(self, obj):
         ret = {}
@@ -135,11 +149,22 @@ class ProblemAdminSerializer(BaseProblemSerializer):
         fields = "__all__"
 
 
-class ProblemProfessorSerializer(BaseProblemSerializer):
+class ProblemAssignmentProfessorSerializer(BaseProblemSerializer):
     total_submission_assignment = serializers.SerializerMethodField()
 
     def get_total_submission_assignment(self, obj):
         return Submission.objects.filter(problem=obj, assignment=obj.assignment).values("user_id").distinct().count()
+
+    class Meta:
+        model = Problem
+        fields = "__all__"
+
+
+class ProblemCourseProfessorSerializer(BaseProblemSerializer):
+    total_submission_course = serializers.SerializerMethodField()
+
+    def get_total_submission_course(self, obj):
+        return Submission.objects.filter(problem=obj, course=obj.course).values("user_id").distinct().count()
 
     class Meta:
         model = Problem
@@ -176,7 +201,14 @@ class AddContestProblemSerializer(serializers.Serializer):
 
 
 class AddAssignmentProblemSerializer(serializers.Serializer):
+    course_id = serializers.IntegerField()
     assignment_id = serializers.IntegerField()
+    problem_id = serializers.IntegerField()
+    display_id = serializers.CharField()
+
+
+class AddCourseProblemSerializer(serializers.Serializer):
+    course_id = serializers.IntegerField()
     problem_id = serializers.IntegerField()
     display_id = serializers.CharField()
 

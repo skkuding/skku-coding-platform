@@ -105,7 +105,7 @@ class AssignmentSubmissionListTest(SubmissionPrepare):
 
     def test_get_assignment_submission_list(self):
         problem_id = self.problem["_id"]
-        resp = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
+        resp = self.client.get(f"{self.url}?course_id={self.course_id}&assignment_id={self.assignment_id}&problem_id={problem_id}")
         self.assertSuccess(resp)
 
     def test_get_student_assignment_submission_list(self):
@@ -115,7 +115,7 @@ class AssignmentSubmissionListTest(SubmissionPrepare):
         self.submission_data["username"] = student.username
         Submission.objects.create(**self.submission_data)
         problem_id = self.problem["_id"]
-        resp = self.client.get(f"{self.url}?assignment_id={self.assignment_id}&problem_id={problem_id}")
+        resp = self.client.get(f"{self.url}?course_id={self.course_id}&assignment_id={self.assignment_id}&problem_id={problem_id}")
         self.assertSuccess(resp)
 
 
@@ -127,7 +127,7 @@ class AssignmentSubmissionListProfessorTest(SubmissionPrepare):
     def test_get_assignment_submission_list_professor(self):
         assignment_id = self.assignment_id
         problem_id = self.problem["id"]
-        resp = self.client.get(f"{self.url}?assignment_id={assignment_id}&problem_id={problem_id}")
+        resp = self.client.get(f"{self.url}?course_id={self.course_id}&assignment_id={assignment_id}&problem_id={problem_id}")
         self.assertSuccess(resp)
 
 

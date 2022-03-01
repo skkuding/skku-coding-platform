@@ -549,21 +549,18 @@ export default {
       ],
       search: '',
       assignmentId: '',
+      courseId: '',
       pageLocations: [
         {
           text: this.$route.params.courseInfo,
           to: '/course/' + this.$route.params.courseId + '/dashboard'
-        },
-        {
-          text: this.$route.params.assignmentInfo,
-          to: '/course/' + this.$route.params.courseId + '/assignment'
         }
       ]
     }
   },
   async mounted () {
     this.routeName = this.$route.name
-    if (this.routeName === 'edit-course-problem') {
+    if (this.routeName === 'edit-assignment-problem' || this.routeName === 'edit-course-problem') {
       this.mode = 'edit'
     } else {
       this.mode = 'add'
@@ -571,6 +568,8 @@ export default {
     this.problem = this.reProblem = {
       _id: '',
       title: '',
+      course_id: '',
+      assignment_id: '',
       description: '',
       input_description: '',
       output_description: '',
@@ -596,6 +595,8 @@ export default {
       io_mode: { io_mode: 'Standard IO', input: 'input.txt', output: 'output.txt' }
     }
     this.assignmentId = this.$route.params.assignmentId
+    this.courseId = this.$route.params.courseId
+    this.problem.course_id = this.reProblem.course_id = this.courseId
     if (this.assignmentId) {
       this.problem.assignment_id = this.reProblem.assignment_id = this.assignmentId
       const res = await api.getAssignmentList(null, this.assignmentId)
@@ -609,7 +610,9 @@ export default {
     // get problem after getting languages list to avoid find undefined value in `watch problem.languages`
     if (this.mode === 'edit') {
       this.title = 'Edit Problem'
-      const problemRes = await api.getAssignmentProblem(this.assignemntId, this.$route.params.problemId)
+      const problemRes = (this.routeName === 'edit-assignment-problem')
+        ? await api.getAssignmentProblem(this.assignmentId, this.$route.params.problemId)
+        : await api.getCourseProblem(this.courseId, this.$route.params.problemId)
       const data = problemRes.data.data
       if (!data.spj_code) {
         data.spj_code = ''
@@ -623,20 +626,13 @@ export default {
       this.problem.testcases = this.problem.testcases.concat(testcaseData.testcases)
       if (testcaseData.spj === 'True') this.problem.spj = true
       else this.problem.spj = testcaseData.spj === 'True'
-      this.pageLocations.push({
-        text: this.$route.params.problemId + ' - ' + this.problem.title
-      }, {
-        text: 'Edit problem'
-      })
     } else {
       this.title = 'Add Problem'
       for (const item of allLanguage.languages) {
         this.problem.languages.push(item.name)
       }
-      this.pageLocations.push({
-        text: 'Create Problem'
-      })
     }
+    this.setPageLocation()
     this.getProblemTagList()
   },
   watch: {
@@ -676,6 +672,25 @@ export default {
     }
   },
   methods: {
+    setPageLocation () {
+      if (this.assignmentId) {
+        this.pageLocations.push({
+          text: this.$route.params.assignmentInfo,
+          to: '/course/' + this.$route.params.courseId + '/assignment'
+        })
+      }
+      if (this.mode === 'edit') {
+        this.pageLocations.push({
+          text: this.$route.params.problemId + ' - ' + this.problem.title
+        }, {
+          text: 'Edit problem'
+        })
+      } else {
+        this.pageLocations.push({
+          text: 'Create Problem'
+        })
+      }
+    },
     onTagClick ({ item, addTag }) {
       addTag(item)
       this.search = ''
@@ -854,8 +869,10 @@ export default {
         }
       }
       const funcName = {
-        'create-course-problem': 'createAssignmentProblem',
-        'edit-course-problem': 'editAssignmentProblem'
+        'create-assignment-problem': 'createAssignmentProblem',
+        'edit-assignment-problem': 'editAssignmentProblem',
+        'create-course-problem': 'createCourseProblem',
+        'edit-course-problem': 'editCourseProblem'
       }[this.routeName]
       if (funcName === 'editAssignmentProblem') {
         this.problem.assignment_id = this.assignment.id
@@ -904,16 +921,35 @@ export default {
             })
           })
           await api[funcName](this.problem)
-          this.$router.push({ name: 'course-assignment-list', params: { assignmentId: this.assignmentId } })
+          if (funcName === 'createCourseProblem' || funcName === 'editCourseProblem') {
+            this.$router.push({
+              name: 'course-problem',
+              params: { courseId: this.courseId }
+            })
+          } else {
+            this.$router.push({
+              name: 'course-assignment-list',
+              params: { assignmentId: this.assignmentId }
+            })
+          }
         } catch (err) {
           console.error(err)
         }
       } else {
         try {
           await api[funcName](this.problem)
-          this.$router.push({ name: 'course-assignment-list', params: { assignmentId: this.assignmentId } })
-        } catch (err) {
-        }
+          if (funcName === 'createCourseProblem' || funcName === 'editCourseProblem') {
+            this.$router.push({
+              name: 'course-problem',
+              params: { courseId: this.courseId }
+            })
+          } else {
+            this.$router.push({
+              name: 'course-assignment-list',
+              params: { assignmentId: this.assignmentId }
+            })
+          }
+        } catch (err) {}
       }
     }
   },

@@ -603,7 +603,8 @@ export default {
         language: this.language,
         code: this.code,
         contest_id: this.contestID,
-        assignment_id: this.assignmentID
+        assignment_id: this.assignmentID,
+        course_id: this.courseID
       }
       if (this.captchaRequired) {
         data.captcha = this.captchaCode

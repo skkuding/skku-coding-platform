@@ -270,6 +270,7 @@ class AssignmentProblemProfessorTest(ProblemCreateTestBase):
         admin = self.create_admin()
         course = Course.objects.create(created_by=admin, **DEFAULT_COURSE_DATA)
         Registration.objects.create(user_id=student.id, course_id=course.id)
+        self.course_id = course.id
         self.assignment_id = Assignment.objects.create(created_by=admin, course=course, **DEFAULT_ASSIGNMENT_DATA).id
         self.url = self.reverse("assignment_problem_professor_api")
 
@@ -286,6 +287,7 @@ class AssignmentProblemProfessorTest(ProblemCreateTestBase):
     def test_create_assignment_problem(self):
         data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
         data["assignment_id"] = self.assignment_id
+        data["course_id"] = self.course_id
         res = self.client.post(self.url, data=data)
         self.assertSuccess(res)
         return res.data["data"]
@@ -295,6 +297,7 @@ class AssignmentProblemProfessorTest(ProblemCreateTestBase):
         data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
         data["id"] = problem_id
         data["title"] = "edit test"
+        data["course"] = self.course_id
         data["assignment"] = self.assignment_id
         res = self.client.put(self.url, data=data)
         self.assertSuccess(res)
@@ -357,12 +360,14 @@ class AddAssignmentProblemFromPublicProblemAPITest(ProblemCreateTestBase):
         admin = self.create_admin()
         course = Course.objects.create(created_by=admin, **DEFAULT_COURSE_DATA)
         self.assignment_id = Assignment.objects.create(created_by=admin, course=course, **DEFAULT_ASSIGNMENT_DATA).id
+        self.course_id = course.id
         self.problem = self.add_problem(DEFAULT_PROBLEM_DATA, admin)
         self.url = self.reverse("add_assignment_problem_from_public_api")
         self.data = {
             "display_id": "1000",
             "assignment_id": self.assignment_id,
-            "problem_id": self.problem.id
+            "problem_id": self.problem.id,
+            "course_id": self.course_id
         }
 
     def test_add_assignment_problem(self):

@@ -54,6 +54,17 @@
                   Dashboard
                 </b-list-group-item>
                 <b-list-group-item
+                  :to="'/course/'+course.id+'/problem'"
+                  class="list-group-inner"
+                >
+                  <b-icon
+                    icon="record-fill"
+                    font-scale="0.5"
+                    style="margin-right: 8px; vertical-align:1px"
+                  />
+                  Problems
+                </b-list-group-item>
+                <b-list-group-item
                   :to="'/course/'+course.id+'/assignment'"
                   class="list-group-inner"
                 >

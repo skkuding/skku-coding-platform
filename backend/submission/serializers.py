@@ -11,6 +11,7 @@ class CreateSubmissionSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=1024 * 1024)
     contest_id = serializers.IntegerField(required=False)
     assignment_id = serializers.IntegerField(required=False)
+    course_id = serializers.IntegerField(required=False)
     captcha = serializers.CharField(required=False)
 
 
@@ -72,4 +73,4 @@ class SubmissionListProfessorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        exclude = ("contest", "assignment", "shared", "ip")
+        exclude = ("contest", "assignment", "course", "shared", "ip")
