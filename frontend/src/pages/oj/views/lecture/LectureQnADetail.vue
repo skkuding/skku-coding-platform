@@ -5,25 +5,27 @@
       <section class="question-container">
         <div class="question__header">
           <div class="question__title">{{ question.title }}</div>
-          <div class="question__date">{{ question.create_time }}</div>
+          <div class="question__date">{{ getTimeFormat(question.create_time) }}</div>
         </div>
         <div class="question-nav">
-          <div class="question-nav__button">
+          <span v-if="question.created_by.username===user.username || isAdminRole" class="question-nav__button">
             <b-icon icon="circle-fill" scale="0.4"/>
-            <span style="cursor: pointer" @click="showEditQuestion">Edit</span>
+            <span style="cursor: pointer" @click="showEditQuestionDialog = true">Edit</span>
             <b-icon icon="circle-fill" scale="0.4" style="margin-left: 3px;"/>
-            <span style="cursor: pointer" @click="showDeleteQuestion">Delete</span>
-          </div>
-          <div class="question-nav__status">
-            <b-form-checkbox v-model="resolveStatus" switch/>
+            <span style="cursor: pointer" @click="showDeleteQuestionDialog = true">Delete</span>
+          </span>
+          <span class="question-nav__status">
+            <span v-if="question.created_by.username===user.username || isAdminRole">
+              <b-form-checkbox v-model="resolveStatus" switch/>
+            </span>
             <b-badge
               variant="light"
               id="question-badge"
             >
-              <b-icon icon="circle-fill" :color="question.statuscolor"/>
-              {{ question.status }}
+              <b-icon icon="circle-fill" :color="getColor(question.is_open)"/>
+              {{ getStatus(question.is_open) }}
             </b-badge>
-          </div>
+          </span>
         </div>
         <div class="question__content">
           <p v-dompurify-html="question.content"/>
@@ -31,25 +33,6 @@
       </section>
 
       <section class="answer-container">
-        <div class="answer-registered">
-          <div class="answer-registered__header">
-            <span class="answer-registered__by">{{ answer.create_by }}</span>
-            <b-badge
-              id="answer-usertype"
-              pill
-            >
-              Professor
-            </b-badge>
-            <span class="answer-registered__date">{{ answer.create_time }}</span>
-            <span class="answer-registered__button">
-              <b-icon icon="circle-fill" scale="0.4"/>
-              <span style="cursor: pointer" @click="showEditAnswer">Edit</span>
-              <b-icon icon="circle-fill" scale="0.4" style="margin-left: 3px;"/>
-              <span style="cursor: pointer" @click="showDeleteAnswer">Delete</span>
-            </span>
-          </div>
-          <p class="answer-registered__content">{{ answer.content }}</p>
-        </div>
         <div class="answer-enter">
           <b-form-textarea
             class="answer-enter__text"
@@ -60,6 +43,43 @@
           <b-button class="answer-enter__btn" @click="createAnswer">등록</b-button>
         </div>
       </section>
+
+      <div v-for="i in answers" :key="i">
+        <section class="answer-container">
+          <div class="answer-registered">
+            <div class="answer-registered__header">
+              <span class="answer-registered__by">{{ i.name }}</span>
+              <b-badge
+                id="answer-usertype"
+                pill
+              >
+                {{ i.admin_type }}
+              </b-badge>
+              <span class="answer-registered__date">{{ getTimeFormat(i.last_update_time) }}</span>
+              <span v-if="i.name===user.username || isAdminRole">
+                <span class="answer-registered__button">
+                  <b-icon icon="circle-fill" scale="0.4"/>
+                  <span style="cursor: pointer" @click="goEditAnswer(i.id)">Edit</span>
+                  <b-icon icon="circle-fill" scale="0.4" style="margin-left: 3px;"/>
+                  <span style="cursor: pointer" @click="showDeleteAnswer(i.id)">Delete</span>
+                </span>
+              </span>
+            </div>
+            <p class="answer-registered__content">{{ i.content }}</p>
+          </div>
+          <div v-if="showEditAnswerDialog === true && editAnswer.id === i.id">
+            <div class="answer-enter">
+              <b-form-textarea
+                class="answer-enter__text"
+                v-model="editAnswer.content"
+                no-resize
+                size="lg"
+              ></b-form-textarea>
+              <b-button class="answer-enter__btn" @click="showEditAnswer">수정</b-button>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <b-modal
         centered
@@ -100,18 +120,20 @@
         </div>
         <template #modal-footer>
           <b-button style="cursor: pointer" @click="showEditQuestionDialog = false">Cancel</b-button>
-          <b-button>Save</b-button>
+          <b-button @click="showEditQuestion">Save</b-button>
         </template>
       </b-modal>
       <b-modal
         centered
         v-model="showDeleteQuestionDialog"
+        @ok="showDeleteQuestion"
       >
         Are you sure you want to delete this question? :o
       </b-modal>
       <b-modal
         centered
         v-model="showDeleteAnswerDialog"
+        @ok="deleteAnswer"
       >
         Are you sure you want to delete this answer? :o
       </b-modal>
@@ -122,7 +144,9 @@
 <script>
 import sidemenu from '@oj/components/Sidemenu.vue'
 import api from '@oj/api'
-import moment from 'moment'
+// import moment from 'moment'
+import time from '@/utils/time'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CourseQnaDetail',
@@ -132,69 +156,131 @@ export default {
   data () {
     return {
       resolveStatus: false,
-      question: {
-        id: '1',
-        title: 'first',
-        status: 'Resolved',
-        statuscolor: '#8DC63F',
-        create_time: '2021-08-09',
-        content: 'first question content'
-      },
-      answer: {
-        create_by: '김영훈',
-        create_time: '2021-08-10 18:30',
-        content: '이번엔 프로젝트로 진행합니다.'
-      },
+      question: {},
       course_id: 1,
       answerContent: '',
+      editAnswer: {},
+      ToDelete: 1,
+      question_id: 1,
       showEditQuestionDialog: false,
       showDeleteQuestionDialog: false,
-      showDeleteAnswerDialog: false
+      showDeleteAnswerDialog: false,
+      showEditAnswerDialog: false
     }
   },
   async mounted () {
     this.course_id = this.$route.params.courseID
+    this.question_id = this.$route.params.questionID
+    this.getQuestion()
+    this.getAnswerList()
   },
   methods: {
-    async showEditQuestion () {
-      this.showEditQuestionDialog = true
-      const localtime = moment().format()
-      const data = {
+    async getQuestion () {
+      const params = {
         course_id: this.course_id,
-        title: this.questions.title,
-        content: this.questions.content,
-        last_update_time: localtime,
-        create_time: this.questions.date
+        question_id: this.question_id
       }
-      console.log(data)
-      const res = await api.updateQuestion(data)
-      console.log(res)
+      const res = await api.getQuestionList(params)
+      this.question = res.data.data
+    },
+    async showEditQuestion () {
+      // const localtime = moment().format()
+      const data = {
+        id: this.question.id,
+        title: this.question.title,
+        content: this.question.content,
+        is_open: this.question.is_open
+      }
+      await api.updateQuestion(data)
+      this.showEditQuestionDialog = false
     },
     async showDeleteQuestion () {
-      this.showDeleteQuestionDialog = true
-      await api.deleteQuestion(this.question.id)
+      const params = {
+        course_id: this.course_id,
+        question_id: this.question_id
+      }
+      await api.deleteQuestion(params)
+      await this.$router.push({ name: 'lecture-qna', params: { courseID: this.course_id } })
     },
-    async showDeleteAnswer () {
+    async getAnswerList () {
+      const res = await api.getAnswerList({ question_id: this.question_id })
+      this.answers = res.data.data
+    },
+    async showDeleteAnswer (id) {
+      this.toDelete = id
       this.showDeleteAnswerDialog = true
-      await api.deleteAnswer(this.answer.id)
+    },
+    async deleteAnswer () {
+      await api.deleteAnswer({ id: this.toDelete })
+      this.showDeleteAnswerDialog = false
+      this.getAnswerList()
     },
     async createAnswer () {
       const data = {
         question_id: this.question_id,
         content: this.answerContent,
-        closure: true
+        closure: false
       }
+      this.answerContent = ''
       await api.createAnswer(data)
+      this.getAnswerList()
+    },
+    goEditAnswer (id) {
+      if (!this.showEditAnswerDialog) {
+        this.showEditAnswerDialog = true
+        this.editAnswer = this.answers.find(i => {
+          if (id === i.id) { return i }
+        })
+      } else {
+        this.showEditAnswerDialog = false
+      }
     },
     async showEditAnswer () {
+      this.showEditAnswerDialog = false
       const data = {
-        id: this.answer.id,
-        content: this.answerContent
+        id: this.editAnswer.id,
+        content: this.editAnswer.content
       }
       await api.updateAnswer(data)
+      const res = await api.getAnswerList({ question_id: this.question_id })
+      this.answers = res.data.data
+      this.editAnswer = {}
+    },
+    getTimeFormat (value) {
+      return time.utcToLocal(value, 'YYYY-MM-DD HH:mm')
+    },
+    getColor (value) {
+      if (value) {
+        return '#D75B66'
+      } else {
+        return '#8DC63F'
+      }
+    },
+    getStatus (value) {
+      if (value) {
+        return 'Not resolved'
+      } else {
+        return 'Resolved'
+      }
+    },
+    async correctStatus () {
+      const data = {
+        id: this.question.id,
+        title: this.question.title,
+        content: this.question.content,
+        is_open: !this.question.is_open
+      }
+      this.question.is_open = !this.question.is_open
+      await api.updateQuestion(data)
     }
   },
   computed: {
+    ...mapGetters(['user', 'isAdminRole'])
+  },
+  watch: {
+    resolveStatus () {
+      this.correctStatus()
+    }
   }
 }
 </script>

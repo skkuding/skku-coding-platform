@@ -366,16 +366,14 @@ export default {
       data
     })
   },
-  getQuestionList (id, params) {
+  getQuestionList (params) {
     return ajax('lecture/course/question/', 'get', {
       params
     })
   },
-  deleteQuestion (id) {
+  deleteQuestion (params) {
     return ajax('lecture/course/question/', 'delete', {
-      params: {
-        id
-      }
+      params
     })
   },
   createAnswer (data) {
@@ -393,11 +391,9 @@ export default {
       params
     })
   },
-  deleteAnswer (id) {
+  deleteAnswer (params) {
     return ajax('lecture/course/question/answer/', 'delete', {
-      params: {
-        id
-      }
+      params
     })
   }
 }
