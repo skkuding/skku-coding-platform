@@ -10,6 +10,7 @@ from options.options import SysOptions
 # from judge.dispatcher import JudgeDispatcher
 from problem.models import Problem, ProblemRuleType
 from account.models import User, AdminType
+from django.db.models import Q
 from utils.api import APIView, validate_serializer
 from utils.constants import AssignmentStatus
 from utils.cache import cache
@@ -86,7 +87,9 @@ class SubmissionAPI(APIView):
                                                username=request.user.username,
                                                language=data["language"],
                                                code=data["code"],
+                                               code_length=len(data["code"].encode("utf-8")),
                                                problem_id=problem.id,
+                                               title=problem.title,
                                                ip=request.session["ip"],
                                                contest_id=data.get("contest_id"),
                                                assignment_id=data.get("assignment_id"))
@@ -473,3 +476,22 @@ class SubmissionExistsAPI(APIView):
         return self.success(request.user.is_authenticated and
                             Submission.objects.filter(problem_id=request.GET["problem_id"],
                                                       user_id=request.user.id).exists())
+
+
+class ProfileSubmissionListAPI(APIView):
+    def get(self, request):
+        submissions = Submission.objects.filter(user_id=request.user.id)
+        # keyword search, 문제 번호로 검색 안됨
+        keyword = request.GET.get("keyword", "").strip()
+        if keyword:
+            submissions = submissions.filter(Q(title__icontains=keyword))
+        # result search
+        result = request.GET.get("result")
+        if result:
+            if result == "AC":
+                submissions = submissions.filter(result=0)
+            elif result == "NAC":
+                submissions = submissions.exclude(result=0)
+        data = self.paginate_data(request, submissions)
+        data["results"] = SubmissionListSerializer(data["results"], many=True, user=request.user).data
+        return self.success(data)

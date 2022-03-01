@@ -29,10 +29,12 @@ class Submission(models.Model):
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
     assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE, related_name="submissions")
+    title = models.TextField(null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     user_id = models.IntegerField(db_index=True)
     username = models.TextField()
     code = models.TextField()
+    code_length = models.IntegerField(default=0)
     result = models.IntegerField(db_index=True, default=JudgeStatus.PENDING)
     # Judgment details returned from JudgeServer
     info = JSONField(default=dict)
