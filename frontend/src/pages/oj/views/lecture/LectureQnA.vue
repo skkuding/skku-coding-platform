@@ -9,7 +9,6 @@
         @click="editCreateQuestionDialog"
       >New Question</b-button>
     </div>
-    <div style="margin-left: 68px;">QnA Page will be provided soon. :></div>
     <div class="table">
       <b-table
         hover
@@ -20,15 +19,15 @@
         @row-clicked="goQuestion"
       >
         <template #cell(date)="data">
-          {{ data.item.date }}
+          {{ getTimeFormat(data.item.create_time) }}
         </template>
         <template #cell(status)="data">
           <b-icon
             icon="circle-fill"
             scale="0.7"
-            :style="'color:' + data.item.color"
+            :style="'color:' + getColor(data.item.is_open)"
           ></b-icon>
-          {{ data.item.status }}
+          {{ getStatus(data.item.is_open) }}
         </template>
       </b-table>
     </div>
@@ -82,6 +81,7 @@
 import sidemenu from '@oj/components/Sidemenu.vue'
 import api from '@oj/api'
 import moment from 'moment'
+import time from '@/utils/time'
 
 export default {
   name: 'CourseQna',
@@ -96,38 +96,14 @@ export default {
         'date'
       ],
       course_id: 1,
-      questions: [
-        {
-          id: 3,
-          title: 'third',
-          status: 'Not Resolved',
-          date: '2021-08-09',
-          color: '#D75B66',
-          content: ''
-        },
-        {
-          id: 2,
-          title: 'second',
-          status: 'Not Resolved',
-          date: '2021-08-09',
-          color: '#D75B66',
-          content: ''
-        },
-        {
-          id: 1,
-          title: 'first',
-          status: 'Resolved',
-          date: '2021-08-09',
-          color: '#8DC63F',
-          content: ''
-        }
-      ],
-
+      questions: [],
+      length: 1,
       showCreateQuestionDialog: false,
       listVisible: true
     }
   },
   async mounted () {
+    await this.init()
     this.course_id = this.$route.params.courseID
   },
   methods: {
@@ -135,51 +111,21 @@ export default {
       await this.getQuestionList()
     },
     async getQuestionList () {
-      const res = await api.getQuestionList(0, 20) // 개수?
+      const params = {
+        course_id: this.course_id
+      }
+      const res = await api.getQuestionList(params)
       this.questions = res.data.data.results
+      this.length = this.questions.length
     },
     async editCreateQuestionDialog () {
       this.showCreateQuestionDialog = true
-      /*
-      const localtime = moment().format()
-      const data = {
-        course_id: this.course_id,
-        title: this.questions.title,
-        content: this.questions.content,
-        last_update_time: localtime,
-        create_time: this.questions.date
-      }
-      console.log(data)
-      const res = await api.updateQuestion(data)
-      console.log(res)
-      */
     },
     async submitQuestion () {
       this.showCreateQuestionDialog = false
       const localtime = moment().format()
-      /*
-      if (this.questions) {
-        const data = {
-          id: this.questions.id,
-          title: this.questions.title,
-          content: this.questions.content
-        }
-        console.log(data)
-        const res = await api.createQuestion(data)
-        console.log(res)
-      } else {
-        const data = {
-          course_id: this.course_id,
-          title: this.questions.title,
-          content: this.questions.content,
-          last_update_time: localtime,
-          create_time: this.questions.date
-        }
-        console.log(data)
-        const res = await api.updateQuestion(data)
-        console.log(res)
-      }
-*/
+      this.getQuestionList()
+
       const data = {
         course_id: this.course_id,
         title: this.questions.title,
@@ -187,14 +133,29 @@ export default {
         last_update_time: localtime,
         create_time: this.questions.date
       }
-      console.log(data)
-      const res = await api.createQuestion(data)
-      console.log(res)
+      await api.createQuestion(data)
     },
     async goQuestion (question) {
       this.question = question
       this.listVisible = false
       await this.$router.push({ name: 'lecture-qna-detail', params: { questionID: question.id } })
+    },
+    getTimeFormat (value) {
+      return time.utcToLocal(value, 'YYYY-MM-DD')
+    },
+    getColor (value) {
+      if (value) {
+        return '#D75B66'
+      } else {
+        return '#8DC63F'
+      }
+    },
+    getStatus (value) {
+      if (value) {
+        return 'Not resolved'
+      } else {
+        return 'Resolved'
+      }
     }
   },
   computed: {
