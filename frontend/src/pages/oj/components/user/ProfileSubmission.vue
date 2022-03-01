@@ -21,7 +21,7 @@
           :items="submissionList"
           :fields="submissionTableColumns"
           :per-page="perPage"
-          :current-page="currentPage"
+          :current-page="updateCurrentPage"
           head-variant="light"
           @row-clicked="onMySubmissionClicked"
         >
@@ -48,7 +48,7 @@
       <div class="pagination">
         <b-pagination
           v-model="currentPage"
-          :total-rows="rows"
+          :total-rows="total"
           :per-page="perPage"
           limit="3"
         ></b-pagination>
@@ -100,7 +100,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import api from '@oj/api'
 import time from '@/utils/time'
 import { JUDGE_STATUS } from '@/utils/constants'
@@ -119,11 +118,10 @@ export default {
       currentPage: 1,
       checked: false,
       submissionList: [],
-      limit: 50,
+      limit: 20,
       total: 0,
       keyword: '',
       result: 'All',
-      page: 1,
       submissionTableColumns: [
         {
           label: 'Title',
@@ -169,26 +167,14 @@ export default {
       codemirror_key: 1
     }
   },
-  computed: {
-    rows () {
-      return this.submissionList.length
-    },
-    ...mapGetters(['isAuthenticated'])
-  },
-  async mounted () {
-    await this.init()
-  },
   methods: {
-    async init () {
-      await this.getProfileSubmissionList()
-    },
-    async getProfileSubmissionList () {
-      const offset = (this.page - 1) * this.limit
+    async getProfileSubmissionList (page) {
+      const offset = (page - 1) * this.limit
       const res = await api.getProfileSubmissionList(offset, this.limit,
         {
           result: this.result,
           keyword: this.keyword,
-          page: this.page
+          page: page
         }
       )
       this.total = res.data.data.total
@@ -199,11 +185,12 @@ export default {
       })
     },
     async filterByResult (item) {
+      this.currentPage = 1
       this.result = item
       await this.getProfileSubmissionList()
     },
     async filterByKeyword () {
-      this.page = 1
+      this.currentPage = 1
       await this.getProfileSubmissionList()
     },
     resultTextColor (result) {
@@ -259,8 +246,12 @@ export default {
     async 'isAuthenticated' (newVal) {
       await this.init()
     }
+  },
+  computed: {
+    updateCurrentPage () {
+      return this.getProfileSubmissionList(this.currentPage)
+    }
   }
-
 }
 </script>
 
