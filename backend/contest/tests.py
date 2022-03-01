@@ -66,8 +66,8 @@ DEFAULT_SUBMISSION_DATA = {
 
 
 DEFAULT_ACMCONTESTRANK_DATA = {"submission_number": 1, "accepted_number": 1, "total_time": 123, "total_penalty": 123,
-                                "submission_info": {"1": {"is_ac": True, "ac_time": 123, "penalty": 123, "problem_submission": 1}},
-                                "contest": 1}
+                               "submission_info": {"1": {"is_ac": True, "ac_time": 123, "penalty": 123, "problem_submission": 1}},
+                               "contest": 1}
 
 
 class ContestAdminAPITest(APITestCase):
