@@ -227,6 +227,13 @@ export default {
       params
     })
   },
+  getProfileSubmissionList (offset, limit, params) {
+    params.limit = limit
+    params.offset = offset
+    return ajax('profile_submissions/', 'get', {
+      params
+    })
+  },
   getSubmission (id) {
     return ajax('submission/', 'get', {
       params: {
