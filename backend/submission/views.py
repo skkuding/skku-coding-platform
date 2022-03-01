@@ -71,7 +71,7 @@ class SubmissionAPI(APIView):
                                                username=request.user.username,
                                                language=data["language"],
                                                code=data["code"],
-                                               code_length=len(str(data["code"])),
+                                               code_length=len(data["code"].encode("utf-8")),
                                                problem_id=problem.id,
                                                title=problem.title,
                                                ip=request.session["ip"],
@@ -326,7 +326,6 @@ class ProfileSubmissionListAPI(APIView):
             submissions = submissions.filter(Q(title__icontains=keyword))
         # result search
         result = request.GET.get("result")
-        print(submissions)
         if result:
             if result == "AC":
                 submissions = submissions.filter(result=0)
