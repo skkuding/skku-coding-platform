@@ -129,7 +129,9 @@ class AnswerAPI(APIView):
     def post(self, request):
         data = request.data
         try:
-            question = Question.objects.get(id=data.pop("question_id"), is_open=True)
+            question = Question.objects.get(id=data.pop("question_id"))
+            if not question.is_open:
+                self.error("You cannot answer resolved question")
             data["question"] = question
             data["created_by"] = request.user
         except Question.DoesNotExist:
