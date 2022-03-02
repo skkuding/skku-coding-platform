@@ -44,7 +44,7 @@ export default {
   .tab-split-in-two {
     display: flex;
     justify-content: space-between;
-    margin: 0px 50px;
+    margin: 10px 50px;
     overflow: auto;
     .tab-split-in-two__tab {
       margin: 0px 10px;
