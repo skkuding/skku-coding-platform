@@ -270,6 +270,7 @@ export default {
     display:inline;
     position:relative;
     top:36px;
+    font-size: 2rem;
   }
   .submission-list-card{
     margin:0 auto;
