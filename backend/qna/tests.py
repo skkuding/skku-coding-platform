@@ -92,7 +92,7 @@ class AnswerAPITest(APITestCase):
     def create_question(self):
         self.professor = self.create_admin(login=False)
         course_id = Course.objects.create(created_by=self.professor, **DEFAULT_COURSE_DATA).id
-        return Question.objects.create(created_by_id=self.user.id, course_id=course_id, title="title", content="content", is_open=True).id
+        return Question.objects.create(created_by_id=self.user.id, course_id=course_id, title="title", content="content").id
 
     def test_create_answer(self):
         response = self.client.post(self.url, data=self.data)
