@@ -1,0 +1,15 @@
+**/*
+!.gitignore
+!config/
+!config/.gitkeep
+!log/
+!log/.gitkeep
+!public/
+!public/avatar/
+!public/avatar/default.png
+!public/upload/
+!public/upload/banner[1234].png
+!ssl/
+!ssl/.gitkeep
+!test_case/
+!test_case/.gitkeep
