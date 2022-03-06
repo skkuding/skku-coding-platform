@@ -29,8 +29,13 @@ class Contest(models.Model):
     # If it is visible, false is equivalent to delete
     visible = models.BooleanField(default=True)
     allowed_ip_ranges = JSONField(default=list)
-    is_bank = models.BooleanField(default=False)
     bank_filter = JSONField(default=None, null=True)
+
+    @property
+    def is_bank(self):
+        if self.bank_filter:
+            return True
+        return False
 
     @property
     def status(self):
