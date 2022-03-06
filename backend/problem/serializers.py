@@ -164,6 +164,15 @@ class ProblemSafeSerializer(BaseProblemSerializer):
                    "difficulty", "submission_number", "accepted_number", "statistic_info")
 
 
+class BankProblemSerializer(BaseProblemSerializer):
+
+    class Meta:
+        model = Problem
+        exclude = ("test_case_score", "test_case_id", "visible", "is_public",
+                   "spj_code", "spj_version", "spj_compile_ok",
+                   "submission_number", "accepted_number", "statistic_info")
+
+
 class ContestProblemMakePublicSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     display_id = serializers.CharField(max_length=32)

@@ -2,8 +2,8 @@ from django.db.models import Q, Count
 from utils.api import APIView
 from utils.decorators import check_contest_permission
 from ..models import ProblemTag, Problem, ProblemRuleType
-from ..serializers import ProblemSerializer, TagSerializer, ProblemSafeSerializer
-from contest.models import ContestRuleType
+from ..serializers import ProblemSerializer, TagSerializer, ProblemSafeSerializer, BankProblemSerializer
+from contest.models import ContestRuleType, ProblemBank
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -162,4 +162,34 @@ class ContestProblemAPI(APIView):
             self._add_problem_status(request, data)
         else:
             data = ProblemSafeSerializer(contest_problems, many=True).data
+        return self.success(data)
+
+
+class BankProblemAPI(APIView):
+    @check_contest_permission()
+    def get(self, request):
+        if not self.contest.is_bank:
+            return self.error("This is not a problem bank contest")
+
+        try:
+            problem_bank = ProblemBank.objects.get(user=request.user, contest=self.contest)
+        except ProblemBank.DoesNotExist:
+            return self.error("You don't have permission of this contest")
+        bank_problem_ids = problem_bank.problem_list
+
+        problem_id = request.Get.get("problem_id")
+
+        if problem_id:
+            if not problem_id in bank_problem_ids:
+                return self.error("This problem is not allocated to you")
+            try:
+                problem = Problem.objects.selected_related("created_by") \
+                    .get(_id=problem_id, contest_id__isnull=True, assignment_id__isnull=True)
+                data = BankProblemSerializer(problem).data
+                return self.success(data)
+            except Problem.DoesNotExist:
+                return self.error("Problem does not eixst")
+
+        problems = Problem.objects.select_related("created_by").filter(pk__in=bank_problem_ids)
+        data = BankProblemSerializer(problems, many=True).data
         return self.success(data)
