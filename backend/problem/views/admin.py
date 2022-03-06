@@ -637,6 +637,15 @@ class ContestProblemAPI(ProblemBase):
         return self.success()
 
 
+class ProblemLevelAPIView(APIView):
+    def get(self, request):
+        problemList = Problem.objects.filter(bank=True).values_list("difficulty", flat=True)
+        counter = {}
+        for level in problemList:
+            counter[level] = counter.get(level,0) + 1
+        return self.success(counter)
+
+
 class MakeContestProblemPublicAPIView(APIView):
     @validate_serializer(ContestProblemMakePublicSerializer)
     @problem_permission_required

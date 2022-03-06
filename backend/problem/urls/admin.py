@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ..views.admin import (ContestProblemAPI, ProblemAPI, TestCaseAPI, MakeContestProblemPublicAPIView,
+from ..views.admin import (ContestProblemAPI, ProblemAPI, ProblemLevelAPIView, TestCaseAPI, MakeContestProblemPublicAPIView,
                            CompileSPJAPI, AddContestProblemAPI, TestCaseTextAPI)
 
 urlpatterns = [
@@ -10,5 +10,6 @@ urlpatterns = [
     path("contest/problem/", ContestProblemAPI.as_view(), name="contest_problem_admin_api"),
     path("contest_problem/make_public/", MakeContestProblemPublicAPIView.as_view(), name="make_public_api"),
     path("contest/add_problem_from_public/", AddContestProblemAPI.as_view(), name="add_contest_problem_from_public_api"),
-    path("testcase_text/", TestCaseTextAPI.as_view(), name="testcase_text_api")
+    path("testcase_text/", TestCaseTextAPI.as_view(), name="testcase_text_api"),
+    path("problem_level_count/", ProblemLevelAPIView.as_view(), name="problem_level_count"),
 ]
