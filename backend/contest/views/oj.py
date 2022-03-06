@@ -12,9 +12,13 @@ from utils.decorators import login_required, check_contest_permission, check_con
 
 from utils.constants import ContestStatus
 from ..models import ContestAnnouncement, Contest, ACMContestRank
+from problem.models import Problem, ProblemBank
 from ..serializers import ContestAnnouncementSerializer
 from ..serializers import ContestSerializer, ContestPasswordVerifySerializer
 from ..serializers import ACMContestRankSerializer
+
+import random
+import json
 
 
 class ContestAnnouncementListAPI(APIView):
@@ -230,3 +234,31 @@ class ContestRankAPI(APIView):
             page_qs["results"] = serializer(page_qs["results"], many=True, is_contest_admin=is_contest_admin).data
             page_qs["results"].append(self.contest.id)
         return self.success(page_qs)
+
+
+class ProblemBankAPI(APIView):
+    @login_required
+    @check_contest_permission
+    def post(self, request):
+        # Contest 참가하기 -> ProblemBank Post
+        data = request.data
+        try:
+            contest = Contest.objects.get(id=data["contest_id"])
+        except Contest.DoesNotExist:
+            self.error("Contest Does not exist")
+
+        bank_filter = contest.bank_filter
+
+        # filtered random problem list
+        problem_list = []
+
+        for data in bank_filter:
+            problems = Problem.objects.filter(difficulty=data["level"]).values_list("id",flat=True)
+            random_problems = random.sample(problems, data["count"])
+            problem_list.extend(random_problems)
+
+
+        problem_bank = ProblemBank.objects.create(contest=contest, user=request.user)
+        problem_bank.problem_list = json.dumps(problem_list)
+        problem_bank.save()
+        return self.success()
