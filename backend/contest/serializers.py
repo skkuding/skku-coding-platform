@@ -1,4 +1,5 @@
 from utils.api import UsernameSerializer, serializers
+from utils.constants import Difficulty
 
 from .models import Contest, ContestAnnouncement, ContestPrize, ContestRuleType
 from .models import ACMContestRank, OIContestRank
@@ -16,6 +17,16 @@ class ContestPrizeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContestPrize
         fields = "__all__"
+
+
+class BankFilterSerializer(serializers.Serializer):
+    level = serializers.ChoiceField(choices=Difficulty.choices())
+    tag = serializers.CharField(allow_blank=True)
+    count = serializers.IntegerField()
+
+
+class CreateBankFilterSerializer(serializers.Serializer):
+    bank_filter = serializers.ListField(child=BankFilterSerializer())
 
 
 class CreateConetestSeriaizer(serializers.Serializer):
@@ -58,6 +69,7 @@ class ContestAdminSerializer(serializers.ModelSerializer):
     contest_type = serializers.CharField()
     allowed_groups = GroupSummarySerializer(many=True)
     prizes = ContestPrizeSerializer(many=True)
+    is_bank = serializers.BooleanField()
 
     class Meta:
         model = Contest
