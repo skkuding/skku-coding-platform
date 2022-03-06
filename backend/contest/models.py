@@ -104,6 +104,16 @@ class OIContestRank(AbstractContestRank):
         unique_together = (("user", "contest"),)
 
 
+class ProblemBank(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    problem_list = models.TextField(null=True)
+
+    class Meta:
+        db_table = "problem_bank"
+        unique_together = (("user", "contest"),)
+
+
 class ContestAnnouncement(models.Model):
     contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
     problem = models.ForeignKey("problem.Problem", on_delete=models.CASCADE, default=None)
