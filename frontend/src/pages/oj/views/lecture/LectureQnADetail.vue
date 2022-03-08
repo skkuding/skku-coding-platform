@@ -14,17 +14,19 @@
             <b-icon icon="circle-fill" scale="0.4" style="margin-left: 3px;"/>
             <span style="cursor: pointer" @click="showDeleteQuestionDialog = true">Delete</span>
           </span>
-          <span class="question-nav__status">
+          <span class="question-nav__status align-right">
             <span v-if="question.created_by.username===user.username || isAdminRole">
               <b-form-checkbox v-model="resolveStatus" switch/>
             </span>
-            <b-badge
-              variant="light"
-              id="question-badge"
-            >
-              <b-icon icon="circle-fill" :color="getColor(question.is_open)"/>
-              {{ getStatus(question.is_open) }}
-            </b-badge>
+            <span>
+              <b-badge
+                variant="light"
+                id="question-badge"
+              >
+                <b-icon icon="circle-fill" :color="getColor(question.is_open)"/>
+                {{ getStatus(question.is_open) }}
+              </b-badge>
+            </span>
           </span>
         </div>
         <div class="question__content">
@@ -155,6 +157,7 @@ export default {
   },
   data () {
     return {
+      answers: {},
       resolveStatus: false,
       question: {},
       course_id: 1,
@@ -182,6 +185,7 @@ export default {
       }
       const res = await api.getQuestionList(params)
       this.question = res.data.data
+      console.log(this.question)
     },
     async showEditQuestion () {
       // const localtime = moment().format()
@@ -221,16 +225,18 @@ export default {
         content: this.answerContent,
         closure: false
       }
-      this.answerContent = ''
       await api.createAnswer(data)
+      this.answerContent = ''
       this.getAnswerList()
     },
     goEditAnswer (id) {
       if (!this.showEditAnswerDialog) {
         this.showEditAnswerDialog = true
-        this.editAnswer = this.answers.find(i => {
-          if (id === i.id) { return i }
+        const newans = this.answers.find(ans => {
+          if (id === ans.id) { return ans }
         })
+        this.editAnswer = JSON.parse(JSON.stringify(newans))
+        console.log(this.editAnswer)
       } else {
         this.showEditAnswerDialog = false
       }
@@ -263,15 +269,21 @@ export default {
         return 'Resolved'
       }
     },
-    async correctStatus () {
+    async updateStatus () {
       const data = {
         id: this.question.id,
         title: this.question.title,
         content: this.question.content,
         is_open: !this.question.is_open
       }
+      try {
+        await api.updateQuestion(data)
+      } catch (err) {
+        console.log(err)
+        console.log(this.question)
+      }
       this.question.is_open = !this.question.is_open
-      await api.updateQuestion(data)
+      this.getQuestion()
     }
   },
   computed: {
@@ -279,7 +291,7 @@ export default {
   },
   watch: {
     resolveStatus () {
-      this.correctStatus()
+      this.updateStatus()
     }
   }
 }

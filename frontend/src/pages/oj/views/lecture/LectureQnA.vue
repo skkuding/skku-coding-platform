@@ -124,7 +124,6 @@ export default {
     async submitQuestion () {
       this.showCreateQuestionDialog = false
       const localtime = moment().format()
-      this.getQuestionList()
 
       const data = {
         course_id: this.course_id,
@@ -134,6 +133,7 @@ export default {
         create_time: this.questions.date
       }
       await api.createQuestion(data)
+      this.getQuestionList()
     },
     async goQuestion (question) {
       this.question = question
