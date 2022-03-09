@@ -10250,6 +10250,11 @@ vue-loader@^15.7.0, vue-loader@^15.9.2:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
+vue-resizable@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/vue-resizable/-/vue-resizable-2.0.5.tgz#7e7fdae19e8cedbd332758d8886b95f445802653"
+  integrity sha512-AasULoGLeg87VFS07QpoR8q+U0saSlLVBhZy5wPKBl9L7YhmHVJ5Vng8mFpfnBbF2B7SujwPRTcRooz7/ntpqA==
+
 vue-router@^3.5.3:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.5.3.tgz#041048053e336829d05dafacf6a8fb669a2e7999"

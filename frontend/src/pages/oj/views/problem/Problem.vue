@@ -220,57 +220,66 @@
       </b-navbar>
 
       <b-row id="problem-container">
-        <b-col id="problem-description" cols="5">
-          <div class="description-io">
-            <h2>Description</h2>
-            <p v-dompurify-html="problem.description" v-katex:auto></p>
-            <div class="blank-line"></div>
-            <h2>Input</h2>
-            <p v-dompurify-html="problem.input_description" v-katex:auto></p>
-            <h2>Output</h2>
-            <p v-dompurify-html="problem.output_description" v-katex:auto></p>
-            <div class="blank-line"></div>
-          </div>
+        <vue-resizable
+        class="resizable"
+        ref="resizableComponent"
+        active="r"
+        :fit-parent="true"
+        :width="`50vw`"
+        :min-width="200"
+        >
+          <b-col id="problem-description">
+            <div class="description-io">
+              <h2>Description</h2>
+              <p v-dompurify-html="problem.description" v-katex:auto></p>
+              <div class="blank-line"></div>
+              <h2>Input</h2>
+              <p v-dompurify-html="problem.input_description" v-katex:auto></p>
+              <h2>Output</h2>
+              <p v-dompurify-html="problem.output_description" v-katex:auto></p>
+              <div class="blank-line"></div>
+            </div>
 
-          <div v-for="(sample, index) of problem.samples" :key="index">
-            <h2>
-              Sample Input {{ index + 1 }}
-              <a v-clipboard:copy="sample.input">
-                <b-icon
-                  id="clipboard1"
-                  icon="clipboard"
-                  class="copy-icon"
-                  scale="0.8"
-                />
-              </a>
-              <b-tooltip target="clipboard1" placement="top" triggers="hover">
-                Copy
-              </b-tooltip>
-            </h2>
-            <pre class="sample-io">{{ sample.input }}</pre>
-            <h2>Sample Output {{ index + 1 }}</h2>
-            <pre class="sample-io">{{ sample.output }}</pre>
-            <div class="blank-line"></div>
-          </div>
+            <div v-for="(sample, index) of problem.samples" :key="index">
+              <h2>
+                Sample Input {{ index + 1 }}
+                <a v-clipboard:copy="sample.input">
+                  <b-icon
+                    id="clipboard1"
+                    icon="clipboard"
+                    class="copy-icon"
+                    scale="0.8"
+                  />
+                </a>
+                <b-tooltip target="clipboard1" placement="top" triggers="hover">
+                  Copy
+                </b-tooltip>
+              </h2>
+              <pre class="sample-io">{{ sample.input }}</pre>
+              <h2>Sample Output {{ index + 1 }}</h2>
+              <pre class="sample-io">{{ sample.output }}</pre>
+              <div class="blank-line"></div>
+            </div>
 
-          <div v-if="problem.hint">
-            <h2>Hint</h2>
-            <p v-dompurify-html="problem.hint" v-katex:auto></p>
-          </div>
-          <Table
-            :items="problemInfo"
-            :fields="problemInfoField"
-            lightStyle
-          >
-            <template v-slot:time_limit="data">
-              {{data.row.time_limit}}
-            </template>
-            <template v-slot:memory_limit="data">
-              {{data.row.memory_limit}}
-            </template>
-          </Table>
-        </b-col>
-        <b-col id="console" cols="7">
+            <div v-if="problem.hint">
+              <h2>Hint</h2>
+              <p v-dompurify-html="problem.hint" v-katex:auto></p>
+            </div>
+            <Table
+              :items="problemInfo"
+              :fields="problemInfoField"
+              lightStyle
+            >
+              <template v-slot:time_limit="data">
+                {{data.row.time_limit}}
+              </template>
+              <template v-slot:memory_limit="data">
+                {{data.row.memory_limit}}
+              </template>
+            </Table>
+          </b-col>
+        </vue-resizable>
+        <b-col id="console">
           <b-row id="editor">
             <CodeMirror
               ref="codemirror"
@@ -330,6 +339,7 @@ import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
 import profileSetting from '@oj/views/user/ProfileSetting'
 import Table from '@oj/components/Table.vue'
+import VueResizable from 'vue-resizable'
 
 export default {
   name: 'ProblemDetails',
@@ -339,7 +349,8 @@ export default {
     login,
     register,
     profileSetting,
-    Table
+    Table,
+    VueResizable
   },
   mixins: [FormMixin],
   data () {
@@ -877,6 +888,7 @@ $inner-header-height: 58px;
   padding: 0;
   margin: 0;
   flex: 1 1 auto;
+  flex-direction: row;
 
   #problem-description {
     background: #173747;
