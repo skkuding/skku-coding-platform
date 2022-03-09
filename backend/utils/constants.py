@@ -46,3 +46,7 @@ class Difficulty(Choices):
 
 
 CONTEST_PASSWORD_SESSION_KEY = "contest_password"
+
+class ProblemSetType(Choices):
+    Colorful = "Colorful"
+    Grayscale = "Grayscale"

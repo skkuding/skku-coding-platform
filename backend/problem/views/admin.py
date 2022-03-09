@@ -14,10 +14,10 @@ from submission.models import Submission
 from utils.api import APIView, CSRFExemptAPIView, validate_serializer, APIError
 from utils.decorators import problem_permission_required, ensure_created_by
 from utils.shortcuts import rand_str, natural_sort_key
-from ..models import Problem, ProblemRuleType, ProblemTag
-from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer,
+from ..models import Problem, ProblemRuleType, ProblemSet, ProblemTag
+from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer, CreateOrEditProblemSerializer,
                            CreateProblemSerializer, EditProblemSerializer, EditContestProblemSerializer,
-                           ProblemAdminSerializer, TestCaseUploadForm, ContestProblemMakePublicSerializer,
+                           ProblemAdminSerializer, ProblemSetSerializer, TestCaseUploadForm, ContestProblemMakePublicSerializer,
                            AddContestProblemSerializer, TestCaseTextSerializer)
 
 from drf_yasg.utils import swagger_auto_schema
@@ -702,3 +702,27 @@ class AddContestProblemAPI(APIView):
         problem.save()
         problem.tags.set(tags)
         return self.success()
+
+
+class ProblemSetAPI(APIView):
+    @validate_serializer(CreateOrEditProblemSerializer)
+    def post(self, request):
+        data = request.data
+        problem_ids = data["problems"]
+
+        if not ProblemSet.objects.filter(title=data["title"]).exists():
+            return self.error("Duplicated problem set title!")
+
+        try:
+            for problem_id in problem_ids:
+                Problem.objects.get(id=problem_id, contest_id__isnull=True, assignment_id__isnull=True)
+        except Problem.DoesNotExist:
+            self.error("One or more problem does not exist or is not a general problem")
+
+        problem_set = ProblemSet.objects.create(title=data["title"], type=data["type"])
+        problem_set.problems.set(problem_ids)
+
+        return self.success(ProblemSetSerializer(problem_set).data)
+
+    def get(self, request):
+        

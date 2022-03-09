@@ -7,7 +7,7 @@ from utils.constants import Difficulty
 from utils.serializers import LanguageNameMultiChoiceField, SPJLanguageNameChoiceField, LanguageNameChoiceField
 
 from submission.models import Submission
-from .models import Problem, ProblemRuleType, ProblemTag, ProblemIOMode
+from .models import Problem, ProblemRuleType, ProblemSet, ProblemTag, ProblemIOMode
 from .utils import parse_problem_template
 
 
@@ -214,3 +214,17 @@ class SPJSerializer(serializers.Serializer):
 class AnswerSerializer(serializers.Serializer):
     code = serializers.CharField()
     language = LanguageNameChoiceField()
+
+
+class ProblemSetSerializer(serializers.Serializer):
+    problems = serializers.ListField(child=ProblemSafeSerializer(), allow_empty=True)
+
+    class Meta:
+        model = ProblemSet
+        fields = "__all__"
+
+
+class CreateOrEditProblemSetSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    type = serializers.ChoiceField(choices=ProblemSet.type)
+    problems = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)

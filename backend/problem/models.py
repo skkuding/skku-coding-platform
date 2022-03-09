@@ -105,3 +105,9 @@ class Problem(models.Model):
     def add_ac_number(self):
         self.accepted_number = models.F("accepted_number") + 1
         self.save(update_fields=["accepted_number"])
+
+
+class ProblemSet(models.Model):
+    title = models.TextField()
+    type = models.TextField()
+    problems = models.ManyToManyField(Problem)
