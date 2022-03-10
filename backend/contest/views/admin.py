@@ -19,7 +19,7 @@ from utils.decorators import ensure_created_by
 from utils.shortcuts import rand_str
 from utils.tasks import delete_files
 from ..models import Contest, ContestAnnouncement, ContestPrize, ACMContestRank
-from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer, CreateBankFilterSerializer,
+from ..serializers import (ContestAnnouncementSerializer, ContestAdminSerializer,
                            CreateConetestSeriaizer, CreateContestAnnouncementSerializer,
                            EditConetestSeriaizer, EditContestAnnouncementSerializer,
                            ContestPrizeSerializer, ACMContestRankSerializer)
@@ -51,12 +51,6 @@ class ContestAPI(APIView):
         allowed_groups_qs = Group.objects.filter(id__in=allowed_groups)
         if allowed_groups_qs.count() != len(allowed_groups):
             return self.error("Some groups don't exist")
-
-        if data.get("bank_filter"):
-            filterList = CreateBankFilterSerializer(data["bank_filter"])
-            if not filterList.is_valid():
-                return self.error("Filter values are not valid")
-            data["bank_filter"] = jsonDump(filterList)
 
         contest = Contest.objects.create(**data)
         contest.allowed_groups.set(allowed_groups_qs)
@@ -121,12 +115,6 @@ class ContestAPI(APIView):
 
         for k, v in data.items():
             setattr(contest, k, v)
-
-        if data.get("bank_filter"):
-            filterList = CreateBankFilterSerializer(data["bank_filter"])
-            if not filterList.is_valid():
-                return self.error("Filter values are not valid")
-            data["bank_filter"] = jsonDump(filterList)
 
         contest.save()
         data = ContestAdminSerializer(contest).data
