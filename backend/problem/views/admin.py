@@ -642,7 +642,7 @@ class ProblemLevelAPIView(APIView):
         problemList = Problem.objects.filter(bank=True).values_list("difficulty", flat=True)
         counter = {}
         for level in problemList:
-            counter[level] = counter.get(level,0) + 1
+            counter[level] = counter.get(level, 0) + 1
         return self.success(counter)
 
 
