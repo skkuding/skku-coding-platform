@@ -92,6 +92,7 @@ class Problem(models.Model):
     share_submission = models.BooleanField(default=False)
     # Submission type
     type = models.TextField(default="Problem", null=True)
+    bank = models.BooleanField(default=False)
 
     class Meta:
         db_table = "problem"
