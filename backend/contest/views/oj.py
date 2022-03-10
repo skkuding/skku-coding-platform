@@ -11,8 +11,8 @@ from account.models import AdminType
 from utils.decorators import login_required, check_contest_permission, check_contest_password
 
 from utils.constants import ContestStatus
-from ..models import ContestAnnouncement, Contest, ACMContestRank
-from problem.models import Problem, ProblemBank
+from ..models import ContestAnnouncement, Contest, ACMContestRank, ProblemBank
+from problem.models import Problem
 from ..serializers import ContestAnnouncementSerializer
 from ..serializers import ContestSerializer, ContestPasswordVerifySerializer
 from ..serializers import ACMContestRankSerializer
@@ -253,10 +253,9 @@ class ProblemBankAPI(APIView):
         problem_list = []
 
         for data in bank_filter:
-            problems = Problem.objects.filter(difficulty=data["level"]).values_list("id",flat=True)
+            problems = Problem.objects.filter(difficulty=data["level"]).values_list("id", flat=True)
             random_problems = random.sample(problems, data["count"])
             problem_list.extend(random_problems)
-
 
         problem_bank = ProblemBank.objects.create(contest=contest, user=request.user)
         problem_bank.problem_list = json.dumps(problem_list)

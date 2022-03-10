@@ -180,7 +180,7 @@ class BankProblemAPI(APIView):
         problem_id = request.Get.get("problem_id")
 
         if problem_id:
-            if not problem_id in bank_problem_ids:
+            if problem_id not in bank_problem_ids:
                 return self.error("This problem is not allocated to you")
             try:
                 problem = Problem.objects.selected_related("created_by") \
