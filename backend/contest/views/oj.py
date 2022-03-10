@@ -238,14 +238,14 @@ class ContestRankAPI(APIView):
 
 class ProblemBankAPI(APIView):
     @login_required
-    @check_contest_permission
+    @check_contest_permission(check_type="problems")
     def post(self, request):
         # Contest 참가하기 -> ProblemBank Post
         data = request.data
         try:
             contest = Contest.objects.get(id=data["contest_id"])
         except Contest.DoesNotExist:
-            self.error("Contest Does not exist")
+            return self.error("Contest Does not exist")
 
         bank_filter = contest.bank_filter
 
@@ -253,7 +253,7 @@ class ProblemBankAPI(APIView):
         problem_list = []
 
         for data in bank_filter:
-            problems = Problem.objects.filter(difficulty=data["level"]).values_list("id", flat=True)
+            problems = list(Problem.objects.filter(difficulty=data["level"]).values_list("id", flat=True))
             random_problems = random.sample(problems, data["count"])
             problem_list.extend(random_problems)
 
