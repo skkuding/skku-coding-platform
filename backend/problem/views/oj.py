@@ -7,6 +7,8 @@ from contest.models import ContestRuleType, ProblemBank
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+import json
+
 
 class ProblemTagAPI(APIView):
     @swagger_auto_schema(
@@ -166,7 +168,7 @@ class ContestProblemAPI(APIView):
 
 
 class BankProblemAPI(APIView):
-    @check_contest_permission()
+    @check_contest_permission(check_type="problems")
     def get(self, request):
         if not self.contest.is_bank:
             return self.error("This is not a problem bank contest")
@@ -175,10 +177,11 @@ class BankProblemAPI(APIView):
             problem_bank = ProblemBank.objects.get(user=request.user, contest=self.contest)
         except ProblemBank.DoesNotExist:
             return self.error("You don't have permission of this contest")
-        bank_problem_ids = problem_bank.problem_list
 
-        problem_id = request.Get.get("problem_id")
+        decoder = json.decoder.JSONDecoder()
+        bank_problem_ids = decoder.decode(problem_bank.problem_list)
 
+        problem_id = request.GET.get("problem_id")
         if problem_id:
             if problem_id not in bank_problem_ids:
                 return self.error("This problem is not allocated to you")
