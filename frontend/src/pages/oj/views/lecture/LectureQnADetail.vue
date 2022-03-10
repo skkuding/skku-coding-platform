@@ -7,27 +7,31 @@
           <div class="question__title">{{ question.title }}</div>
           <div class="question__date">{{ getTimeFormat(question.create_time) }}</div>
         </div>
-        <div class="question-nav">
-          <span v-if="question.created_by.username===user.username || isAdminRole" class="question-nav__button">
+        <div v-if="question.created_by.username===user.username || isAdminRole" class="question-nav">
+          <span class="question-nav__button">
             <b-icon icon="circle-fill" scale="0.4"/>
             <span style="cursor: pointer" @click="showEditQuestionDialog = true">Edit</span>
             <b-icon icon="circle-fill" scale="0.4" style="margin-left: 3px;"/>
             <span style="cursor: pointer" @click="showDeleteQuestionDialog = true">Delete</span>
           </span>
-          <span class="question-nav__status align-right">
-            <span v-if="question.created_by.username===user.username || isAdminRole">
-              <b-form-checkbox v-model="resolveStatus" switch/>
-            </span>
-            <span>
-              <b-badge
-                variant="light"
-                id="question-badge"
-              >
-                <b-icon icon="circle-fill" :color="getColor(question.is_open)"/>
-                {{ getStatus(question.is_open) }}
-              </b-badge>
-            </span>
-          </span>
+          <b-form-checkbox v-model="resolveStatus" switch>
+            <b-badge
+              variant="light"
+              id="question-badge"
+            >
+              <b-icon icon="circle-fill" :color="getColor(question.is_open)"/>
+              {{ getStatus(question.is_open) }}
+            </b-badge>
+          </b-form-checkbox>
+        </div>
+        <div v-else class="question-status">
+          <b-badge
+            variant="light"
+            id="question-badge-only"
+          >
+            <b-icon icon="circle-fill" :color="getColor(question.is_open)"/>
+            {{ getStatus(question.is_open) }}
+          </b-badge>
         </div>
         <div class="question__content">
           <p v-dompurify-html="question.content"/>
@@ -96,7 +100,7 @@
             label-for="title"
           >
             <b-form-input
-              v-model="question.title"
+              v-model="editQuestionTitle"
               placeholder="Title"
               id="title"
               required
@@ -111,7 +115,7 @@
           >
             <b-form-textarea
               id="content"
-              v-model="question.content"
+              v-model="editQuestionContent"
               placeholder="Content"
               rows="6"
               max-rows="6"
@@ -121,7 +125,7 @@
           </b-form-group>
         </div>
         <template #modal-footer>
-          <b-button style="cursor: pointer" @click="showEditQuestionDialog = false">Cancel</b-button>
+          <b-button style="cursor: pointer" @click="cancelEditQuestion">Cancel</b-button>
           <b-button @click="showEditQuestion">Save</b-button>
         </template>
       </b-modal>
@@ -165,6 +169,8 @@ export default {
       editAnswer: {},
       ToDelete: 1,
       question_id: 1,
+      editQuestionContent: '',
+      editQuestionTitle: '',
       showEditQuestionDialog: false,
       showDeleteQuestionDialog: false,
       showDeleteAnswerDialog: false,
@@ -185,7 +191,10 @@ export default {
       }
       const res = await api.getQuestionList(params)
       this.question = res.data.data
-      console.log(this.question)
+      this.editQuestionContent = this.question.content
+      this.editQuestionTitle = this.question.title
+      console.log(this.question.created_by.username)
+      console.log(this.user.username)
     },
     async showEditQuestion () {
       // const localtime = moment().format()
@@ -205,6 +214,11 @@ export default {
       }
       await api.deleteQuestion(params)
       await this.$router.push({ name: 'lecture-qna', params: { courseID: this.course_id } })
+    },
+    cancelEditQuestion () {
+      this.showEditQuestionDialog = false
+      this.editQuestionContent = this.question.content
+      this.editQuestionTitle = this.question.title
     },
     async getAnswerList () {
       const res = await api.getAnswerList({ question_id: this.question_id })
@@ -272,17 +286,11 @@ export default {
     async updateStatus () {
       const data = {
         id: this.question.id,
-        title: this.question.title,
-        content: this.question.content,
+        title: this.editQuestionTitle,
+        content: this.editQuestionContent,
         is_open: !this.question.is_open
       }
-      try {
-        await api.updateQuestion(data)
-      } catch (err) {
-        console.log(err)
-        console.log(this.question)
-      }
-      this.question.is_open = !this.question.is_open
+      await api.updateQuestion(data)
       this.getQuestion()
     }
   },
@@ -330,7 +338,7 @@ export default {
       margin: auto 1rem;
       font-size: 14px;
       font-weight: 400;
-      text-align: right;
+      //text-align: right;
     }
   }
   .question-nav {
@@ -347,6 +355,18 @@ export default {
       border: 1px solid #EDECEC;
       color: #7C7A7B !important;
     }
+  }
+  .question-status {
+    font-size: 12px;
+    margin: 10px;
+    display: flex;
+    justify-content: flex-end;
+    #question-badge-only{
+      padding: 6px 6px;
+      border: 1px solid #EDECEC;
+      color: #7C7A7B;
+    }
+
   }
   .question__content{
     @import '@/styles/tiptapview.scss';
