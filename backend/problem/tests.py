@@ -267,6 +267,28 @@ class ContestProblemTest(ProblemCreateTestBase):
         self.assertSuccess(resp)
 
 
+class BankProblemAPITest(ProblemCreateTestBase):
+    def test_get_bank_problem_list(self):
+        admin = self.create_super_admin()
+        # create contest
+        contest_data = copy.deepcopy(DEFAULT_CONTEST_DATA)
+        contest_data["password"] = ""
+        contest_data["bank_filter"] = [{"level": "Level1", "tag": "", "count": 1}, {"level": "Level2", "tag": "", "count": 1}]
+        contest = self.client.post(self.reverse("contest_admin_api"), data=contest_data).data["data"]
+        # create problems
+        problem_data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        self.add_problem(problem_data, admin)
+        problem_data["difficulty"] = "Level2"
+        self.add_problem(problem_data, admin)
+        # create problembank
+        self.create_user("test", "test123")
+        response = self.client.post(self.reverse("contest_bank_api"), data={"contest_id": contest["id"]})
+
+        url = self.reverse("bank_problem_api")
+        response = self.client.get(url + "?contest_id=" + str(contest["id"]))
+        self.assertSuccess(response)
+
+
 class AssignmentProblemProfessorTest(ProblemCreateTestBase):
     def setUp(self):
         student = self.create_user("student", "1234")
