@@ -36,6 +36,7 @@ DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description"
                         "rule_type": ContestRuleType.ACM,
                         "password": "123",
                         "allowed_ip_ranges": [],
+                        "bank_filter": [],
                         "visible": True, "real_time_rank": True}
 
 
@@ -47,6 +48,13 @@ class ContestAdminAPITest(APITestCase):
 
     def test_create_contest(self):
         response = self.client.post(self.url, data=self.data)
+        self.assertSuccess(response)
+        return response
+
+    def test_create_contest_with_bank_filter(self):
+        data = copy.deepcopy(DEFAULT_CONTEST_DATA)
+        data["bank_filter"] = [{"level": "Level1", "tag": "", "count": 1}, {"level": "Level2", "tag": "", "count": 3}]
+        response = self.client.post(self.url, data=data)
         self.assertSuccess(response)
         return response
 
@@ -78,8 +86,8 @@ class ContestAdminAPITest(APITestCase):
         update_data = {"id": id, "title": "update title",
                        "description": "update description",
                        "password": "12345",
-                       "visible": False, "real_time_rank": False
-                       }
+                       "bank_filter": [{"level": "Level1", "tag": "", "count": 1}],
+                       "visible": False, "real_time_rank": False}
         data = copy.deepcopy(self.data)
         data.update(update_data)
         response = self.client.put(self.url, data=data)

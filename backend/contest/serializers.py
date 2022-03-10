@@ -25,10 +25,6 @@ class BankFilterSerializer(serializers.Serializer):
     count = serializers.IntegerField()
 
 
-class CreateBankFilterSerializer(serializers.Serializer):
-    bank_filter = serializers.ListField(child=BankFilterSerializer())
-
-
 class CreateConetestSeriaizer(serializers.Serializer):
     title = serializers.CharField(max_length=128)
     description = serializers.CharField()
@@ -44,6 +40,7 @@ class CreateConetestSeriaizer(serializers.Serializer):
     visible = serializers.BooleanField()
     real_time_rank = serializers.BooleanField()
     allowed_ip_ranges = serializers.ListField(child=serializers.CharField(max_length=32), allow_empty=True)
+    bank_filter = serializers.ListField(child=BankFilterSerializer(), allow_empty=True)
 
 
 class EditConetestSeriaizer(serializers.Serializer):
@@ -61,6 +58,7 @@ class EditConetestSeriaizer(serializers.Serializer):
     visible = serializers.BooleanField()
     real_time_rank = serializers.BooleanField()
     allowed_ip_ranges = serializers.ListField(child=serializers.CharField(max_length=32))
+    bank_filter = serializers.ListField(child=BankFilterSerializer(), allow_empty=True)
 
 
 class ContestAdminSerializer(serializers.ModelSerializer):
