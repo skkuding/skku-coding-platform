@@ -221,8 +221,6 @@
 
       <b-row id="problem-container">
         <vue-resizable
-        class="resizable"
-        ref="resizableComponent"
         active="r"
         :fit-parent="true"
         :width="`50vw`"
