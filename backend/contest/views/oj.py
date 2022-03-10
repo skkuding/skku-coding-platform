@@ -253,7 +253,8 @@ class ProblemBankAPI(APIView):
         problem_list = []
 
         for data in bank_filter:
-            problems = list(Problem.objects.filter(difficulty=data["level"]).values_list("id", flat=True))
+            problems = list(Problem.objects.filter(difficulty=data["level"], bank=True) \
+                .values_list("id", flat=True))
             random_problems = random.sample(problems, data["count"])
             problem_list.extend(random_problems)
 
