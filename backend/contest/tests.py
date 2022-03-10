@@ -225,3 +225,29 @@ class ContestAnnouncementListAPITest(APITestCase):
         contest_id = self.create_contest_announcements()
         response = self.client.get(self.url, data={"contest_id": contest_id})
         self.assertSuccess(response)
+
+
+class ProblemBankAPITest(APITestCase):
+    def create_problems(self):
+        problem_data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        url = self.reverse("problem_admin_api")
+        self.client.post(url, data=problem_data)
+        problem_data["_id"] = "A-111"
+        self.client.post(url, data=problem_data)
+        problem_data["_id"] = "A-112"
+        problem_data["difficulty"] = "Level2"
+        self.client.post(url, data=problem_data)
+
+    def test_create_problem_bank(self):
+        self.create_super_admin()
+        # create problembank contest
+        contest_data = copy.deepcopy(DEFAULT_CONTEST_DATA)
+        contest_data["bank_filter"] = [{"level": "Level1", "tag": "", "count": 1}, {"level": "Level2", "tag": "", "count": 1}]
+        contest = self.client.post(self.reverse("contest_admin_api"), data=contest_data).data["data"]
+
+        self.create_problems()
+
+        #self.create_user("2018123123", "123123")
+        url = self.reverse("contest_bank_api")
+        response = self.client.post(url, data={"contest_id": contest["id"]})
+        self.assertSuccess(response)
