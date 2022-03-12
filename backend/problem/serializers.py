@@ -70,6 +70,7 @@ class CreateOrEditProblemSerializer(serializers.Serializer):
     hint = serializers.CharField(allow_blank=True, allow_null=True)
     source = serializers.CharField(max_length=256, allow_blank=True, allow_null=True)
     share_submission = serializers.BooleanField()
+    bank = serializers.BooleanField()
 
 
 class TestCaseTextSerializer(serializers.Serializer):
