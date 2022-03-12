@@ -290,6 +290,54 @@
             </div>
           </b-form-group>
         </b-col>
+        <b-col cols="12">
+          <b-form-group>
+            <template #label>
+              <p class="labels" style="margin-top:16px">
+                Problem Bank
+              </p>
+            </template>
+            <div>
+              <div
+                v-for="(range, index) in contest.bank_filter"
+                :key="index"
+              >
+                <b-row style="margin-bottom: 15px">
+                  <b-col cols="3">
+                    <b-form-select
+                      v-model="range.level"
+                      :options="levelOptions"
+                    />
+                  </b-col>
+                  <b-col cols="3">
+                    <b-form-select
+                      v-model="range.tag"
+                      :options="problemTagList"
+                    />
+                  </b-col>
+                  <p style="font-size: 25px">X</p>
+                  <b-col cols="2">
+                    <b-form-input
+                      v-model="range.count"
+                      placeholder="the number of this problems"
+                      type="number"
+                    />
+                  </b-col>
+                  <b-col cols="1">
+                    <b-button @click="removeBankFilter(range)" variant="outline-secondary">
+                        <b-icon icon="trash-fill"></b-icon>
+                    </b-button>
+                  </b-col>
+                </b-row>
+              </div>
+              <b-col cols="1">
+                <b-button @click="addBankFilter" variant="outline-secondary">
+                    <b-icon icon="plus"></b-icon>
+                </b-button>
+              </b-col>
+            </div>
+          </b-form-group>
+        </b-col>
       </b-row>
       <save @click.native="saveContest" />
     </Panel>
@@ -333,13 +381,32 @@ export default {
         visible: true,
         allowed_ip_ranges: [{
           value: ''
-        }]
+        }],
+        is_bank_filter: false,
+        bank_filter: [
+          // {
+          //   level: null,
+          //   tag: '',
+          //   count: 0
+          // }
+        ]
       },
       groupOptions: [],
       startTime: '',
       startDate: '',
       endTime: '',
-      endDate: ''
+      endDate: '',
+      levelOptions: [
+        { value: null, text: 'Select Please', disabled: true },
+        'Level1',
+        'Level2',
+        'Level3',
+        'Level4',
+        'Level5',
+        'Level6',
+        'Level7'
+      ],
+      problemTagList: []
     }
   },
   async mounted () {
@@ -402,6 +469,7 @@ export default {
       } catch (err) {
       }
     }
+    await this.getProblemTagList()
   },
   methods: {
     async saveContest () {
@@ -492,6 +560,25 @@ export default {
       const index = this.contest.prizes.indexOf(range)
       if (index !== -1 && this.contest.prizes.length !== 1) {
         this.contest.prizes.splice(index, 1)
+      }
+    },
+    async getProblemTagList () {
+      const response = await api.getProblemTagList()
+      for (const tag of response.data.data) {
+        this.problemTagList.push(tag.name)
+      }
+    },
+    addBankFilter () {
+      this.contest.bank_filter.push({
+        level: null,
+        tag: '',
+        count: 0
+      })
+    },
+    removeBankFilter (range) {
+      const index = this.contest.bank_filter.indexOf(range)
+      if (index !== -1) {
+        this.contest.bank_filter.splice(index, 1)
       }
     }
   }
