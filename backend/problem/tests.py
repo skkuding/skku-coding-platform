@@ -31,7 +31,7 @@ DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test
                                              "input_size": 0, "score": 0}],
                         "io_mode": {"io_mode": ProblemIOMode.standard, "input": "input.txt", "output": "output.txt"},
                         "share_submission": False,
-                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
+                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test", "bank": False}
 
 
 class ProblemCreateTestBase(APITestCase):
@@ -277,6 +277,7 @@ class BankProblemAPITest(ProblemCreateTestBase):
         contest = self.client.post(self.reverse("contest_admin_api"), data=contest_data).data["data"]
         # create problems
         problem_data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        problem_data["bank"] = True
         self.add_problem(problem_data, admin)
         problem_data["difficulty"] = "Level2"
         self.add_problem(problem_data, admin)
