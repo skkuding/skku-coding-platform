@@ -10,7 +10,7 @@ from options.options import SysOptions
 # from judge.dispatcher import JudgeDispatcher
 from problem.models import Problem, ProblemRuleType
 from account.models import User, AdminType
-from utils.api import APIView, validate_serializer
+from utils.api import APIView, validate_serializer, CSRFExemptAPIView
 from utils.constants import AssignmentStatus
 from utils.cache import cache
 from utils.captcha import Captcha
@@ -22,7 +22,7 @@ from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
                           SubmissionListProfessorSerializer, EditSubmissionScoreSerializer)
 
 
-class SubmissionAPI(APIView):
+class SubmissionAPI(CSRFExemptAPIView):
     def throttling(self, request):
         user_bucket = TokenBucket(key=str(request.user.id),
                                   redis_conn=cache, **SysOptions.throttling["user"])
@@ -49,7 +49,7 @@ class SubmissionAPI(APIView):
 
     @swagger_auto_schema(request_body=CreateSubmissionSerializer)
     @validate_serializer(CreateSubmissionSerializer)
-    @login_required
+    # @login_required
     def post(self, request):
         data = request.data
         hide_id = False
@@ -61,35 +61,34 @@ class SubmissionAPI(APIView):
             if not contest.problem_details_permission(request.user):
                 hide_id = True
 
-        if data.get("assignment_id"):
-            error = self.check_assignment_permission(request)
-            if error:
-                return error
+        # if data.get("assignment_id"):
+        #     error = self.check_assignment_permission(request)
+        #     if error:
+        #         return error
             # assignment = self.assignment
             # if not assignment.problem_details_permission(request.user):
             #     hide_id = True
 
-        if data.get("captcha"):
-            if not Captcha(request).check(data["captcha"]):
-                return self.error("Invalid captcha")
-        error = self.throttling(request)
-        if error:
-            return self.error(error)
+        # if data.get("captcha"):
+        #     if not Captcha(request).check(data["captcha"]):
+        #         return self.error("Invalid captcha")
+        # error = self.throttling(request)
+        # if error:
+        #     return self.error(error)
 
         try:
-            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), assignment_id=data.get("assignment_id"), visible=True)
+            problem = Problem.objects.get(id=data["problem_id"], contest_id=data.get("contest_id"), visible=True)
         except Problem.DoesNotExist:
             return self.error("Problem not exist")
         if data["language"] not in problem.languages:
             return self.error(f"{data['language']} is now allowed in the problem")
-        submission = Submission.objects.create(user_id=request.user.id,
-                                               username=request.user.username,
+        submission = Submission.objects.create(user_id=1,
+                                               username="root",
                                                language=data["language"],
                                                code=data["code"],
                                                problem_id=problem.id,
-                                               ip=request.session["ip"],
-                                               contest_id=data.get("contest_id"),
-                                               assignment_id=data.get("assignment_id"))
+                                               ip="0.0.0.0",
+                                               contest_id=data.get("contest_id"))
         # use this for debug
         # JudgeDispatcher(submission.id, problem.id).judge()
         judge_task.send(submission.id, problem.id)
