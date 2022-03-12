@@ -20,7 +20,7 @@ DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test
                                              "input_size": 0, "score": 0}],
                         "io_mode": {"io_mode": ProblemIOMode.standard, "input": "input.txt", "output": "output.txt"},
                         "share_submission": False,
-                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test"}
+                        "rule_type": "ACM", "hint": "<p>test</p>", "source": "test", "bank": False}
 
 DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description",
                         "requirements": ["SKKU undergrate enrolled 2021 Spring"],
@@ -230,6 +230,7 @@ class ContestAnnouncementListAPITest(APITestCase):
 class ProblemBankAPITest(APITestCase):
     def create_problems(self):
         problem_data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        problem_data["bank"] = True
         url = self.reverse("problem_admin_api")
         self.client.post(url, data=problem_data)
         problem_data["_id"] = "A-111"
@@ -242,12 +243,13 @@ class ProblemBankAPITest(APITestCase):
         self.create_super_admin()
         # create problembank contest
         contest_data = copy.deepcopy(DEFAULT_CONTEST_DATA)
+        contest_data["password"] = ""
         contest_data["bank_filter"] = [{"level": "Level1", "tag": "", "count": 1}, {"level": "Level2", "tag": "", "count": 1}]
         contest = self.client.post(self.reverse("contest_admin_api"), data=contest_data).data["data"]
 
         self.create_problems()
 
-        #self.create_user("2018123123", "123123")
+        self.create_user("2018123123", "123123")
         url = self.reverse("contest_bank_api")
         response = self.client.post(url, data={"contest_id": contest["id"]})
         self.assertSuccess(response)
