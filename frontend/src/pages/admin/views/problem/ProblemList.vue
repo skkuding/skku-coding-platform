@@ -25,6 +25,9 @@
             @keyup.enter.native="handleInlineEdit(row.item)"
           />
         </template>
+        <template #cell(is_bank)="row">
+          <span v-show="row.item.bank">🏦</span>
+        </template>
         <template #cell(edit-title)="row">
           <span v-show="!row.item.isEditing">{{ row.item.title }}</span>
           <b-form-input
@@ -152,6 +155,7 @@ export default {
       fields: [
         { key: 'id', label: 'ID', tdClass: 'problemListTable' },
         { key: 'edit-id', label: 'Display ID', tdClass: 'problemListTable' },
+        { key: 'is_bank', label: 'Bank', tdClass: 'problemListTable' },
         { key: 'edit-title', label: 'Title', tdClass: 'problemListTable' },
         { key: 'created_by.username', label: 'Author', tdClass: 'problemListTable' },
         { key: 'create-time', label: 'Create Time', tdClass: 'problemListTable' },
