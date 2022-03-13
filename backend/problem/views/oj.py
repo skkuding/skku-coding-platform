@@ -80,7 +80,7 @@ class ProblemAPI(APIView):
         if problem_id:
             try:
                 problem = Problem.objects.select_related("created_by") \
-                    .get(_id=problem_id, contest_id__isnull=True, assignment_id__isnull=True, visible=True)
+                    .get(_id=problem_id, contest_id__isnull=True, assignment_id__isnull=True, visible=True, bank=False)
                 problem_data = ProblemSerializer(problem).data
                 self._add_problem_status(request, problem_data)
                 return self.success(problem_data)
@@ -91,7 +91,7 @@ class ProblemAPI(APIView):
         if not limit:
             return self.error("Limit is needed")
 
-        problems = Problem.objects.select_related("created_by").filter(contest_id__isnull=True, assignment_id__isnull=True, visible=True)
+        problems = Problem.objects.select_related("created_by").filter(contest_id__isnull=True, assignment_id__isnull=True, visible=True, bank=False)
         # filter by label
         tag_text = request.GET.get("tag")
         if tag_text:
