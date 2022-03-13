@@ -333,6 +333,13 @@ export default {
         contest_id: contestID
       }
     })
+  },
+  getProblemBankParticipation (contestID) {
+    return ajax('contest/bank/', 'get', {
+      params: {
+        contest_id: contestID
+      }
+    })
   }
 }
 

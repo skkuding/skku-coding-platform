@@ -95,13 +95,19 @@ export default {
   methods: {
     async getContestProblems () {
       try {
-        var res
-        if (!this.contest.is_bank) {
-          res = await this.$store.dispatch('getContestProblems')
-        } else {
-          res = await this.$store.dispatch('getProblemBankContestProblems')
+        const res = await api.getProblemBankParticipation(this.contestID)
+        if (!res.data.data) {
+          // not participating now
+          return
         }
-        const data = res.data.data
+
+        var res2
+        if (!this.contest.is_bank) {
+          res2 = await this.$store.dispatch('getContestProblems')
+        } else {
+          res2 = await this.$store.dispatch('getProblemBankContestProblems')
+        }
+        const data = res2.data.data
         this.contestProblems = data
         this.total = this.contestProblems.length
       } catch (err) {
