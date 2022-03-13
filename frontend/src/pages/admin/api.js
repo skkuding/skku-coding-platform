@@ -352,6 +352,14 @@ export default {
   },
   getProblemLevelCount () {
     return ajax('admin/problem_level_count/')
+  },
+  getProblemBankContestProblem (contestID, problemID) {
+    return ajax('bank/problem/', 'get', {
+      params: {
+        problem_id: problemID,
+        contest_id: contestID
+      }
+    })
   }
 }
 
