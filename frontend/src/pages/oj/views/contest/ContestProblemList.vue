@@ -1,32 +1,35 @@
 <template>
   <div class="contest-problem-list-card font-bold">
-    <Table
-      hover
-      :items="contestProblems"
-      :fields="contestProblemListFields"
-      :per-page="perPage"
-      :current-page="currentPage"
-      @row-clicked="goContestProblem"
-    >
-      <template v-slot:_id="data">
-        {{data.row._id}}
-      </template>
-      <template v-slot:title="data">
-        {{data.row.title}}
-        <b-icon
-          icon="check2-circle"
-          style="color: #8DC63F;"
-          font-scale="1.2"
-          v-if="data.row.my_status===0"></b-icon>
-      </template>
-    </Table>
-    <div class="pagination">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="contestProblems.length"
+    <b-button v-if="showProblemBankStartBtn" @click="startProblemBankContest(contest)" style="width:100%">Start Contest</b-button>
+    <div v-else>
+      <Table
+        hover
+        :items="contestProblems"
+        :fields="contestProblemListFields"
         :per-page="perPage"
-        limit="3"
-      ></b-pagination>
+        :current-page="currentPage"
+        @row-clicked="goContestProblem"
+      >
+        <template v-slot:_id="data">
+          {{data.row._id}}
+        </template>
+        <template v-slot:title="data">
+          {{data.row.title}}
+          <b-icon
+            icon="check2-circle"
+            style="color: #8DC63F;"
+            font-scale="1.2"
+            v-if="data.row.my_status===0"></b-icon>
+        </template>
+      </Table>
+      <div class="pagination">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="contestProblems.length"
+          :per-page="perPage"
+          limit="3"
+        ></b-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -36,6 +39,7 @@ import { mapState, mapActions } from 'vuex'
 import { types } from '@/store'
 import { ProblemMixin } from '@oj/components/mixins'
 import Table from '@oj/components/Table.vue'
+import api from '@oj/api'
 
 export default {
   name: 'ContestProblemList',
@@ -79,7 +83,6 @@ export default {
   async mounted () {
     this.contestID = this.$route.params.contestID
     this.route_name = this.$route.name
-    this.getContestProblems()
     try {
       const res = await this.$store.dispatch('getContest')
       this.changeDomTitle({ title: res.data.data.title })
@@ -87,11 +90,17 @@ export default {
       this.contest = data
     } catch (err) {
     }
+    this.getContestProblems()
   },
   methods: {
     async getContestProblems () {
       try {
-        const res = await this.$store.dispatch('getContestProblems')
+        var res
+        if (!this.contest.is_bank) {
+          res = await this.$store.dispatch('getContestProblems')
+        } else {
+          res = await api.getProblemBankContestProblem(this.contest.id)
+        }
         const data = res.data.data
         this.contestProblems = data
         this.total = this.contestProblems.length
@@ -103,13 +112,18 @@ export default {
         name: 'contest-problem-details',
         params: {
           contestID: this.$route.params.contestID,
-          problemID: row._id
+          problemID: row._id,
+          bank: this.contest.is_bank
         }
       })
     },
     ...mapActions(['changeDomTitle']),
     async handleRoute (route) {
       await this.$router.push(route)
+    },
+    async startProblemBankContest (item) {
+      await api.startProblemBankContest(item.id)
+      await this.getContestProblems()
     }
   },
   computed: {
@@ -117,7 +131,10 @@ export default {
       contest: state => state.contest.contest,
       problems: state => state.contest.contestProblems,
       now: state => state.contest.now
-    })
+    }),
+    showProblemBankStartBtn () {
+      return this.contest.is_bank && !this.total
+    }
   },
   watch: {
     '$route' (newVal) {
