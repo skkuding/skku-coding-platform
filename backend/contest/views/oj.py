@@ -262,3 +262,19 @@ class ProblemBankAPI(APIView):
         problem_bank.problem_list = json.dumps(problem_list)
         problem_bank.save()
         return self.success()
+
+    @login_required
+    @check_contest_permission(check_type="problems")
+    def get(self, request):
+        # Contest 참가하는지 확인 -> ProblemBank Get
+        data = request.data
+        try:
+            contest = Contest.objects.get(id=data["contest_id"])
+        except Contest.DoesNotExist:
+            return self.error("Contest Does not exist")
+
+        try:
+            problem_bank = ProblemBank.objects.get(contest=contest, user=request.user)
+        except ProblemBank.DoesNotExist:
+            return self.success()
+        return self.success(problem_bank)
