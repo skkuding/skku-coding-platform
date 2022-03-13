@@ -315,13 +315,17 @@
                       :options="problemTagList"
                     />
                   </b-col>
-                  <p style="font-size: 25px">X</p>
-                  <b-col cols="2">
-                    <b-form-input
-                      v-model="range.count"
-                      placeholder="the number of this problems"
-                      type="number"
-                    />
+                  <b-col cols="3">
+                    <div class="d-flex">
+                      <p style="font-size: 20px; margin-right:5px; padding: 0.275rem 0.1rem">X</p>
+                      <b-form-input
+                        v-model="range.count"
+                        placeholder="the number of this problems"
+                        type="number"
+                        style="max-width:60px"
+                      />
+                      <p style="font-size: 20px; margin-left:5px; padding: 0.275rem 0.1rem">/ {{ problemLevelCount[range.level] || 0 }}</p>
+                    </div>
                   </b-col>
                   <b-col cols="1">
                     <b-button @click="removeBankFilter(range)" variant="outline-secondary">
@@ -385,7 +389,7 @@ export default {
         is_bank_filter: false,
         bank_filter: [
           // {
-          //   level: null,
+          //   level: "unselected",
           //   tag: '',
           //   count: 0
           // }
@@ -406,7 +410,13 @@ export default {
         'Level6',
         'Level7'
       ],
-      problemTagList: []
+      problemTagList: [],
+      problemLevelCount: {
+        // "null": 0,
+        // "Level1": 1,
+        // "Level2": 3,
+        // "Level5": 2,
+      }
     }
   },
   async mounted () {
@@ -470,6 +480,7 @@ export default {
       }
     }
     await this.getProblemTagList()
+    await this.getProblemLevelCount()
   },
   methods: {
     async saveContest () {
@@ -567,6 +578,12 @@ export default {
       for (const tag of response.data.data) {
         this.problemTagList.push(tag.name)
       }
+    },
+    async getProblemLevelCount () {
+      const response = await api.getProblemLevelCount()
+      const data = response.data.data
+      data.unselected = 0
+      this.problemLevelCount = data
     },
     addBankFilter () {
       this.contest.bank_filter.push({

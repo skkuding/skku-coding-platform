@@ -349,6 +349,9 @@ export default {
   },
   getGroupList () {
     return ajax('admin/group/', 'get')
+  },
+  getProblemLevelCount () {
+    return ajax('admin/problem_level_count/')
   }
 }
 
