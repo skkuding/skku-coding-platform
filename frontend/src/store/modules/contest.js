@@ -21,7 +21,6 @@ const state = {
 }
 
 const getters = {
-  // contest 是否加载完成
   contestLoaded: (state) => {
     return !!state.contest.status
   },
@@ -155,6 +154,26 @@ const actions = {
   async getContestProblems ({ commit, rootState }) {
     try {
       const res = await api.getContestProblemList(rootState.route.params.contestID)
+      res.data.data.sort((a, b) => {
+        const aId = isNaN(a._id) ? a._id : a._id * 1
+        const bId = isNaN(b._id) ? b._id : b._id * 1
+        if (aId === bId) {
+          return 0
+        } else if (aId > bId) {
+          return 1
+        }
+        return -1
+      })
+      commit(types.CHANGE_CONTEST_PROBLEMS, { contestProblems: res.data.data })
+      return res
+    } catch (err) {
+      commit(types.CHANGE_CONTEST_PROBLEMS, { contestProblems: [] })
+      throw err
+    }
+  },
+  async getProblemBankContestProblems ({ commit, rootState }) {
+    try {
+      const res = await api.getProblemBankContestProblem(rootState.route.params.contestID)
       res.data.data.sort((a, b) => {
         const aId = isNaN(a._id) ? a._id : a._id * 1
         const bId = isNaN(b._id) ? b._id : b._id * 1

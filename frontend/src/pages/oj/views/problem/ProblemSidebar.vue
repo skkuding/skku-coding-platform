@@ -243,7 +243,12 @@ export default {
     CodeMirror,
     Table
   },
-  props: ['hide', 'contestID', 'problemID'],
+  props: {
+    hide: Boolean,
+    contestID: Number,
+    problemID: Number,
+    bank: Boolean
+  },
   data () {
     return {
       assignmentID: '',
@@ -307,7 +312,7 @@ export default {
       this.assignmentID = this.$route.params.assignmentID
       await this.getCourseAssignmentProblemList()
     }
-    if (this.$route.params.contestID || this.$route.params.assignmentID) {
+    if ((this.$route.params.contestID && !this.bank) || this.$route.params.assignmentID) {
       this.submission_table_fields.unshift({ key: 'Problem' })
       this.submission_info_table_fields.unshift({ label: 'Problem', key: 'problem' })
     }
@@ -315,7 +320,12 @@ export default {
   },
   methods: {
     async getContestProblems () {
-      const res = await this.$store.dispatch('getContestProblems')
+      let res
+      if (!this.bank) {
+        res = await this.$store.dispatch('getContestProblems')
+      } else {
+        res = await this.$store.dispatch('getProblemBankContestProblems')
+      }
       if (this.isAuthenticated) {
         if (this.contestRuleType === 'ACM') {
           this.addStatusColumn(this.ACMTableColumns, res.data.data)
@@ -381,11 +391,12 @@ export default {
       params.problem_id = this.problemID
       params.assignment_id = this.assignmentID
       var func
-      if (this.contestID) {
+      if (this.contestID && !this.bank) {
         func = 'getContestSubmissionList'
       } else if (this.assignmentID) {
         func = 'getAssignmentSubmissionList'
       } else {
+        delete params.contest_id // Problem Bank specified action
         func = 'getSubmissionList'
       }
 

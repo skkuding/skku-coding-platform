@@ -99,7 +99,7 @@ export default {
         if (!this.contest.is_bank) {
           res = await this.$store.dispatch('getContestProblems')
         } else {
-          res = await api.getProblemBankContestProblem(this.contest.id)
+          res = await this.$store.dispatch('getProblemBankContestProblems')
         }
         const data = res.data.data
         this.contestProblems = data
