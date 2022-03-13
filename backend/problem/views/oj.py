@@ -183,10 +183,10 @@ class BankProblemAPI(APIView):
 
         problem_id = request.GET.get("problem_id")
         if problem_id:
-            if problem_id not in bank_problem_ids:
+            if int(problem_id) not in bank_problem_ids:
                 return self.error("This problem is not allocated to you")
             try:
-                problem = Problem.objects.selected_related("created_by") \
+                problem = Problem.objects.select_related("created_by") \
                     .get(_id=problem_id, contest_id__isnull=True, assignment_id__isnull=True)
                 data = BankProblemSerializer(problem).data
                 return self.success(data)
