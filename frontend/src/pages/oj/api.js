@@ -318,6 +318,21 @@ export default {
   getGroupList () {
     return ajax('group/', 'get', {
     })
+  },
+  startProblemBankContest (contestID) {
+    return ajax('contest/bank/', 'post', {
+      data: {
+        contest_id: contestID
+      }
+    })
+  },
+  getProblemBankContestProblem (contestID, problemID) {
+    return ajax('bank/problem/', 'get', {
+      params: {
+        problem_id: problemID,
+        contest_id: contestID
+      }
+    })
   }
 }
 
