@@ -276,5 +276,5 @@ class ProblemBankAPI(APIView):
         try:
             problem_bank = ProblemBank.objects.get(contest=contest, user=request.user)
         except ProblemBank.DoesNotExist:
-            return self.success()
-        return self.success(problem_bank)
+            return self.success(False)
+        return self.success(True)
