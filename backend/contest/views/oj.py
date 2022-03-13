@@ -253,8 +253,7 @@ class ProblemBankAPI(APIView):
         problem_list = []
 
         for data in bank_filter:
-            problems = list(Problem.objects.filter(difficulty=data["level"], bank=True) \
-                .values_list("id", flat=True))
+            problems = list(Problem.objects.filter(difficulty=data["level"], bank=True).values_list("id", flat=True))
             random_problems = random.sample(problems, data["count"])
             problem_list.extend(random_problems)
 
@@ -274,7 +273,7 @@ class ProblemBankAPI(APIView):
             return self.error("Contest Does not exist")
 
         try:
-            problem_bank = ProblemBank.objects.get(contest=contest, user=request.user)
+            ProblemBank.objects.get(contest=contest, user=request.user)
         except ProblemBank.DoesNotExist:
             return self.success(False)
         return self.success(True)
