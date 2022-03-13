@@ -124,26 +124,6 @@
       </b-row>
 
       <b-row>
-        <b-col cols="2">
-          <p class="labels">
-            Visible
-          </p>
-          <b-form-checkbox
-            v-model="problem.visible"
-            switch
-          >
-          </b-form-checkbox>
-        </b-col>
-        <b-col cols="2">
-          <p class="labels">
-            Share Submission
-          </p>
-          <b-form-checkbox
-            v-model="problem.share_submission"
-            switch
-          >
-          </b-form-checkbox>
-        </b-col>
         <b-col cols="4">
           <p class="labels">
             <span class="text-danger">*</span> Tag
@@ -194,7 +174,39 @@
             </b-form-tags>
           </div>
         </b-col>
+        <b-col cols="2">
+          <p class="labels">
+            Visible
+          </p>
+          <b-form-checkbox
+            v-model="problem.visible"
+            switch
+          >
+          </b-form-checkbox>
+        </b-col>
+        <b-col cols="2">
+          <p class="labels">
+            Share Submission
+          </p>
+          <b-form-checkbox
+            v-model="problem.share_submission"
+            switch
+          >
+          </b-form-checkbox>
+        </b-col>
         <b-col cols="4">
+          <p class="labels">
+            Include in problem bank pool
+          </p>
+          <b-form-checkbox
+            v-model="problem.bank"
+            switch
+          >
+          </b-form-checkbox>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="12">
           <b-form-group>
             <template v-slot:label>
               <p class="labels">
@@ -219,7 +231,6 @@
           </b-form-group>
         </b-col>
       </b-row>
-
       <div>
         <b-form-group v-for="(sample, index) in problem.samples" :key="'sample'+index">
           <Accordion :title="'Sample' + (index + 1)">
@@ -497,6 +508,7 @@ export default {
       textsizeOver50mb: true,
       allLanguage: {},
       inputVisible: false,
+      bank: false,
       tagInput: '',
       problemTagList: [],
       template: {},
@@ -548,6 +560,7 @@ export default {
       difficulty: 'Level1',
       visible: true,
       share_submission: false,
+      bank: false,
       tags: [],
       languages: [],
       template: {},
