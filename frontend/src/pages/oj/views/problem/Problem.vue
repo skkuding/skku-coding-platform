@@ -23,7 +23,7 @@
             <b-icon icon="chevron-right" />
           </b-nav-item>
           <b-nav-item :to="'/contest/' + this.contestID">{{
-            problem.contest_name
+            problem.contest_name || contest.title /* problem bank일 경우 contest_name이 없음 */
           }}</b-nav-item>
           <b-nav-item>
             <b-icon icon="chevron-right" />
@@ -303,6 +303,8 @@
             :hide="hide"
             :contestID="contestID"
             :problemID="problemID"
+            :bank="bank"
+            v-if="renderSidebar"
           />
         </template>
       </b-sidebar>
@@ -351,6 +353,8 @@ export default {
       contestID: '',
       problemID: '',
       courseID: '',
+      bank: false,
+      renderSidebar: false,
       assignmentID: '',
       assignment_name: '',
       submitting: false,
@@ -432,7 +436,13 @@ export default {
       var res
 
       if (route === 'contest-problem-details') {
-        res = await api.getContestProblem(this.problemID, this.contestID)
+        const res2 = await api.getContest(this.contestID)
+        this.bank = res2.data.data.is_bank
+        if (!this.bank) {
+          res = await api.getContestProblem(this.problemID, this.contestID)
+        } else {
+          res = await api.getProblemBankContestProblem(this.contestID, this.problemID)
+        }
       } else if (route === 'lecture-assignment-problem-details') {
         res = await api.getCourseAssignmentProblem(
           this.assignmentID,
@@ -441,6 +451,7 @@ export default {
       } else {
         res = await api.getProblem(this.problemID)
       }
+      this.renderSidebar = true
 
       const problem = res.data.data
       this.changeDomTitle({ title: problem.title })
@@ -494,7 +505,12 @@ export default {
       }
     },
     async getContestProblems () {
-      const res = await this.$store.dispatch('getContestProblems')
+      let res
+      if (!this.bank) {
+        res = await this.$store.dispatch('getContestProblems')
+      } else {
+        res = await this.$store.dispatch('getProblemBankContestProblems')
+      }
       if (this.isAuthenticated) {
         if (
           this.contestRuleType === 'ACM' ||
@@ -605,6 +621,9 @@ export default {
         code: this.code,
         contest_id: this.contestID,
         assignment_id: this.assignmentID
+      }
+      if (this.bank) {
+        delete data.contest_id
       }
       if (this.captchaRequired) {
         data.captcha = this.captchaCode
