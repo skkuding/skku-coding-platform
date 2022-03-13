@@ -23,7 +23,7 @@
             <b-icon icon="chevron-right" />
           </b-nav-item>
           <b-nav-item :to="'/contest/' + this.contestID">{{
-            problem.contest_name || contest.title /* problem bank일 경우 contest_name이 없음 */
+            problem.contest_name || this.contest_title /* problem bank일 경우 contest_name이 없음 */
           }}</b-nav-item>
           <b-nav-item>
             <b-icon icon="chevron-right" />
@@ -438,6 +438,7 @@ export default {
       if (route === 'contest-problem-details') {
         const res2 = await api.getContest(this.contestID)
         this.bank = res2.data.data.is_bank
+        this.contest_title = res2.data.data.title
         if (!this.bank) {
           res = await api.getContestProblem(this.problemID, this.contestID)
         } else {
