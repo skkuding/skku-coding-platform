@@ -206,7 +206,8 @@ export default {
       },
       announcementDialogTitle: 'Edit Announcement',
       currentPage: 0,
-      problemOption: []
+      problemOption: [],
+      bank: false
     }
   },
   watch: {
@@ -220,6 +221,10 @@ export default {
   methods: {
     async init () {
       this.contestID = this.$route.params.contestId
+      const res = await api.getContest(this.contestID)
+      if (res.data.data.is_bank === true) {
+        this.bank = true
+      }
       if (this.contestID) {
         await this.getContestAnnouncementList()
       } else {
@@ -307,17 +312,27 @@ export default {
       }
     },
     async getProblemOption () {
-      const res = await api.getContestProblemList({
-        contest_id: this.contestID,
-        limit: 100,
-        offset: 0
-      })
-      this.problemOption = res.data.data.results.map(item => {
+      const data = this.bank
+        ? await this.getProblemBankContestProblem()
+        : await this.getContestProblemList()
+      this.problemOption = data.map(item => {
         return {
           value: item.id,
           text: item._id + ' ' + item.title
         }
       })
+    },
+    async getProblemBankContestProblem () {
+      const res = await api.getProblemBankContestProblem(this.contestID)
+      return res.data.data
+    },
+    async getContestProblemList () {
+      const res = await api.getContestProblemList({
+        contest_id: this.contestID,
+        limit: 100,
+        offset: 0
+      })
+      return res.data.data.results
     },
     async openAnnouncementDialog (id) {
       this.showEditAnnouncementDialog = true
