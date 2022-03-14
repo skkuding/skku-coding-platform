@@ -27,7 +27,7 @@
             <div class="w-80">{{data.row.title}}</div>
           </template>
           <template v-slot:create_time="data">
-            {{ getTimeFormat(data.row.create_time, 'MMM D, YYYY') }}
+            <span class="whitespace-nowrap">{{ getTimeFormat(data.row.create_time, 'MMM D, YYYY') }}</span>
           </template>
         </Table>
       </b-card>
@@ -56,7 +56,7 @@
             <div class="w-80">{{ data.row.title }}</div>
           </template>
           <template v-slot:start_time="data" class="text-right">
-            {{ getTimeFormat(data.row.start_time, "MMM D, YYYY") }}
+            <span class="whitespace-nowrap">{{ getTimeFormat(data.row.start_time, "MMM D, YYYY") }}</span>
           </template>
         </Table>
       </b-card>
@@ -222,6 +222,7 @@ export default {
     margin-bottom: 30px;
     height: 255px;
     width: 45%;
+    min-width: 600px;
     &-table {
       cursor: pointer;
       :hover {
@@ -250,7 +251,7 @@ export default {
     }
   }
 
-  @media screen and (max-width: 1016px) {
+  @media screen and (max-width: 1300px) {
     .post-card {
       width:80%;
       margin-top: 40px;
