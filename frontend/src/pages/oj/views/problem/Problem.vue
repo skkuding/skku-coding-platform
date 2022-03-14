@@ -453,6 +453,7 @@ export default {
       const problemInfo = {}
       this.$set(problemInfo, 'time_limit', problem.time_limit + ' ms')
       this.$set(problemInfo, 'memory_limit', problem.memory_limit + ' MB')
+      this.problemInfo.pop()
       this.problemInfo.push(problemInfo)
 
       let precode = storage.get(buildProblemCodeKey(this.problemID, this.contestID))
