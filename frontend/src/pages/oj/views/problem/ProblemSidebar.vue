@@ -320,12 +320,7 @@ export default {
   },
   methods: {
     async getContestProblems () {
-      let res
-      if (!this.bank) {
-        res = await this.$store.dispatch('getContestProblems')
-      } else {
-        res = await this.$store.dispatch('getProblemBankContestProblems')
-      }
+      const res = await this.$store.dispatch(this.bank ? 'getProblemBankContestProblems': 'getContestProblems')
       if (this.isAuthenticated) {
         if (this.contestRuleType === 'ACM') {
           this.addStatusColumn(this.ACMTableColumns, res.data.data)
