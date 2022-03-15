@@ -317,14 +317,14 @@
                 </b-col>
                 <b-col cols="3">
                   <div class="d-flex">
-                    <p class="bank-filter__count">X</p>
+                    <span class="bank-filter__count">X</span>
                     <b-form-input
                       v-model="range.count"
                       placeholder="the number of this problems"
                       type="number"
                       style="max-width:60px"
                     />
-                    <p class="bank-filter__count">/ {{ problemLevelCount[range.level] || 0 }}</p>
+                    <span class="bank-filter__count">/ {{ problemLevelCount[range.level] || 0 }}</span>
                   </div>
                 </b-col>
                 <b-col cols="1">
@@ -399,7 +399,7 @@ export default {
       endTime: '',
       endDate: '',
       levelOptions: [
-        { value: null, text: 'Select Please', disabled: true },
+        { value: 'unselected', text: 'Select Please', disabled: true },
         'Level1',
         'Level2',
         'Level3',
@@ -409,7 +409,7 @@ export default {
         'Level7'
       ],
       problemTagList: [
-        { value: null, text: 'Select Please', disabled: true }
+        { value: 'unselected', text: 'Select Please', disabled: true }
         // TODO: Problem Tag List should be made
       ],
       problemLevelCount: {
