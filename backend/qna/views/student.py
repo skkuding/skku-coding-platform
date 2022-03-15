@@ -42,9 +42,11 @@ class QuestionAPI(APIView):
         data = request.data
         try:
             question = Question.objects.get(id=data.pop("id"))
-            ensure_created_by(question, request.user)
         except Question.DoesNotExist:
             return self.error("Question does not exist")
+
+        if not request.user.is_question_admin(question):
+            return self.error("No permission for this action")
 
         for k, v in data.items():
             setattr(question, k, v)
@@ -131,7 +133,7 @@ class AnswerAPI(APIView):
         try:
             question = Question.objects.get(id=data.pop("question_id"))
             if not question.is_open:
-                self.error("You cannot answer resolved question")
+                return self.error("You cannot answer resolved question")
             data["question"] = question
             data["created_by"] = request.user
         except Question.DoesNotExist:
