@@ -316,9 +316,9 @@ export default {
         ? await this.getProblemBankContestProblem()
         : await this.getContestProblemList()
       this.problemOption = data.map(item => ({
-          value: item.id,
-          text: item._id + ' ' + item.title
-        })
+        value: item.id,
+        text: item._id + ' ' + item.title
+      })
       )
     },
     async getProblemBankContestProblem () {

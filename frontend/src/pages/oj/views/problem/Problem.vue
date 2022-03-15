@@ -506,7 +506,7 @@ export default {
       }
     },
     async getContestProblems () {
-      const res = await this.$store.dispatch(this.bank ? 'getProblemBankContestProblems': 'getContestProblems')
+      const res = await this.$store.dispatch(this.bank ? 'getProblemBankContestProblems' : 'getContestProblems')
       if (this.isAuthenticated) {
         if (
           this.contestRuleType === 'ACM' ||

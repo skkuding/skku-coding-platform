@@ -101,7 +101,7 @@ export default {
           return
         }
         this.contestProblems = await this.$store.dispatch(
-          this.contest.is_bank ? 'getProblemBankContestProblems': 'getContestProblems'
+          this.contest.is_bank ? 'getProblemBankContestProblems' : 'getContestProblems'
         ).then((x) => x.data.data)
         this.total = this.contestProblems.length
       } catch (err) {
