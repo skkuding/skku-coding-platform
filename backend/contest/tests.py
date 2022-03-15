@@ -52,9 +52,8 @@ class ContestAdminAPITest(APITestCase):
         return response
 
     def test_create_contest_with_bank_filter(self):
-        data = copy.deepcopy(DEFAULT_CONTEST_DATA)
-        data["bank_filter"] = [{"level": "Level1", "tag": "", "count": 1}, {"level": "Level2", "tag": "", "count": 3}]
-        response = self.client.post(self.url, data=data)
+        self.data["bank_filter"] = [{"level": "Level1", "tag": "", "count": 1}, {"level": "Level2", "tag": "", "count": 3}]
+        response = self.client.post(self.url, data=self.data)
         self.assertSuccess(response)
         return response
 
