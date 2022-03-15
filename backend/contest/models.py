@@ -33,9 +33,7 @@ class Contest(models.Model):
 
     @property
     def is_bank(self):
-        if self.bank_filter:
-            return True
-        return False
+        return True if self.bank_filter else False
 
     @property
     def status(self):
