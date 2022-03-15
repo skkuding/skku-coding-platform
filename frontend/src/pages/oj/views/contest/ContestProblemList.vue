@@ -100,15 +100,9 @@ export default {
           // not participating now
           return
         }
-
-        var res2
-        if (!this.contest.is_bank) {
-          res2 = await this.$store.dispatch('getContestProblems')
-        } else {
-          res2 = await this.$store.dispatch('getProblemBankContestProblems')
-        }
-        const data = res2.data.data
-        this.contestProblems = data
+        this.contestProblems = await this.$store.dispatch(
+          this.contest.is_bank ? 'getProblemBankContestProblems': 'getContestProblems'
+        ).then((x) => x.data.data)
         this.total = this.contestProblems.length
       } catch (err) {
       }
