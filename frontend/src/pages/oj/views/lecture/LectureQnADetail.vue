@@ -193,11 +193,8 @@ export default {
       this.question = res.data.data
       this.editQuestionContent = this.question.content
       this.editQuestionTitle = this.question.title
-      console.log(this.question.created_by.username)
-      console.log(this.user.username)
     },
     async showEditQuestion () {
-      // const localtime = moment().format()
       const data = {
         id: this.question.id,
         title: this.question.title,
@@ -250,7 +247,6 @@ export default {
           if (id === ans.id) { return ans }
         })
         this.editAnswer = JSON.parse(JSON.stringify(newans))
-        console.log(this.editAnswer)
       } else {
         this.showEditAnswerDialog = false
       }
