@@ -315,12 +315,11 @@ export default {
       const data = this.bank
         ? await this.getProblemBankContestProblem()
         : await this.getContestProblemList()
-      this.problemOption = data.map(item => {
-        return {
+      this.problemOption = data.map(item => ({
           value: item.id,
           text: item._id + ' ' + item.title
-        }
-      })
+        })
+      )
     },
     async getProblemBankContestProblem () {
       const res = await api.getProblemBankContestProblem(this.contestID)
