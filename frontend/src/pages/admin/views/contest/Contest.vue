@@ -298,42 +298,41 @@
               </p>
             </template>
             <div>
-              <div
+              <b-row
                 v-for="(range, index) in contest.bank_filter"
-                :key="index"
+                :key="range.id"
+                style="margin-bottom: 15px"
               >
-                <b-row style="margin-bottom: 15px">
-                  <b-col cols="3">
-                    <b-form-select
-                      v-model="range.level"
-                      :options="levelOptions"
+                <b-col cols="3">
+                  <b-form-select
+                    v-model="range.level"
+                    :options="levelOptions"
+                  />
+                </b-col>
+                <b-col cols="3">
+                  <b-form-select
+                    v-model="range.tag"
+                    :options="problemTagList"
+                  />
+                </b-col>
+                <b-col cols="3">
+                  <div class="d-flex">
+                    <p class="bank-filter__count">X</p>
+                    <b-form-input
+                      v-model="range.count"
+                      placeholder="the number of this problems"
+                      type="number"
+                      style="max-width:60px"
                     />
-                  </b-col>
-                  <b-col cols="3">
-                    <b-form-select
-                      v-model="range.tag"
-                      :options="problemTagList"
-                    />
-                  </b-col>
-                  <b-col cols="3">
-                    <div class="d-flex">
-                      <p style="font-size: 20px; margin-right:5px; padding: 0.275rem 0.1rem">X</p>
-                      <b-form-input
-                        v-model="range.count"
-                        placeholder="the number of this problems"
-                        type="number"
-                        style="max-width:60px"
-                      />
-                      <p style="font-size: 20px; margin-left:5px; padding: 0.275rem 0.1rem">/ {{ problemLevelCount[range.level] || 0 }}</p>
-                    </div>
-                  </b-col>
-                  <b-col cols="1">
-                    <b-button @click="removeBankFilter(range)" variant="outline-secondary">
-                        <b-icon icon="trash-fill"></b-icon>
-                    </b-button>
-                  </b-col>
-                </b-row>
-              </div>
+                    <p class="bank-filter__count">/ {{ problemLevelCount[range.level] || 0 }}</p>
+                  </div>
+                </b-col>
+                <b-col cols="1">
+                  <b-button @click="removeBankFilter(index)" variant="outline-secondary">
+                      <b-icon icon="trash-fill"></b-icon>
+                  </b-button>
+                </b-col>
+              </b-row>
               <b-col cols="1">
                 <b-button @click="addBankFilter" variant="outline-secondary">
                     <b-icon icon="plus"></b-icon>
@@ -386,7 +385,6 @@ export default {
         allowed_ip_ranges: [{
           value: ''
         }],
-        is_bank_filter: false,
         bank_filter: [
           // {
           //   level: "unselected",
@@ -410,7 +408,10 @@ export default {
         'Level6',
         'Level7'
       ],
-      problemTagList: [],
+      problemTagList: [
+        { value: null, text: 'Select Please', disabled: true },
+        // TODO: Problem Tag List should be made
+      ],
       problemLevelCount: {
         // "null": 0,
         // "Level1": 1,
@@ -580,20 +581,18 @@ export default {
       }
     },
     async getProblemLevelCount () {
-      const response = await api.getProblemLevelCount()
-      const data = response.data.data
+      const data = await api.getProblemLevelCount().then((x) => x.data.data)
       data.unselected = 0
       this.problemLevelCount = data
     },
     addBankFilter () {
       this.contest.bank_filter.push({
-        level: null,
+        level: 'unselected',
         tag: '',
         count: 0
       })
     },
-    removeBankFilter (range) {
-      const index = this.contest.bank_filter.indexOf(range)
+    removeBankFilter (index) {
       if (index !== -1) {
         this.contest.bank_filter.splice(index, 1)
       }
@@ -605,5 +604,10 @@ export default {
 <style scoped>
   .row, .col {
     word-wrap: break-word;
+  }
+  .bank-filter__count {
+    font-size: 20px;
+    margin-right:5px;
+    padding: 0.275rem 0.1rem;
   }
 </style>
