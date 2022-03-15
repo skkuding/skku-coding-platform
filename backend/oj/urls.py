@@ -25,4 +25,5 @@ urlpatterns = [
     path("api/lecture/professor/", include("course.urls.professor")),
     path("api/lecture/", include("assignment.urls.student")),
     path("api/lecture/professor/", include("assignment.urls.professor")),
+    path("api/", include("temperature.urls")),
 ]
