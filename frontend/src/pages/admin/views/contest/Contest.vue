@@ -409,7 +409,7 @@ export default {
         'Level7'
       ],
       problemTagList: [
-        { value: null, text: 'Select Please', disabled: true },
+        { value: null, text: 'Select Please', disabled: true }
         // TODO: Problem Tag List should be made
       ],
       problemLevelCount: {
