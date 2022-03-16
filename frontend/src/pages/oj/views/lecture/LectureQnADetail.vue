@@ -126,13 +126,13 @@
         </div>
         <template #modal-footer>
           <b-button style="cursor: pointer" @click="cancelEditQuestion">Cancel</b-button>
-          <b-button @click="showEditQuestion">Save</b-button>
+          <b-button @click="editQuestion">Save</b-button>
         </template>
       </b-modal>
       <b-modal
         centered
         v-model="showDeleteQuestionDialog"
-        @ok="showDeleteQuestion"
+        @ok="deleteQuestion"
       >
         Are you sure you want to delete this question? :o
       </b-modal>
@@ -167,7 +167,7 @@ export default {
       course_id: 1,
       answerContent: '',
       editAnswer: {},
-      ToDelete: 1,
+      toDelete: 1,
       question_id: 1,
       editQuestionContent: '',
       editQuestionTitle: '',
@@ -194,17 +194,18 @@ export default {
       this.editQuestionContent = this.question.content
       this.editQuestionTitle = this.question.title
     },
-    async showEditQuestion () {
+    async editQuestion () {
       const data = {
         id: this.question.id,
-        title: this.question.title,
-        content: this.question.content,
+        title: this.editQuestionTitle,
+        content: this.editQuestionContent,
         is_open: this.question.is_open
       }
-      await api.updateQuestion(data)
+      const res = await api.updateQuestion(data)
+      this.question = res.data.data
       this.showEditQuestionDialog = false
     },
-    async showDeleteQuestion () {
+    async deleteQuestion () {
       const params = {
         course_id: this.course_id,
         question_id: this.question_id
