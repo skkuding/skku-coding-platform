@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="profile-setting">
     <div class="setting-main font-bold">
       <div class="section-title logo-title font-bold">
         <h2>Setting</h2>
@@ -74,7 +74,7 @@ import { types } from '@/store'
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'ProfileSetting',
+  name: 'UserSetting',
   data () {
     return {
       loading: {
