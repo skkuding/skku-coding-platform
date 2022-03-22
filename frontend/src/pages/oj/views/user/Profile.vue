@@ -16,6 +16,7 @@
       <profile-badge v-show="currentTab==='Badge'"></profile-badge>
       <profile-storage v-show="currentTab==='Storage'"></profile-storage>
       <profile-group v-if="currentTab==='Group'"></profile-group>
+      <UserSetting v-if="currentTab==='Setting'"></UserSetting>
     </div>
   </div>
 </template>
@@ -27,6 +28,7 @@ import TabSplitInTwo from '../../components/user/TabSplitInTwo.vue'
 import ProfileSubmission from '../../components/user/ProfileSubmission.vue'
 import ProfileContest from '../../components/user/ProfileContest.vue'
 import ProfileGroup from '../../components/user/ProfileGroup.vue'
+import UserSetting from '../../components/user/UserSetting.vue'
 
 export default {
   name: 'ProfileSetting',
@@ -35,7 +37,8 @@ export default {
     TabSplitInTwo,
     ProfileSubmission,
     ProfileContest,
-    ProfileGroup
+    ProfileGroup,
+    UserSetting
   },
   data () {
     return {
@@ -53,7 +56,8 @@ export default {
         'Submission',
         'History',
         'Contest',
-        'Badge'
+        'Badge',
+        'Setting'
       ],
       rightTabs: [
         'Storage',

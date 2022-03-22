@@ -16,7 +16,6 @@ import {
   ProblemList,
   ProblemSet,
   ResetPassword,
-  ProfileSetting,
   LectureList,
   LectureDashboard,
   LectureAssignmentList,
@@ -122,12 +121,6 @@ export default [
     path: '/contest/:contestID/rank/',
     component: ContestRanking,
     meta: { title: 'Contest Ranking' }
-  },
-  {
-    name: 'setting',
-    path: '/setting',
-    meta: { requiresAuth: true, title: 'settings' },
-    component: ProfileSetting
   },
   {
     name: 'lecture-list',
