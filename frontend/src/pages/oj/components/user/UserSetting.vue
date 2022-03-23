@@ -1,7 +1,7 @@
 <template>
   <div class="profile-setting">
-    <div class="setting-main font-bold">
-      <div class="section-title logo-title font-bold">
+    <div class="setting-main">
+      <div class="section-title logo-title">
         <h2>Setting</h2>
       </div>
       <div style="display:flex; flex-direction:row; margin-bottom:12px;" class="profileSetting">
@@ -278,7 +278,6 @@ export default {
   }
   .logo-title {
     margin:8px 0 16px 0;
-    color: #8DC63F;
     text-align:center;
   }
   .font-bold {

@@ -16,7 +16,7 @@
       <profile-badge v-show="currentTab==='Badge'"></profile-badge>
       <profile-storage v-show="currentTab==='Storage'"></profile-storage>
       <profile-group v-if="currentTab==='Group'"></profile-group>
-      <UserSetting v-if="currentTab==='Setting'"></UserSetting>
+      <user-setting v-if="currentTab==='Setting'"></user-setting>
     </div>
   </div>
 </template>
@@ -56,12 +56,12 @@ export default {
         'Submission',
         'History',
         'Contest',
-        'Badge',
-        'Setting'
+        'Badge'
       ],
       rightTabs: [
         'Storage',
-        'Group'
+        'Group',
+        'Setting'
       ],
       currentTab: 'Summary'
     }
