@@ -1,12 +1,14 @@
 <template>
   <div>
-    <div class="page-top">
-      <h2 class="text-3xl">
+    <page-top>
+      <template #title>
         <span class="title-white">🏆 SKKU Coding Platform</span>
         <span class="title-gold"> Contests</span>
-      </h2>
-      <div class="description text-xl">Compete with schoolmates & win the prizes!</div>
-    </div>
+      </template>
+      <template #description>
+        Compete with schoolmates & win the prizes!
+      </template>
+    </page-top>
     <div class="contest-list-container">
       <h4 class="subtitle-blue text-xl" v-if="contestsUnderway.length || contestsUnderwayNoPermission.length">
         Active Contests >>
@@ -86,6 +88,7 @@ import utils from '@/utils/utils'
 import time from '@/utils/time'
 import { CONTEST_STATUS_REVERSE, CONTEST_TYPE, CONTEST_STATUS } from '@/utils/constants'
 import NeonBox from '@oj/components/NeonBox.vue'
+import PageTop from '@oj/components/PageTop.vue'
 import ContestInformation from '@oj/components/ContestInformation.vue'
 import store from '@/store'
 import moment from 'moment'
@@ -130,7 +133,8 @@ export default {
   },
   components: {
     NeonBox,
-    ContestInformation
+    ContestInformation,
+    PageTop
   },
   data () {
     return {
@@ -366,22 +370,11 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  .page-top {
-    background: linear-gradient(270deg, rgba(26, 62, 81, 0.90) 0%, #1A3E51 25%, #1A3E51 75%, rgba(26, 62, 81, 0.90) 100%);;
-    padding: 50px 0px;
-    text-align: center;
-    font-family: Manrope;
-    .title-white {
-      color: white;
-    }
-    .title-gold {
-      color: #FEB144;
-    }
-    .description {
-      font-size: 1rem;
-      color: white;
-      margin-top: 1rem;
-    }
+  .title-white {
+    color: white;
+  }
+  .title-gold {
+    color: #FEB144;
   }
   .subtitle-blue {
     color: #1A3E51;
