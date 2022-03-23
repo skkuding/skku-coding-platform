@@ -219,12 +219,13 @@
         </b-navbar-nav>
       </b-navbar>
 
-      <b-row id="problem-container">
+      <b-row id="problem-container" ref="container">
         <vue-resizable
         active="r"
         :fit-parent="true"
         :width="`50vw`"
         :min-width="200"
+        :max-width="problemWidth - 200"
         >
           <b-col id="problem-description">
             <div class="description-io">
@@ -400,7 +401,8 @@ export default {
       theme: 'material',
       theme_list: ['solarized', 'monokai', 'material'],
 
-      overlayShow: false
+      overlayShow: false,
+      problemWidth: undefined
     }
   },
   async mounted () {
@@ -429,6 +431,10 @@ export default {
       const data = res.data.data
       this.assignment_name = data.title
     }
+    this.problemWidth = this.$refs.container.clientWidth
+    window.addEventListener('resize', () => {
+      this.problemWidth = this.$refs.container.clientWidth
+    })
   },
   methods: {
     ...mapActions(['changeDomTitle', 'changeModalStatus']),
