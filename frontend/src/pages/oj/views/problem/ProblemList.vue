@@ -1,5 +1,6 @@
 <template>
   <div class="problem-list-card font-bold">
+    <problem-set></problem-set>
     <div class="mb-4 flex justify-between">
       <page-title text="Problem List"/>
       <div class="my-auto mr-32">
@@ -82,11 +83,13 @@ import api from '@oj/api'
 import { ProblemMixin } from '@oj/components/mixins'
 import { DIFFICULTY_COLOR } from '@/utils/constants'
 import PageTitle from '@oj/components/PageTitle.vue'
+import ProblemSet from '@oj/components/ProblemSet.vue'
 
 export default {
   name: 'problemList',
   components: {
-    PageTitle
+    PageTitle,
+    ProblemSet
   },
   mixins: [ProblemMixin],
   data () {
