@@ -1,5 +1,6 @@
 from django.db import models
-from utils.shortcuts import rand_str
+from problem.models import Problem
+from account.models import User
 
 
 class JudgeStatus:
@@ -29,24 +30,23 @@ class ProblemScore:
 
 
 class Temperature(models.Model):
-    user_id = models.IntegerField(unique=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     temperature = models.IntegerField(default=0)
     date = models.DateField(auto_now_add=True)
 
     class Meta:
         db_table = "temperature"
-        unique_together = (("user_id", "date"),)
+        unique_together = (("user", "date"),)
         ordering = ("-date",)
 
 
 class SolvedProblem(models.Model):
-    id = models.TextField(default=rand_str, primary_key=True, db_index=True)
-    user_id = models.IntegerField(db_index=True)
-    _id = models.TextField(db_index=True, default=0)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    problem = models.ForeignKey(Problem, null=True, on_delete=models.CASCADE)
     score = models.IntegerField()
     solved_time = models.DateField(auto_now_add=True)
 
     class Meta:
         db_table = "solvedproblem"
-        unique_together = (("user_id", "_id"),)
+        unique_together = (("user", "problem"),)
         ordering = ("-solved_time",)
