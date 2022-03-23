@@ -27,8 +27,7 @@
       </template>
       <template v-slot:content v-else>
         <button v-if="isAdminRole" @click="goManagement()" class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base font-medium text-text-title hover:text-green hover:no-underline">Management</button>
-        <a class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title font-medium hover:text-green hover:no-underline" href="/#">Settings</a>
-        <button class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title font-medium hover:text-green hover:no-underline" @click="goProfile()">My Profile</button>
+        <button v-if="!isAdminRole" class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title font-medium hover:text-green hover:no-underline" @click="goProfile()">My Profile</button>
         <a class="flex w-full justify-between items-center rounded-lg px-3 py-1 my-1 text-base text-text-title hover:text-green hover:no-underline" href="/logout">Sign Out</a>
       </template>
     </dropdown>

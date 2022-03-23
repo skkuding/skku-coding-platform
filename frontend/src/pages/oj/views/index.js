@@ -23,7 +23,8 @@ const ResetPassword = () => import(/* webpackChunkName: "password" */ '@oj/views
 const EmailAuth = () => import(/* webpackChunkName: "emailAuth" */ '@oj/views/user/EmailAuth.vue')
 const Register = () => import('@oj/views/user/Register.vue')
 
-const ProfileSetting = () => import(/* webpackChunckName: "setting" */ '@oj/views/user/ProfileSetting.vue')
+/* const ProfileSetting = () => import(/* webpackChunckName: "setting" */
+/* '@oj/views/user/ProfileSetting.vue') */
 
 const ContestList = () => import(/* webpackChunkName: "contest" */ '@oj/views/contest/ContestList.vue')
 const ContestDetail = () => import(/* webpackChunkName: "contest" */ '@oj/views/contest/ContestDetail.vue')
@@ -31,7 +32,7 @@ const ContestDetail = () => import(/* webpackChunkName: "contest" */ '@oj/views/
 export {
   Home, NotFound,
   Logout, ProblemList, Announcement, AnnouncementList, Problem,
-  ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting,
+  ApplyResetPassword, ResetPassword, EmailAuth,
   ContestList, ContestDetail, ContestProblemList, ContestRanking, Register,
   LectureList, LectureDashboard, LectureAssignmentList, LectureAssignmentDetail, LectureQna, LectureQnaDetail,
   Profile

@@ -93,7 +93,7 @@
         centered
         modal-class="modal-med modal-big"
       >
-        <profileSetting></profileSetting>
+        <UserSetting></UserSetting>
       </b-modal>
 
       <b-navbar id="inner-header" type="dark">
@@ -336,7 +336,7 @@ import ProblemSidebar from './ProblemSidebar.vue'
 import moment from 'moment'
 import register from '@oj/views/user/Register'
 import login from '@oj/views/user/Login'
-import profileSetting from '@oj/views/user/ProfileSetting'
+import UserSetting from '@oj/components/user/UserSetting'
 import Table from '@oj/components/Table.vue'
 import VueResizable from 'vue-resizable'
 
@@ -349,7 +349,8 @@ export default {
     register,
     profileSetting,
     Table,
-    VueResizable
+    VueResizable,
+    UserSetting
   },
   mixins: [FormMixin],
   data () {
