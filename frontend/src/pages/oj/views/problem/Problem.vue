@@ -435,10 +435,7 @@ export default {
       const data = res.data.data
       this.assignment_name = data.title
     }
-    this.problemWidth = this.$refs.container.clientWidth
-    window.addEventListener('resize', () => {
-      this.problemWidth = this.$refs.container.clientWidth
-    })
+    window.addEventListener('resize', this.updateProblemWidth)
   },
   methods: {
     ...mapActions(['changeDomTitle', 'changeModalStatus']),
@@ -705,6 +702,9 @@ export default {
         theme: this.theme
       }
       return sstorage
+    },
+    updateProblemWidth () {
+      this.problemWidth = this.$refs.container.clientWidth
     }
   },
   computed: {
@@ -786,6 +786,7 @@ export default {
       clearInterval(this.timer)
       this.$store.commit(types.CLEAR_CONTEST)
     }
+    window.removeEventListener('resize', this.updateProblemWidth)
   }
 }
 </script>
