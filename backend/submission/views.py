@@ -21,6 +21,11 @@ from .serializers import (CreateSubmissionSerializer, SubmissionModelSerializer,
                           ShareSubmissionSerializer, SubmissionSafeModelSerializer, SubmissionListSerializer,
                           SubmissionListProfessorSerializer, EditSubmissionScoreSerializer)
 
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 
 class SubmissionAPI(CSRFExemptAPIView):
     def throttling(self, request):
@@ -52,6 +57,8 @@ class SubmissionAPI(CSRFExemptAPIView):
     # @login_required
     def post(self, request):
         data = request.data
+        code = data["code"].replace("\n", "")
+        logger.critical(f"post - start{code}")
         hide_id = False
         if data.get("contest_id"):
             error = self.check_contest_permission(request)
@@ -89,9 +96,11 @@ class SubmissionAPI(CSRFExemptAPIView):
                                                problem_id=problem.id,
                                                ip="0.0.0.0",
                                                contest_id=data.get("contest_id"))
+        logger.critical(f"post - submission created {code}")
         # use this for debug
         # JudgeDispatcher(submission.id, problem.id).judge()
         judge_task.send(submission.id, problem.id)
+        logger.critical(f"post - judge_task send {code}")
         if hide_id:
             return self.success()
         else:

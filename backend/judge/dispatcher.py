@@ -93,6 +93,7 @@ class JudgeDispatcher(DispatcherBase):
     def __init__(self, submission_id, problem_id):
         super().__init__()
         self.submission = Submission.objects.get(id=submission_id)
+        self.code = self.submission.code.replace("\n", "")
         self.contest_id = self.submission.contest_id
         self.assignment_id = self.submission.assignment_id
         self.last_result = self.submission.result if self.submission.info else None
@@ -102,6 +103,7 @@ class JudgeDispatcher(DispatcherBase):
             self.contest = self.problem.contest
         else:
             self.problem = Problem.objects.get(id=problem_id)
+        logger.critical(f"dramatiq - 1. dispatcher initialized {self.code}")
 
     def _compute_statistic_info(self, resp_data):
         # Time and memory usage are saved as the longest among multiple test points
@@ -147,6 +149,7 @@ class JudgeDispatcher(DispatcherBase):
         return table[lang](memory)
 
     def judge(self):
+        logger.critical(f"dramatiq - 2. call judge {self.code}")
         language = self.submission.language
         sub_config = list(filter(lambda item: language == item["name"], SysOptions.languages))[0]
         spj_config = {}
@@ -177,13 +180,18 @@ class JudgeDispatcher(DispatcherBase):
             "io_mode": self.problem.io_mode
         }
 
+        logger.critical(f"dramatiq - 3. choose judgeserver {self.code}")
         with ChooseJudgeServer() as server:
+            logger.critical(f"dramatiq - 4. judgeserver choosen {self.code}")
             if not server:
                 data = {"submission_id": self.submission.id, "problem_id": self.problem.id}
                 cache.lpush(CacheKey.waiting_queue, json.dumps(data))
+                logger.critical(f"dramatiq - 5. No available server!! {self.code}")
                 return
             Submission.objects.filter(id=self.submission.id).update(result=JudgeStatus.JUDGING)
+            logger.critical(f"dramatiq - 5. submission status updated, send request to judgeserver {self.code}")
             resp = self._request(urljoin(server.service_url, "/judge"), data=data)
+            logger.critical(f"dramatiq - 6. get response, Judge ended {self.code}")
 
         if not resp:
             Submission.objects.filter(id=self.submission.id).update(result=JudgeStatus.SYSTEM_ERROR)
@@ -225,7 +233,7 @@ class JudgeDispatcher(DispatcherBase):
                 self.update_problem_status_rejudge()
             else:
                 self.update_problem_status()
-
+        logger.critical(f"dramatiq - 7. all process ended {self.code}")
         # At this point, the judgment is over, try to process the remaining tasks in the task queue
         process_pending_task()
 
