@@ -1,17 +1,14 @@
 <template>
-  <div>
-    <color-round-button>
-      Level1
-    </color-round-button>
-  </div>
+  <button class="bg-blue rounded-full px-5 h-14 drop-shadow-sm">
+    <slot></slot>
+  </button>
 </template>
 
 <script>
-import ColorRoundButton from './ColorRoundButton.vue'
+
 export default {
   name: 'problemSet',
   components: {
-    ColorRoundButton
   },
   data () {
     return {
@@ -21,6 +18,7 @@ export default {
   },
   methods: {
   }
+
 }
 </script>
 

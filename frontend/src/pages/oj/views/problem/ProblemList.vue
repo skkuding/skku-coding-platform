@@ -1,78 +1,97 @@
 <template>
-  <div class="problem-list-card font-bold">
-    <problem-set></problem-set>
-    <div class="mb-4 flex justify-between">
-      <page-title text="Problem List"/>
-      <div class="my-auto mr-32">
-        <div class="category-container">
-          <b-dropdown :text="difficulty" class="mr-4">
-            <b-dropdown-item @click="filterByDifficulty('All')">All</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level1')">Level1</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level2')">Level2</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level3')">Level3</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level4')">Level4</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level5')">Level5</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level6')">Level6</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level7')">Level7</b-dropdown-item>
-          </b-dropdown>
-            <div class="tags mr-4">
-              tags
-              <b-form-checkbox
-                v-model="checked"
-                name="check-button"
-                switch
-                class="ml-2"
-              >
-              </b-form-checkbox>
+  <div>
+    <page-top>
+      <template #title>
+        <span class="text-white"> Problems </span>
+      </template>
+      <template #description>
+        Find problems with problem set and filters, and solve it!
+      </template>
+    </page-top>
+    <div class="problem-list-card font-bold">
+      <h4 class="subtitle-blue text-xl">
+        SCAT 대비 문제집
+      </h4>
+      <problem-set></problem-set>
+      <h4 class="subtitle-blue text-xl">
+        SKKU 프로그래밍 대회 기출문제
+      </h4>
+      <problem-set></problem-set>
+      <h4 class="subtitle-blue text-xl">
+        All Problems
+      </h4>
+      <div class="mb-4 flex justify-between flex-row-reverse">
+        <div class="my-auto mr-32">
+          <div class="category-container">
+            <b-dropdown :text="difficulty" class="mr-4">
+              <b-dropdown-item @click="filterByDifficulty('All')">All</b-dropdown-item>
+              <b-dropdown-item @click="filterByDifficulty('Level1')">Level1</b-dropdown-item>
+              <b-dropdown-item @click="filterByDifficulty('Level2')">Level2</b-dropdown-item>
+              <b-dropdown-item @click="filterByDifficulty('Level3')">Level3</b-dropdown-item>
+              <b-dropdown-item @click="filterByDifficulty('Level4')">Level4</b-dropdown-item>
+              <b-dropdown-item @click="filterByDifficulty('Level5')">Level5</b-dropdown-item>
+              <b-dropdown-item @click="filterByDifficulty('Level6')">Level6</b-dropdown-item>
+              <b-dropdown-item @click="filterByDifficulty('Level7')">Level7</b-dropdown-item>
+            </b-dropdown>
+              <div class="tags mr-4">
+                tags
+                <b-form-checkbox
+                  v-model="checked"
+                  name="check-button"
+                  switch
+                  class="ml-2"
+                >
+                </b-form-checkbox>
+              </div>
+            <div class="col-4">
+              <b-icon icon="search" class="search-icon"/>
+              <b-input placeholder="keywords" class="search-input w-40"
+                v-model="keyword" @input="filterByKeyword"/>
             </div>
-          <div class="col-4">
-            <b-icon icon="search" class="search-icon"/>
-            <b-input placeholder="keywords" class="search-input w-40"
-              v-model="keyword" @input="filterByKeyword"/>
           </div>
         </div>
       </div>
-    </div>
-    <div class="table">
-      <b-table
-        hover
-        :items="problemList"
-        :fields="problemTableColumns"
-        :per-page="perPage"
-        :current-page="currentPage"
-        head-variant="light"
-        @row-clicked="goProblem"
-      >
-        <template #cell(title)="data">
-          {{data.value}}
-          <b-icon icon="check2-circle" style="color: #8DC63F;" font-scale="1.2" v-if="data.item.my_status===0"></b-icon>
-        </template>
-        <template #cell(difficulty)="data">
-          <b-icon
-            icon="circle-fill"
-            class="mr-2"
-            :style="'color:' + difficultyColor(data.value)"
-          />
-          {{ data.value }}
-        </template>
-        <template #cell(AC_Rate)="data">
-          {{ getACRate(data.item.accepted_number, data.item.submission_number) }}
-        </template>
-        <template v-slot:cell(tags)="data">
-          <span v-show="checked" v-for="item in data.item.tags" :key="item.id">{{ item }}  </span>
-        </template>
-        <template v-slot:head(tags)="field">
-          <div v-show="checked">{{ field.label }}</div>
-        </template>
-      </b-table>
-    </div>
-    <div class="pagination">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="perPage"
-        limit="3"
-      ></b-pagination>
+      <div class="table">
+        <b-table
+          hover
+          :items="problemList"
+          :fields="problemTableColumns"
+          :per-page="perPage"
+          :current-page="currentPage"
+          head-variant="light"
+          @row-clicked="goProblem"
+        >
+          <template #cell(title)="data">
+            {{data.value}}
+            <b-icon icon="check2-circle" style="color: #8DC63F;" font-scale="1.2" v-if="data.item.my_status===0"></b-icon>
+          </template>
+          <template #cell(difficulty)="data">
+            <b-icon
+              icon="circle-fill"
+              class="mr-2"
+              :style="'color:' + difficultyColor(data.value)"
+            />
+            {{ data.value }}
+          </template>
+          <template #cell(AC_Rate)="data">
+            {{ getACRate(data.item.accepted_number, data.item.submission_number) }}
+          </template>
+          <template v-slot:cell(tags)="data">
+            <span v-show="checked" v-for="item in data.item.tags" :key="item.id">{{ item }}  </span>
+          </template>
+          <template v-slot:head(tags)="field">
+            <div v-show="checked">{{ field.label }}</div>
+          </template>
+        </b-table>
+      </div>
+      <div class="pagination">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          limit="3"
+        ></b-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -82,14 +101,14 @@ import { mapGetters } from 'vuex'
 import api from '@oj/api'
 import { ProblemMixin } from '@oj/components/mixins'
 import { DIFFICULTY_COLOR } from '@/utils/constants'
-import PageTitle from '@oj/components/PageTitle.vue'
 import ProblemSet from '@oj/components/ProblemSet.vue'
+import PageTop from '@oj/components/PageTop.vue'
 
 export default {
   name: 'problemList',
   components: {
-    PageTitle,
-    ProblemSet
+    ProblemSet,
+    PageTop
   },
   mixins: [ProblemMixin],
   data () {
@@ -194,6 +213,10 @@ export default {
   @font-face {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
+  }
+  .subtitle-blue {
+    color: #1A3E51;
+    margin: 2rem 0 1rem 0;
   }
   .problem-list-card{
     margin:0 auto;
