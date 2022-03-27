@@ -374,7 +374,7 @@ export default {
     })
   },
   editProblemSetGroup (data) {
-    return ajax('admin/problemset/group', 'edit', {
+    return ajax('admin/problemset/group', 'put', {
       data
     })
   }
