@@ -1,8 +1,8 @@
 from django.db.models import Q, Count
 from utils.api import APIView
 from utils.decorators import check_contest_permission
-from ..models import ProblemTag, Problem, ProblemRuleType
-from ..serializers import ProblemSerializer, TagSerializer, ProblemSafeSerializer, BankProblemSerializer
+from ..models import ProblemSet, ProblemSetGroup, ProblemTag, Problem, ProblemRuleType
+from ..serializers import ProblemSerializer, ProblemSetGroupSerializer, ProblemSetSerializer, TagSerializer, ProblemSafeSerializer, BankProblemSerializer
 from contest.models import ContestRuleType, ProblemBank
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -196,3 +196,33 @@ class BankProblemAPI(APIView):
         problems = Problem.objects.select_related("created_by").filter(pk__in=bank_problem_ids)
         data = BankProblemSerializer(problems, many=True).data
         return self.success(data)
+
+
+class ProblemSetGroupAPI(APIView):
+    def get(self, request):
+        id = request.GET.get("id")
+
+        if not id:
+            problem_set_group = ProblemSetGroup.objects.filter(is_disabled=False)
+            return self.success(ProblemSetGroupSerializer(problem_set_group).data)
+
+        try:
+            problem_set_group = ProblemSetGroup.objects.get(id=id, is_disabled=False)
+            return self.success(problem_set_group)
+        except ProblemSetGroup.DoesNotExist:
+            return self.error("Problem set group does not exist.")
+
+
+class ProblemSetAPI(APIView):
+    def get(self, request):
+        id = request.GET.get("id")
+
+        if not id:
+            problem_set = ProblemSet.objects.filter(is_disabled=False, is_public=True)
+            return self.success(ProblemSetSerializer(problem_set).data)
+
+        try:
+            problem_set = ProblemSet.objects.get(id=id, is_disabled=False, is_public=True)
+            return self.success(problem_set)
+        except ProblemSet.DoesNotExist:
+            return self.error("Problem set does not exist.")
