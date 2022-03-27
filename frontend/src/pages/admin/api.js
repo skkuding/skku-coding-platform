@@ -360,6 +360,18 @@ export default {
         contest_id: contestID
       }
     })
+  },
+  getProblemSetGroup (problemSetGroupID) {
+    return ajax('admin/problemset/group', 'get', {
+      params: {
+        problem_set_group_id: problemSetGroupID
+      }
+    })
+  },
+  createProblemSetGroup (data) {
+    return ajax('admin/problemset/group', 'post', {
+      data
+    })
   }
 }
 
