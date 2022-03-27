@@ -13,12 +13,12 @@
             <b-icon :icon="row.item._showDetails ? 'caret-down-fill':'caret-right-fill'" aria-hidden="true"></b-icon>
           </template>
           <template v-slot:row-details="row" style="padding-left:50px; padding-right:50px">
-            <div v-if="!row.item.problemList.length">
-              No Problem data! Please add some problems
+            <div v-if="!row.item.problemSet.length">
+              No Problem Set data! Please add some problem sets
             </div>
             <b-table
               v-else
-              :items="row.item.problemList"
+              :items="row.item.problemSet"
               :fields="problemField"
               no-border-collapse
               class="px-5"
@@ -29,25 +29,26 @@
               <template v-slot:cell(title)="data">
                 {{ data.item.title }}
               </template>
-              <template v-slot:cell(submission)="data">
-                {{ data.item.total_submission_assignment }} / {{ studentTotal }}
+              <template v-slot:cell(color)="data">
+                {{ data.item.color }}
+              </template>
+              <template v-slot:cell(is_disabled)="data">
+                {{ data.item.is_disabled }}
+              </template>
+              <template v-slot:cell(is_public)="data">
+                {{ data.item.is_public }}
               </template>
               <template #cell(operation)="data">
                 <div>
                   <icon-btn
-                    name="Edit Problem"
+                    name="Edit Problem Set"
                     icon="pencil"
-                    @click.native="editAssignmentProblem(row.item, data.item.id)"
+                    @click.native="editProblemSet(row.item.id, data.item.id)"
                   />
                   <icon-btn
-                    name="Grade Problem"
-                    icon="check2-all"
-                    @click.native="gradeProblem(row.item, data.item)"
-                  />
-                  <icon-btn
-                    name="Delete Problem"
+                    name="Delete Problem Set"
                     icon="trash"
-                    @click.native="deleteAssignmentProblem(row.item.id, data.item.id)"
+                    @click.native="deleteProblemSet(row.item.id, data.item.id)"
                   />
                 </div>
               </template>
@@ -55,19 +56,11 @@
             <b-col class="text-right">
               <b-button
                 size="sm"
-                style="background-color: #4891FE; border-color: unset;"
-                class="mr-2 text-light"
-                @click="showImportPublicProblemModal(row.item.id)"
-              >
-                +problem<br>From SKKU coding platform
-              </b-button>
-              <b-button
-                size="sm"
                 style="background-color: #E9A05A; border-color: unset"
                 class="mr-2 text-light"
-                @click="createAssignmentProblem(row.item)"
+                @click="createProblemSet(row.item.id)"
               >
-                +problem<br>Create a new problem
+                +problem set<br>Create a new problem set
               </b-button>
             </b-col>
           </template>
@@ -112,6 +105,12 @@
         No Problem set group
       </div>
     </Panel>
+    <problem-set-modal
+      :problem-set-id="selectedProblemSetId"
+      :problem-set-group-id="selectedProblemSetGroupId"
+      :modal-type="modalType"
+      @update="getProblemSetList"
+    ></problem-set-modal>
   </div>
 </template>
 
@@ -119,29 +118,20 @@
 import api from '../../api.js'
 import Panel from '../../components/Panel.vue'
 import ProblemSetGroupModal from '../../components/ProblemSetGroupModal.vue'
+import ProblemSetModal from '../../components/ProblemSetModal.vue'
 
 export default {
   name: 'ProblemSetList',
   components: {
     Panel,
-    ProblemSetGroupModal
+    ProblemSetGroupModal,
+    ProblemSetModal
   },
   props: [
-    'course-id',
-    'modal-type'
   ],
   data () {
     return {
       modalType: '',
-      pageLocations: [
-        {
-          text: '',
-          to: '/course/' + this.$route.params.courseId + '/dashboard'
-        },
-        {
-          text: 'Assignments'
-        }
-      ],
       problemSetGroupField: [
         {
           key: 'show_detail',
@@ -163,7 +153,7 @@ export default {
       ],
       problemSetGroupList: [
       ],
-      problemField: [
+      problemSetField: [
         {
           key: '_id',
           label: '#'
@@ -173,13 +163,21 @@ export default {
           label: 'Title'
         },
         {
-          key: 'submission',
-          label: 'Submission rate'
+          key: 'color',
+          label: 'Color'
+        },
+        {
+          key: 'is_disabled',
+          label: 'Disabled'
+        },
+        {
+          key: 'is_public',
+          label: 'Public'
         },
         'Operation'
       ],
-      selectedAssignmentId: null,
-      studentTotal: 0
+      selectedProblemSetGroupId: null,
+      selectedProblemSetId: null
     }
   },
   async mounted () {
@@ -192,7 +190,7 @@ export default {
   },
   methods: {
     async getProblemSetGroupList () {
-      const res = await api.getProblemSetGroup(this.courseId)
+      const res = await api.getProblemSetGroup()
       this.problemSetGroupList = res.data.data
     },
     async createProblemSetGroup () {
@@ -204,8 +202,8 @@ export default {
       this.selectedProblemSetGroupId = problemSetGroupId
       await this.$bvModal.show('create-problem-set-group')
     },
-    async updateAssignmentProblemList (assignmentId) {
-      const res = await api.getAssignmentProblem(assignmentId)
+    async updateProblemSetList (assignmentId) {
+      const res = await api.getProblemSet(assignmentId)
       for (let i = 0; i < this.assignmentList.length; i++) {
         if (this.assignmentList[i].id === assignmentId) {
           this.$set(this.assignmentList[i], 'problemList', res.data.data)
@@ -220,50 +218,39 @@ export default {
       } else if (item.problemList) {
         this.$set(item, '_showDetails', true)
       } else {
-        const res = await api.getAssignmentProblem(item.id)
-        item.problemList = res.data.data
+        const res = await api.getProblemSet(item.id)
+        item.problemSet = res.data.data
         this.$set(item, '_showDetails', true)
       }
     },
-    createAssignmentProblem (assignment) {
-      if (this.routeName === 'course-assignment-list') {
-        this.$router.push({
-          name: 'create-course-problem',
-          params: {
-            assignmentId: assignment.id,
-            courseInfo: this.pageLocations[0].text,
-            assignmentInfo: assignment.title
-          }
-        })
-      }
+    async getProblemSetList () {
+      const res = await api.getProblemSet()
+      this.problemSetGroupList = res.data.data
     },
-    editAssignmentProblem (assignment, problemId) {
-      if (this.routeName === 'course-assignment-list') {
-        this.$router.push({
-          name: 'edit-course-problem',
-          params: {
-            courseId: this.courseId,
-            assignmentId: assignment.id,
-            problemId: problemId,
-            courseInfo: this.pageLocations[0].text,
-            assignmentInfo: assignment.title
-          }
-        })
-      }
+    async createProblemSet (problemSetGroupId) {
+      this.modalType = 'create'
+      this.selectedProblemSetGroupId = problemSetGroupId
+      this.$bvModal.show('create-problem-set')
+    },
+    async editProblemSet (problemSetId, problemSetGroupId) {
+      this.modalType = 'edit'
+      this.selectedProblemSetId = problemSetId
+      this.selectedProblemSetGroupId = problemSetGroupId
+      await this.$bvModal.show('create-problem-set')
     },
     async deleteProblemSetGroup (problemSetGroupId) {
       try {
         await this.$confirm('Sure to delete this problemSetGroup?', 'Delete problem set group', 'warning', false)
-        await api.deleteProblemSetGroup(this.courseId, problemSetGroupId)
+        await api.deleteProblemSetGroup(problemSetGroupId)
         this.getProblemSetGroupList()
       } catch (err) {
       }
     },
-    async deleteAssignmentProblem (assignmentId, problemId) {
+    async deleteProblemSet (problemSetGroupId, problemId) {
       try {
-        await this.$confirm('Sure to delete this problem?', 'Delete Problem', 'warning', false)
-        await api.deleteAssignmentProblem(problemId)
-        await this.updateAssignmentProblemList(assignmentId)
+        await this.$confirm('Sure to delete this problem set?', 'Delete Problem set', 'warning', false)
+        await api.deleteProblemSet(problemId)
+        await this.updateProblemSetList(problemSetGroupId)
       } catch (err) {
       }
     }
@@ -273,13 +260,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-  #assignment-list {
-    margin: auto;
-    flex:1 0;
-    max-width: 1300px;
-  }
-</style>
 <style lang="scss">
   .problem-set-group-table-body:not(.b-table-details) {
     cursor: pointer;

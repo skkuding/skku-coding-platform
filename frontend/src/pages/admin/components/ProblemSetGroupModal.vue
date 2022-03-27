@@ -40,12 +40,11 @@
         ></b-form-input>
       </b-form-group>
       <b-form-group
-        v-if="modalType === 'create'"
         id="input-group-is-disabled"
         label="Disabled"
         label-for="input-is-disabled"
       >
-        <b-form-checkbox id="input-is-disabled" v-model="form.is_disabled" style="pointer:" switch>
+        <b-form-checkbox id="input-is-disabled" v-model="form.is_disabled" switch>
         </b-form-checkbox>
       </b-form-group>
     </b-form>
@@ -100,6 +99,7 @@ export default {
     },
     async getProblemSetGroupDetail () {
       const res = await api.getProblemSetGroup(this.problemSetGroupId)
+      this.form.id = res.data.data.id
       this.form.title = res.data.data.title
       this.form.is_disabled = res.data.data.is_disabled
       this.form.button_type = res.data.data.button_type
