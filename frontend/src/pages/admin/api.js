@@ -385,10 +385,11 @@ export default {
       }
     })
   },
-  getProblemSet (problemSetGroupID) {
+  getProblemSet (problemSetGroupID, problemSetID) {
     return ajax('admin/problemset/', 'get', {
       params: {
-        id: problemSetGroupID
+        problem_set_group_id: problemSetGroupID,
+        id: problemSetID
       }
     })
   },

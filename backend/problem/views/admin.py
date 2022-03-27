@@ -823,9 +823,10 @@ class ProblemSetAPI(APIView):
 
     def get(self, request):
         id = request.GET.get("id")
+        problem_set_group_id = request.GET.get("problem_set_group_id")
 
         if not id:
-            problem_set = ProblemSet.objects.all()
+            problem_set = ProblemSet.objects.filter(problem_set_group=problem_set_group_id)
             return self.success(ProblemSetSerializer(problem_set, many=True).data)
 
         try:
