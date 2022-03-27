@@ -84,6 +84,12 @@
       >
         Create Problem
       </b-list-group-item>
+      <b-list-group-item
+        to="/problem-set"
+        class="list-group-subitem"
+      >
+        Problem Set
+      </b-list-group-item>
     </b-collapse>
 
     <b-list-group-item href="#" role="tab" v-b-toggle.contest>
