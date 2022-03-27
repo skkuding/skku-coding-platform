@@ -15,8 +15,8 @@ from utils.api import APIView, CSRFExemptAPIView, validate_serializer, APIError
 from utils.decorators import problem_permission_required, ensure_created_by
 from utils.shortcuts import rand_str, natural_sort_key
 from ..models import Problem, ProblemRuleType, ProblemSetGroup, ProblemTag, ProblemSet
-from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer, CreateOrEditProblemSetGroupSerializer, CreateOrEditProblemSetSerializer,
-                           CreateProblemSerializer, EditProblemSerializer, EditContestProblemSerializer,
+from ..serializers import (CreateContestProblemSerializer, CompileSPJSerializer, CreateProblemSetGroupSerializer, CreateProblemSetSerializer,
+                           EditProblemSetGroupSerializer, EditProblemSetSerializer, CreateProblemSerializer, EditProblemSerializer, EditContestProblemSerializer,
                            ProblemAdminSerializer, ProblemSetGroupSerializer, ProblemSetSerializer, TestCaseUploadForm, ContestProblemMakePublicSerializer,
                            AddContestProblemSerializer, TestCaseTextSerializer)
 
@@ -714,17 +714,17 @@ class AddContestProblemAPI(APIView):
 
 
 class ProblemSetGroupAPI(APIView):
-    @validate_serializer(CreateOrEditProblemSetGroupSerializer)
+    @validate_serializer(CreateProblemSetGroupSerializer)
     def post(self, request):
         data = request.data
-        if ProblemSetGroup.objects.filter(data["title"]).exists():
+        if ProblemSetGroup.objects.filter(title=data["title"]).exists():
             return self.error("Problem set group title already exists.")
 
         problem_set_group = ProblemSetGroup.objects.create(**data)
 
         return self.success(ProblemSetGroupSerializer(problem_set_group).data)
 
-    @validate_serializer(CreateOrEditProblemSetGroupSerializer)
+    @validate_serializer(EditProblemSetGroupSerializer)
     def put(self, request):
         data = request.data
 
@@ -757,29 +757,36 @@ class ProblemSetGroupAPI(APIView):
 
         if not id:
             problem_set_group = ProblemSetGroup.objects.all()
-            return self.success(ProblemSetGroupSerializer(problem_set_group).data)
+            return self.success(ProblemSetGroupSerializer(problem_set_group, many=True).data)
 
         try:
             problem_set_group = ProblemSetGroup.objects.get(id=id)
-            return self.success(problem_set_group)
+            return self.success(ProblemSetGroupSerializer(problem_set_group).data)
         except ProblemSetGroup.DoesNotExist:
             return self.error("Problem set group does not exist.")
 
 
 class ProblemSetAPI(APIView):
-    @validate_serializer(CreateOrEditProblemSetSerializer)
+    @validate_serializer(CreateProblemSetSerializer)
     def post(self, request):
         data = request.data
-        if ProblemSet.objects.filter(data["title"]).exists():
+        if ProblemSet.objects.filter(title=data["title"]).exists():
             return self.error("Problem set title already exists.")
-        if ProblemSet.objects.filter(data["color"]).exists():
+        if ProblemSet.objects.filter(color=data["color"]).exists():
             return self.error("Problem set color already exists.")
 
+        problem_set_group_id = data.pop("problem_set_group_id")
+        try:
+            problem_set_group = ProblemSetGroup.objects.get(id=problem_set_group_id)
+        except ProblemSetGroup.DoesNotExist:
+            return self.error("Problem set group does not exist.")
+
+        data["problem_set_group"] = problem_set_group
         problem_set = ProblemSet.objects.create(**data)
 
         return self.success(ProblemSetSerializer(problem_set).data)
 
-    @validate_serializer(CreateOrEditProblemSetSerializer)
+    @validate_serializer(EditProblemSetSerializer)
     def put(self, request):
         data = request.data
 
@@ -788,11 +795,18 @@ class ProblemSetAPI(APIView):
         except ProblemSet.DoesNotExist:
             return self.error("Problem set does not exist.")
 
+        problem_set_group_id = data.pop("problem_set_group_id")
+        try:
+            problem_set_group = ProblemSetGroup.objects.get(id=problem_set_group_id)
+        except ProblemSetGroup.DoesNotExist:
+            return self.error("Problem set group does not exist.")
+
+        data["problem_set_group"] = problem_set_group
         for k, v in data.items():
             setattr(problem_set, k, v)
         problem_set.save()
 
-        return self.success()
+        return self.success(ProblemSetSerializer(problem_set).data)
 
     def delete(self, request):
         id = request.GET.get("id")
@@ -812,10 +826,10 @@ class ProblemSetAPI(APIView):
 
         if not id:
             problem_set = ProblemSet.objects.all()
-            return self.success(ProblemSetSerializer(problem_set).data)
+            return self.success(ProblemSetSerializer(problem_set, many=True).data)
 
         try:
             problem_set = ProblemSet.objects.get(id=id)
-            return self.success(problem_set)
+            return self.success(ProblemSetSerializer(problem_set).data)
         except ProblemSet.DoesNotExist:
             return self.error("Problem set does not exist.")
