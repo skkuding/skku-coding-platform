@@ -33,6 +33,11 @@ DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test
                         "share_submission": False,
                         "rule_type": "ACM", "hint": "<p>test</p>", "source": "test", "bank": False}
 
+DEFAULT_PROBLEM_SET_GROUP_DATA = {"title": "SKKU Programming Competition past Problems",
+                                  "button_type": "shadow-round-button", "is_disabled": False}
+
+DEFAULT_PROBLEM_SET_DATA = {"title": "Level 1", "color": "#CC99C9", "is_disabled": False, "is_public": True}
+
 
 class ProblemCreateTestBase(APITestCase):
     @staticmethod
@@ -437,3 +442,103 @@ ddd
         self.assertEqual(ret["prepend"], "aaa\n")
         self.assertEqual(ret["template"], "")
         self.assertEqual(ret["append"], "ccc\n")
+
+
+class ProblemSetGroupAdminTest(APITestCase):
+    def setUp(self):
+        self.super_admin = self.create_super_admin()
+        self.url = self.reverse("problem_set_group_admin_api")
+        self.data = copy.deepcopy(DEFAULT_PROBLEM_SET_GROUP_DATA)
+
+    def test_create_problem_set_group(self):
+        response = self.client.post(self.url, data=self.data)
+        self.assertSuccess(response)
+        return response
+
+    def test_delete_problem_set_group(self):
+        id = self.test_create_problem_set_group().data["data"]["id"]
+        response = self.client.delete("{}?id={}".format(self.url, id))
+        self.assertSuccess(response)
+
+    def test_update_problem_set_group(self):
+        id = self.test_create_problem_set_group().data["data"]["id"]
+        update_data = {"id": id, "title": "updated Programming Competition past Problems",
+                       "button_type": "color-round-button", "is_disabled": False}
+        data = copy.deepcopy(self.data)
+        data.update(update_data)
+        response = self.client.put(self.url, data=update_data)
+        self.assertSuccess(response)
+        response_data = response.data["data"]
+        for k in data.keys():
+            self.assertEqual(response_data[k], data[k])
+
+    def test_get_problem_set_groups(self):
+        self.test_create_problem_set_group()
+        response = self.client.get(self.url)
+        self.assertSuccess(response)
+
+    def test_get_one_problem_set_group(self):
+        id = self.test_create_problem_set_group().data["data"]["id"]
+        response = self.client.get("{}?id={}".format(self.url, id))
+        self.assertSuccess(response)
+
+
+class ProblemSetAdminTest(APITestCase):
+    def setUp(self):
+        self.super_admin = self.create_super_admin()
+        self.url = self.reverse("problem_set_admin_api")
+        self.problem_set_group_id = self.client.post(self.reverse("problem_set_group_admin_api"), data=DEFAULT_PROBLEM_SET_GROUP_DATA).data["data"]["id"]
+        self.data = copy.deepcopy(DEFAULT_PROBLEM_SET_DATA)
+        self.data["problem_set_group_id"] = self.problem_set_group_id
+
+    def test_create_problem_set(self):
+        response = self.client.post(self.url, data=self.data)
+        self.assertSuccess(response)
+        return response
+
+    def test_delete_problem_set(self):
+        id = self.test_create_problem_set().data["data"]["id"]
+        response = self.client.delete("{}?id={}".format(self.url, id))
+        self.assertSuccess(response)
+
+    def test_update_problem_set(self):
+        id = self.test_create_problem_set().data["data"]["id"]
+        update_data = {"id": id, "title": "Level 3", "color": "#FF99C9",
+                       "is_disabled": False, "is_public": True, "problem_set_group_id": self.problem_set_group_id}
+        data = copy.deepcopy(self.data)
+        data.update(update_data)
+        response = self.client.put(self.url, data=data)
+        self.assertSuccess(response)
+        response_data = response.data["data"]
+        for k in data.keys():
+            if k == "problem_set_group_id":
+                self.assertEqual(response_data["problem_set_group"], data[k])
+                continue
+            self.assertEqual(response_data[k], data[k])
+
+    def test_update_change_problem_set_group(self):
+        id = self.test_create_problem_set().data["data"]["id"]
+        problem_set_group_data = {"title": "Would change to here..",
+                                  "button_type": "shadow-round-button", "is_disabled": False}
+        problem_set_group_id_2 = self.client.post(self.reverse("problem_set_group_admin_api"), data=problem_set_group_data).data["data"]["id"]
+        data = copy.deepcopy(self.data)
+        data["problem_set_group_id"] = problem_set_group_id_2
+        data["id"] = id
+        response = self.client.put(self.url, data=data)
+        self.assertSuccess(response)
+        response_data = response.data["data"]
+        for k in data.keys():
+            if k == "problem_set_group_id":
+                self.assertEqual(response_data["problem_set_group"], data[k])
+                continue
+            self.assertEqual(response_data[k], data[k])
+
+    def test_get_problem_sets(self):
+        self.test_create_problem_set()
+        response = self.client.get(self.url)
+        self.assertSuccess(response)
+
+    def test_get_one_problem_set(self):
+        id = self.test_create_problem_set().data["data"]["id"]
+        response = self.client.get("{}?id={}".format(self.url, id))
+        self.assertSuccess(response)
