@@ -737,7 +737,7 @@ class ProblemSetGroupAPI(APIView):
             setattr(problem_set_group, k, v)
         problem_set_group.save()
 
-        return self.success()
+        return self.success(ProblemSetGroupSerializer(problem_set_group).data)
 
     def delete(self, request):
         id = request.GET.get("id")
