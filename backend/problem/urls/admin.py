@@ -1,7 +1,7 @@
 from django.urls import path
 
 from ..views.admin import (ContestProblemAPI, ProblemAPI, ProblemLevelAPIView, TestCaseAPI, MakeContestProblemPublicAPIView,
-                           CompileSPJAPI, AddContestProblemAPI, TestCaseTextAPI)
+                           CompileSPJAPI, AddContestProblemAPI, TestCaseTextAPI, ProblemSetGroupAPI, ProblemSetAPI)
 
 urlpatterns = [
     path("test_case/", TestCaseAPI.as_view(), name="test_case_api"),
@@ -12,4 +12,6 @@ urlpatterns = [
     path("contest/add_problem_from_public/", AddContestProblemAPI.as_view(), name="add_contest_problem_from_public_api"),
     path("testcase_text/", TestCaseTextAPI.as_view(), name="testcase_text_api"),
     path("problem_level_count/", ProblemLevelAPIView.as_view(), name="problem_level_count"),
+    path("problemset/group", ProblemSetGroupAPI.as_view(), name="problem_set_group_admin_api"),
+    path("problemset/problem", ProblemSetAPI.as_view(), name="problem_set_admin_api"),
 ]
