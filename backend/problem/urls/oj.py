@@ -8,5 +8,5 @@ urlpatterns = [
     path("contest/problem/", ContestProblemAPI.as_view(), name="contest_problem_api"),
     path("bank/problem/", BankProblemAPI.as_view(), name="bank_problem_api"),
     path("problemset/group/", ProblemSetGroupAPI.as_view(), name="problem_set_group_api"),
-    path("problemset/problem/", ProblemSetAPI.as_view(), name="problem_set_api"),
+    path("problemset/", ProblemSetAPI.as_view(), name="problem_set_api"),
 ]
