@@ -103,11 +103,11 @@
       >
         +Create
       </b-button>
-      <create-problem-set-group-modal
+      <problem-set-group-modal
         :problem-set-group-id="selectedProblemSetGroupId"
         :modal-type="modalType"
         @update="getProblemSetGroupList"
-      ></create-problem-set-group-modal>
+      ></problem-set-group-modal>
       <div v-if="!problemSetGroupList.length">
         No Problem set group
       </div>
@@ -118,13 +118,13 @@
 <script>
 import api from '../../api.js'
 import Panel from '../../components/Panel.vue'
-import CreateProblemSetGroupModal from '../../components/CreateProblemSetGroupModal.vue'
+import ProblemSetGroupModal from '../../components/ProblemSetGroupModal.vue'
 
 export default {
   name: 'ProblemSetList',
   components: {
     Panel,
-    CreateProblemSetGroupModal
+    ProblemSetGroupModal
   },
   props: [
     'course-id',
