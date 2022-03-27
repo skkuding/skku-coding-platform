@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// 引入 view 组件
 import {
   Announcement, Conf, Contest, ContestList, Home, JudgeServer, Login,
-  Problem, ProblemList, User, PruneTestCase, Dashboard, Banner
+  Problem, ProblemList, ProblemSet, User, PruneTestCase, Dashboard, Banner
 } from './views'
 Vue.use(VueRouter)
 
@@ -60,6 +59,11 @@ export default new VueRouter({
           path: '/problems',
           name: 'problem-list',
           component: ProblemList
+        },
+        {
+          path: '/problem-set',
+          name: 'problem-set',
+          component: ProblemSet
         },
         {
           path: '/problem/create',
