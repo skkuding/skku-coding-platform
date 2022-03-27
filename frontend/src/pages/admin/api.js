@@ -362,20 +362,51 @@ export default {
     })
   },
   getProblemSetGroup (problemSetGroupID) {
-    return ajax('admin/problemset/group', 'get', {
+    return ajax('admin/problemset/group/', 'get', {
       params: {
         id: problemSetGroupID
       }
     })
   },
   createProblemSetGroup (data) {
-    return ajax('admin/problemset/group', 'post', {
+    return ajax('admin/problemset/group/', 'post', {
       data
     })
   },
   editProblemSetGroup (data) {
-    return ajax('admin/problemset/group', 'put', {
+    return ajax('admin/problemset/group/', 'put', {
       data
+    })
+  },
+  deleteProblemSetGroup (problemSetGroupID) {
+    return ajax('admin/problemset/group/', 'delete', {
+      params: {
+        id: problemSetGroupID
+      }
+    })
+  },
+  getProblemSet (problemSetGroupID) {
+    return ajax('admin/problemset/', 'get', {
+      params: {
+        id: problemSetGroupID
+      }
+    })
+  },
+  createProblemSet (data) {
+    return ajax('admin/problemset/', 'post', {
+      data
+    })
+  },
+  editProblemSet (data) {
+    return ajax('admin/problemset/', 'put', {
+      data
+    })
+  },
+  deleteProblemSet (problemSetGroupID) {
+    return ajax('admin/problemset/', 'delete', {
+      params: {
+        id: problemSetGroupID
+      }
     })
   }
 }
