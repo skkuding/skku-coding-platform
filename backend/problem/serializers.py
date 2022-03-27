@@ -226,7 +226,14 @@ class AnswerSerializer(serializers.Serializer):
     language = LanguageNameChoiceField()
 
 
-class CreateOrEditProblemSetGroupSerializer(serializers.Serializer):
+class CreateProblemSetGroupSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    button_type = serializers.ChoiceField(choices=("color-round-button", "shadow-round-button"))
+    is_disabled = serializers.BooleanField()
+
+
+class EditProblemSetGroupSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     title = serializers.CharField()
     button_type = serializers.ChoiceField(choices=("color-round-button", "shadow-round-button"))
     is_disabled = serializers.BooleanField()
@@ -238,9 +245,18 @@ class ProblemSetGroupSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CreateOrEditProblemSetSerializer(serializers.Serializer):
+class CreateProblemSetSerializer(serializers.Serializer):
     title = serializers.CharField()
-    problem_set_group = serializers.IntegerField()
+    problem_set_group_id = serializers.IntegerField()
+    color = serializers.CharField()
+    is_disabled = serializers.BooleanField()
+    is_public = serializers.BooleanField()
+
+
+class EditProblemSetSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    problem_set_group_id = serializers.IntegerField()
     color = serializers.CharField()
     is_disabled = serializers.BooleanField()
     is_public = serializers.BooleanField()
