@@ -45,6 +45,7 @@ LOCAL_APPS = [
     'contest',
     'utils',
     'submission',
+    'temperature',
     'options',
     'judge',
     'assignment',
