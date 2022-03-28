@@ -28,16 +28,16 @@
         label="Button Type"
         label-for="input-problem-set-group-button-type"
         required
-        :state="form.title !== ''"
+        :state="form.button_type !== ''"
         invalid-feedback="Problem set group button type is required"
       >
-        <b-form-input
+        <b-form-select
           id="input-problem-set-group-button-type"
           v-model="form.button_type"
           placeholder="Enter Button Type"
+          :options="options_button_type"
           required
-          :state="form.title !== ''"
-        ></b-form-input>
+        ></b-form-select>
       </b-form-group>
       <b-form-group
         id="input-group-is-disabled"
@@ -69,7 +69,11 @@ export default {
         title: '',
         is_disabled: false,
         button_type: 'color-round-button'
-      }
+      },
+      options_button_type: [
+        { text: 'Color round button', value: 'color-round-button', disabled: false },
+        { text: 'Shadow round button', value: 'shadow-round-button', disabled: false }
+      ]
     }
   },
   methods: {

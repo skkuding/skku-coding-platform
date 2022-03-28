@@ -50,6 +50,11 @@
                     icon="trash"
                     @click.native="deleteProblemSet(row.item.id, data.item.id)"
                   />
+                  <icon-btn
+                    name="Manage problem set's problem list"
+                    icon="list"
+                    @click.native="showManageProblem(row.item.id, data.item.id)"
+                  />
                 </div>
               </template>
             </b-table>
@@ -111,6 +116,9 @@
       :modal-type="modalTypeProblemSet"
       @update="updateProblemSetList(selectedProblemSetGroupId)"
     ></problem-set-modal>
+    <manage-problem-modal
+      :problem-set-id="selectedProblemSetId"
+    ></manage-problem-modal>
   </div>
 </template>
 
@@ -119,13 +127,15 @@ import api from '../../api.js'
 import Panel from '../../components/Panel.vue'
 import ProblemSetGroupModal from '../../components/ProblemSetGroupModal.vue'
 import ProblemSetModal from '../../components/ProblemSetModal.vue'
+import manageProblemModal from '../../components/ManageProblemModal.vue'
 
 export default {
   name: 'ProblemSetList',
   components: {
     Panel,
     ProblemSetGroupModal,
-    ProblemSetModal
+    ProblemSetModal,
+    manageProblemModal
   },
   props: [
   ],
@@ -250,6 +260,10 @@ export default {
         await this.updateProblemSetList(problemSetGroupId)
       } catch (err) {
       }
+    },
+    async showManageProblem (problemSetId) {
+      this.selectedProblemSetId = problemSetId
+      await this.$bvModal.show('manage-problem')
     }
   },
   computed: {
