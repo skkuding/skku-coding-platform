@@ -3,7 +3,7 @@
   id="create-problem-set"
   :title="modalTitle"
   size="lg"
-  @ok="(modalType === 'create') ? createNewProblemSet() : editProblemSet()"
+  @ok="(modalType === 'create') ? createProblemSet() : editProblemSet()"
   @cancel="cancelCreation"
   >
     <b-form>
@@ -65,11 +65,17 @@ export default {
   name: 'ProblemSetModal',
   components: {
   },
-  props: [
-    'modalType',
-    'problemSetId',
-    'problemSetGroupId'
-  ],
+  props: {
+    modalType: {
+      type: Boolean
+    },
+    problemSetId: {
+      type: Number
+    },
+    problemSetGroupId: {
+      type: Number
+    }
+  },
   data () {
     return {
       modalTitle: '',
@@ -83,7 +89,7 @@ export default {
     }
   },
   methods: {
-    async createNewProblemSet () {
+    async createProblemSet () {
       const data = {
         title: this.form.title,
         problem_set_group_id: this.problemSetGroupId,
@@ -113,7 +119,7 @@ export default {
       this.form.is_public = true
     },
     async getProblemSetDetail () {
-      const res = await api.getProblemSet(this.problemSetId)
+      const res = await api.getProblemSet(this.problemSetGroupId, this.problemSetId)
       this.form = res.data.data
     }
   },

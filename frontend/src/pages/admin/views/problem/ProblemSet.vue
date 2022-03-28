@@ -19,7 +19,7 @@
             <b-table
               v-else
               :items="row.item.problemSet"
-              :fields="problemField"
+              :fields="problemSetField"
               no-border-collapse
               class="px-5"
             >
@@ -98,7 +98,7 @@
       </b-button>
       <problem-set-group-modal
         :problem-set-group-id="selectedProblemSetGroupId"
-        :modal-type="modalType"
+        :modal-type="modalTypeProblemSetGroup"
         @update="getProblemSetGroupList"
       ></problem-set-group-modal>
       <div v-if="!problemSetGroupList.length">
@@ -108,8 +108,8 @@
     <problem-set-modal
       :problem-set-id="selectedProblemSetId"
       :problem-set-group-id="selectedProblemSetGroupId"
-      :modal-type="modalType"
-      @update="getProblemSetList"
+      :modal-type="modalTypeProblemSet"
+      @update="updateProblemSetList(selectedProblemSetGroupId)"
     ></problem-set-modal>
   </div>
 </template>
@@ -131,7 +131,8 @@ export default {
   ],
   data () {
     return {
-      modalType: '',
+      modalTypeProblemSetGroup: '',
+      modalTypeProblemSet: '',
       problemSetGroupField: [
         {
           key: 'show_detail',
@@ -194,28 +195,28 @@ export default {
       this.problemSetGroupList = res.data.data
     },
     async createProblemSetGroup () {
-      this.modalType = 'create'
+      this.modalTypeProblemSetGroup = 'create'
       this.$bvModal.show('create-problem-set-group')
     },
     async editProblemSetGroup (problemSetGroupId) {
-      this.modalType = 'edit'
+      this.modalTypeProblemSetGroup = 'edit'
       this.selectedProblemSetGroupId = problemSetGroupId
       await this.$bvModal.show('create-problem-set-group')
     },
-    async updateProblemSetList (assignmentId) {
-      const res = await api.getProblemSet(assignmentId)
-      for (let i = 0; i < this.assignmentList.length; i++) {
-        if (this.assignmentList[i].id === assignmentId) {
-          this.$set(this.assignmentList[i], 'problemList', res.data.data)
-          this.assignmentList[i]._showDetails = false
-          this.$set(this.assignmentList[i], '_showDetails', true)
+    async updateProblemSetList (problemSetGroupId) {
+      const res = await api.getProblemSet(problemSetGroupId)
+      for (let i = 0; i < this.problemSetGroupList.length; i++) {
+        if (this.problemSetGroupList[i].id === problemSetGroupId) {
+          this.$set(this.problemSetGroupList[i], 'problemSet', res.data.data)
+          this.problemSetGroupList[i]._showDetails = false
+          this.$set(this.problemSetGroupList[i], '_showDetails', true)
         }
       }
     },
     async toggleProblemSetGroup (item) {
       if (item._showDetails) {
         item._showDetails = false
-      } else if (item.problemList) {
+      } else if (item.problemSet) {
         this.$set(item, '_showDetails', true)
       } else {
         const res = await api.getProblemSet(item.id)
@@ -223,19 +224,15 @@ export default {
         this.$set(item, '_showDetails', true)
       }
     },
-    async getProblemSetList () {
-      const res = await api.getProblemSet()
-      this.problemSetGroupList = res.data.data
-    },
     async createProblemSet (problemSetGroupId) {
-      this.modalType = 'create'
+      this.modalTypeProblemSet = 'create'
       this.selectedProblemSetGroupId = problemSetGroupId
       this.$bvModal.show('create-problem-set')
     },
-    async editProblemSet (problemSetId, problemSetGroupId) {
-      this.modalType = 'edit'
-      this.selectedProblemSetId = problemSetId
+    async editProblemSet (problemSetGroupId, problemSetId) {
+      this.modalTypeProblemSet = 'edit'
       this.selectedProblemSetGroupId = problemSetGroupId
+      this.selectedProblemSetId = problemSetId
       await this.$bvModal.show('create-problem-set')
     },
     async deleteProblemSetGroup (problemSetGroupId) {
@@ -246,10 +243,10 @@ export default {
       } catch (err) {
       }
     },
-    async deleteProblemSet (problemSetGroupId, problemId) {
+    async deleteProblemSet (problemSetGroupId, problemSetId) {
       try {
         await this.$confirm('Sure to delete this problem set?', 'Delete Problem set', 'warning', false)
-        await api.deleteProblemSet(problemId)
+        await api.deleteProblemSet(problemSetId)
         await this.updateProblemSetList(problemSetGroupId)
       } catch (err) {
       }
