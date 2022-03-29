@@ -14,6 +14,7 @@ import {
   NotFound,
   Problem,
   ProblemList,
+  ProblemSet,
   ResetPassword,
   ProfileSetting,
   LectureList,
@@ -84,6 +85,12 @@ export default [
     path: '/problem/:problemID',
     meta: { title: 'Problem Details' },
     component: Problem
+  },
+  {
+    name: 'problem-set',
+    path: '/problem-set/:problemSetId',
+    meta: { title: 'Problem Set' },
+    component: ProblemSet
   },
   {
     name: 'contest-list',

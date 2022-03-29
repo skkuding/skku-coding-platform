@@ -1,4 +1,5 @@
 import ProblemList from './problem/ProblemList.vue'
+import ProblemSet from './problem/ProblemSet.vue'
 import AnnouncementList from './announcement/AnnouncementList.vue'
 import Announcement from './announcement/Announcement.vue'
 import Logout from './user/Logout.vue'
@@ -29,7 +30,7 @@ const ContestDetail = () => import(/* webpackChunkName: "contest" */ '@oj/views/
 
 export {
   Home, NotFound,
-  Logout, ProblemList, Announcement, AnnouncementList, Problem,
+  Logout, ProblemList, Announcement, AnnouncementList, Problem, ProblemSet,
   ApplyResetPassword, ResetPassword, EmailAuth, ProfileSetting,
   ContestList, ContestDetail, ContestProblemList, ContestRanking, Register,
   LectureList, LectureDashboard, LectureAssignmentList, LectureAssignmentDetail, LectureQna, LectureQnaDetail
