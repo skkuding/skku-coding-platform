@@ -19,7 +19,7 @@
         All Problems
       </h4>
       <div class="mb-4 flex justify-between flex-row-reverse">
-        <div class="my-auto mr-32">
+        <div class="my-auto mr-16">
           <div class="category-container">
             <b-dropdown :text="difficulty" class="mr-4">
               <b-dropdown-item @click="filterByDifficulty('All')">All</b-dropdown-item>
@@ -31,16 +31,16 @@
               <b-dropdown-item @click="filterByDifficulty('Level6')">Level6</b-dropdown-item>
               <b-dropdown-item @click="filterByDifficulty('Level7')">Level7</b-dropdown-item>
             </b-dropdown>
-              <div class="tags mr-4">
-                tags
-                <b-form-checkbox
-                  v-model="checked"
-                  name="check-button"
-                  switch
-                  class="ml-2"
-                >
-                </b-form-checkbox>
-              </div>
+            <div class="tags mr-4">
+              tags
+              <b-form-checkbox
+                v-model="checked"
+                name="check-button"
+                switch
+                class="ml-2"
+              >
+              </b-form-checkbox>
+            </div>
             <div class="col-4">
               <b-icon icon="search" class="search-icon"/>
               <b-input placeholder="keywords" class="search-input w-40"
@@ -270,9 +270,7 @@ export default {
     font-family: manrope_bold;
   }
   ::v-deep .table {
-    width:95% !important;
-    margin-left:auto;
-    margin-right:auto;
+    width:100%;
     td {
       cursor: pointer;
     }

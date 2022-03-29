@@ -1,13 +1,14 @@
 <template>
   <div class="problem-list-card font-bold">
-    <div class="text-2xl flex items-center" :style="`color: ${problemSet.color}`">
+    <button class="mt-8" @click="goProblemList">&lt;&lt; Back</button>
+    <div class="text-2xl flex items-center mt-6" :style="`color: ${problemSet.color}`">
       <div class="ellipse" :style="`background-color: ${problemSet.color}`"></div>
       <h4 class="-ml-10 text-stroke-white">{{ problemSetGroup.title }} - {{ problemSet.title }}</h4>
     </div>
     <div class="mb-4 flex justify-between flex-row-reverse">
-      <div class="my-auto mr-32">
+      <div class="my-auto">
         <div class="category-container">
-          <div class="tags mr-4">
+          <div class="tags">
             tags
             <b-form-checkbox
               v-model="checked"
@@ -170,6 +171,9 @@ export default {
     },
     async goProblem (item) {
       await this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
+    },
+    async goProblemList () {
+      await this.$router.push({ name: 'problem-list' })
     }
   },
   watch: {
@@ -230,9 +234,7 @@ export default {
     font-family: manrope_bold;
   }
   ::v-deep .table {
-    width:95% !important;
-    margin-left:auto;
-    margin-right:auto;
+    width:100%
     td {
       cursor: pointer;
     }
