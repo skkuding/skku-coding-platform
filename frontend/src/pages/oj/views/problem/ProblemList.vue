@@ -236,7 +236,7 @@ export default {
   }
   .category-container{
     display:flex;
-    justify-content:flex-end;
+    justify-content: flex-end;
   }
   .dropdown-toggle{
     margin-right:2em;
