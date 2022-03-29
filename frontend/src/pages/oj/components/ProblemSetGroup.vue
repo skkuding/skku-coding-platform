@@ -4,14 +4,14 @@
       <color-round-button
         v-if="problemSetGroup.button_type === 'color-round-button'"
         :color="problemSet.color" class="mr-5 my-3"
-        @click="goProblemSet(problemSet.id)"
+        @click.native="goProblemSet(problemSet.id)"
       >
         {{ problemSet.title }}
       </color-round-button>
       <shadow-round-button
         v-else-if="problemSetGroup.button_type === 'shadow-round-button'"
         :color="problemSet.color" class="mr-5 my-3"
-        @click="goProblemSet(problemSet.id)"
+        @click.native="goProblemSet(problemSet.id)"
       >
         {{ problemSet.title }}
       </shadow-round-button>
