@@ -88,7 +88,7 @@ export default [
   },
   {
     name: 'problem-set',
-    path: '/problem-set/:problemSetId',
+    path: '/problem-set/:problemSetGroupId/:problemSetId',
     meta: { title: 'Problem Set' },
     component: ProblemSet
   },
