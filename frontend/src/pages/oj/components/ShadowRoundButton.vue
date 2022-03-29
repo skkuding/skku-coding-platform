@@ -1,5 +1,5 @@
 <template>
-  <button class="rounded-full px-5 h-14 shadow" :style="'background-color:' + color">
+  <button class="rounded-2xl px-5 h-10" :style="'box-shadow: 4px 4px 15px ' + color">
     <slot></slot>
   </button>
 </template>

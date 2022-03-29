@@ -13,7 +13,7 @@
         <h4 class="subtitle-blue text-xl">
           {{ problemSetGroup.title }}
         </h4>
-        <problem-set :problem-set-group-id="problemSetGroup.id"></problem-set>
+        <problem-set :problem-set-group="problemSetGroup"></problem-set>
       </div>
       <h4 class="subtitle-blue text-xl">
         All Problems
