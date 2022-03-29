@@ -9,14 +9,12 @@
       </template>
     </page-top>
     <div class="problem-list-card font-bold">
-      <h4 class="subtitle-blue text-xl">
-        SCAT 대비 문제집
-      </h4>
-      <problem-set></problem-set>
-      <h4 class="subtitle-blue text-xl">
-        SKKU 프로그래밍 대회 기출문제
-      </h4>
-      <problem-set></problem-set>
+      <div v-for="problemSetGroup in problemSetGroups" :key="problemSetGroup.id">
+        <h4 class="subtitle-blue text-xl">
+          {{ problemSetGroup.title }}
+        </h4>
+        <problem-set v-for="problemSet in problemSetGroup.problemSets" :key="problemSet.id"></problem-set>
+      </div>
       <h4 class="subtitle-blue text-xl">
         All Problems
       </h4>
