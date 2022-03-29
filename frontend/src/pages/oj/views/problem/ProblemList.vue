@@ -13,7 +13,7 @@
         <h4 class="subtitle-blue text-xl">
           {{ problemSetGroup.title }}
         </h4>
-        <problem-set :problem-set-group="problemSetGroup"></problem-set>
+        <problem-set-group :problem-set-group="problemSetGroup"></problem-set-group>
       </div>
       <h4 class="subtitle-blue text-xl">
         All Problems
@@ -99,13 +99,13 @@ import { mapGetters } from 'vuex'
 import api from '@oj/api'
 import { ProblemMixin } from '@oj/components/mixins'
 import { DIFFICULTY_COLOR } from '@/utils/constants'
-import ProblemSet from '@oj/components/ProblemSet.vue'
+import ProblemSetGroup from '@oj/components/ProblemSetGroup.vue'
 import PageTop from '@oj/components/PageTop.vue'
 
 export default {
   name: 'problemList',
   components: {
-    ProblemSet,
+    ProblemSetGroup,
     PageTop
   },
   mixins: [ProblemMixin],

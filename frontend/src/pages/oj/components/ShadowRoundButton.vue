@@ -1,5 +1,5 @@
 <template>
-  <button class="rounded-2xl px-5 h-10 shadow-round-button" :style="cssColor">
+  <button class="rounded-2xl px-5 h-10 shadow-round-button transition duration-200 ease-in-out" :style="cssColor">
     <slot></slot>
   </button>
 </template>
@@ -27,7 +27,7 @@ export default {
     cssColor () {
       return {
         // for opacity purpose. Use tailwindcss v3 class after migrating to tailwindcss v3
-        '--color': this.color + '55'
+        '--color-opacity': this.color + '55'
       }
     }
   }
@@ -36,6 +36,9 @@ export default {
 
 <style lang="scss" scoped>
   .shadow-round-button {
-    box-shadow: 4px 4px 15px var(--color)
+    box-shadow: 4px 4px 15px var(--color-opacity)
+  }
+  .shadow-round-button:hover {
+    background-color: var(--color-opacity)
   }
 </style>
