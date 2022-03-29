@@ -120,4 +120,4 @@ class ProblemSet(models.Model):
     color = models.TextField()
     is_disabled = models.BooleanField()
     is_public = models.BooleanField()
-    problems = models.ManyToManyField(Problem, blank=True)
+    problems = models.ManyToManyField(Problem, blank=True, related_name="problem_set")
