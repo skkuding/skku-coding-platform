@@ -503,8 +503,9 @@ class ProblemSetAdminTest(APITestCase):
 
     def test_update_problem_set(self):
         id = self.test_create_problem_set().data["data"]["id"]
+        problem_id = self.client.post(self.reverse("problem_admin_api"), data=DEFAULT_PROBLEM_DATA).data["data"]["id"]
         update_data = {"id": id, "title": "Level 3", "color": "#FF99C9",
-                       "is_disabled": False, "is_public": True, "problem_set_group_id": self.problem_set_group_id}
+                       "is_disabled": False, "is_public": True, "problem_set_group_id": self.problem_set_group_id, "problems": [problem_id]}
         data = copy.deepcopy(self.data)
         data.update(update_data)
         response = self.client.put(self.url, data=data)
@@ -518,12 +519,14 @@ class ProblemSetAdminTest(APITestCase):
 
     def test_update_change_problem_set_group(self):
         id = self.test_create_problem_set().data["data"]["id"]
+        problem_id = self.client.post(self.reverse("problem_admin_api"), data=DEFAULT_PROBLEM_DATA).data["data"]["id"]
         problem_set_group_data = {"title": "Would change to here..",
                                   "button_type": "shadow-round-button", "is_disabled": False}
         problem_set_group_id_2 = self.client.post(self.reverse("problem_set_group_admin_api"), data=problem_set_group_data).data["data"]["id"]
         data = copy.deepcopy(self.data)
         data["problem_set_group_id"] = problem_set_group_id_2
         data["id"] = id
+        data["problems"] = [problem_id]
         response = self.client.put(self.url, data=data)
         self.assertSuccess(response)
         response_data = response.data["data"]
