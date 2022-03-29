@@ -51,7 +51,7 @@ export default {
     goProblemSet (problemSetId) {
       this.$router.push({
         name: 'problem-set',
-        params: { problemSetId }
+        params: { problemSetId, problemSetGroupId: this.problemSetGroup.id }
       })
     }
   }

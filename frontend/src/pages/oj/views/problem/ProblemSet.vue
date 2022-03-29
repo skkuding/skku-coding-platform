@@ -1,32 +1,21 @@
 <template>
   <div class="problem-list-card font-bold">
+    <div class="text-2xl flex items-center" :style="`color: ${problemSet.color}`">
+      <div class="ellipse" :style="`background-color: ${problemSet.color}`"></div>
+      <h4 class="-ml-10 text-stroke-white">{{ problemSetGroup.title }} - {{ problemSet.title }}</h4>
+    </div>
     <div class="mb-4 flex justify-between flex-row-reverse">
       <div class="my-auto mr-32">
         <div class="category-container">
-          <b-dropdown :text="difficulty" class="mr-4">
-            <b-dropdown-item @click="filterByDifficulty('All')">All</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level1')">Level1</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level2')">Level2</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level3')">Level3</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level4')">Level4</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level5')">Level5</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level6')">Level6</b-dropdown-item>
-            <b-dropdown-item @click="filterByDifficulty('Level7')">Level7</b-dropdown-item>
-          </b-dropdown>
-            <div class="tags mr-4">
-              tags
-              <b-form-checkbox
-                v-model="checked"
-                name="check-button"
-                switch
-                class="ml-2"
-              >
-              </b-form-checkbox>
-            </div>
-          <div class="col-4">
-            <b-icon icon="search" class="search-icon"/>
-            <b-input placeholder="keywords" class="search-input w-40"
-              v-model="keyword" @input="filterByKeyword"/>
+          <div class="tags mr-4">
+            tags
+            <b-form-checkbox
+              v-model="checked"
+              name="check-button"
+              switch
+              class="ml-2"
+            >
+            </b-form-checkbox>
           </div>
         </div>
       </div>
@@ -96,8 +85,6 @@ export default {
       problemList: [],
       limit: 50,
       total: 0,
-      keyword: '',
-      difficulty: 'All',
       tag: '',
       page: 1,
       problemTableColumns: [
@@ -126,7 +113,9 @@ export default {
           key: 'tags'
         }
       ],
-      problemSetId: 0
+      problemSetId: 0,
+      problemSet: [],
+      problemSetGroup: {}
     }
   },
   computed: {
@@ -141,8 +130,19 @@ export default {
   methods: {
     async init () {
       this.problemSetId = this.$route.params.problemSetId
+      this.problemSetGroupId = this.$route.params.problemSetGroupId
+      await this.getProblemSetGroup()
+      await this.getProblemSet()
       await this.getTagList()
       await this.getProblemList()
+    },
+    async getProblemSetGroup () {
+      const res = await api.getProblemSetGroup(this.problemSetGroupId)
+      this.problemSetGroup = res.data.data
+    },
+    async getProblemSet () {
+      const res = await api.getProblemSet(this.problemSetGroupId, this.problemSetId)
+      this.problemSet = res.data.data
     },
     async getTagList () {
       const res = await api.getProblemTagList()
@@ -164,15 +164,6 @@ export default {
       if (this.isAuthenticated) {
         this.addStatusColumn(this.problemTableColumns, res.data.data.results)
       }
-    },
-    async filterByDifficulty (item) {
-      this.difficulty = item
-      this.page = 1
-      await this.getProblemList()
-    },
-    async filterByKeyword () {
-      this.page = 1
-      await this.getProblemList()
     },
     difficultyColor (value) {
       return DIFFICULTY_COLOR[value]
@@ -245,5 +236,20 @@ export default {
     td {
       cursor: pointer;
     }
+  }
+  .ellipse {
+    height: 60px;
+    width: 60px;
+    margin: auto 10px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+  }
+  .text-stroke-white {
+     text-shadow:
+      -1.5px -1.5px 0 white,
+      1.5px -1.5px 0 white,
+      -1.5px 1.5px 0 white,
+      1.5px 1.5px 0 white;
   }
 </style>
