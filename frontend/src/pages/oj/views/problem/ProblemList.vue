@@ -13,7 +13,7 @@
         <h4 class="subtitle-blue text-xl">
           {{ problemSetGroup.title }}
         </h4>
-        <problem-set v-for="problemSet in problemSetGroup.problemSets" :key="problemSet.id"></problem-set>
+        <problem-set :problem-set-group-id="problemSetGroup.id"></problem-set>
       </div>
       <h4 class="subtitle-blue text-xl">
         All Problems
@@ -161,7 +161,12 @@ export default {
   methods: {
     async init () {
       await this.getTagList()
+      await this.getProblemSetGroupList()
       await this.getProblemList()
+    },
+    async getProblemSetGroupList () {
+      const res = await api.getProblemSetGroup()
+      this.problemSetGroups = res.data.data
     },
     async getTagList () {
       const res = await api.getProblemTagList()
