@@ -53,7 +53,7 @@
                   <icon-btn
                     name="Manage problem set's problem list"
                     icon="list"
-                    @click.native="showManageProblem(row.item.id, data.item.id)"
+                    @click.native="showManageProblem(row.item.id, data.item)"
                   />
                 </div>
               </template>
@@ -117,7 +117,8 @@
       @update="updateProblemSetList(selectedProblemSetGroupId)"
     ></problem-set-modal>
     <manage-problem-modal
-      :problem-set-id="selectedProblemSetId"
+      :problem-set="selectedProblemSet"
+      @update="updateProblemSetList(selectedProblemSetGroupId)"
     ></manage-problem-modal>
   </div>
 </template>
@@ -188,7 +189,8 @@ export default {
         'Operation'
       ],
       selectedProblemSetGroupId: null,
-      selectedProblemSetId: null
+      selectedProblemSetId: null,
+      selectedProblemSet: {}
     }
   },
   async mounted () {
@@ -261,8 +263,9 @@ export default {
       } catch (err) {
       }
     },
-    async showManageProblem (problemSetId) {
-      this.selectedProblemSetId = problemSetId
+    async showManageProblem (problemSetGroupId, problemSet) {
+      this.selectedProblemSet = problemSet
+      this.selectedProblemSetGroupId = problemSetGroupId
       await this.$bvModal.show('manage-problem')
     }
   },

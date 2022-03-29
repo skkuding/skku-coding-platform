@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="manage-problem" @ok="goCreateProblem" title="Add problem to problem set" size="xl" class="font-bold">
+  <b-modal id="manage-problem" @ok="setProblemSetProblems" title="Change problems of the problem set" size="xl" class="font-bold">
     <div class="top-bar mb-4" style="margin-top:4px;">
       <h2 class="title">Problem List</h2>
       <div class="problem-list-table">
@@ -34,7 +34,7 @@
     </div>
     <div class="table">
       <b-table
-        select-mode="single"
+        select-mode="multi"
         selectable
         hover
         :items="problemList"
@@ -42,7 +42,7 @@
         :per-page="perPage"
         :current-page="currentPage"
         head-variant="light"
-        @row-clicked="selectProblem"
+        @row-selected="onRowSelected"
       >
         <template #cell(title)="data">
           {{data.value}}
@@ -76,9 +76,10 @@
       ></b-pagination>
     </div>
     <template #modal-footer="{ ok }">
-      <b-form-input v-model="form.displayId" placeholder="Enter display ID"></b-form-input>
+      Now: {{ problemSet.problems.length ? problemSet.problems.toString() : "None" }} =>
+      Selected problems: {{ form.selectedProblems.length ? form.selectedProblems.toString() : "None" }}
       <b-button size="md" variant="success" @click="ok()">
-        Add
+        Change
       </b-button>
     </template>
   </b-modal>
@@ -86,19 +87,18 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import api from '@oj/api'
+import api from '@admin/api'
 import { ProblemMixin } from '@oj/components/mixins'
 import { DIFFICULTY_COLOR } from '@/utils/constants'
 
 export default {
   name: 'ManageProblemModal',
   mixins: [ProblemMixin],
-  props: ['problemSetId'],
+  props: ['problemSet'],
   data () {
     return {
       form: {
-        selectedProblemId: null,
-        displayId: ''
+        selectedProblems: []
       },
       perPage: 7,
       currentPage: 1,
@@ -111,6 +111,10 @@ export default {
       tag: '',
       page: 1,
       problemTableColumns: [
+        {
+          label: 'Id',
+          key: 'id'
+        },
         {
           label: '#',
           key: '_id'
@@ -157,19 +161,16 @@ export default {
       this.tagList = res.data.data
     },
     async getProblemList () {
-      const offset = (this.page - 1) * this.limit
-      const res = await api.getProblemList(offset, this.limit,
-        {
-          difficulty: this.difficulty === 'All' ? '' : this.difficulty,
-          keyword: this.keyword,
-          tag: this.tag,
-          page: this.page
-        }
-      )
-      this.total = res.data.data.total
-      this.problemList = res.data.data.results
-      if (this.isAuthenticated) {
-        this.addStatusColumn(this.problemTableColumns, res.data.data.results)
+      const params = {
+        keyword: this.keyword,
+        offset: (this.page - 1) * this.limit,
+        limit: this.limit
+      }
+      try {
+        const res = await api.getProblemList(params)
+        this.total = res.data.data.total
+        this.problemList = res.data.data.results
+      } catch (err) {
       }
     },
     async filterByDifficulty (item) {
@@ -187,21 +188,30 @@ export default {
     async goProblem (item) {
       await this.$router.push({ name: 'problem-details', params: { problemID: item._id } })
     },
-    selectProblem (item) {
-      this.form.selectedProblemId = item.id
+    onRowSelected (items) {
+      this.form.selectedProblems = items.map(i => i.id)
     },
-    async goCreateProblem () {
-      if (this.form.selectedProblemId === null || this.form.displayId === '') {
-        this.$error('Select Problem and enter display ID!')
+    async setProblemSetProblems (bvModalEvt) {
+      bvModalEvt.preventDefault()
+      if (this.form.selectedProblems === []) {
+        this.$error('Please select one or more problems.')
         return
       }
       try {
-        // await api.addProblemFromPublic(data)
+        await api.editProblemSet({
+          ...this.problemSet,
+          problem_set_group_id: this.problemSet.problem_set_group,
+          problems: this.form.selectedProblems
+        })
       } catch (err) {
+        console.log(err)
+        return
       }
-      this.$set(this.form, 'selectedProblemId', null)
-      this.$set(this.form, 'displayId', '')
+      this.$set(this.form, 'selectedProblems', [])
       this.$emit('update')
+      this.$nextTick(() => {
+        this.$bvModal.hide('manage-problem')
+      })
     }
   },
   watch: {
