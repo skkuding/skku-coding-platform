@@ -84,7 +84,8 @@ export default {
         title: '',
         color: '',
         is_disabled: false,
-        is_public: true
+        is_public: true,
+        problems: []
       }
     }
   },
@@ -107,7 +108,8 @@ export default {
         problem_set_group_id: this.problemSetGroupId,
         color: this.form.color,
         is_disabled: this.form.is_disabled,
-        is_public: this.form.is_public
+        is_public: this.form.is_public,
+        problems: this.form.problems
       }
       await api.editProblemSet(data)
       this.$emit('update')
