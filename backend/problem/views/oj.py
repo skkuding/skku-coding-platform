@@ -204,7 +204,7 @@ class ProblemSetGroupAPI(APIView):
 
         if not id:
             problem_set_group = ProblemSetGroup.objects.filter(is_disabled=False)
-            return self.success(ProblemSetGroupSerializer(problem_set_group).data)
+            return self.success(ProblemSetGroupSerializer(problem_set_group, many=True).data)
 
         try:
             problem_set_group = ProblemSetGroup.objects.get(id=id, is_disabled=False)
@@ -216,13 +216,22 @@ class ProblemSetGroupAPI(APIView):
 class ProblemSetAPI(APIView):
     def get(self, request):
         id = request.GET.get("id")
+        problem_set_group_id = request.GET.get("problem_set_group_id")
 
-        if not id:
-            problem_set = ProblemSet.objects.filter(is_disabled=False, is_public=True)
-            return self.success(ProblemSetSerializer(problem_set).data)
+        if not problem_set_group_id:
+            return self.error("Problem set group id is required.")
 
         try:
-            problem_set = ProblemSet.objects.get(id=id, is_disabled=False, is_public=True)
+            problem_set_group = ProblemSetGroup.objects.get(id=problem_set_group_id, is_disabled=False)
+        except ProblemSetGroup.DoesNotExist:
+            return self.error("Problem set group does not exist")
+
+        if not id:
+            problem_set = ProblemSet.objects.filter(problem_set_group=problem_set_group, is_disabled=False, is_public=True)
+            return self.success(ProblemSetSerializer(problem_set, many=True).data)
+
+        try:
+            problem_set = ProblemSet.objects.get(problem_set_group=problem_set_group, id=id, is_disabled=False, is_public=True)
             return self.success(problem_set)
         except ProblemSet.DoesNotExist:
             return self.error("Problem set does not exist.")
