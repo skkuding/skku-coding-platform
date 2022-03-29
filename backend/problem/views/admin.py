@@ -801,9 +801,13 @@ class ProblemSetAPI(APIView):
         except ProblemSetGroup.DoesNotExist:
             return self.error("Problem set group does not exist.")
 
+        problem_ids = data.pop("problems")
+        problems = Problem.objects.filter(id__in=problem_ids, assignment_id__isnull=True, contest_id__isnull=True)
+
         data["problem_set_group"] = problem_set_group
         for k, v in data.items():
             setattr(problem_set, k, v)
+        problem_set.problems.set(problems)
         problem_set.save()
 
         return self.success(ProblemSetSerializer(problem_set).data)

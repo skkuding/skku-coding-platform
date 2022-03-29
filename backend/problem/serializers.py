@@ -260,6 +260,7 @@ class EditProblemSetSerializer(serializers.Serializer):
     color = serializers.CharField()
     is_disabled = serializers.BooleanField()
     is_public = serializers.BooleanField()
+    problems = serializers.ListField(child=serializers.IntegerField())
 
 
 class ProblemSetSerializer(serializers.ModelSerializer):

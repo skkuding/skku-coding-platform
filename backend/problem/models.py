@@ -41,28 +41,12 @@ def _default_io_mode():
     return {"io_mode": ProblemIOMode.standard, "input": "input.txt", "output": "output.txt"}
 
 
-class ProblemSetGroup(models.Model):
-    title = models.TextField()
-    button_type = models.TextField()
-    is_disabled = models.BooleanField()
-
-
-class ProblemSet(models.Model):
-    title = models.TextField()
-    problem_set_group = models.ForeignKey(ProblemSetGroup, null=True, on_delete=models.SET_NULL, related_name="problem_set")
-    color = models.TextField()
-    is_disabled = models.BooleanField()
-    is_public = models.BooleanField()
-
-
 class Problem(models.Model):
     # display ID
     _id = models.TextField(db_index=True)
     # assignment ID
     assignment = models.ForeignKey(Assignment, null=True, on_delete=models.CASCADE, related_name="problems")
     contest = models.ForeignKey(Contest, null=True, on_delete=models.CASCADE)
-    # TODO: filter problem set null.
-    problem_set = models.ForeignKey(ProblemSet, null=True, on_delete=models.SET_NULL)
     # for contest problem
     is_public = models.BooleanField(default=False)
     title = models.TextField()
@@ -122,3 +106,18 @@ class Problem(models.Model):
     def add_ac_number(self):
         self.accepted_number = models.F("accepted_number") + 1
         self.save(update_fields=["accepted_number"])
+
+
+class ProblemSetGroup(models.Model):
+    title = models.TextField()
+    button_type = models.TextField()
+    is_disabled = models.BooleanField()
+
+
+class ProblemSet(models.Model):
+    title = models.TextField()
+    problem_set_group = models.ForeignKey(ProblemSetGroup, null=True, on_delete=models.SET_NULL, related_name="problem_set")
+    color = models.TextField()
+    is_disabled = models.BooleanField()
+    is_public = models.BooleanField()
+    problems = models.ManyToManyField(Problem, blank=True)
