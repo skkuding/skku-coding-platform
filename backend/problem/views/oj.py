@@ -92,6 +92,14 @@ class ProblemAPI(APIView):
             return self.error("Limit is needed")
 
         problems = Problem.objects.select_related("created_by").filter(contest_id__isnull=True, assignment_id__isnull=True, visible=True, bank=False)
+
+        problem_set_id = request.GET.get("problem_set_id")
+        if problem_set_id:
+            try:
+                problem_set = ProblemSet.objects.get(id=problem_set_id)
+            except ProblemSet.DoesNotExist:
+                return self.error("Problem set does not exist.")
+            problems = problems.filter(problem_set=problem_set)
         # filter by label
         tag_text = request.GET.get("tag")
         if tag_text:
@@ -208,7 +216,7 @@ class ProblemSetGroupAPI(APIView):
 
         try:
             problem_set_group = ProblemSetGroup.objects.get(id=id, is_disabled=False)
-            return self.success(problem_set_group)
+            return self.success(ProblemSetGroupSerializer(problem_set_group).data)
         except ProblemSetGroup.DoesNotExist:
             return self.error("Problem set group does not exist.")
 
@@ -232,6 +240,6 @@ class ProblemSetAPI(APIView):
 
         try:
             problem_set = ProblemSet.objects.get(problem_set_group=problem_set_group, id=id, is_disabled=False, is_public=True)
-            return self.success(problem_set)
+            return self.success(ProblemSetSerializer(problem_set).data)
         except ProblemSet.DoesNotExist:
             return self.error("Problem set does not exist.")
