@@ -340,6 +340,21 @@ export default {
         contest_id: contestID
       }
     })
+  },
+  getProblemSetGroup (problemSetGroupID) {
+    return ajax('problemset/group/', 'get', {
+      params: {
+        id: problemSetGroupID
+      }
+    })
+  },
+  getProblemSet (problemSetGroupID, problemSetID) {
+    return ajax('problemset/', 'get', {
+      params: {
+        problem_set_group_id: problemSetGroupID,
+        id: problemSetID
+      }
+    })
   }
 }
 

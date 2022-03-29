@@ -1,5 +1,5 @@
 <template>
-  <button class="bg-blue rounded-full px-5 h-14 drop-shadow-sm">
+  <button class="rounded-full px-5 h-14 drop-shadow-sm" :style="'background-color:' + color">
     <slot></slot>
   </button>
 </template>
@@ -7,7 +7,12 @@
 <script>
 
 export default {
-  name: 'problemSet',
+  name: 'ColorRoundButton',
+  props: {
+    color: {
+      type: String
+    }
+  },
   components: {
   },
   data () {
