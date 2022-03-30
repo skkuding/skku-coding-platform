@@ -116,7 +116,7 @@ class ProblemSetGroup(models.Model):
 
 class ProblemSet(models.Model):
     title = models.TextField()
-    problem_set_group = models.ForeignKey(ProblemSetGroup, null=True, on_delete=models.SET_NULL, related_name="problem_set")
+    problem_set_group = models.ForeignKey(ProblemSetGroup, null=True, on_delete=models.CASCADE, related_name="problem_set")
     color = models.TextField()
     is_disabled = models.BooleanField()
     is_public = models.BooleanField()
