@@ -27,18 +27,26 @@
         id="input-group-problem-set-color"
         label="Color"
         label-for="input-problem-set-color"
-        required
-        :state="form.title !== ''"
-        invalid-feedback="Problem set color is required"
       >
-        <b-form-input
-          id="input-problem-set-color"
-          v-model="form.color"
-          placeholder="Enter Color"
-          required
-          :state="form.title !== ''"
-        ></b-form-input>
+        <b-button id="popover-1-color">
+          Select Color
+        </b-button>
       </b-form-group>
+      <b-popover
+        boundary-padding
+        target="popover-1-color"
+        placement="auto"
+        title="Pick color for the problem set"
+        triggers="click"
+      >
+        <color-picker
+          :color="color"
+          :onStartChange="color => onChangeColor(color, 'start')"
+          :onChange="color => onChangeColor(color, 'change')"
+          :onEndChange="color => onChangeColor(color, 'end')"
+        >
+        </color-picker>
+      </b-popover>
       <b-form-group
         id="input-group-is-disabled"
         label="Disabled"
@@ -61,9 +69,12 @@
 
 <script>
 import api from '../api.js'
+import { ColorPicker } from 'vue-color-gradient-picker'
+
 export default {
   name: 'ProblemSetModal',
   components: {
+    ColorPicker
   },
   props: {
     modalType: {
@@ -79,6 +90,12 @@ export default {
   data () {
     return {
       modalTitle: '',
+      color: {
+        red: 255,
+        green: 0,
+        blue: 0,
+        alpha: 1
+      },
       form: {
         id: '',
         title: '',
@@ -94,7 +111,7 @@ export default {
       const data = {
         title: this.form.title,
         problem_set_group_id: this.problemSetGroupId,
-        color: this.form.color,
+        color: this.RGBAColorToString(this.color),
         is_disabled: this.form.is_disabled,
         is_public: this.form.is_public
       }
@@ -106,7 +123,7 @@ export default {
         id: this.form.id,
         title: this.form.title,
         problem_set_group_id: this.problemSetGroupId,
-        color: this.form.color,
+        color: this.RGBAColorToString(this.color),
         is_disabled: this.form.is_disabled,
         is_public: this.form.is_public,
         problems: this.form.problems
@@ -123,12 +140,19 @@ export default {
     async getProblemSetDetail () {
       const res = await api.getProblemSet(this.problemSetGroupId, this.problemSetId)
       this.form = res.data.data
+    },
+    onChangeColor (attrs, name) {
+      this.color = { ...attrs }
+    },
+    RGBAColorToString (rgbaColor) {
+      return `rgba(${rgbaColor.red}, ${rgbaColor.green}, ${rgbaColor.blue}, ${rgbaColor.alpha})`
     }
   },
   computed: {
     modalTypeOrProblemSetId () {
       return `${this.modalType}|${this.problemSetId}`
     }
+
   },
   watch: {
     async modalTypeOrProblemSetId () {
@@ -146,4 +170,8 @@ export default {
 </script>
 
 <style lang="scss">
+  .popover-color {
+    min-width: 320px;
+  }
 </style>
+<style src="vue-color-gradient-picker/dist/index.css" lang="css" />

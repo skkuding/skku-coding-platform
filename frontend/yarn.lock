@@ -10193,6 +10193,13 @@ vue-codemirror-lite@^1.0.4:
   dependencies:
     codemirror "^5.22.0"
 
+vue-color-gradient-picker@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/vue-color-gradient-picker/-/vue-color-gradient-picker-0.1.2.tgz#27207495acd51852524e7f271b17101ba7ad7ce0"
+  integrity sha512-aAHBSCNtSbMKLJhthrJLSATYaTKomgukcs69pKcyR/+6aN5RONLn2pEKqpLArO7uZZeoZvCoxP1LzC3s/82OuQ==
+  dependencies:
+    vue-fragment "^1.5.1"
+
 vue-dompurify-html@^2.4.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/vue-dompurify-html/-/vue-dompurify-html-2.5.0.tgz#635a266e6802e413c520bccd628d9a28c42ad0cd"
@@ -10212,6 +10219,11 @@ vue-eslint-parser@^7.10.0:
     esquery "^1.4.0"
     lodash "^4.17.21"
     semver "^6.3.0"
+
+vue-fragment@^1.5.1:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/vue-fragment/-/vue-fragment-1.5.2.tgz#310017170c564c4aad95da14c185c92c6784fd3c"
+  integrity sha512-KEW0gkeNOLJjtXN4jqJhTazez5jtrwimHkE5Few/VxblH4F9EcvJiEsahrV5kg5uKd5U8du4ORKS6QjGE0piYA==
 
 vue-functional-data-merge@^3.1.0:
   version "3.1.0"
