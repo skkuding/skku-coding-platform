@@ -27,7 +27,7 @@ export default {
     cssColor () {
       return {
         // for opacity purpose. Use tailwindcss v3 class after migrating to tailwindcss v3
-        '--color-opacity': this.color + '55'
+        '--color-opacity': this.color
       }
     }
   }

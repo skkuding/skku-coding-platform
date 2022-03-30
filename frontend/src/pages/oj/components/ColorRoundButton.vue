@@ -26,8 +26,6 @@ export default {
   computed: {
     cssColor () {
       return {
-        // for opacity purpose. Use tailwindcss v3 class after migrating to tailwindcss v3
-        '--color-opacity': this.color + 'AA',
         '--color': this.color
       }
     }
@@ -37,7 +35,7 @@ export default {
 
 <style lang="scss" scoped>
   .color-round-button {
-    background-color: var(--color-opacity);
+    background-color: var(--color);
   }
   .color-round-button:hover {
     background-color: var(--color);
