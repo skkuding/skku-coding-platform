@@ -772,8 +772,6 @@ class ProblemSetAPI(APIView):
         data = request.data
         if ProblemSet.objects.filter(title=data["title"]).exists():
             return self.error("Problem set title already exists.")
-        if ProblemSet.objects.filter(color=data["color"]).exists():
-            return self.error("Problem set color already exists.")
 
         problem_set_group_id = data.pop("problem_set_group_id")
         try:
