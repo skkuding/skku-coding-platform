@@ -8,7 +8,7 @@ Vue.use(VueRouter)
 
 export default new VueRouter({
   mode: 'history',
-  base: '/prof/',
+  base: '/professor/',
   scrollBehavior: () => ({ y: 0 }),
   routes: [
     {

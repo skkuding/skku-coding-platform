@@ -73,7 +73,7 @@ export default {
     },
     goManagement () {
       if (!this.isSuperAdmin) {
-        window.open('/prof/')
+        window.open('/professor/')
       } else {
         window.open('/admin/')
       }
