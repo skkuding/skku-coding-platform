@@ -2,7 +2,7 @@
   <div id="container">
     <side-menu @hide="showSideMenu=false" v-show="showSideMenu" :update="updateSidebar"/>
     <div style="flex: 1 1 auto">
-      <div id="prof-header">
+      <div id="professor-header">
         <b-button
           variant="light"
           size="sm"
@@ -63,7 +63,7 @@
 import { types } from '@/store'
 import { mapGetters } from 'vuex'
 import SideMenu from '../components/SideMenu.vue'
-import KatexEditor from '@prof/components/KatexEditor.vue'
+import KatexEditor from '@professor/components/KatexEditor.vue'
 import api from '../api'
 
 export default {
@@ -134,7 +134,7 @@ export default {
     box-sizing: border-box;
   }
 
-  #prof-header {
+  #professor-header {
     /* padding-left: 10px;
     padding-right: 10px; */
     line-height: 50px;

@@ -11,7 +11,7 @@
       :xl="4"
       id="first-col"
     >
-      <b-card class="admin-info drop-shadow-custom" :title="'Welcome, Prof. ' + user.username">
+      <b-card class="admin-info drop-shadow-custom" :title="'Welcome, Professor. ' + user.username">
         <b-card-text>
           Last login
           <ul style="margin:10px 0 0 25px">
@@ -108,7 +108,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import browserDetector from 'browser-detect'
-import InfoCard from '@prof/components/infoCard.vue'
+import InfoCard from '@professor/components/infoCard.vue'
 import api from '../../api.js'
 import CourseModal from './CourseModal.vue'
 

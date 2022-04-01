@@ -87,7 +87,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import api from '@oj/api'
-import profApi from '@prof/api'
+import profApi from '@professor/api'
 import { ProblemMixin } from '@oj/components/mixins'
 import { DIFFICULTY_COLOR } from '@/utils/constants'
 
