@@ -95,10 +95,11 @@ export default {
   methods: {
     async getContestProblems () {
       try {
-        const res = await api.getProblemBankParticipation(this.contestID)
-        if (!res.data.data) {
-          // not participating now
-          return
+        if (this.contest.is_bank) {
+          const res = await api.getProblemBankParticipation(this.contestID)
+          if (!res.data.data) {
+            return
+          }
         }
         this.contestProblems = await this.$store.dispatch(
           this.contest.is_bank ? 'getProblemBankContestProblems' : 'getContestProblems'
