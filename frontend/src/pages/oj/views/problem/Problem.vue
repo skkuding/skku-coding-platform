@@ -221,11 +221,12 @@
 
       <b-row id="problem-container" ref="container">
         <vue-resizable
-        active="r"
-        :fit-parent="true"
-        :width="`50vw`"
-        :min-width="200"
-        :max-width="problemWidth - 200"
+          active="r"
+          :fit-parent="true"
+          :width="`50vw`"
+          :min-width="200"
+          :max-width="problemWidth - 200"
+          :disable-attributes="['h']"
         >
           <b-col id="problem-description">
             <div class="description-io">
