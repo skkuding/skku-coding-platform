@@ -1,16 +1,5 @@
 <template>
   <div class="contest-ranking-card font-bold">
-    <div class="standings-description" style="text-align: right;">
-      <b-icon icon="question-circle" id="standings-info" style="margin-right: 50px;"/>
-      <b-popover
-        target="standings-info"
-        title="How to read?"
-        placement="bottom"
-        triggers="hover focus"
-      >
-        <img style="width: 200px; height: auto;" src="@/assets/standing.png"/>
-      </b-popover>
-    </div>
     <Table
       text="No Standings"
       :items="contestRankingList"
@@ -44,7 +33,16 @@
         <div class="text-xs">{{ data.row.total_penalty }}</div>
       </template>
     </Table>
-    <div class="pagination">
+    <div class="table-footer">
+      <b-icon icon="question-circle" id="standings-info" style="margin-right: 50px;"/>
+      <b-popover
+        target="standings-info"
+        title="How to read?"
+        placement="bottom"
+        triggers="hover focus"
+      >
+        <img style="width: 200px; height: auto;" src="@/assets/standing.png"/>
+      </b-popover>
       <b-pagination
         v-model="currentPage"
         :total-rows="contestRankingList.length"
@@ -152,13 +150,12 @@ export default {
     font-family: Manrope_bold;
     src: url('../../../../fonts/Manrope-Bold.ttf');
   }
-  div {
-    &.pagination{
-      margin-right: 5%;
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-end;
-    }
+  .table-footer{
+    margin-right: 5%;
+    margin-left: 5%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between
   }
   .font-bold {
     font-family: manrope_bold;
