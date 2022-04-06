@@ -220,7 +220,7 @@ export default {
   .post-card {
     margin-top: 30px;
     margin-bottom: 30px;
-    height: 255px;
+    min-height: 255px;
     width: 45%;
     min-width: 600px;
     &-table {
