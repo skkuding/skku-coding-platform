@@ -895,6 +895,7 @@ $inner-header-height: 58px;
   margin: 0;
   flex: 1 1 auto;
   flex-direction: row;
+  flex-wrap: nowrap;
 
   #problem-description {
     background: #173747;
