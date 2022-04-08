@@ -321,7 +321,7 @@ export default {
       this.$bvModal.show('modal-contest-information')
     },
     makeGroupRequirementInfo (contest) {
-      return 'For ' + (contest.allowed_groups.map(g => g.name).join(', ') || 'All')
+      return 'For ' + (contest.allowed_groups.map(g => g.name).join(', ') || 'All Groups')
     },
     calculateTimeDiff () {
       for (const contest of this.contestsUpcoming) {

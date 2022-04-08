@@ -20,7 +20,11 @@
           </b-form-group>
         </b-col>
         <b-col cols="12">
-          <p class="labels">
+          <p
+            class="labels"
+            v-b-popover.hover="`Detail description about this contest. It may includes contest schedule,
+                                eligibility for participation, how to score and rank and what is the prizes, etc.`"
+          >
             <span class="text-danger">*</span>
             Description
           </p>
@@ -29,9 +33,15 @@
         <b-col cols="6">
           <b-form-group>
             <template #label>
-              <p class="labels" style="margin-top:16px">
+              <p
+                class="labels"
+                style="margin-top:16px"
+                v-b-popover.hover="`Short descriptions of who are eligible to participate in this contest.
+                                    If there are multiple eligiblity requirement, split into multiple pieces.
+                                    Example: SKKU students enrolled this semester`"
+              >
                 <span class="text-danger">*</span>
-                Requirements
+                Eligibility for participation
               </p>
             </template>
             <div
@@ -62,7 +72,13 @@
         <b-col cols="6">
           <b-form-group>
             <template #label>
-              <p class="labels" style="margin-top:16px">
+              <p
+                class="labels"
+                style="margin-top:16px"
+                v-b-popover.hover="`Short descriptions of who are restricted to participate in this contest.
+                                    If there are multiple constraints, split into multiple pieces.
+                                    Example: Students who have awarded in same contest before.`"
+              >
                 Constraints
               </p>
             </template>
@@ -96,7 +112,11 @@
             label-for="ContestScoring"
           >
             <template #label>
-              <p class="labels">
+              <p
+                class="labels"
+                v-b-popover.hover="`Short description of how to score problems and how to decide the rank of this contest.
+                                    Example: ACM-ICPC style`"
+              >
                 <span class="text-danger">*</span>
                 Scoring
               </p>
@@ -111,7 +131,12 @@
         <b-col cols="12">
           <b-form-group>
             <template #label>
-              <p class="labels" style="margin-top:16px">
+              <p
+                class="labels"
+                style="margin-top:16px"
+                v-b-popover.hover="`What is the prizes of this contest? Set representative color, name and reward of every prizes
+                                    Example: #abcdef / Top 1 - 10 / Cute teddy bear`"
+              >
                 Prizes
               </p>
             </template>
@@ -123,19 +148,19 @@
                 <b-col cols="2">
                   <b-form-input
                     v-model="range.color"
-                    placeholder="Contest prize color"
+                    placeholder="Representative color"
                   />
                 </b-col>
                 <b-col cols="4">
                   <b-form-input
                     v-model="range.name"
-                    placeholder="Contest prize name"
+                    placeholder="Name"
                   />
                 </b-col>
                 <b-col cols="4">
                   <b-form-input
                     v-model="range.reward"
-                    placeholder="Contest reward"
+                    placeholder="Reward"
                   />
                 </b-col>
                 <b-col cols="1">
@@ -209,7 +234,11 @@
         <b-col cols="4">
           <b-form-group label-for="Contest_Password">
             <template #label>
-              <p class="labels" style="margin-top:16px">
+              <p
+                class="labels"
+                style="margin-top:16px"
+                v-b-popover.hover="`You can set password for this contest and protect from unauthorized users.`"
+              >
                 Password
               </p>
             </template>
@@ -240,7 +269,7 @@
           <b-form-group>
             <template #label>
               <p class="labels">
-                Status
+                Visible
               </p>
             </template>
             <b-form-checkbox v-model="contest.visible" switch>
@@ -250,7 +279,11 @@
         <b-col>
           <b-form-group>
             <template #label>
-              <p class="labels">
+              <p
+                class="labels"
+                v-b-popover.hover="`Only members of certain group can participate in the contest.
+                  If not set, all group members can participate.`"
+              >
                 Allowed Groups
               </p>
             </template>
@@ -293,8 +326,25 @@
         <b-col cols="12">
           <b-form-group>
             <template #label>
-              <p class="labels" style="margin-top:16px">
-                Problem Bank
+              <p class="labels">
+                Problem Bank Contest Mode
+              </p>
+            </template>
+            <b-form-checkbox v-model="useProblemBankFilter" switch>
+            </b-form-checkbox>
+          </b-form-group>
+        </b-col>
+        <b-col cols="12" v-show="useProblemBankFilter">
+          <b-form-group>
+            <template #label>
+              <p
+                class="labels"
+                style="margin-top:16px"
+                v-b-popover.hover="`Use Problem bank feature for this contest.
+                                    Each users will get random problems according to this conditions.
+                                    level/tag condition is supported now on.`"
+              >
+                Problem Bank Filter
               </p>
             </template>
             <div>
@@ -317,29 +367,49 @@
                 </b-col>
                 <b-col cols="3">
                   <div class="d-flex">
-                    <span class="bank-filter__count">X</span>
+                    <span class="bank-filter__count mx-3">X</span>
                     <b-form-input
                       v-model="range.count"
                       placeholder="the number of this problems"
                       type="number"
-                      style="max-width:60px"
+                      :state="0 < range.count && range.count <= problemLevelCount[range.level]"
                     />
-                    <span class="bank-filter__count">/ {{ problemLevelCount[range.level] || 0 }}</span>
+                    <span class="bank-filter__count mx-3"> / {{ problemLevelCount[range.level] || 0 }}</span>
                   </div>
                 </b-col>
-                <b-col cols="1">
+                <b-col cols="3">
                   <b-button @click="removeBankFilter(index)" variant="outline-secondary">
-                      <b-icon icon="trash-fill"></b-icon>
+                    <b-icon icon="trash-fill"></b-icon>
                   </b-button>
                 </b-col>
               </b-row>
-              <b-col cols="1">
-                <b-button @click="addBankFilter" variant="outline-secondary">
-                    <b-icon icon="plus"></b-icon>
-                </b-button>
-              </b-col>
+              <b-button @click="addBankFilter" variant="outline-secondary">
+                  <b-icon icon="plus"></b-icon>
+              </b-button>
             </div>
           </b-form-group>
+        </b-col>
+        <b-col>
+          Preview (Some style differ from actual appearance.)
+          <neon-box color="#8DC63F" class="my-3"
+                :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" rightBottom="Start in / Started from / Finished ago" rightTop="Pariticipants count"
+                :shadow="true" @click.native="showContestInformationModal(contest)"
+          >
+            <template #overlay-icon>
+              <b-icon-zoom-in color="#B4B4B4" width="1.5em" height="1.5em"></b-icon-zoom-in>
+            </template>
+          </neon-box>
+          <b-modal id="modal-contest-information" size="xl">
+            <contest-information
+              :title="contest.title" :requirements="contest.requirements.map(r => r.value)"
+              :constraints="contest.constraints.map(r => r.value)" :scoring="contest.scoring"
+              :prizes="contest.prizes" :description="contest.description"
+            >
+            </contest-information>
+            <template #modal-footer>
+              <b-button>Go Contest</b-button>
+            </template>
+          </b-modal>
         </b-col>
       </b-row>
       <save @click.native="saveContest" />
@@ -350,11 +420,15 @@
 <script>
 import api from '../../api.js'
 import Tiptap from '../../components/Tiptap.vue'
+import NeonBox from '@oj/components/NeonBox.vue'
+import ContestInformation from '@oj/components/ContestInformation.vue'
 
 export default {
   name: 'CreateContest',
   components: {
-    Tiptap
+    Tiptap,
+    NeonBox,
+    ContestInformation
   },
   data () {
     return {
@@ -410,14 +484,14 @@ export default {
       ],
       problemTagList: [
         { value: 'unselected', text: 'Select Please', disabled: true }
-        // TODO: Problem Tag List should be made
       ],
       problemLevelCount: {
         // "null": 0,
         // "Level1": 1,
         // "Level2": 3,
         // "Level5": 2,
-      }
+      },
+      useProblemBankFilter: false
     }
   },
   async mounted () {
@@ -522,6 +596,10 @@ export default {
         }
       }
       data.prizes = prizes
+
+      if (!this.useProblemBankFilter) {
+        data.bank_filter = []
+      }
       try {
         await api[funcName](data)
         await this.$router.push({ name: 'contest-list', query: { refresh: 'true' } })
@@ -588,7 +666,7 @@ export default {
     addBankFilter () {
       this.contest.bank_filter.push({
         level: 'unselected',
-        tag: '',
+        tag: 'unselected',
         count: 0
       })
     },
@@ -596,6 +674,13 @@ export default {
       if (index !== -1) {
         this.contest.bank_filter.splice(index, 1)
       }
+    },
+    makeGroupRequirementInfo (contest) {
+      return 'For ' + (contest.allowed_groups.map(g => g.name).join(', ') || 'All Groups')
+    },
+    showContestInformationModal (contest) {
+      this.contestInformation = contest
+      this.$bvModal.show('modal-contest-information')
     }
   }
 }
@@ -609,5 +694,6 @@ export default {
     font-size: 20px;
     margin-right:5px;
     padding: 0.275rem 0.1rem;
+    white-space: nowrap;
   }
 </style>
