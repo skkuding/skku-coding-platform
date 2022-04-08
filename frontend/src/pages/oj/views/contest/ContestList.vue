@@ -297,7 +297,7 @@ export default {
         this.$error('Please login first!')
         await this.$store.dispatch('changeModalStatus', { mode: 'login', visible: true })
       } else {
-        if (item.contest_type === CONTEST_TYPE.PRIVATE) {
+        if (item.contest_type === CONTEST_TYPE.PRIVATE && !this.isContestAdmin) {
           this.$error('This contest is locked')
         } else {
           await this.$router.push({ name: 'contest-details', params: { contestID: item.id } })
