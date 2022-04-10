@@ -13,7 +13,7 @@
       >
         <div v-if="data.row[problem].is_ac === true" :key="problem">
           <div class="text-green text-center">{{ data.row[problem].problem_submission }}</div>
-          <div class="text-xs">{{ parseInt(data.row[problem].penalty) }}</div>
+          <div v-if="contest.rank_penalty_visible" class="text-xs">{{ parseInt(data.row[problem].penalty) }}</div>
         </div>
         <div v-else-if="data.row[problem].problem_submission === '0'"
           :key="problem"
@@ -30,7 +30,7 @@
       </template>
       <template v-slot:accepted_number="data">
         <div class="text-blue">{{ data.row.accepted_number }}</div>
-        <div class="text-xs">{{ data.row.total_penalty }}</div>
+        <div v-if="contest.rank_penalty_visible" class="text-xs">{{ data.row.total_penalty }}</div>
       </template>
     </Table>
     <div class="table-footer">
