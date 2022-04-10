@@ -30,6 +30,7 @@ class Contest(models.Model):
     visible = models.BooleanField(default=True)
     allowed_ip_ranges = JSONField(default=list)
     bank_filter = JSONField(default=None, null=True)
+    rank_penalty_visible = models.BooleanField(default=True)
 
     @property
     def is_bank(self):

@@ -41,6 +41,7 @@ class CreateConetestSeriaizer(serializers.Serializer):
     real_time_rank = serializers.BooleanField()
     allowed_ip_ranges = serializers.ListField(child=serializers.CharField(max_length=32), allow_empty=True)
     bank_filter = serializers.ListField(child=BankFilterSerializer(), allow_empty=True)
+    rank_penalty_visible = serializers.BooleanField()
 
 
 class EditConetestSeriaizer(serializers.Serializer):
@@ -59,6 +60,7 @@ class EditConetestSeriaizer(serializers.Serializer):
     real_time_rank = serializers.BooleanField()
     allowed_ip_ranges = serializers.ListField(child=serializers.CharField(max_length=32))
     bank_filter = serializers.ListField(child=BankFilterSerializer(), allow_empty=True)
+    rank_penalty_visible = serializers.BooleanField()
 
 
 class ContestAdminSerializer(serializers.ModelSerializer):
@@ -119,6 +121,26 @@ class ACMContestRankSerializer(serializers.ModelSerializer):
     class Meta:
         model = ACMContestRank
         fields = ["id", "accepted_number", "total_time", "total_penalty", "submission_info", "username", "prize"]
+
+    def __init__(self, *args, **kwargs):
+        self.is_contest_admin = kwargs.pop("is_contest_admin", False)
+        super().__init__(*args, **kwargs)
+
+    def get_username(self, obj):
+        data = UsernameSerializer(obj.user, need_real_name=self.is_contest_admin).data
+        username = data["username"]
+        if len(username) >= 10:
+            username = username[:4]+"****"+username[8:]
+        return username
+
+
+class ACMContestRankNoPenaltySerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+    prize = ContestPrizeSerializer()
+
+    class Meta:
+        model = ACMContestRank
+        fields = ["id", "accepted_number", "total_time", "submission_info", "username", "prize"]
 
     def __init__(self, *args, **kwargs):
         self.is_contest_admin = kwargs.pop("is_contest_admin", False)

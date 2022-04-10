@@ -37,7 +37,7 @@ DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description"
                         "password": "123",
                         "allowed_ip_ranges": [],
                         "bank_filter": [],
-                        "visible": True, "real_time_rank": True}
+                        "visible": True, "real_time_rank": True, "rank_penalty_visible": True}
 
 
 class ContestAdminAPITest(APITestCase):
