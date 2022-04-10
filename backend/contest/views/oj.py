@@ -13,7 +13,7 @@ from utils.decorators import login_required, check_contest_permission, check_con
 from utils.constants import ContestStatus
 from ..models import ContestAnnouncement, Contest, ACMContestRank, ProblemBank
 from problem.models import Problem
-from ..serializers import ContestAnnouncementSerializer
+from ..serializers import ACMContestRankNoPenaltySerializer, ContestAnnouncementSerializer
 from ..serializers import ContestSerializer, ContestPasswordVerifySerializer
 from ..serializers import ACMContestRankSerializer
 
@@ -216,7 +216,7 @@ class ContestRankAPI(APIView):
         self.contest = contest
         force_refresh = request.GET.get("force_refresh")
         is_contest_admin = request.user.is_authenticated and request.user.is_contest_admin(contest)
-        serializer = ACMContestRankSerializer
+        serializer = ACMContestRankSerializer if contest.rank_penalty_visible else ACMContestRankNoPenaltySerializer
 
         if force_refresh == "1":
             qs = self.get_rank()
