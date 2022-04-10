@@ -265,7 +265,7 @@
             </b-form-checkbox>
           </b-form-group>
         </b-col>
-        <b-col cols="8">
+        <b-col cols="4">
           <b-form-group>
             <template #label>
               <p class="labels">
@@ -276,13 +276,28 @@
             </b-form-checkbox>
           </b-form-group>
         </b-col>
+        <b-col cols="4">
+          <b-form-group>
+            <template #label>
+              <p
+                class="labels"
+                v-b-popover.hover="`Select the visibility of penalty on user's ranking page.
+                                    If disabled, users won't see contest participants' penalty.`"
+              >
+                Show Rank Penalty
+              </p>
+            </template>
+            <b-form-checkbox v-model="contest.rank_penalty_visible" switch>
+            </b-form-checkbox>
+          </b-form-group>
+        </b-col>
         <b-col>
           <b-form-group>
             <template #label>
               <p
                 class="labels"
                 v-b-popover.hover="`Only members of certain group can participate in the contest.
-                  If not set, all group members can participate.`"
+                                    If not set, all group members can participate.`"
               >
                 Allowed Groups
               </p>
@@ -390,7 +405,7 @@
           </b-form-group>
         </b-col>
         <b-col>
-          Preview (Some style differ from actual appearance.)
+          Preview (Some styles may differ from actual appearance.)
           <neon-box color="#8DC63F" class="my-3"
                 :leftTop="contest.title" :leftBottom="makeGroupRequirementInfo(contest)" rightBottom="Start in / Started from / Finished ago" rightTop="Pariticipants count"
                 :shadow="true" @click.native="showContestInformationModal(contest)"
@@ -465,7 +480,8 @@ export default {
           //   tag: '',
           //   count: 0
           // }
-        ]
+        ],
+        rank_penalty_visible: true
       },
       groupOptions: [],
       startTime: '',
