@@ -267,6 +267,7 @@ class ProblemBankAPITest(APITestCase):
         self.create_user("2018123123", "123123")
         url = self.reverse("contest_bank_api")
         response = self.client.post(url, data={"contest_id": contest["id"]})
+        self.assertSuccess(response)
 
 
 class UserContestAPITest(APITestCase):
