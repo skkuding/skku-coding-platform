@@ -267,13 +267,17 @@ class ProblemBankAPITest(APITestCase):
         self.create_user("2018123123", "123123")
         url = self.reverse("contest_bank_api")
         response = self.client.post(url, data={"contest_id": contest["id"]})
+        self.assertSuccess(response)
 
 
 class UserContestAPITest(APITestCase):
     def setUp(self):
         # create contest
         admin = self.create_admin()
-        self.contest = Contest.objects.create(created_by=admin, **DEFAULT_CONTEST_DATA)
+        data = copy.deepcopy(DEFAULT_CONTEST_DATA)
+        data.pop("allowed_groups")
+        data.pop("prizes")
+        self.contest = Contest.objects.create(created_by=admin, **data)
 
         # create problem in contest
         data = copy.deepcopy(DEFAULT_PROBLEM_DATA)

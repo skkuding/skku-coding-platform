@@ -348,7 +348,6 @@ export default {
     ProblemSidebar,
     login,
     register,
-    profileSetting,
     Table,
     VueResizable,
     UserSetting
