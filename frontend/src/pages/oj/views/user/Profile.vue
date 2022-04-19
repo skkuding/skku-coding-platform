@@ -25,6 +25,7 @@
 
 import UserInfo from '../../components/user/UserInfo'
 import TabSplitInTwo from '../../components/user/TabSplitInTwo.vue'
+import ProfileSummary from '../../components/user/ProfileSummary.vue'
 import ProfileSubmission from '../../components/user/ProfileSubmission.vue'
 import ProfileContest from '../../components/user/ProfileContest.vue'
 import ProfileGroup from '../../components/user/ProfileGroup.vue'
@@ -35,6 +36,7 @@ export default {
   components: {
     UserInfo,
     TabSplitInTwo,
+    ProfileSummary,
     ProfileSubmission,
     ProfileContest,
     ProfileGroup,
