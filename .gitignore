@@ -190,4 +190,4 @@ typings/
 .devcontainer/data
 
 # MacOS file
-.DS_Store
+.DS_Store*
