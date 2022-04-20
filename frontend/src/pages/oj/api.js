@@ -328,6 +328,16 @@ export default {
     return ajax('assignment_submissions/', 'get', {
       params
     })
+  },
+  temperature (problemID) {
+    return ajax('temperature/', 'post', {
+      params: {
+        id: problemID
+      }
+    })
+  },
+  getTemperature () {
+    return ajax('temperature/', 'get')
   }
 }
 

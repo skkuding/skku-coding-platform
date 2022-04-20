@@ -391,7 +391,10 @@ export default {
       theme: 'material',
       theme_list: ['solarized', 'monokai', 'material'],
 
-      overlayShow: false
+      overlayShow: false,
+
+      // temperature
+      checked: false
     }
   },
   async mounted () {
@@ -571,6 +574,10 @@ export default {
         try {
           const res = await api.getSubmission(id)
           this.result = res.data.data
+          if (!this.checked && this.result.result === 0) {
+            this.checked = true
+            await api.temperature(this.problem.id)
+          }
           if (Object.keys(res.data.data.statistic_info).length !== 0) {
             this.submitting = false
             this.submitted = false

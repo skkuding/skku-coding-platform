@@ -21,7 +21,7 @@
 </template>
 
 <script>
-
+import api from '@oj/api'
 import UserInfo from '../../components/user/UserInfo'
 import TabSplitInTwo from '../../components/user/TabSplitInTwo.vue'
 import ProfileSubmission from '../../components/user/ProfileSubmission.vue'
@@ -64,12 +64,17 @@ export default {
       currentTab: 'Summary'
     }
   },
-  async mounted () {
-  },
   methods: {
     showTab (tabName) {
       this.currentTab = tabName
+    },
+    async getTemperature () {
+      const res = await api.getTemperature()
+      this.info.temperature = res.data.data.temperature
     }
+  },
+  async mounted () {
+    this.getTemperature()
   },
   computed: {
   }
