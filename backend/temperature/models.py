@@ -19,13 +19,13 @@ class JudgeStatus:
 
 class ProblemScore:
     scores = {
-        "LEVEL1": 8,
-        "LEVEL2": 16,
-        "LEVEL3": 32,
-        "LEVEL4": 64,
-        "LEVEL5": 128,
-        "LEVEL6": 256,
-        "LEVEL7": 512,
+        "Level1": 8,
+        "Level2": 16,
+        "Level3": 32,
+        "Level4": 64,
+        "Level5": 128,
+        "Level6": 256,
+        "Level7": 512,
     }
 
 
@@ -37,13 +37,12 @@ class Temperature(models.Model):
     class Meta:
         db_table = "temperature"
         unique_together = (("user", "date"),)
-        ordering = ("-date",)
+        ordering = ["-date", "-temperature"]
 
 
 class SolvedProblem(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     problem = models.ForeignKey(Problem, null=True, on_delete=models.CASCADE)
-    score = models.IntegerField()
     solved_time = models.DateField(auto_now_add=True)
 
     class Meta:
