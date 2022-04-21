@@ -1,10 +1,17 @@
 from utils.api import APIView, validate_serializer
 from .models import ProblemScore, Temperature, SolvedProblem
 from problem.models import Problem
-from account.models import User
 from .serializers import CreateTemperatureSerializer
 import datetime
 
+def createTemperature(user, date):
+    if Temperature.objects.filter(user=user, date=date).exists(): return
+    solved_problem = SolvedProblem.objects.filter(user=user)
+    solved_problem = list(solved_problem)
+    temp = 0
+    for t in solved_problem:
+        temp += ProblemScore.scores[t.problem.difficulty]
+    Temperature.objects.create(user=user, temperature=temp)
 
 class TemperatureAPI(APIView):
     def post(self, request):
@@ -12,13 +19,11 @@ class TemperatureAPI(APIView):
         if not id:
             return self.error("Parameter error, id is required")
         difficulty = Problem.objects.get(id=id).difficulty
-        print(ProblemScore.scores[difficulty])
         date = datetime.date.today()
-        if not Temperature.objects.filter(user=request.user, date=date):
-            Temperature.objects.create(user=request.user)
+        createTemperature(request.user, date)
         user_temp = Temperature.objects.get(user=request.user, date=date)
         user_temp_qs = Temperature.objects.filter(user=request.user, date=date)
-        solved_problem = SolvedProblem.objects.filter(user=request.user, problem=id)
+        solved_problem = SolvedProblem.objects.filter(user=request.user, problem=Problem.objects.get(id=id))
         if not solved_problem:
             SolvedProblem.objects.create(user=request.user,
                                          problem=Problem.objects.get(id=id))
@@ -27,11 +32,13 @@ class TemperatureAPI(APIView):
 
     def get(self, request):
         date = datetime.date.today()
+        createTemperature(request.user, date)
         user_temp = Temperature.objects.get(user=request.user, date=date)
         if not user_temp:
-            data = "DB error, Data doesn't exist"
-        else: data = { "temperature": user_temp.temperature }
-        return self.success(data)
+            return self.error("DB error, Data doesn't exist")
+        else:
+            data = { "temperature": user_temp.temperature }
+            return self.success(data)
 
 class RankAPI(APIView):
     def get(self, request):
