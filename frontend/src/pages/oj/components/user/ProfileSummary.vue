@@ -5,10 +5,22 @@
     <div class="container">
       <p> <span class="font-red">670°C </span>Burning🔥</p>
       <p>for 23 days</p>
+      <p style="margin-bottom: 10px;">5 more days for Roaring 🌋!</p>
       <div class="burning-container">
-        <p>5 more days for Roaring 🌋!</p>
         <div id="burning-line">
+          <div class="origin"></div>
           <div class="temperature"></div>
+        </div>
+        <div id="burning-gauge">
+          <div class="gauge" v-for="(temper, idx) in temperatures" :key="idx">
+            <b-icon
+              icon="circle-fill"
+              class="mr-2"
+              :style="'color: gray; height: 20px;'"
+            ></b-icon>
+            <div class="scale"> {{temper[0]}} </div>
+            <div class="scale"> {{temper[1]}} °C</div>
+          </div>
         </div>
       </div>
     </div>
@@ -75,7 +87,13 @@ export default {
   data () {
     return {
       Chart,
-      problemsets: [1001, 1002, 1003, 1004, 1005]
+      temperatures: [
+        ['Frozen', 0],
+        ['Warm', 200],
+        ['Hot', 400],
+        ['Burning', 600],
+        ['Roaring', 800]],
+      problemsets: [10, 100, 1000, 1001, 1003, 1005, 1007, 1008]
     }
   },
   async mounted () {
@@ -184,23 +202,54 @@ export default {
 }
 
 .burning-container {
-  margin-top: 20px;
+  position: relative;
+  padding-top: 20px;
   background-color: rgb(204, 237, 238);
   height: 100px;
 }
 
 #burning-line {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
   background-color: #EAEAEA;
   width: 90%;
   height: 20px;
   border-radius: 5px;
 }
 
+#burning-line .origin {
+  width: 20px;
+  height: 20px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background: gray;
+}
+
 #burning-line .temperature {
   width: 72%;
   height: 20px;
-  border-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
   background-color: #FF6663;
+}
+
+#burning-gauge {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  z-index: 2;
+  height: 100%;
+}
+
+#burning-gauge .gauge {
+  width: 20%;
+  flex-direction: column;
+}
+
+#burning-gauge .scale {
+  font-size: 10px;
 }
 
 .font-red {
@@ -276,7 +325,8 @@ export default {
 
 .grid-set {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  text-align: center;
   background-color: rgb(174, 228, 228);
   height: auto;
 }
