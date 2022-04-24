@@ -41,7 +41,8 @@
     <div class="subtitle">Solved Problem</div>
     <div class="divided-container">
       <div class="left-box">
-        <canvas id="doughnutChart" style="width:100%; height:auto;"></canvas>
+        <canvas id="doughnutChart" style="position: absolute; width: 100%; height: auto; z-index: 1;"></canvas>
+        <div class="doughnutlabel">742 Solved</div>
       </div>
       <div class="right-box">
         <div class="table">
@@ -77,7 +78,6 @@
 <script>
 import { Chart, registerables } from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-//import ChartDoughnutLabels from 'chartjs-plugin-doughnutlabel';
 import { DIFFICULTY_COLOR } from '@/utils/constants';
 Chart.register(...registerables);
 
@@ -168,11 +168,14 @@ export default {
               },
               font: { size: 15 }
             },
-            // doughnutlabel: {
-            //   labels: {
-            //     text: 'title'
-            //   }
-            // }
+            doughnutlabel: {
+              labels: {
+                text: 'title',
+                font: {
+                  size: '30'
+                }
+              }
+            }
           }
         }
       });
@@ -264,11 +267,19 @@ export default {
 .left-box {
   display: flex;
   width: 30%;
-  height: auto;
+  aspect-ratio: 1 / 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .right-box {
   width: 70%;
+}
+
+.doughnutlabel {
+  width: 100%;
+  text-align: center;
+  z-index: 2;
 }
 
 .status-info {
@@ -283,7 +294,7 @@ export default {
   border-bottom: 1px solid #7A7C7B;
   width: 90%;
   height: 100%;
-  margin-left: 10px;
+  margin-left: 30px;
 }
 
 .problem-info {
