@@ -273,7 +273,9 @@ export default {
 }
 
 .right-box {
+  display: flex;
   width: 70%;
+  align-items: center;
 }
 
 .doughnutlabel {
