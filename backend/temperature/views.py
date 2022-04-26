@@ -10,7 +10,7 @@ def createTemperature(user, date):
     solved_problem = list(solved_problem)
     temp = 0
     for t in solved_problem:
-        temp += ProblemScore.scores[t.problem.difficulty]
+        temp += ProblemScore.scores[t.problem.difficulty] / (2 ** ((date - t.solved_time) // 7))
     Temperature.objects.create(user=user, temperature=temp)
 
 class TemperatureAPI(APIView):
@@ -64,6 +64,7 @@ class SolvedProblemListAPI(APIView):
         return self.success(data)
 class RankListAPI(APIView):
     def get(self, request):
-        user_temps = Temperature.objects.__annotations__
         data = []
+        solved_problem = SolvedProblem.objects.filter(user=request.user)
+        solved_problem = list(solved_problem)
         return self.success(data)
