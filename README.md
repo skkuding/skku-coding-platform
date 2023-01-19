@@ -1,3 +1,8 @@
+> **[WARN] We don't work on this repo anymore. 더 이상 이 repo는 개발하지 않습니다.  
+> We moved to a new repo. 새로운 repo를 참고해주세요. [skkuding/next](https://github.com/skkuding/next)**
+
+---
+
 # SKKU Coding Platform
 
 ![issues](https://img.shields.io/github/issues/skkuding/skku-coding-platform)
