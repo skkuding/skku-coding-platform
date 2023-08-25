@@ -16,6 +16,7 @@ from problem.models import Problem
 from ..serializers import ACMContestRankNoPenaltySerializer, ContestAnnouncementSerializer
 from ..serializers import ContestSerializer, ContestPasswordVerifySerializer
 from ..serializers import ACMContestRankSerializer
+from ..serializers import ProfileContestSerializer
 
 import random
 import json
@@ -277,3 +278,29 @@ class ProblemBankAPI(APIView):
         except ProblemBank.DoesNotExist:
             return self.success(False)
         return self.success(True)
+
+
+class UserContestAPI(APIView):
+    def get(self, request):
+        user = request.user
+        # queryset for all problems information which user submitted
+        qs_problems = ACMContestRank.objects.filter(user=user.id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False)
+        contests = []
+        for problem in qs_problems:
+            contest_id = problem.contest.id
+            try:
+                contest = Contest.objects.get(id=contest_id, visible=True)
+                contest = ContestSerializer(contest).data
+                total_participants = ACMContestRank.objects.filter(contest=contest_id, user__admin_type=AdminType.REGULAR_USER, user__is_disabled=False).count()
+                contest["rank"] = problem.rank
+                contest["percentage"] = round(contest["rank"]/total_participants*100, 2)
+                contests.append(contest)
+            except Contest.DoesNotExist:
+                return self.error("Contest does not exist")
+
+        # priority
+        priority = request.GET.get("priority")
+        if priority:
+            contests = sorted(contests, key=lambda c: c[priority])
+
+        return self.success(ProfileContestSerializer(contests, many=True).data)

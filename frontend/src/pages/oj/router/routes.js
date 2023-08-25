@@ -16,13 +16,13 @@ import {
   ProblemList,
   ProblemSet,
   ResetPassword,
-  ProfileSetting,
   LectureList,
   LectureDashboard,
   LectureAssignmentList,
   LectureAssignmentDetail,
   LectureQna,
-  LectureQnaDetail
+  LectureQnaDetail,
+  Profile
 } from '../views'
 
 export default [
@@ -123,12 +123,6 @@ export default [
     meta: { title: 'Contest Ranking' }
   },
   {
-    name: 'profile-setting',
-    path: '/setting',
-    meta: { requiresAuth: true, title: 'Profile Settings' },
-    component: ProfileSetting
-  },
-  {
     name: 'lecture-list',
     path: '/lecture',
     meta: { title: 'Lecture List' },
@@ -169,6 +163,12 @@ export default [
     path: '/lecture/:courseID/question/:questionID',
     meta: { title: 'Lecture QnA Detail' },
     component: LectureQnaDetail
+  },
+  {
+    name: 'profile',
+    path: '/profile',
+    meta: { requiresAuth: true, title: 'My Profile' },
+    component: Profile
   },
   {
     path: '*',

@@ -174,3 +174,11 @@ class ACMContesHelperSerializer(serializers.Serializer):
     problem_id = serializers.CharField()
     rank_id = serializers.IntegerField()
     checked = serializers.BooleanField()
+
+
+class ProfileContestSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField(max_length=128)
+    start_time = serializers.DateTimeField()
+    rank = serializers.IntegerField()
+    percentage = serializers.FloatField()

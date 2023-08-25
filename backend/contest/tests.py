@@ -6,9 +6,9 @@ from group.models import Group
 
 from utils.api.tests import APITestCase
 
-from .models import ContestAnnouncement, ContestRuleType, Contest
-
-from problem.models import ProblemIOMode
+from .models import ContestAnnouncement, ContestRuleType, Contest, ACMContestRank
+from submission.models import Submission
+from problem.models import Problem, ProblemIOMode, ProblemTag
 
 DEFAULT_PROBLEM_DATA = {"_id": "A-110", "title": "test", "description": "<p>test</p>", "input_description": "test",
                         "output_description": "test", "time_limit": 1000, "memory_limit": 256, "difficulty": "Level1",
@@ -38,6 +38,22 @@ DEFAULT_CONTEST_DATA = {"title": "test title", "description": "test description"
                         "allowed_ip_ranges": [],
                         "bank_filter": [],
                         "visible": True, "real_time_rank": True, "rank_penalty_visible": True}
+
+DEFAULT_SUBMISSION_DATA = {
+    "problem_id": "1",
+    "user_id": 1,
+    "username": "test",
+    "code": "xxxxxxxxxxxxxx",
+    "result": -2,
+    "info": {},
+    "language": "C",
+    "statistic_info": {}
+}
+
+
+DEFAULT_ACMCONTESTRANK_DATA = {"submission_number": 1, "accepted_number": 1, "total_time": 123, "total_penalty": 123,
+                               "submission_info": {"1": {"is_ac": True, "ac_time": 123, "penalty": 123, "problem_submission": 1}},
+                               "contest": 1}
 
 
 class ContestAdminAPITest(APITestCase):
@@ -251,4 +267,49 @@ class ProblemBankAPITest(APITestCase):
         self.create_user("2018123123", "123123")
         url = self.reverse("contest_bank_api")
         response = self.client.post(url, data={"contest_id": contest["id"]})
+        self.assertSuccess(response)
+
+
+class UserContestAPITest(APITestCase):
+    def setUp(self):
+        # create contest
+        admin = self.create_admin()
+        data = copy.deepcopy(DEFAULT_CONTEST_DATA)
+        data.pop("allowed_groups")
+        data.pop("prizes")
+        self.contest = Contest.objects.create(created_by=admin, **data)
+
+        # create problem in contest
+        data = copy.deepcopy(DEFAULT_PROBLEM_DATA)
+        data["contest_id"] = self.contest.id
+        tags = data.pop("tags")
+        problem = Problem.objects.create(created_by=admin, **data)
+
+        for item in tags:
+            try:
+                tag = ProblemTag.objects.get(name=item)
+            except ProblemTag.DoesNotExist:
+                tag = ProblemTag.objects.create(name=item)
+            problem.tags.add(tag)
+
+        self.problem = problem
+        # user submit problem
+        user = self.create_user("test", "test123")
+        data = copy.deepcopy(DEFAULT_SUBMISSION_DATA)
+        data["contest_id"] = self.contest.id
+        data["problem_id"] = self.problem.id
+        data["user_id"] = user.id
+        self.submission = Submission.objects.create(**data)
+
+        # create ACMContestRank
+        data = copy.deepcopy(DEFAULT_ACMCONTESTRANK_DATA)
+        data["user"] = user
+        data["contest"] = self.contest
+        self.rank = ACMContestRank.objects.create(**data)
+
+        self.url = self.reverse("contest_user_api")
+
+    # test UserContestAPI : can user get contest info which he participated and rank?
+    def test_get_participated_contest_list(self):
+        response = self.client.get(self.url)
         self.assertSuccess(response)

@@ -208,6 +208,13 @@ export default {
       }
     })
   },
+  getUserContestInfo (offset, limit, params) {
+    params.limit = limit
+    params.offset = offset
+    return ajax('contest/user/', 'get', {
+      params
+    })
+  },
   submitCode (data) {
     return ajax('submission/', 'post', {
       data
@@ -224,6 +231,13 @@ export default {
     params.limit = limit
     params.offset = offset
     return ajax('contest_submissions/', 'get', {
+      params
+    })
+  },
+  getProfileSubmissionList (offset, limit, params) {
+    params.limit = limit
+    params.offset = offset
+    return ajax('profile_submissions/', 'get', {
       params
     })
   },
